@@ -1,0 +1,8 @@
+node_modules/
+docs/node_modules
+dist/
+*.log
+.DS_Store
+.claude
+.claude_cache
+.claude_cache_*
