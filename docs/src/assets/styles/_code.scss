@@ -1,0 +1,135 @@
+
+code, .code {
+	background: var(--bg-subtle);
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 1em;
+	display: inline-block;
+}
+
+p code, li code , dl code, dt.code, td code {
+	background: var(--doc-code-transparent);
+	padding: 0em 0.3em;
+	font-size: 0.9em ;
+}
+
+p code, li code  {
+	display: inline;
+}
+
+pre {
+	background: var(--bg-surface-tint);
+	border: 1px solid var(--border-default);
+	border-radius: 6px;
+	padding: 1rem;
+	overflow-x: auto;
+	margin-bottom: 1rem;
+
+	code {
+		background: none;
+		padding: 0;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	pre code {
+		opacity: 0.8;
+	}
+}
+
+.card pre, 
+.card code,
+.code-block pre {
+	white-space: pre-wrap;
+	overflow-wrap: break-word;
+	overflow-x: visible;
+}
+
+dl.horizontal {
+	display: grid;
+	grid-template-columns: max-content auto;
+	gap: 1rem;
+}
+
+.code-block {
+	position: relative;
+	
+	.code-header {
+		background: var(--bg-subtle);
+		padding: 0.5rem 0.5rem 0.5rem 1rem;
+		border: 1px solid var(--border-default);
+		border-bottom: none;
+		border-radius: 6px 6px 0 0;
+		font-size: 0.875rem;
+		font-weight: 600;
+		color: var(--fg-muted);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+	
+	pre {
+		margin: 0;	
+		border-radius: 0 0 6px 6px;
+	}
+	p + & {
+		margin-top: 1rem;
+	}
+
+}
+
+// HIGHLIGHTING CODE
+
+.hljs-ln td.hljs-ln-numbers {
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+	text-align: right;
+	color: #ccc;
+	padding-right: 1.5rem;
+}
+.hljs-ln-code {
+	padding-left: 10px;
+}
+
+pre code.hljs {
+	padding: 0;
+	background: none;
+}
+
+.hljs-attribute, 
+.hljs-doctag, 
+.hljs-keyword, 
+.hljs-meta .hljs-keyword, 
+.hljs-name, 
+.hljs-selector-tag, 
+.hljs-section, 
+.hljs-title {
+	font-weight: 600;
+}
+
+button.copy {
+	background: var(--border-default);
+	border: none;
+	border-radius: 3px;
+	padding: 0.2rem 0.5rem;
+	font-size: 1rem;
+	font-weight: 400;
+	color: var(--fg-muted);
+	cursor: pointer;
+
+	transition: background 0.2s, color 0.2s;
+	outline-width: 2px;
+	
+	&:hover {
+		background: var(--bg-surface);
+		color: var(--btn-primary-hover);
+	}
+	&.copied {
+		background: var(--btn-outline-text);
+		color: var(--btn-primary-text);
+	}
+}

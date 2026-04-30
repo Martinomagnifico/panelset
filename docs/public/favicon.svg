@@ -1,0 +1,17 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+	rect {
+		stroke: #0073CC;
+	}
+    @media (prefers-color-scheme: dark) {
+      rect { stroke: #fff; }
+    }
+  </style>
+
+<rect opacity="0.15" x="29" y="16" width="16" height="16" rx="2"/>
+<rect x="29" y="16" width="16" height="16" rx="2" stroke="#0073CC"/>
+<rect opacity="0.15" x="17" y="12" width="24" height="24" rx="2" fill="white"/>
+<rect x="17" y="12" width="24" height="24" rx="3" stroke="#0073CC" stroke-width="2"/>
+<rect opacity="0.15" x="4" y="8" width="32" height="32" rx="4" fill="white"/>
+<rect x="4" y="8" width="32" height="32" rx="4" stroke="#0073CC" stroke-width="3"/>
+</svg>

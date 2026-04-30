@@ -1,0 +1,113 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Panel — Web Component"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Web Component
+				p.lead Use Panel as a native HTML element with no selectors or init() call required.
+
+	.lane
+		.container
+			+anchor Getting started
+
+			p #[code &lt;ps-panel&gt;] is a custom element that wraps Panel. All Panel functionality — events, async content, grouped accordions, #[code persist] — works identically. The only differences are how you register it and the attribute naming convention.
+
+			.title-text
+				h3 IIFE (no build step)
+				p Include the bundled script. #[code register()] is called automatically with the default #[code ps] prefix. No extra setup needed.
+
+			+codeblock('HTML').
+				<script src="panelset.js"></script>
+
+				<!-- <ps-panel> is ready immediately after the script loads -->
+				<ps-panel id="my-panel" panel-axis="vertical" class="is-closed">
+				  <div class="panel-wrapper">...</div>
+				</ps-panel>
+
+			.title-text
+				h3 Module — side-effect import
+				p Import the registration side-effect. Both elements are registered; nothing else is exported.
+
+			+codeblock('JS').
+				import 'panelset/register';
+				// <ps-panel> and <ps-panelset> are now registered
+
+			.title-text
+				h3 Module — explicit call
+				p Call #[code register()] yourself when you need control over timing or the prefix.
+
+			+codeblock('JS').
+				import { register } from 'panelset';
+				register(); // registers <ps-panel> and <ps-panelset>
+
+	.lane
+		.container
+			+anchor Basic example
+
+			p A show-more panel using #[code &lt;ps-panel&gt;] with plain attributes. Attribute names are the camelCase dataset key converted to kebab-case: #[code data-panel-axis] becomes #[code panel-axis].
+
+			.example
+				.demo
+					article.show-more-article
+						p This is always visible introductory text.
+						button(aria-controls="wc-panel-demo" aria-expanded="false") Show more
+						ps-panel#wc-panel-demo(panel-axis="vertical" class="is-closed")
+							.panel-wrapper
+								p Additional content that was hidden. The panel animates to its natural height, exactly as with #[code data-panel].
+
+			+codeblock('HTML').
+				<button aria-controls="my-panel" aria-expanded="false">Show more</button>
+
+				<ps-panel id="my-panel" panel-axis="vertical" class="is-closed">
+				  <div class="panel-wrapper">
+				    <p>Hidden content.</p>
+				  </div>
+				</ps-panel>
+
+			p Panel auto-wires the trigger via #[code aria-controls] — no click handler needed.
+
+	.lane
+		.container
+			+anchor Trigger wiring
+
+			p Panel auto-binds all #[code [aria-controls]&thinsp;] triggers on init. If you need to access the Panel instance from custom JavaScript, use #[code closest('ps-panel')] instead of #[code closest('[data-panel]')].
+
+			+codeblock('JS').
+				// Accessing the Panel instance from custom JS:
+				document.addEventListener('click', event => {
+				  const el = event.target.closest('ps-panel');
+				  if (!el?.panel) return;
+				  el.panel.toggle(event);
+				});
+
+	.lane
+		.container
+			+anchor Full feature parity
+
+			p All Panel features work identically with the web component: #[code panel:beforeopen] / async content, #[code panel:opened] and the other lifecycle events, #[code closeSiblings], grouped accordions via #[code data-panel-group], #[code autoFocus], #[code returnFocus], and #[code persist]. The element tag and attribute names are the only differences.
+
+	.lane
+		.container
+			+anchor Custom prefix
+
+			p Pass a string to #[code register()] to use a custom element name prefix. The default is #[code ps].
+
+			+codeblock('JS').
+				import { register } from 'panelset';
+
+				register();         // → <ps-panel>, <ps-panelset>
+				register('solar'); // → <solar-panel>, <solar-panelset>
+
+			p #[code register()] is safe to call multiple times — it skips any name that is already defined.
+
+append scripts
+	if isProd
+		//- IIFE included by _scripts.pug already calls register(); no extra init needed.
+	else
+		script(type="module").
+			import { register } from 'panelset';
+			register();

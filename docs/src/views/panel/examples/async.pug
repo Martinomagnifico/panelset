@@ -1,0 +1,90 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Async panel"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Async panel
+				p.lead Load panel content on demand. Fetch data, run heavy computation, or do anything async before the panel opens.
+
+	.lane
+		.container
+			.title-text
+				+anchor Overview
+				p Panel supports async content loading via the #[code panel:beforeopen] event. Attach a promise to #[code event.detail.promise] (or use the #[code onBeforeOpen()] convenience method) and the panel waits for it to resolve before animating open. While loading, a spinner appears after #[code loadingDelay] ms.
+
+	.lane
+		.container
+			+anchor Live example
+
+			p The panel below fetches a random recipe from a public API when opened. A simulated delay makes the spinner visible. With #[code { once: true }] the content is cached, so reopening the panel skips the fetch.
+
+			.example
+				.demo
+					button(aria-controls="async-panel-recipe" aria-expanded="false") Load recipe
+					div#async-panel-recipe(
+						data-panel
+						data-panel-axis="vertical"
+						data-panel-loading-delay="200"
+						class="is-closed"
+					)
+						.panel-wrapper
+							// content injected by JS
+
+				+codeblock('JS').
+					const panel = new Panel('#async-panel-recipe');
+
+					panel.onBeforeOpen((el, signal) => {
+					  return slowFetch('https://dummyjson.com/recipes/1', { signal })
+					    .then(r => r.json())
+					    .then(data => {
+					      el.querySelector('.panel-wrapper').innerHTML = renderRecipe(data);
+					    });
+					}, { once: true });
+
+	.lane
+		.container
+			+anchor Using the event directly
+
+			p For more control, listen to #[code panel:beforeopen] on the element:
+
+			+codeblock('JS').
+				document.querySelector('#my-panel').addEventListener('panel:beforeopen', e => {
+				  const { signal } = e.detail;
+
+				  e.detail.promise = fetch('/api/content', { signal })
+				    .then(r => r.text())
+				    .then(html => {
+				      e.currentTarget.querySelector('.panel-wrapper').innerHTML = html;
+				    });
+				});
+
+	.lane
+		.container
+			+anchor Event detail properties
+
+			.example.api
+				dl
+					dt signal
+					dd #[code AbortSignal]: pass to #[code fetch()] so in-flight requests cancel if the user closes the panel before it opens.
+
+					dt promise
+					dd #[code Promise | null]: set this to delay opening until the promise resolves. Leave as #[code null] to open immediately.
+
+					dt trigger
+					dd #[code HTMLElement | null]: the element that initiated the open (e.g. the button).
+
+append scripts
+	if isProd
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			Panel.init('.docs-content [data-panel]');
+		script(src="/assets/scripts/example-panel-async.js" vite-ignore)
+	else
+		script(type="module").
+			import { Panel } from 'panelset';
+			Panel.init('.docs-content [data-panel]');
+		script(type="module" src="/src/assets/scripts/example-panel-async.js")

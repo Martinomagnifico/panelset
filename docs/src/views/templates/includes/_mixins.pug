@@ -1,0 +1,169 @@
+
+mixin anchor(tag, id)
+	- tag = tag || 'h2'
+	- id = id || attributes.id || null
+	- var attrs = Object.assign({}, attributes); delete attrs.id;
+	- var oldBuf = pug_html; pug_html = '';
+	block
+	- var blockContent = pug_html; pug_html = oldBuf;
+	- if (!id) { id = blockContent.replace(/<[^>]*>/g, '').trim().toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, '-'); }
+	#{tag}.heading-anchor(id=id)&attributes(attrs)
+		!= blockContent
+		a(href=`#${id}` aria-label="Copy link to section" data-tooltip="Copy link")
+			svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+				path(d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71")
+				path(d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71")
+
+
+mixin html
+	doctype html
+	html(class=page.class, lang=page.language)
+		if block
+			block
+
+
+mixin badge(pluginname, extraclass)
+	a.github-corner(class=extraclass, href=plugin.homepage target="blank" title='View source on GitHub')
+		svg(xmlns='http://www.w3.org/2000/svg' viewBox='0 0 55 55')
+			path(fill='currentColor' d='M27.5 11.2a16.3 16.3 0 0 0-5.1 31.7c.8.2 1.1-.3 1.1-.7v-2.8c-4.5 1-5.5-2.2-5.5-2.2-.7-1.9-1.8-2.4-1.8-2.4-1.5-1 .1-1 .1-1 1.6.1 2.5 1.7 2.5 1.7 1.5 2.5 3.8 1.8 4.7 1.4.2-1 .6-1.8 1-2.2-3.5-.4-7.3-1.8-7.3-8 0-1.8.6-3.3 1.6-4.4-.1-.5-.7-2.1.2-4.4 0 0 1.4-.4 4.5 1.7a15.6 15.6 0 0 1 8.1 0c3.1-2 4.5-1.7 4.5-1.7.9 2.3.3 4 .2 4.4 1 1 1.6 2.6 1.6 4.3 0 6.3-3.8 7.7-7.4 8 .6.6 1.1 1.6 1.1 3v4.6c0 .4.3.9 1.1.7a16.3 16.3 0 0 0-5.2-31.7')
+
+
+//mixin examplepanelset(id)
+	div(id=id data-panelset)&attributes(attributes)
+		.panel-wrapper
+			.active(role="tabpanel", id=`${id}-panel-1`, aria-label="Key features")
+				h3 Key Features
+				ul
+					li This is our most important feature ever!
+
+			div(role="tabpanel", id=`${id}-panel-2`, hidden, aria-label="Pricing plans")
+				h3 Pricing Plans
+				ul
+					li Starter Plan: Whenever you do not want to pay a lot.
+					li Professional Plan: Ideal for managers who like to spend money!
+
+			div(role="tabpanel", id=`${id}-panel-3`, hidden, aria-label="Support options")
+				h3 Support Options
+				ul
+					li If you send us an email, we will probably ignore it.
+					li We don’t even have a community forum.
+					li Opening an issue on GitHub is your next best option. Or even better: PR’s! You do the work!
+
+mixin examplepanelset(id, wc=false)
+	- const tag = wc ? 'ps-panelset' : 'div'
+	#{tag}(id=id, data-panelset=(!wc || undefined))&attributes(attributes)
+		.panel-wrapper
+			.active(role="tabpanel", id=`${id}-panel-1`, aria-label="Key features")
+				h3 Key Features
+				ul
+					li This is our most important feature ever!
+
+			div(role="tabpanel", id=`${id}-panel-2`, hidden, aria-label="Pricing plans")
+				h3 Pricing Plans
+				ul
+					li Starter Plan: Whenever you do not want to pay a lot.
+					li Professional Plan: Ideal for managers who like to spend money!
+
+			div(role="tabpanel", id=`${id}-panel-3`, hidden, aria-label="Support options")
+				h3 Support Options
+				ul
+					li If you send us an email, we will probably ignore it.
+					li We don’t even have a community forum.
+					li Opening an issue on GitHub is your next best option. Or even better: PR’s! You do the work!
+
+mixin revealsrc(kind, thesource)
+	- let isProd = process.env.NODE_ENV === 'production';
+	if isProd
+		if kind === 'script'
+			script(src=`${thesource}`)
+		else
+			link(rel="stylesheet", href=`${thesource}`)
+	else
+		if kind === 'script'
+			script(src=`/node_modules/reveal.js/${thesource}`)
+		else
+			link(rel="stylesheet", href=`/node_modules/reveal.js/${thesource}`)
+
+-
+	const reindentCode = (code) => {
+		const lines = code.split('\n');
+		let minIndent = Infinity;
+		
+		for (const line of lines) {
+			if (line.trim().length > 0) {
+				const match = line.match(/^(\s*)/);
+				if (match && match[1].length < minIndent) {
+					minIndent = match[1].length;
+				}
+			}
+		}
+		
+		if (minIndent === Infinity) {
+			minIndent = 0;
+		}
+
+		const deindentedLines = lines.map(line => line.substring(minIndent));
+		return deindentedLines.join('\n').trim();
+	};
+
+
+mixin escape()
+	- var oldBuf = pug_html;
+	- pug_html = '';
+	block
+	- pug_html = oldBuf + pug.escape(pug_html);
+
+
+mixin reindent_block_html()
+	- var oldBuf = pug_html;
+	- pug_html = '';
+	block
+	- var rawPugSource = pug_html;
+	- pug_html = oldBuf;
+	- var deindentedCode = reindentCode(rawPugSource)
+	- pug_html += deindentedCode
+
+
+
+mixin close(label)
+	- label = label || 'Close'
+	button.close(data-panel-close aria-label=label)
+		svg.offset(viewport="0 0 24 24", version="1.1", xmlns="http://www.w3.org/2000/svg")
+			g(transform="rotate(45 12 12)")
+				line(x1="0", y1="12", x2="24", y2="12")
+				line(x1="12", y1="0", x2="12", y2="24")
+
+		span.sr-only=label
+
+
+
+mixin codeblock(type)
+	.code-block
+		.code-header
+			| #{type}
+			button.copy Copy
+		pre
+			code(class=`language-${type}`)
+				if block
+					+escape()
+						+reindent_block_html()
+							block
+
+
+mixin example-1
+	h3 Key Features
+	ul
+		li This is our most important feature ever!
+
+mixin example-2
+	h3 Pricing Plans
+	ul
+		li Starter Plan: Whenever you do not want to pay a lot.
+		li Professional Plan: Ideal for managers who like to spend money!
+
+mixin example-3
+	h3 Support Options
+	ul
+		li If you send us an email, we will probably ignore it.
+		li We don't even have a community forum.
+		li Opening an issue on GitHub is your next best option. Or even better: PR’s! You do the work!

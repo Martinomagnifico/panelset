@@ -1,0 +1,52 @@
+{
+  "name": "panelset",
+  "version": "1.1.0",
+  "description": "Flexible panel management with smooth transitions",
+  "type": "module",
+  "main": "./dist/panelset.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/panelset.esm.js"
+    },
+    "./register": "./dist/register.js",
+    "./style.css": "./dist/panelset.css"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "start": "cd docs && npm start",
+    "dev": "vite",
+    "docs": "cd docs && npm start",
+    "docs:build": "cd docs && npm run build",
+    "docs:preview": "npm run build && cd docs && rm -rf dist && npm run build && npm run preview",
+    "build": "npm run clean && npm run build:lib",
+    "build:lib": "vite build",
+    "prepublishOnly": "npm run build",
+    "clean": "rm -rf dist",
+    "postinstall": "[ -d docs ] && cd docs && npm install || true"
+  },
+  "keywords": [
+    "panels",
+    "tabs",
+    "accordion",
+    "transitions",
+    "ui-components"
+  ],
+  "author": "Martijn De Jongh",
+  "license": "MIT",
+  "devDependencies": {
+    "@vituum/vite-plugin-pug": "^2.0.1",
+    "fast-glob": "^3.3.3",
+    "sass": "^1.97.3",
+    "terser": "^5.46.0",
+    "typescript": "^5.9.3",
+    "vite": "^8.0.0",
+    "vite-plugin-dts": "5.0.0-beta.6",
+    "vituum": "^2.0.1"
+  }
+}

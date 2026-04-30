@@ -1,0 +1,136 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelSet — Web Component"
+
+append styles
+	link(rel="stylesheet" href="/src/assets/styles/tabs.scss")
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Web Component
+				p.lead Use PanelSet as a native HTML element with no selectors or init() call required.
+
+	.lane
+		.container
+			+anchor Getting started
+
+			p #[code &lt;ps-panelset&gt;] is a custom element that wraps PanelSet. All PanelSet functionality — events, async content, closable mode, #[code persist] — works identically. The only differences are how you register it and the attribute naming convention.
+
+			.title-text
+				h3 IIFE (no build step)
+				p Include the bundled script. #[code register()] is called automatically with the default #[code ps] prefix. No extra setup needed.
+
+			+codeblock('HTML').
+				<script src="panelset.js"></script>
+
+				<!-- <ps-panelset> is ready immediately after the script loads -->
+				<ps-panelset id="my-tabs">
+				  <div class="panel-wrapper">
+				    <div role="tabpanel" id="tab-1" class="active">...</div>
+				    <div role="tabpanel" id="tab-2" hidden>...</div>
+				  </div>
+				</ps-panelset>
+
+			.title-text
+				h3 Module — side-effect import
+				p Import the registration side-effect. Both elements are registered; nothing else is exported.
+
+			+codeblock('JS').
+				import 'panelset/register';
+				// <ps-panel> and <ps-panelset> are now registered
+
+			.title-text
+				h3 Module — explicit call
+				p Call #[code register()] yourself when you need control over timing or the prefix.
+
+			+codeblock('JS').
+				import { register } from 'panelset';
+				register(); // registers <ps-panel> and <ps-panelset>
+
+	.lane
+		.container
+			+anchor Basic tab example
+
+			p A tab interface using #[code &lt;ps-panelset&gt;] with plain attributes. Attribute names are the camelCase dataset key converted to kebab-case: #[code data-panelset-align] becomes #[code panelset-align].
+
+			.example
+
+				.demo
+					nav.tabs(role="tablist" aria-label="Content sections")
+						button(role="tab" aria-controls="wc-ps-panel-1" aria-selected="true") Features
+						button(role="tab" aria-controls="wc-ps-panel-2" aria-selected="false") Pricing
+						button(role="tab" aria-controls="wc-ps-panel-3") Support
+					+examplepanelset('wc-ps', wc=true).tab-content
+
+
+				+codeblock('HTML')
+					nav.tabs(role="tablist" aria-label="Content sections")
+						button(role="tab" aria-controls="wc-ps-panel-1" aria-selected="true") Features
+						button(role="tab" aria-controls="wc-ps-panel-2" aria-selected="false") Pricing
+						button(role="tab" aria-controls="wc-ps-panel-3") Support
+
+					ps-panelset
+						.panel-wrapper
+							.active(role="tabpanel" id="wc-ps-panel-1" aria-label="Features") ...
+							div(role="tabpanel" id="wc-ps-panel-2" hidden aria-label="Pricing") ...
+							div(role="tabpanel" id="wc-ps-panel-3" hidden aria-label="Support") ...
+
+	.lane
+		.container
+			+anchor Trigger wiring
+
+			p PanelSet requires a click handler to call #[code show()]. The only change from the standard pattern is using #[code closest('ps-panelset')] instead of #[code closest('[data-panelset]')] to find the container.
+
+			+codeblock('JS').
+				document.addEventListener('click', event => {
+				  const button = event.target.closest('button[aria-controls]');
+				  if (!button) return;
+
+				  const tablist = button.closest('[role="tablist"]');
+				  tablist?.querySelectorAll('[role="tab"]').forEach(t => {
+				    t.setAttribute('aria-selected', 'false');
+				  });
+				  button.setAttribute('aria-selected', 'true');
+
+				  const panelId = button.getAttribute('aria-controls');
+				  const panel = document.getElementById(panelId);
+				  const container = panel?.closest('ps-panelset'); // ← instead of '[data-panelset]'
+
+				  container?.panelSet?.show(panelId, { event });
+				});
+
+	.lane
+		.container
+			+anchor Full feature parity
+
+			p All PanelSet features work identically with the web component: #[code ps:beforeopen] / async content, the full lifecycle event set, closable mode with #[code open()] / #[code close()] / #[code toggle()], height tracking via #[code data-panelset-trackheight], #[code autoFocus], #[code returnFocus], and #[code persist]. The element tag and attribute names are the only differences.
+
+	.lane
+		.container
+			+anchor Custom prefix
+
+			p Pass a string to #[code register()] to use a custom element name prefix. The default is #[code ps].
+
+			+codeblock('JS').
+				import { register } from 'panelset';
+
+				register();         // → <ps-panel>, <ps-panelset>
+				register('acme'); // → <acme-panel>, <acme-panelset>
+
+			p #[code register()] is safe to call multiple times — it skips any name that is already defined.
+
+append scripts
+	if isProd
+		script(src="/assets/scripts/example-wc-tabs.js" vite-ignore)
+		//- IIFE in _scripts.pug already calls register(); no extra init needed.
+	else
+		script(type="module").
+			import { register } from 'panelset';
+			register();
+		script(type="module" src="/src/assets/scripts/example-wc-tabs.js")
+
+prepend styles
+	link(rel="stylesheet" href="/src/assets/styles/tabs.scss")

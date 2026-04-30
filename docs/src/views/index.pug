@@ -1,0 +1,39 @@
+extends /views/templates/layouts/_nosidebar
+
+append variables
+	- pagetitle = "Intro"
+	- page.class = 'intro'
+
+block content
+	.container
+		h1 PanelSet
+		p.lead Flexible panel management with smooth transitions. ~6.5&nbsp;KB gzipped.
+
+		a.btn.chevron(href="intro.html") 
+			| Check out the docs and examples
+			svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
+				polyline(points="9 6 15 12 9 18")
+
+		.example.demo
+			.demo-controls.center
+				button(aria-controls="demo-panel-1") Short panel
+				button(aria-controls="demo-panel-2") Medium panel
+				button(aria-controls="demo-panel-3") Tall panel
+			+examplepanelset('demo')
+
+
+	footer
+		p #[a(href="about.html") About] • Open source • MIT License • TypeScript Ready • #[a(href="https://ko-fi.com/martinomagnifico") Buy me a coffee]
+
+append scripts
+	if isProd
+		script(src="/assets/scripts/example.js" vite-ignore)
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			PanelSet.init();
+	else
+		script(type="module" src="/src/assets/scripts/example.js")
+		script(type="module").
+			import PanelSet from 'panelset';
+			PanelSet.init({debug: true });
+

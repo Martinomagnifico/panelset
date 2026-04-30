@@ -1,0 +1,97 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Persisting state"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Persisting state
+				p.lead By default, panel state resets on every page load. The #[code persist] option changes that.
+
+	.lane
+		.container
+			+anchor What persist does
+
+			p Without #[code persist], Panel and PanelSet read the state on load but never write it back. Open a panel, refresh the page, and it resets. Enable #[code persist] and that changes: opening and closing is saved to localStorage, so the panel comes back where you left it.
+
+			p It also updates the #[code ?panel=] URL param via #[code history.replaceState], keeping the address bar in sync. No new history entry is created.
+
+	.lane
+		.container
+			+anchor Enabling persist
+
+			.title-text
+				h3 JavaScript
+
+			+codeblock('JavaScript').
+				new Panel('#sidebar', { persist: true });
+				new PanelSet('#tabs', { persist: true });
+
+			.title-text
+				h3 Data attribute
+
+			+codeblock('HTML').
+				<div id="sidebar" data-panel data-panel-persist class="is-closed">...</div>
+				<div id="tabs" data-panelset data-panel-persist>...</div>
+
+			p PanelSet requires an #[code id] on the container. Without one, there is nothing to key the localStorage entry against.
+
+	.lane
+		.container
+			+anchor Accordion groups
+
+			p For Panel groups, set #[code data-panel-persist] on the #[code [data-panel-group]] element instead of on each panel individually.
+
+			+codeblock('HTML').
+				<div data-panel-group data-panel-persist>
+				  <div>
+				    <button aria-controls="faq-1">Question 1</button>
+				    <div id="faq-1" data-panel class="is-closed">
+				      <div class="panel-wrapper">Answer 1</div>
+				    </div>
+				  </div>
+				  <div>
+				    <button aria-controls="faq-2">Question 2</button>
+				    <div id="faq-2" data-panel class="is-closed">
+				      <div class="panel-wrapper">Answer 2</div>
+				    </div>
+				  </div>
+				</div>
+
+	.lane
+		.container
+			+anchor How state is restored on load
+
+			p On every page load, both components check two sources in order:
+
+			ol
+				li #[strong URL param] (#[code ?panel=]): always wins if present, regardless of #[code persist]
+				li #[strong localStorage]: used when no URL param is present
+
+			p #[code persist] only controls whether navigating writes state back. Reading always happens.
+
+			p See #[a(href="/sharedconcepts/deep-linking.html") Deep linking] for how to link directly to a panel state from an external link.
+
+	.lane
+		.container
+			+anchor localStorage keys
+
+			p State is stored under namespaced keys:
+
+			table.table
+				thead
+					tr
+						th Component
+						th Key format
+						th Example
+				tbody
+					tr
+						td PanelSet
+						td #[code ps:<container-id>]
+						td #[code ps:main-tabs]
+					tr
+						td Panel
+						td #[code panel:<element-id>]
+						td #[code panel:sidebar]

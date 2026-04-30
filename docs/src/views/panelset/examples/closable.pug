@@ -1,0 +1,101 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Closable panelset"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1=pagetitle
+
+	.lane
+		.container
+			.title-text
+				p Add #[code data-closable] to the container to enable open/close/toggle. The example below also adds #[code data-close-on-tab]: tab buttons can then open the PanelSet when it is closed (switching to the clicked panel silently first if needed), and clicking the active tab while open, closes it.
+				p Below is an example of a script that uses some data-attributes to handle the open, close, and toggle actions. All they do is call the respective methods on the instance. You may choose your own attributes and code.
+
+
+			.example
+				.demo
+					.demo-controls
+						button(aria-controls="demo-closable-panel-1" aria-selected="true")
+							span Panel 1
+							svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
+								polyline(points="6 9 12 15 18 9")
+						button(aria-controls="demo-closable-panel-2")
+							span Panel 2
+							svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
+								polyline(points="6 9 12 15 18 9")
+						button(aria-controls="demo-closable-panel-3")
+							span Panel 3
+							svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
+								polyline(points="6 9 12 15 18 9")
+						button.secondary(data-panelset-close="#demo-closable") Close
+						button.secondary(data-panelset-open="#demo-closable") Open
+						button.secondary(data-panelset-toggle="#demo-closable") Toggle
+					hr.no-margin
+					+examplepanelset('demo-closable')(data-closable, data-close-on-tab, data-panelset-align="end" )
+				br
+				h2 Markup
+				+codeblock('HTML')
+					.demo-controls
+						button(aria-controls="demo-closable-panel-1") Panel 1
+						button(aria-controls="demo-closable-panel-2") Panel 2
+						button(aria-controls="demo-closable-panel-3") Panel 3
+						button.secondary(data-panelset-close="#demo-closable") Close
+						button.secondary(data-panelset-open="#demo-closable") Open
+						button.secondary(data-panelset-toggle="#demo-closable") Toggle
+
+					#demo-closable(data-panelset data-closable data-close-on-tab)
+						// Panels here
+
+				.title-text
+					h2 JavaScript
+					p The panel switching JavaScript is the same as in the other examples. Note that we pass the event to #[code show()]. This is optional, but useful if you want to know what triggered the panel switch (accessible as #[code event.target] in the handler or via the #[code ps:activationstart] event).
+
+				+codeblock('JS').
+					document.addEventListener('click', event => {
+					  const button = event.target.closest('button[aria-controls]');
+					  if (!button) return;
+					  const panelId = button.getAttribute('aria-controls');
+					  const container = document.getElementById(panelId)?.closest('[data-panelset]');
+					  container?.panelSet?.show(panelId, {event});
+					});
+		
+				p The buttons to open, close or toggle the panelset could be handled like this:
+				+codeblock('JS').
+					document.addEventListener('click', event => {
+					  const actions = ['close', 'open', 'toggle'];
+						
+					  for (const action of actions) {
+					    const btn = event.target.closest(`[data-panelset-${action}]`);
+					    if (btn) {
+					      const selector = btn.getAttribute(`data-panelset-${action}`);
+					      const container = document.querySelector(selector);
+					
+					      if (container?.panelSet) {
+					        const withTransition = !btn.hasAttribute('data-no-transition');
+					        container.panelSet[action]({ 
+					          event: event, 
+					          transition: withTransition 
+					        });
+					      }
+					      return;
+					    }
+					  }
+					});
+
+
+
+append scripts
+	if isProd
+		script(src="/assets/scripts/example-closable.js" vite-ignore)
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			PanelSet.init();
+	else
+		script(type="module" src="/src/assets/scripts/example-closable.js")
+		script(type="module").
+			import PanelSet from 'panelset';
+			PanelSet.init({debug: true });

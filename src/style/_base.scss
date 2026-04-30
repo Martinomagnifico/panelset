@@ -1,0 +1,149 @@
+// Custom element defaults to display:inline; force block so height/overflow work.
+ps-panelset { display: block; }
+
+:is([data-panelset], ps-panelset) {
+    position: relative;
+    transition: height calc((var(--fadein-speed) + var(--fadein-delay)) * var(--height-duration-ratio)) var(--transition-timing);
+    will-change: height;
+    box-sizing: border-box;
+
+    .panel-wrapper {
+        position: relative;
+        margin: 0;
+    }
+
+    &.is-closed {
+        height: 0 !important;
+        min-height: 0;
+        
+        .panel-wrapper {
+            opacity: 0;
+            pointer-events: none;
+        }
+    }
+    
+    &.is-opening {
+        transition: height var(--open-speed) var(--open-timing), box-shadow var(--open-speed) var(--open-timing), border-color var(--open-speed) var(--open-timing);
+        
+        .panel-wrapper {
+            transition: opacity var(--open-speed) var(--open-timing);
+            transition-delay: calc(0.5 * var(--open-speed));
+            opacity: 1;
+        }
+    }
+    
+    &.is-closing {
+        transition: height var(--close-speed) var(--close-timing), box-shadow var(--close-speed) var(--close-timing), border-color var(--open-speed) var(--open-timing);
+        
+        .panel-wrapper {
+            transition: opacity var(--close-speed) var(--close-timing);
+            opacity: 0;
+        }
+    }
+
+
+    [role="tabpanel"] {
+        opacity: 0;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0;
+
+        &.fade {
+            transition: opacity var(--fadeout-speed) var(--fadeout-timing);
+            pointer-events: none;
+
+            &.incoming {
+                transition-duration: var(--fadein-speed);
+                transition-delay: var(--fadein-delay);
+                transition-timing-function: var(--fadein-timing);
+            }
+        }
+
+        &.active {
+            opacity: 1;
+            position: relative;
+        }
+
+        &.no-transition, &.incoming.no-transition {
+            transition: none;
+        }
+
+        &:focus {
+            outline: none;
+        }
+    }
+    &.is-transitioning, &.is-opening, &.is-closing {
+        overflow: hidden;
+    }
+
+    // Alignment
+    // Controls where .panel-wrapper sits during open/close.
+
+    &.is-opening, &.is-closing, &.is-closed {
+        &[data-panelset-align="center"] {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        &[data-panelset-align="end"] {
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+    }
+}
+
+
+// Native interpolate-size (progressive enhancement)
+// When supported, CSS animates height 0 ↔ auto for closable PanelSets without
+// JS measuring a pixel value. JS still owns state classes, ARIA, and focus.
+// Fallback: the JS pixel-locking cycle in _animateOpenClose handles other browsers.
+
+@supports (interpolate-size: allow-keywords) {
+    :is([data-panelset], ps-panelset) {
+        // Scoped to is-opening/is-closing only so interpolate-size is NOT active
+        // during normal panel switching — otherwise clearing the inline height in
+        // _cleanupPanels() would trigger an unwanted auto-size animation.
+        &.is-opening {
+            interpolate-size: allow-keywords;
+            height: auto;
+        }
+
+        &.is-closing {
+            interpolate-size: allow-keywords;
+            height: 0;
+        }
+    }
+}
+
+
+@media (prefers-reduced-motion: reduce) {
+    :is([data-panelset], ps-panelset) {
+        --fadeout-speed: 0s !important;
+        --fadein-speed: 0s !important;
+        --fadein-delay: 0s !important;
+        --loading-dim-duration: 0s !important;
+        --loading-fadeout-duration: 0s !important;
+        --close-speed: 0s !important;
+        --open-speed: 0s !important;
+        
+        transition: none !important;
+        
+        [role="tabpanel"] {
+            transition: none !important;
+        }
+        
+        &::after {
+            transition: none !important;
+            animation-play-state: paused !important;
+        }
+        
+        .panel-wrapper {
+            transition: none !important;
+        }
+    }
+}

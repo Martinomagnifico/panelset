@@ -1,0 +1,124 @@
+
+.demo-controls button[aria-controls] {
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+
+  svg {
+    flex-shrink: 0;
+    transform: rotate(-180deg);
+    transition: transform var(--close-speed, 0.5s) var(--close-timing, ease-in-out);
+  }
+
+  &[aria-selected="true"] svg {
+    transform: rotate(0deg);
+  }
+}
+
+.demo:has([data-panelset].is-closed) .demo-controls button[aria-controls] svg,
+.demo:has([data-panelset].is-closing) .demo-controls button[aria-controls] svg {
+  transform: rotate(-180deg);
+}
+
+// PanelSet demo, closable example 
+
+.demo {
+  hr {
+    border: none;
+    height: 2px;
+    background: var(--btn-outline-border);
+    border-radius: 2px;
+    position: relative;
+    z-index: 5;
+  }
+
+  #demo-closable {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    margin-top: -2px;
+    border: 2px solid var(--btn-outline-border);
+    background: var(--bg-surface);
+    overflow: hidden;
+    border-radius: 0 0 8px 8px;
+
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+
+    position: absolute !important;
+    width: calc(100% - 4rem);
+    left: 1rem;
+    right: 1rem;
+    z-index: 4;
+
+    &.is-closing, &.is-closed {
+      border-color: transparent;
+      box-shadow: 0 0 4px rgba(0, 0, 0, 0);
+    }
+    &.is-closed {
+
+    }
+
+    [role="tabpanel"] {
+      padding: 1rem;
+    }
+  }
+}
+
+// Recipe example 
+
+.recipe {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-column-gap: 2rem;
+  grid-row-gap: 0;
+  margin-bottom: 2rem;
+}
+
+img.recipe-image {
+  grid-area: 1 / 1 / 2 / 2;
+  width: 100%;
+  max-width: 256px;
+  border-radius: 8px;
+  object-fit: cover;
+  margin: 0 auto;
+}
+
+.recipe-ingredients {
+  grid-area: 1 / 2 / 2 / 3;
+}
+
+.recipe-meta {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0;
+  padding: 12px;
+  background: white;
+  border-radius: 8px;
+
+  span {
+    font-size: 14px;
+  }
+}
+
+img.testimage {
+  display: block;
+  margin-top: 1em;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .recipe {
+    display: flex;
+    flex-direction: column;
+
+    img {
+      width: 100%;
+      max-width: unset;
+      max-height: 256px;
+    }
+  }
+
+  .recipe-ingredients {
+    margin-top: 2rem;
+    width: 100%;
+  }
+}

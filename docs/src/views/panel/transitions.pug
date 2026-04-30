@@ -1,0 +1,118 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Panel — Transitions"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Panel transitions
+				p.lead Panel uses only CSS transitions. JavaScript measures and sets pixel values; CSS does the animation.
+
+	.lane
+		.container
+			+anchor CSS variables
+
+			p Set these on the #[code [data-panel]] element or any ancestor to control the transition.
+
+			+codeblock('CSS').
+				[data-panel] {
+				  --open-speed:      0.5s;
+				  --open-timing:     ease-in-out;
+				  --close-speed:     0.5s;
+				  --close-timing:    ease-in-out;
+				  --closed-opacity:  0;
+				}
+
+			dl.horizontal
+				dt #[code --open-speed]
+				dd Open transition duration. Default: #[code 0.5s].
+				dt #[code --open-timing]
+				dd Open easing function. Default: #[code ease-in-out].
+				dt #[code --close-speed]
+				dd Close transition duration. Default: #[code 0.5s].
+				dt #[code --close-timing]
+				dd Close easing function. Default: #[code ease-in-out].
+				dt #[code --closed-opacity]
+				dd Opacity of #[code .panel-wrapper] when closed or closing. Default: #[code 0] (fades out). Set to #[code 1] to disable the inner fade.
+
+	.lane
+		.container
+			+anchor Default speed
+
+			.example
+				.demo
+					button(aria-controls="panel-demo" aria-expanded="false") Toggle panel
+					div#panel-demo(data-panel data-panel-axis="vertical" class="is-closed")
+						.panel-wrapper
+							p This panel uses the default transition speed of #[code 0.5s]. As it opens, the container grows to its natural height while the inner content fades in. As it closes, the content fades out and the container shrinks back to zero.
+
+	.lane
+		.container
+			+anchor Slower transitions
+
+			.example
+				.demo
+					button(aria-controls="panel-slow-demo" aria-expanded="false") Toggle panel
+					div#panel-slow-demo(data-panel data-panel-axis="vertical" class="is-closed")
+						.panel-wrapper
+							p Open and close speeds both set to 1 second. The slower speed makes it easy to see the two parts of the transition separately: the container height animates while the content fades in, and the content fades out before the container fully collapses.
+
+				+codeblock('CSS').
+					#panel-slow-demo {
+					  --open-speed:  1s;
+					  --close-speed: 1s;
+					}
+
+	.lane
+		.container
+			+anchor No fade
+
+			p Set #[code --closed-opacity: 1] to keep the content fully visible while the container grows and shrinks.
+
+			.example
+				.demo
+					button(aria-controls="panel-nofade-demo" aria-expanded="false") Toggle panel
+					div#panel-nofade-demo(data-panel data-panel-axis="vertical" class="is-closed")
+						.panel-wrapper
+							p The content is already at full opacity. Only the container height animates. Compare this to the default example above: the text appears immediately as the container opens, with no fade-in. On close, the text stays visible until the container has fully collapsed.
+
+				+codeblock('CSS').
+					#panel-nofade-demo {
+					  --closed-opacity: 1;
+					}
+
+	.lane
+		.container
+			+anchor Disabling transitions
+
+			p Pass #[code transitions: false] (or #[code data-panel-transitions="false"]) to skip the animation entirely. This is useful for initial page load.
+
+			+codeblock('JavaScript').
+				new Panel('#my-panel', { transitions: false });
+
+			p Panel also respects #[code prefers-reduced-motion] automatically. All transitions are suppressed via CSS when the user has requested reduced motion.
+
+
+append styles
+	style.
+		#panel-slow-demo {
+			--open-speed:  1s;
+			--close-speed: 1s;
+		}
+		#panel-nofade-demo {
+			--closed-opacity: 1;
+		}
+
+append scripts
+	if isProd
+		script(src="/assets/scripts/example.js" vite-ignore)
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			Panel.init('[data-panel]');
+	else
+		script(type="module" src="/src/assets/scripts/example.js")
+		script(type="module").
+			import { Panel } from 'panelset';
+			Panel.init('[data-panel]', { debug: true });

@@ -1,0 +1,217 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Async panels"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Async panels
+				p.lead Load panel content on-demand with promises, fetch, or heavy computation
+
+	.lane
+		.container
+			.title-text
+				+anchor Overview
+				p PanelSet supports async content loading through the #[code ps:beforeopen] event.
+
+	.lane
+		.container
+			+anchor onBeforeOpen()
+
+			.title-text
+				p Use #[code onBeforeOpen()] to add async loading:
+
+			+codeblock('JS').
+				const panelSet = new PanelSet('#my-panelset');
+
+				panelSet.onBeforeOpen((targetPanel, signal) => {
+				  // Return a promise to delay activation
+				  return fetch(`/api/content/${targetPanel.id}`, { signal })
+				    .then(response => response.text())
+				    .then(html => {
+				      targetPanel.innerHTML = html;
+				    });
+				}, { once: true }); // Load once, cache forever
+
+			.example.api
+				h3 Parameters
+				dl
+					dt targetPanel
+					dd The HTMLElement being activated
+
+					dt signal
+					dd AbortSignal for canceling the operation if user clicks away
+
+					dt options.once
+					dd #[code true] loads once and caches; #[code false] always reloads. Default: #[code false]
+
+	.lane
+		.container
+			+anchor Live example
+			p This example uses a 'slowfetch' to mimic a slow network request to fetch recipe data. renderRecipe formats it into HTML.
+
+			.example
+				.demo
+					.demo-controls
+						button(aria-controls="async-panel-1") Panel 1 (Static)
+						button(aria-controls="async-panel-2") Panel 2 (Fetch Recipe)
+						button(aria-controls="async-panel-3") Panel 3 (Static)
+
+					#async-demo(data-panelset data-empty-panel-height="300" data-loading-delay="200")
+						.panel-wrapper
+							#async-panel-1(role="tabpanel" class="active" data-loaded="true")
+								h3 Static Content
+								p This panel has pre-loaded content.
+
+							#async-panel-2(role="tabpanel" hidden)
+								// Empty - will load async
+
+							#async-panel-3(role="tabpanel" hidden)
+								h3 Another Static Panel
+								p More pre-loaded content.
+
+				+codeblock('JS').
+					asyncPanelSet.onBeforeOpen((targetPanel, signal) => {
+					    if (targetPanel.id === 'async-panel-2') {
+					        return slowfetch(`https://dummyjson.com/recipes/${randomIntFromInterval(1, 10)}`, { signal })
+					            .then(response => response.json())
+					            .then(data => {
+					                targetPanel.innerHTML = renderRecipe(data);
+					            });
+					    }
+					});
+
+	.lane
+		.container
+			+anchor Heavy computation
+
+			.title-text
+				p Works for CPU-heavy operations too, not just network requests:
+
+			+codeblock('JS').
+				panelSet.onBeforeOpen((targetPanel, signal) => {
+				  if (targetPanel.id === 'heavy-calc') {
+				    return new Promise((resolve) => {
+				      // Simulate heavy calculation
+				      setTimeout(() => {
+				        const result = fibonacci(40); // Actually slow!
+				        targetPanel.innerHTML = `
+				          <h3>Calculation Complete</h3>
+				          <p>Fibonacci(40) = ${result}</p>
+				        `;
+				        resolve();
+				      }, 2000);
+				    });
+				  }
+				});
+
+				function fibonacci(n) {
+				  if (n <= 1) return n;
+				  return fibonacci(n - 1) + fibonacci(n - 2);
+				}
+
+	.lane
+		.container
+			.title-text
+				+anchor Using the event directly
+				p Or listen to the event directly:
+
+			+codeblock('JS').
+				container.addEventListener('ps:beforeopen', (e) => {
+				  const { panelId, targetPanel, signal } = e.detail;
+
+				  // Skip if already loaded
+				  if (targetPanel.dataset.loaded === 'true') return;
+
+				  // Set the promise property to delay activation
+				  e.detail.promise = fetch(`/api/panel/${panelId}`, { signal })
+				    .then(response => response.text())
+				    .then(html => {
+				      targetPanel.innerHTML = html;
+				      targetPanel.dataset.loaded = 'true';
+				    });
+				});
+
+			.example.api
+				h3 Event detail properties
+				dl
+					dt panelId
+					dd String - ID of the panel being activated
+
+					dt targetPanel
+					dd HTMLElement - The panel element
+
+					dt outgoingPanel
+					dd HTMLElement | null - The panel being deactivated
+
+					dt signal
+					dd AbortSignal - Use with fetch to cancel if user clicks away
+
+					dt promise
+					dd Promise | null - Set this to delay activation until it resolves
+
+	.lane
+		.container
+			+anchor Loading states
+
+			.title-text
+				h3 Loading spinner
+				p During async operations, PanelSet shows a loading spinner. Configure the delay to prevent flashing on fast connections:
+
+			+codeblock('JS').
+				const panelSet = new PanelSet('#my-panelset', {
+				  loadingDelay: 300  // Wait 300ms before showing spinner
+				});
+
+			.title-text
+				p Or via data attribute:
+
+			+codeblock('HTML').
+				<div data-panelset data-loading-delay="300">
+
+			.title-text
+				h3 Empty panel height
+				p Set a minimum height during loading (shows spinner in that space):
+
+			+codeblock('JS').
+				const panelSet = new PanelSet('#my-panelset', {
+				  loadingHeight: 200  // 200px minimum during load
+				});
+
+	.lane
+		.container
+			+anchor Abort handling
+
+			.title-text
+				p When users click away during loading, the operation is automatically aborted via the AbortSignal:
+
+			+codeblock('JS').
+				panelSet.onBeforeOpen((targetPanel, signal) => {
+				  // Pass signal to fetch - automatically cancels on abort
+				  return fetch('/api/data', { signal })
+				    .then(/* ... */);
+				});
+
+			.title-text
+				p The #[code ps:activationaborted] event fires when an async load is cancelled:
+
+			+codeblock('JS').
+				container.addEventListener('ps:activationaborted', (e) => {
+				  console.log('Load cancelled:', e.detail.panelId);
+				  // Clean up, show message, etc.
+				});
+
+
+append scripts
+	if isProd
+		script(src="/assets/scripts/example-async.js" vite-ignore)
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			PanelSet.init();
+	else
+		script(type="module" src="/src/assets/scripts/example-async.js")
+		script(type="module").
+			import PanelSet from 'panelset';
+			PanelSet.init({debug: true });

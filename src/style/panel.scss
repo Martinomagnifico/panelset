@@ -1,0 +1,183 @@
+// Custom element defaults to display:inline; force block so height/overflow work.
+ps-panel { display: block; }
+
+:is([data-panel], ps-panel) {
+	box-sizing: border-box;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: var(--spinner-top, 50%);
+		bottom: var(--spinner-bottom, auto);
+		left: var(--spinner-left, 50%);
+		right: var(--spinner-right, auto);
+		width: 32px;
+		height: 32px;
+		transform: var(--spinner-transform, translate(-50%, -50%));
+		border: 3px solid rgba(0, 0, 0, 0.1);
+		border-top-color: rgba(0, 100, 255, 0.8);
+		border-radius: 50%;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.2s ease;
+		animation: panel-spin 0.8s linear infinite;
+		z-index: 1;
+	}
+
+	.panel-wrapper {
+		position: relative;
+		z-index: 0;
+	}
+
+	// Wrapper hidden when closed; fades in when opening, out when closing.
+	// Set --closed-opacity: 1 to disable the fade (content stays opaque throughout).
+	&.is-closed .panel-wrapper {
+		opacity: var(--closed-opacity, 0);
+		pointer-events: none;
+	}
+
+	&.is-opening .panel-wrapper {
+		opacity: 1;
+		transition: opacity var(--open-speed) var(--open-timing);
+	}
+
+	&.is-closing .panel-wrapper {
+		opacity: var(--closed-opacity, 0);
+		transition: opacity var(--close-speed) var(--close-timing);
+	}
+
+	&.is-closed, &.is-opening, &.is-closing { overflow: hidden; }
+
+	// Vertical is the default
+	&.is-closed  { height: 0 !important; }
+	&.is-opening { transition: height var(--open-speed) var(--open-timing); }
+	&.is-closing { transition: height var(--close-speed) var(--close-timing); }
+
+	// Horizontal overrides — resets height and switches to width
+	&[data-panel-axis="horizontal"] {
+		flex-shrink: 0;
+
+		&.is-closed  { width: 0 !important; height: auto !important; }
+		&.is-opening { transition: width var(--open-speed) var(--open-timing); }
+		&.is-closing { transition: width var(--close-speed) var(--close-timing); }
+
+		// Keep inner content at its natural width so it doesn't reflow
+		// while the container animates.
+		.panel-wrapper {
+			width: var(--panel-width, 320px);
+			min-width: var(--panel-width, 320px);
+			height: 100%;
+		}
+	}
+}
+
+// Alignment
+// Controls where .panel-wrapper sits within the clipped container as it animates.
+// align: start is the default (normal block flow, no extra CSS needed).
+
+// Vertical alignment (default)
+:is([data-panel], ps-panel) {
+	&[data-panel-align="center"] {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	&[data-panel-align="end"] {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+	}
+}
+
+// Horizontal alignment overrides — row direction, no column
+[data-panel-axis="horizontal"] {
+	&[data-panel-align="center"] {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+	}
+
+	&[data-panel-align="end"] {
+		display: flex;
+		flex-direction: row;
+		justify-content: flex-end;
+	}
+}
+
+// Push: body and pin helpers
+// Add data-panel-body to the contracting sibling. Panel JS uses it to find
+// pinned children and lock them at animation start.
+//
+// Add data-panel-pin="start" or data-panel-pin="end" to children that should
+// be clipped rather than reflowing during the animation. In the resting state
+// these are normal in-flow elements. At animation start Panel JS fixes their
+// width and adjusts margin-left so pin="start" clips on the right and
+// pin="end" tracks the right edge and clips on the left.
+
+[data-panel-body] {
+	position: relative;
+	overflow: hidden;
+	box-sizing: border-box;
+}
+
+// Loading state
+// is-loading overrides is-opening's opacity: 1, keeping the wrapper hidden
+// while content loads. When is-loading is removed, is-opening's rule resumes
+// and the wrapper fades in — matching PanelSet's is-closed/is-opening pattern.
+
+:is([data-panel], ps-panel).is-loading {
+	cursor: wait;
+
+	&::after {
+		opacity: 1;
+		transition: opacity 0.2s ease var(--loading-delay, 0s);
+	}
+
+	.panel-wrapper {
+		opacity: 0;
+	}
+}
+
+@keyframes panel-spin {
+	to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+// Native interpolate-size (progressive enhancement)
+// When supported, CSS can animate height/width between 0 and auto without JS
+// locking a measured pixel value. JS detects this support (see panel.ts) and
+// skips its measure-animate cycle entirely, only managing state classes and ARIA.
+// Fallback: the JS pixel-locking cycle in panel.ts handles all other browsers.
+
+@supports (interpolate-size: allow-keywords) {
+	:is([data-panel], ps-panel) {
+		interpolate-size: allow-keywords;
+	}
+
+	// Vertical default
+	:is([data-panel], ps-panel) {
+		&.is-opening {
+			height: auto;
+
+			// Declare the starting value explicitly so the browser knows to
+			// begin from 0 even if no prior is-closed rule was in effect.
+			@starting-style { height: 0; }
+		}
+
+		&.is-closing { height: 0; }
+	}
+
+	// Horizontal overrides — switches axis, resets height to auto
+	:is([data-panel], ps-panel)[data-panel-axis="horizontal"] {
+		&.is-opening { width: auto; height: auto; @starting-style { width: 0; } }
+		&.is-closing { width: 0; height: auto; }
+	}
+}
+
+// Reduced motion
+
+@media (prefers-reduced-motion: reduce) {
+	:is([data-panel], ps-panel) {
+		transition: none !important;
+	}
+}

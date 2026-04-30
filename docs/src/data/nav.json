@@ -1,0 +1,54 @@
+{
+  "mainLinks": [
+    { "text": "Intro", "href": "/intro.html" },
+    { "text": "How it works", "href": "/how-it-works.html" }
+  ],
+  "sections": [
+    {
+      "title": "Panel",
+      "links": [
+        { "text": "Panel — Getting started", "label": "Getting started", "href": "/panel/getting-started.html" },
+        { "text": "Panel — Configuration", "label": "Configuration", "href": "/panel/configuration.html" },
+        { "text": "Panel — Events", "label": "Events", "href": "/panel/events.html" },
+        { "text": "Panel — Transitions", "label": "Transitions", "href": "/panel/transitions.html" },
+        { "text": "Panel — API", "label": "API", "href": "/panel/api.html" }
+      ],
+      "examples": [
+        { "text": "Show more", "href": "/panel/examples/show-more.html" },
+        { "text": "Accordion", "href": "/panel/examples/accordion.html" },
+        { "text": "Alignment", "href": "/panel/examples/alignment.html" },
+        { "text": "Async panel", "href": "/panel/examples/async.html" }
+      ],
+      "integrations": [
+        { "text": "Panel — Web Component", "label": "Web Component", "href": "/panel/examples/webcomponent.html" }
+      ]
+    },
+    {
+      "title": "PanelSet",
+      "links": [
+        { "text": "PanelSet — Getting started", "label": "Getting started", "href": "/panelset/getting-started.html" },
+        { "text": "PanelSet — Configuration", "label": "Configuration", "href": "/panelset/configuration.html" },
+        { "text": "PanelSet — Events", "label": "Events", "href": "/panelset/events.html" },
+        { "text": "PanelSet — Transitions", "label": "Transitions", "href": "/panelset/transitions.html" },
+        { "text": "PanelSet — API", "label": "API", "href": "/panelset/api.html" }
+      ],
+      "examples": [
+        { "text": "Basic tabs", "href": "/panelset/examples/basictabs.html" },
+        { "text": "Async panels", "href": "/panelset/examples/async.html" },
+        { "text": "Closable panelset", "href": "/panelset/examples/closable.html" },
+        { "text": "Height tracking", "href": "/panelset/examples/height-tracking.html" }
+      ],
+      "integrations": [
+        { "text": "PanelSet — Web Component", "label": "Web Component", "href": "/panelset/examples/webcomponent.html" }
+      ]
+    },
+    {
+      "title": "Shared concepts",
+      "links": [
+        { "text": "Accessibility", "href": "/sharedconcepts/accessibility.html" },
+        { "text": "Deep linking", "href": "/sharedconcepts/deep-linking.html" },
+        { "text": "Persisting state", "href": "/sharedconcepts/persisting.html" }
+      ]
+    }
+  ]
+}

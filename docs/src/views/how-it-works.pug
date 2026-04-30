@@ -1,0 +1,273 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "How it works"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 How it works
+				p.lead CSS can only transition between two actual values. This is the core problem that Panel and PanelSet solve.
+
+	.lane
+		.container
+			+anchor The problem
+
+			p It would be nice if CSS could transition elements between 0 and their natural size. Or have parent elements transition their size based on which child is visible. While there are already some advances in getting browsers ready to handle this (see the #[a(href="#interpolatesize") interpolate-size] section), it is not fully supported, and it also does not work in a generic way for all transitions. 
+			
+			p There are a few approaches that are commonly used now, each with tradeoffs:
+
+	.lane
+		.container
+			+anchor Common approaches
+
+			.example.api
+				h3 Per-frame JavaScript
+				p Measure the target, then step to it on every animation frame.
+
+				+codeblock('JavaScript').
+					// Runs 60 times (or whatever the browser supports) per second
+					function animate(el, targetHeight, duration) {
+					  const start = el.offsetHeight;
+					  const startTime = performance.now();
+
+					  function step(now) {
+					    const progress = Math.min((now - startTime) / duration, 1);
+					    el.style.height = (start + (targetHeight - start) * progress) + 'px';
+					    if (progress < 1) requestAnimationFrame(step);
+					  }
+
+					  requestAnimationFrame(step);
+					}
+				p Used by: Older Bootstrap, jQuery UI, many hand-rolled implementations.
+				h4 Drawbacks:
+				ul
+					li Sixty layout recalculations per second, not a nice experience there. It will stutter on most devices. A nightmare on mobile.
+
+			.example.api
+				h3 The max-height hack
+				p Pick a number (for example 2000px) that's at least bigger than your content. The browser will transition the max-height. This is a pure CSS solution with no JavaScript.
+
+				+codeblock('CSS').
+					.panel {
+					    max-height: 0;
+					    overflow: hidden;
+					    transition: max-height 0.3s ease-in-out;
+					}
+					.panel.open {
+					    max-height: 2000px; /* I guess this will be larger than our content */
+					}
+				h4 Drawbacks:
+				ul
+					li Broken easing: the timing is counting towards the maximum size, not the actual content size. In the above example, the user will not see the '-out' part of the easing curve at all because the content has already stopped the growing.
+
+			.example.api
+				h3 The CSS Grid workaround
+				p Transition #[code grid-template-rows] between #[code 0fr] and #[code 1fr]. The inner element uses #[code overflow: hidden] to clip the collapsed state. This is quite a smart trick.
+				+codeblock('CSS').
+					.panel-outer {
+					  display: grid;
+					  grid-template-rows: 0fr; /* collapsed */
+					  transition: grid-template-rows 0.4s ease;
+					}
+					.panel-outer.open {
+					  grid-template-rows: 1fr; /* expanded */
+					}
+					.panel-outer > * {
+					  overflow: hidden;
+					}
+				p Used by: Material Design, many modern CSS-only implementations.
+				h4 Drawbacks:
+				ul
+					li It only works from 0 to something. #[code 1fr] on one panel and #[code 1fr] on another do not transition between each other.
+					li The element needs to be assigned as a grid, even though it may not be a real grid. Grid is just used here because it accidentally results in the behaviour we are pursuing, not because the content calls for a grid layout. It’s a CSS hack.
+
+	.lane
+		.container
+			+anchor The lock-measure–animate–unlock (LMAU) cycle
+
+			p Panel and PanelSet use explicit values throughout. ‘Explicit’ sounds fancy, but it just means using pixel values instead of #[code auto]. It is the same basic approach as used in for example react-collapse, but extended here to horizontal axes and panel switching. The sequence is the same for both:
+
+			ol
+				li
+					strong Lock
+					| : write the current dimension as an inline style. This gives CSS a concrete start value.
+				li
+					strong Measure
+					| : make the target content briefly visible but absolutely positioned (so it does not affect flow), then read its offset dimension (#[code offsetHeight] or #[code offsetWidth]). This value is used in the next step.
+				li
+					strong Animate
+					| : set the container’s inline style to the measured value inside a #[code requestAnimationFrame] call. The CSS #[code transition] runs between the locked start and the measured end.
+				li
+					strong Unlock
+					| : once the transition ends, remove the inline style. The container is responsive again.
+
+			+codeblock('JavaScript').
+				// Simplified. The actual implementation handles AbortSignal,
+				// cross-axis constraints, and async content loading.
+
+				// 1. Lock
+				container.style.height = container.offsetHeight + 'px';
+
+				// 2. Measure target (absolutely positioned, invisible)
+				nextPanel.style.position = 'absolute';
+				nextPanel.hidden = false;
+				const targetHeight = nextPanel.offsetHeight;
+
+				// 3. Animate (inside rAF so the start state is painted first)
+				requestAnimationFrame(() => {
+				  container.style.height = targetHeight + 'px';
+				});
+
+				// 4. Unlock after transition
+				container.addEventListener('transitionend', () => {
+				  container.style.height = '';
+				  nextPanel.style.position = '';
+				}, { once: true });
+
+	.lane
+		.container
+			+anchor('h3') What this enables
+
+			.grid-2
+				.card
+					h4 Expand and collapse
+					p Any element from #[code 0px] to its natural size, or back. The same as the Grid workaround, but with correct easing because the transition range matches the content range.
+
+				.card
+					h4 Panel switching
+					p Switch between two panels that are both non-zero size. For example from a 200px panel to a 400px panel. The container animates smoothly between the measured values. In the mean time, transitions can be used for the inner panels.
+			
+			p CSS variables can be used to coordinate the container’s size change with the inner panels' content change. It just makes the developer’s life easier.
+
+	.lane
+		.container
+			+anchor 'interpolate-size'
+
+			h3 CSS-supported opening and closing
+			p Both Panel and PanelSet use #[code interpolate-size: allow-keywords] as a progressive enhancement for opening and closing. In supporting browsers, CSS can animate directly between #[code 0] and #[code height: auto], so the #[u lock] and #[u measure] steps from the LMAU cycle are skipped. And the #[u unlock] step as well, of course. 
+			
+			p JS (yeah, it is still needed) detects support with #[code CSS.supports()] and takes the shorter path: it just toggles state classes and waits for the transition to end. In other/older browsers, it uses the normal JavaScript LMAU cycle.
+
+			+codeblock('CSS').
+				@supports (interpolate-size: allow-keywords) {
+				  [data-panelset].is-opening { height: auto; }
+				  [data-panelset].is-closing { height: 0; }
+				}
+
+			h3 Inner panel swapping
+			p For the inner panel swapping of PanelSet, the JavaScript LMAU cycle is still needed. #[code interpolate-size] can animate between #[code 0] and #[code auto], but not between two non-zero #[code auto] values.
+
+	.lane
+		.container
+			+anchor Unstyled by design
+
+			p Most animation components come bundled with a design system: colours, borders, spacing, and component structure. Getting your own design in means fighting the library’s CSS. #[em Kill the Chakra].
+
+			.grid-2
+				div
+					h3 Component libraries
+					+codeblock('CSS').
+						/* You want this */
+						.accordion { border-radius: 12px; }
+						.accordion-trigger { background: none; text-align: left; }
+
+						/* You get this instead */
+						::ng-deep .mat-expansion-panel {
+						  border-radius: 12px !important; /* still doesn't work */
+						}
+						::ng-deep .mat-expansion-panel-header {
+						  background: none !important;
+						}
+					ul
+						li Opinionated design system
+						li Specificity wars and #[code !important]
+						li Styles break on library updates
+						li Hard to use with Tailwind or CSS Modules
+
+				div
+					h3 Panel / PanelSet
+					+codeblock('CSS').
+						/* Zero CSS from the library */
+						.accordion { border-radius: 12px; }
+						.accordion-trigger { background: none; text-align: left; } /* just works */
+					ul
+						li No styling CSS included
+						li No specificity conflicts
+						li Works with Tailwind, CSS Modules, CSS-in-JS, anything
+						li Your design system, not the library's
+
+	.lane
+		.container
+			+anchor Comparison
+			.card.no-padding
+				table.comparison
+					thead
+						tr
+							th
+							th Panel / PanelSet
+							th react-collapse
+							th Material Design
+							th Bootstrap
+					tbody
+						tr
+							td Collapse with transition
+							td LMAU*
+							td LMAU* (height only)
+							td CSS Grid trick
+							td Per-frame JS
+						tr
+							td Switch (A to B) with transition
+							td LMAU*
+							td Not supported
+							td Not supported
+							td Per-frame JS
+						tr
+							td Horizontal collapse
+							td LMAU*
+							td Not supported
+							td Not supported
+							td Not supported
+						tr
+							td Ships with styles
+							td No, unstyled
+							td No, unstyled
+							td Yes, Material Design
+							td Yes, Bootstrap theme
+						tr
+							td Approximate bundle size
+							td ~6.3 kB gzip
+							td ~3 kB gzip
+							td 50 kB+ (MWC)
+							td 58 kB+
+
+			p.small * LMAU: Lock-measure-animate-unlock.
+
+
+
+
+append styles
+	style.
+		table.comparison {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 0.9em;
+		}
+		table.comparison th,
+		table.comparison td {
+			padding: 0.6rem 0.75rem;
+			text-align: left;
+			border-bottom: 1px solid var(--doc-gray-200);
+			vertical-align: top;
+		}
+		table.comparison thead th {
+			border-bottom: 2px solid var(--doc-gray-200);
+			font-weight: 600;
+		}
+		table.comparison tbody tr:last-child td {
+			border-bottom: none;
+		}
+		table.comparison td:first-child {
+			font-weight: 500;
+		}

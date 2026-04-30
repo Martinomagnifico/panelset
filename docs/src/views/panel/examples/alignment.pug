@@ -1,0 +1,124 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Alignment"
+
+
+mixin alignment-body(uid, pinlocation)
+	if pinlocation
+		.demo-body(data-panel-body)
+			h3(data-panel-pin="start") This is an interactive demo for Panel
+			p(data-panel-pin=pinlocation) This is just a paragraph that is part of this demo. It is used to demonstrate the panel alignments. Press the Toggle button below to see what happens. 
+			button(aria-controls=uid aria-expanded="false") Toggle
+	else
+		.demo-body
+			h3 This is an interactive demo for Panel
+			p This is just a paragraph that is part of this demo. It is used to demonstrate the panel alignments. Press the Toggle button below to see what happens. 
+			button(aria-controls=uid aria-expanded="false") Toggle
+
+
+mixin alignment-panel(uid, axis, align, pinned)
+	- if (pinned)
+		- pinned=true;
+
+	div(id=uid data-panel=true data-panel-axis=axis data-panel-align=align class="is-closed" data-panel-close-on-resize=pinned)
+		.panel-wrapper(role="region" aria-label="Panel")
+			p This is the content of the panel. It may contain controls and/or maybe some extra information about the main content.
+
+mixin alignment(uid, axis, align, side, pinned)
+	if side === 'start'
+		+alignment-panel(uid, axis, align, pinned)
+		+alignment-body(uid, pinned)
+	else
+		+alignment-body(uid, pinned)
+		+alignment-panel(uid, axis, align, pinned)
+
+
+
+
+
+block content
+	.lane
+		.container
+			.page-header
+				h1=pagetitle
+				p.lead When panels open up, they can be aligned in different ways. This page explores the different options for panel alignment and how they interact with the main content. 
+
+				br
+				p.lead In the below examples, the opening panels are all #[em pushing] the main content away.
+				
+				p.lead It is always possible to have the panels absolutely positioned, so that they appear #[em over] the content. We are not showing that here.
+
+	.lane
+		.container
+			h2 Vertical panels
+
+			.example.alignment-demos
+
+
+				.grid-3
+					.flex.vertical
+						h5 #[code data-panel-align="start"]
+						.demo
+							+alignment('example-2', 'vertical', 'start', 'start')
+					.flex.vertical
+						h5 #[code data-panel-align="center"]
+						.demo
+							+alignment('example-3', 'vertical', 'center', 'start')
+					.flex.vertical
+						h5 #[code data-panel-align="end"]
+						.demo
+							+alignment('example-4', 'vertical', 'end', 'start')
+	
+	.lane
+		.container
+			h2 Horizontal panels
+
+			p Horizontal panels push differently from vertical ones: the page has a maximum width, so the panel squeezes the content instead of pushing it out of frame. Text wraps in front of your eyes. #[strong Some people, me included, might find that annoying]. This can be fixed by pinning the content elements in place, which is explained in the next section.
+			br
+
+
+			.example.alignment-demos
+
+				.flex.vertical
+					h5 #[code data-panel-align="start"]
+					.demo
+						+alignment('example-5', 'horizontal', 'start', 'start')
+				.flex.vertical
+					h5 #[code data-panel-align="center"]
+					.demo
+						+alignment('example-6', 'horizontal', 'center', 'start')
+				.flex.vertical
+					h5 #[code data-panel-align="end"]
+					.demo
+						+alignment('example-7', 'horizontal', 'end', 'start')
+
+	.lane
+		.container
+			h2 Horizontal panels, pinned content
+			p The above examples show how panels can be aligned in different ways, and how #[strong annoying] the squeezing of content can be. This can be fixed by pinning the content elements in place. Those elements will then not resize, but just move out of the way, according to alignment rules. Note that this only works for horizontal panels.
+
+			p Add #[code data-panel-body] to the main content wrapper, #[code data-panel-pin="start"] or #[code "end"] to the elements you want to pin, and #[code data-panel-close-on-resize] to the panel if you want it to close when the layout changes.
+
+			.example.alignment-demos
+				.demo
+					+alignment('example-8', 'horizontal', 'start', 'start', 'start')
+				+codeblock('HTML')
+					+alignment('example-8', 'horizontal', 'start', 'start', 'start')
+
+			.example.alignment-demos
+				.demo
+					+alignment('example-9', 'horizontal', 'end', 'end', 'end')
+				+codeblock('HTML')
+					+alignment('example-9', 'horizontal', 'end', 'end', 'end')
+
+
+append scripts
+	if isProd
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			Panel.init('.docs-content [data-panel]');
+	else
+		script(type="module").
+			import { Panel } from 'panelset';
+			Panel.init('.docs-content [data-panel]', { debug: true });

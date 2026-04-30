@@ -1,0 +1,121 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Panel — Events"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Panel events
+				p.lead Panel dispatches custom events on the #[code [data-panel]] element as it opens and closes. All events bubble and carry a #[code detail.trigger] property.
+
+	.lane
+		.container
+			+anchor Available events
+
+			.example.api
+				h3.code.method-signature panel:beforeopen
+				p Fires before the panel opens. Attach a promise to #[code e.detail.promise] to delay opening until async content is ready.
+				h4 Detail:
+				dl
+					dt.code trigger: HTMLElement | null
+					dd The element that initiated the open, or #[code null] if opened programmatically.
+					dt.code signal: AbortSignal
+					dd Aborted if the open is cancelled before the promise resolves.
+					dt.code promise: Promise | null
+					dd Set this to a promise to delay the open.
+				br
+				+codeblock('JavaScript').
+					panelEl.addEventListener('panel:beforeopen', e => {
+					  e.detail.promise = fetch('/api/content', { signal: e.detail.signal })
+					    .then(r => r.text())
+					    .then(html => { panelEl.querySelector('.panel-wrapper').innerHTML = html; });
+					});
+				p Or use the convenience method:
+				+codeblock('JavaScript').
+					panel.onBeforeOpen(async (el, signal) => {
+					  const html = await fetch('/content', { signal }).then(r => r.text());
+					  el.querySelector('.panel-wrapper').innerHTML = html;
+					}, { once: true });
+
+			.example.api
+				h3.code.method-signature panel:opening
+				p Fires when the open animation begins.
+				h4 Detail:
+				dl
+					dt.code trigger: HTMLElement | null
+					dd The element that initiated the open, or #[code null] if opened programmatically.
+
+			.example.api
+				h3.code.method-signature panel:opened
+				p Fires when the panel is fully open (transition complete).
+				h4 Detail:
+				dl
+					dt.code trigger: HTMLElement | null
+					dd The element that initiated the open, or #[code null] if opened programmatically.
+
+			.example.api
+				h3.code.method-signature panel:closing
+				p Fires when the close animation begins.
+				h4 Detail:
+				dl
+					dt.code trigger: HTMLElement | null
+					dd The element that last opened the panel, or #[code null] if closed programmatically.
+
+			.example.api
+				h3.code.method-signature panel:closed
+				p Fires when the panel is fully closed (transition complete).
+				h4 Detail:
+				dl
+					dt.code trigger: HTMLElement | null
+					dd The element that last opened the panel, or #[code null] if closed programmatically.
+
+	.lane
+		.container
+			+anchor Listening to events
+
+			+codeblock('JavaScript').
+				document.querySelector('#my-panel').addEventListener('panel:opened', e => {
+				  console.log('Opened by', e.detail.trigger);
+				});
+
+				document.querySelector('#my-panel').addEventListener('panel:closed', () => {
+				  console.log('Panel closed');
+				});
+
+	.lane
+		.container
+			+anchor Examples
+
+			.example
+				p Opening this panel plays the video. Closing it pauses playback and resets the position. Events are logged to the console.
+				.demo
+					button(aria-controls="ev-video-panel") Open
+					div#ev-video-panel(data-panel class="is-closed")
+						.panel-wrapper
+							video#ev-video(width="100%")
+								source(src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.webm" type="video/webm")
+								source(src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4")
+				+codeblock('JavaScript').
+					const panel = document.getElementById('my-panel');
+					const video = panel.querySelector('video');
+
+					panel.addEventListener('panel:opened',  () => video.play());
+					panel.addEventListener('panel:closing', () => video.pause());
+					panel.addEventListener('panel:closed',  () => { video.currentTime = 0; });
+
+
+append scripts
+	if isProd
+		script(src="/assets/scripts/example-panel-events.js" vite-ignore)
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			Panel.init();
+
+	else
+		script(type="module" src="/src/assets/scripts/example-panel-events.js")
+		script(type="module").
+			import { Panel } from 'panelset';
+			Panel.init({ debug: true });
+

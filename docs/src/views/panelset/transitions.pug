@@ -1,0 +1,157 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelSet — Transitions"
+
+append styles
+	link(rel="stylesheet" href="/src/assets/styles/tabs.scss")
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 PanelSet transitions
+				p.lead PanelSet uses only CSS transitions. JavaScript measures heights and sets pixel values; CSS does all the animation.
+
+	.lane
+		.container
+			+anchor CSS variables
+
+			p Set these on the #[code [data-panelset]] element or any ancestor. All values must include a unit (#[code 0s] not #[code 0]).
+
+			+codeblock('CSS').
+				[data-panelset] {
+				  /* Panel opacity fades */
+				  --fadeout-speed:         0.25s;
+				  --fadeout-timing:        ease-in;
+				  --fadein-speed:          0.25s;
+				  --fadein-timing:         ease-in-out;
+				  --fadein-delay:          0.25s;
+
+				  /* Container height animation */
+				  --height-duration-ratio: 1;        /* height duration = fadeout × ratio */
+				  --transition-timing:     ease-in-out;
+
+				  /* Open/close (closable PanelSet only) */
+				  --open-speed:            0.5s;
+				  --open-timing:           ease-in-out;
+				  --close-speed:           0.5s;
+				  --close-timing:          ease-in-out;
+				}
+
+			dl.horizontal
+				dt #[code --fadeout-speed]
+				dd Duration of the outgoing panel fade. Default: #[code 0.25s].
+				dt #[code --fadeout-timing]
+				dd Easing for the fade-out. Default: #[code ease-in].
+				dt #[code --fadein-speed]
+				dd Duration of the incoming panel fade. Default: #[code 0.25s].
+				dt #[code --fadein-timing]
+				dd Easing for the fade-in. Default: #[code ease-in-out].
+				dt #[code --fadein-delay]
+				dd Delay before the incoming panel starts fading in. Default: #[code 0.25s].
+				dt #[code --height-duration-ratio]
+				dd Multiplier on the height transition duration relative to #[code --fadeout-speed]. Default: #[code 1].
+				dt #[code --transition-timing]
+				dd Easing for the height change during tab switching. Default: #[code ease-in-out].
+				dt #[code --open-speed]
+				dd Height transition duration when opening a closable PanelSet. Default: #[code 0.5s].
+				dt #[code --open-timing]
+				dd Easing when opening. Default: #[code ease-in-out].
+				dt #[code --close-speed]
+				dd Height transition duration when closing. Default: #[code 0.5s].
+				dt #[code --close-timing]
+				dd Easing when closing. Default: #[code ease-in-out].
+
+	.lane
+		.container
+			+anchor Default speed
+
+			.example
+				.demo
+					.demo-controls
+						button(aria-controls="demo-panel-1") Short panel
+						button(aria-controls="demo-panel-2") Medium panel
+						button(aria-controls="demo-panel-3") Tall panel
+					+examplepanelset('demo')
+
+	.lane
+		.container
+			+anchor Slower transitions
+
+			p Both fade-out and fade-in set to 1 second. Because #[code --fadein-delay] is also 1 second, the panels transition sequentially. The outgoing panel fully fades out before the incoming one fades in. Total time: 2 seconds.
+
+			.example
+				.demo
+					.demo-controls
+						button(aria-controls="slowdemo-panel-1") Short panel
+						button(aria-controls="slowdemo-panel-2") Medium panel
+						button(aria-controls="slowdemo-panel-3") Tall panel
+					+examplepanelset('slowdemo')
+
+				+codeblock('CSS').
+					#slowdemo {
+					  --fadeout-speed: 1s;
+					  --fadein-speed:  1s;
+					  --fadein-delay:  1s;
+					}
+
+	.lane
+		.container
+			+anchor Crossfading
+
+			p Setting #[code --fadein-delay: 0s] makes both panels fade simultaneously, creating a crossfade. Total time matches whichever fade is longer.
+
+			.example
+				.demo
+					.demo-controls
+						button(aria-controls="crossfade-panel-1") Short panel
+						button(aria-controls="crossfade-panel-2") Medium panel
+						button(aria-controls="crossfade-panel-3") Tall panel
+					+examplepanelset('crossfade')
+
+				+codeblock('CSS').
+					#crossfade {
+					  --fadeout-speed: 2s;
+					  --fadein-speed:  2s;
+					  --fadein-delay:  0s;
+					}
+
+	.lane
+		.container
+			+anchor Disabling transitions
+
+			p Pass #[code transitions: false] to skip all animation, or use an object to disable height and panel fades independently.
+
+			+codeblock('JavaScript').
+				new PanelSet('#my-tabs', { transitions: false });             // all off
+				new PanelSet('#my-tabs', { transitions: { height: false } }); // height only off
+				new PanelSet('#my-tabs', { transitions: { panels: false } }); // fades only off
+
+			p PanelSet respects #[code prefers-reduced-motion] automatically. If/when the user has requested reduced motion, all transitions are suppressed via CSS.
+
+
+append styles
+	style.
+		#slowdemo {
+			--fadeout-speed: 1s;
+			--fadein-speed:  1s;
+			--fadein-delay:  1s;
+		}
+		#crossfade {
+			--fadeout-speed: 2s;
+			--fadein-speed:  2s;
+			--fadein-delay:  0s;
+		}
+
+append scripts
+	if isProd
+		script(src="/assets/scripts/example.js" vite-ignore)
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			PanelSet.init();
+	else
+		script(type="module" src="/src/assets/scripts/example.js")
+		script(type="module").
+			import { PanelSet } from 'panelset';
+			PanelSet.init({ debug: true });

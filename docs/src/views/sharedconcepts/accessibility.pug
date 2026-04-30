@@ -1,0 +1,352 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Accessibility"
+
+
+block content
+	.lane
+		.container
+			.page-header
+				h1=pagetitle
+				p.lead Both Panel and PanelSet follow WAI-ARIA authoring practices. The library handles ARIA attributes automatically; you provide the correct markup and keyboard navigation.
+
+	.lane
+		.container
+			+anchor('h2') Panel - accessibility
+
+			p #[code Panel] manages #[code aria-expanded] on all trigger elements (#[code [aria-controls]]) automatically. It also uses the #[code inert] attribute on closed panels to remove them from the tab order and accessibility tree without affecting layout.
+
+			.example.api
+				h3 Trigger markup
+				+codeblock('HTML').
+					<!-- aria-expanded is set automatically by Panel -->
+					<button aria-controls="my-panel" aria-expanded="false">Toggle</button>
+
+			.example.api
+				h3 Panel markup
+				p Use #[code role="dialog"] for modal-like sidebars, #[code role="region"] for inline panels.
+				+codeblock('HTML').
+					<div id="my-panel" data-panel data-panel-axis="horizontal" class="is-closed">
+					  <div class="panel-wrapper" role="dialog" aria-label="Settings">
+					    <button data-panel-close aria-label="Close Settings">✕</button>
+					    <!-- content -->
+					  </div>
+					</div>
+
+			.example.api
+				h3 Focus management
+				p Use #[code autoFocus] to move focus into the panel on open, and #[code returnFocus] to return it to the trigger on close.
+				+codeblock('JS').
+					new Panel('#my-panel', {
+					  autoFocus: 'first',   // focus first focusable element on open
+					  returnFocus: true     // return focus to trigger on close
+					});
+
+	.lane
+		.container
+			+anchor('h2') PanelSet - accessibility
+
+			p PanelSet manages #[code aria-selected] automatically on all #[code [aria-controls]] trigger elements. It is set immediately when a tab switch is committed, before the animation ends. The #[code inert] attribute is applied to the closed container and to panels that are not yet visible during a transition.
+
+			.example.api
+				h3 What PanelSet does automatically
+
+				table.table
+					thead
+						tr
+							th When
+							th PanelSet automatically
+					tbody
+						tr
+							td On initialisation
+							td Sets #[code aria-selected] on all #[code [aria-controls]] triggers to match the active panel
+						tr
+							td Tab is switched
+							td Updates #[code aria-selected] immediately when the new tab is committed (before the animation ends)
+						tr
+							td Closable panelset is closed
+							td Adds #[code inert] to the container, removing it and its contents from the tab order entirely
+
+			.example.api
+				h3 What you still need to provide
+
+				ul
+					li Keyboard navigation (arrow keys, Home, End) if using a proper #[code role="tablist"] pattern
+					li #[code aria-labelledby] or #[code aria-label] on each panel
+					li Initial #[code aria-selected] state in HTML (overridden on init, but correct for no-JS fallback)
+
+	.lane
+		.container
+			+anchor('h2') PanelSet - required markup
+
+			.example.api
+				h3 Panel elements
+				p Every panel must have #[code role="tabpanel"] and a unique #[code id].
+				+codeblock('HTML').
+					<div data-panelset>
+					  <div role="tabpanel" id="panel-1" aria-labelledby="tab-1"><!-- Content --></div>
+					  <div role="tabpanel" id="panel-2" aria-labelledby="tab-2"><!-- Content --></div>
+					</div>
+
+			.example.api
+				h3 Tab buttons
+				p For proper tab interfaces, wrap buttons in a #[code role="tablist"] with #[code role="tab"] and #[code aria-controls].
+				+codeblock('HTML').
+					<nav role="tablist" aria-label="Settings sections">
+					  <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true">Overview</button>
+					  <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false">Security</button>
+					</nav>
+
+	.lane
+		.container
+			+anchor('h2') PanelSet - focus management
+
+			p Switch panels with your #[strong keyboard] to see #[code autoFocus] in action. Tab to a button, press Enter, and watch where focus lands.
+
+			+anchor('h3', 'a11y-heading') autoFocus: 'heading'
+			p Focus moves to the first heading in the incoming panel. Headings must have #[code tabindex="-1"] to be programmatically focusable.
+
+			.example
+				.demo
+					.demo-controls
+						button(aria-controls="a11y-h-panel-1") Panel 1
+						button(aria-controls="a11y-h-panel-2") Panel 2
+						button(aria-controls="a11y-h-panel-3") Panel 3
+					div#a11y-heading-demo(data-panelset)
+						.panel-wrapper
+							div.active(role="tabpanel" id="a11y-h-panel-1" aria-labelledby="a11y-h-tab-1")
+								h3(tabindex="-1") Key Features
+								p Switch to this panel with keyboard to see focus land on this heading.
+								a(href="#a11y-heading") A focusable link in this panel
+							div(role="tabpanel" id="a11y-h-panel-2" hidden aria-labelledby="a11y-h-tab-2")
+								h3(tabindex="-1") Pricing Plans
+								p Switch to this panel with keyboard to see focus land on this heading.
+								button(type="button") A button in this panel
+							div(role="tabpanel" id="a11y-h-panel-3" hidden aria-labelledby="a11y-h-tab-3")
+								h3(tabindex="-1") Support Options
+								p Switch to this panel with keyboard to see focus land on this heading.
+								input(type="text" placeholder="An input in this panel")
+
+			+anchor('h3', 'a11y-first') autoFocus: 'first'
+			p Focus moves to the first focusable element. Kind of ideal for wizard steps where you want the user in the form immediately.
+
+			.example
+				.demo
+					.demo-controls
+						button(aria-controls="a11y-f-panel-1") Step 1
+						button(aria-controls="a11y-f-panel-2") Step 2
+						button(aria-controls="a11y-f-panel-3") Step 3
+					div#a11y-first-demo(data-panelset)
+						.panel-wrapper
+							div.active(role="tabpanel" id="a11y-f-panel-1" aria-label="Step 1: Your name")
+								h3 Step 1. Your name
+								p Focus will land on the input below when you arrive here via keyboard.
+								label
+									| Name:
+									input(type="text" placeholder="Enter your name")
+							div(role="tabpanel" id="a11y-f-panel-2" hidden aria-label="Step 2: Your email")
+								h3 Step 2. Your email
+								p Focus will land on the input below when you arrive here via keyboard.
+								label
+									| Email:
+									input(type="email" placeholder="Enter your email")
+							div(role="tabpanel" id="a11y-f-panel-3" hidden aria-label="Step 3: Confirm")
+								h3 Step 3. Confirm
+								p Focus will land on the submit button when you arrive here via keyboard.
+								p Review your details and submit when ready.
+					.demo-controls(style="justify-content: space-between")
+						button#a11y-wizard-back(disabled) ← Back
+						button#a11y-wizard-next Next →
+
+			.title-text
+				h3 How the wizard navigation works
+				p The Back/Next/Submit buttons are plain buttons wired up with custom JS. There is no built-in wizard trigger in PanelSet. The pattern relies on three things: #[code getActive()] to know the current step, #[code show()] to navigate, and the #[code ps:activationcomplete] event to keep the controls in sync.
+
+			+codeblock('JS').
+				const steps  = ['step-1', 'step-2', 'step-3'];
+				const ps     = new PanelSet('#wizard', { autoFocus: 'first' });
+				const back   = document.getElementById('btn-back');
+				const next   = document.getElementById('btn-next');
+
+				function updateControls(panelId) {
+				  const idx    = steps.indexOf(panelId);
+				  const isLast = idx === steps.length - 1;
+				  back.disabled      = idx === 0;
+				  next.textContent   = isLast ? 'Submit' : 'Next →';
+				}
+
+				back.addEventListener('click', () => {
+				  const idx = steps.indexOf(ps.getActive());
+				  if (idx > 0) ps.show(steps[idx - 1], { event });
+				});
+
+				next.addEventListener('click', (event) => {
+				  const idx = steps.indexOf(ps.getActive());
+				  if (idx < steps.length - 1) {
+				    ps.show(steps[idx + 1], { event });
+				  } else {
+				    // handle submit
+				  }
+				});
+
+				// Keep controls in sync whenever a panel switch completes
+				document.getElementById('wizard').addEventListener('ps:activationcomplete', (e) => {
+				  updateControls(e.detail.panelId);
+				});
+
+				updateControls(steps[0]); // set initial state
+
+	.lane
+		.container
+			+anchor('h2') autoFocus options
+
+			p Both #[code Panel] and #[code PanelSet] support the same #[code autoFocus] values.
+
+			.example.api
+				table.table
+					thead
+						tr
+							th Value
+							th What it focuses
+							th Best for
+					tbody
+						tr
+							td #[code 'heading']
+							td First #[code h1–h6] in panel (needs #[code tabindex="-1"])
+							td Standard tabs with headings
+						tr
+							td #[code 'first']
+							td First focusable element (button, link, input)
+							td Wizard steps, forms
+						tr
+							td #[code true]
+							td The panel element itself
+							td Panels with #[code aria-label]
+						tr
+							td #[code 'input']
+							td First form field (input, select, textarea)
+							td Forms, bypasses keyboard-only check
+						tr
+							td #[code false]
+							td Nothing (no focus movement)
+							td Page load, mouse-only interfaces
+
+			.example.api
+				h3 Keyboard vs. mouse detection
+
+				p When you pass the #[code event] to #[code show()], PanelSet only moves focus on keyboard activation (Enter/Space). Mouse clicks skip the focus movement, preventing unwanted scroll.
+
+				+codeblock('JS').
+					button.addEventListener('click', (event) => {
+					  panelSet.show('panel-2', {
+					    event,              // pass the event
+					    autoFocus: 'heading'
+					  });
+					  // keyboard → focuses heading
+					  // mouse click → no focus movement
+					});
+
+				.callout
+					p #[strong Best practice:] Always pass #[code event] to #[code show()]. Without it, #[code autoFocus] fires on every activation including mouse clicks, which can cause unwanted scrolling on mobile.
+
+	.lane
+		.container
+			+anchor('h2') Labeling panels
+
+			p Every panel needs an accessible name so screen readers can announce what content is being shown.
+
+			.example.api
+				h3 aria-labelledby (recommended for tabs)
+				p Links the panel to its tab button. The button’s text becomes the panel’s accessible name, which is announced when the panel is shown.
+				+codeblock('HTML').
+					<button role="tab" id="tab-overview" aria-controls="panel-overview">Overview</button>
+
+					<div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview">
+					  <!-- Content -->
+					</div>
+
+			.example.api
+				h3 aria-label (for panels without tabs)
+				p Use for wizard steps, sub-panels, or any panel without a corresponding tab.
+				+codeblock('HTML').
+					<div role="tabpanel" id="step-2" aria-label="Step 2: Contact Information">
+					  <!-- Content -->
+					</div>
+
+
+append scripts
+	if isProd
+		script(src="/assets/scripts/example.js" vite-ignore)
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			new PanelSet('#a11y-heading-demo', { autoFocus: 'heading' });
+
+			const wizardSteps = ['a11y-f-panel-1', 'a11y-f-panel-2', 'a11y-f-panel-3'];
+			const wizardPs   = new PanelSet('#a11y-first-demo', { autoFocus: 'first' });
+			const backBtn    = document.getElementById('a11y-wizard-back');
+			const nextBtn    = document.getElementById('a11y-wizard-next');
+
+			function updateWizardControls(panelId) {
+				const idx = wizardSteps.indexOf(panelId);
+				const isLast = idx === wizardSteps.length - 1;
+				backBtn.disabled = idx === 0;
+				nextBtn.textContent = isLast ? 'Submit' : 'Next →';
+			}
+
+			backBtn.addEventListener('click', () => {
+				const idx = wizardSteps.indexOf(wizardPs.getActive());
+				if (idx > 0) wizardPs.show(wizardSteps[idx - 1], { event });
+			});
+
+			nextBtn.addEventListener('click', (event) => {
+				const idx = wizardSteps.indexOf(wizardPs.getActive());
+				if (idx < wizardSteps.length - 1) {
+					wizardPs.show(wizardSteps[idx + 1], { event });
+				} else {
+					alert('Submitted!');
+				}
+			});
+
+			document.getElementById('a11y-first-demo').addEventListener('ps:activationcomplete', (e) => {
+				updateWizardControls(e.detail.panelId);
+			});
+
+			updateWizardControls(wizardSteps[0]);
+	else
+		script(type="module" src="/src/assets/scripts/example.js")
+		script(type="module").
+			import { PanelSet } from 'panelset';
+			new PanelSet('#a11y-heading-demo', { autoFocus: 'heading' });
+
+			const wizardSteps = ['a11y-f-panel-1', 'a11y-f-panel-2', 'a11y-f-panel-3'];
+			const wizardPs   = new PanelSet('#a11y-first-demo', { autoFocus: 'first' });
+			const backBtn    = document.getElementById('a11y-wizard-back');
+			const nextBtn    = document.getElementById('a11y-wizard-next');
+
+			function updateWizardControls(panelId) {
+				const idx = wizardSteps.indexOf(panelId);
+				const isLast = idx === wizardSteps.length - 1;
+				backBtn.disabled = idx === 0;
+				nextBtn.textContent = isLast ? 'Submit' : 'Next →';
+			}
+
+			backBtn.addEventListener('click', () => {
+				const idx = wizardSteps.indexOf(wizardPs.getActive());
+				if (idx > 0) wizardPs.show(wizardSteps[idx - 1], { event });
+			});
+
+			nextBtn.addEventListener('click', (event) => {
+				const idx = wizardSteps.indexOf(wizardPs.getActive());
+				if (idx < wizardSteps.length - 1) {
+					wizardPs.show(wizardSteps[idx + 1], { event });
+				} else {
+					alert('Submitted!');
+				}
+			});
+
+			document.getElementById('a11y-first-demo').addEventListener('ps:activationcomplete', (e) => {
+				updateWizardControls(e.detail.panelId);
+			});
+
+			updateWizardControls(wizardSteps[0]);

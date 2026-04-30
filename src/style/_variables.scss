@@ -1,0 +1,30 @@
+/* Note: All timing values must include a unit (e.g. '0s', not '0') */
+
+:is([data-panel], ps-panel) {
+    --open-speed:          0.5s;
+    --open-timing:         ease-in-out;
+    --close-speed:         0.5s;
+    --close-timing:        ease-in-out;
+    --panel-width:         320px;  /* inner .panel-wrapper width (hori panels) */
+    --closed-opacity:  0;      /* opacity of .panel-wrapper when closed/closing; set to 1 to disable the fade */
+}
+
+:is([data-panelset], ps-panelset) {
+    --fadeout-speed: 0.25s;
+    --fadein-speed: 0.25s;
+    --fadein-delay: 0.25s;
+    --height-duration-ratio: 1;
+    --transition-timing: ease-in-out;
+    --fadeout-timing: ease-in;
+    --fadein-timing: ease-in-out;
+    --loading-panel-opacity: 0.1;
+    
+    --close-speed: 0.5s;
+    --open-speed: 0.5s;
+    --open-timing: ease-in-out;
+    --close-timing: ease-in-out;
+    
+    /* Calculated durations for loading phases */
+    --loading-dim-duration: calc(var(--fadeout-speed) * (1 - var(--loading-panel-opacity)));
+    --loading-fadeout-duration: calc(var(--fadeout-speed) * var(--loading-panel-opacity));
+}

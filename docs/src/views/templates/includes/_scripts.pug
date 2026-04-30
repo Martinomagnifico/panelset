@@ -1,0 +1,22 @@
+block scripts
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js")
+	script(src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.6.0/highlightjs-line-numbers.min.js")
+
+	if isProd
+		script(src="/assets/scripts/copybutton.js" vite-ignore)
+		script(src="/assets/scripts/anchorlink.js" vite-ignore)
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			Panel.init('.docs-sidebar [data-panel]', { returnFocus: false });
+
+	else
+		script(type="module" src="/src/assets/scripts/copybutton.js")
+		script(type="module" src="/src/assets/scripts/anchorlink.js")
+		script(type="module").
+			import { Panel } from 'panelset';
+			Panel.init('.docs-sidebar [data-panel]', { returnFocus: false });
+
+
+	script.
+		hljs.highlightAll();
+		hljs.initLineNumbersOnLoad();

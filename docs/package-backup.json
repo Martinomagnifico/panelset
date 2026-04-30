@@ -1,0 +1,30 @@
+{
+  "name": "panelset-docs",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "overrides": {
+    "minimatch": "^10.2.1"
+  },
+  "dependencies": {
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
+    "@fontsource/jetbrains-mono": "^5.2.8",
+    "@fontsource/source-sans-pro": "^5.2.5",
+    "vite-plugin-static-copy": "^3.2.0"
+  },
+  "devDependencies": {
+    "@vituum/vite-plugin-pug": "^1.1.0",
+    "fast-glob": "^3.3.3",
+    "sass": "^1.97.3",
+    "terser": "^5.46.0",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4",
+    "vituum": "^1.2.0"
+  }
+}

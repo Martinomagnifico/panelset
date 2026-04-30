@@ -1,0 +1,41 @@
+.tabs {
+	display: flex;
+	margin-bottom: 2px;
+
+	.demo & {
+		padding-left: 0.5rem;
+		padding-right: 0.5rem;
+	}
+}
+
+
+.tabs button {
+	border-radius: 0;
+	background: transparent;
+	border: none;
+	border-bottom: 3px solid transparent;
+	padding: 0.75rem 1.5rem;
+	font-size: 1rem;
+	font-weight: 500;
+	color: var(--fg-muted);
+	cursor: pointer;
+	transition: all 0.2s;
+	margin-bottom: -2px;
+}
+
+.tabs button:hover {
+	color: var(--btn-outline-text);
+	background: var(--bg-surface-tint);
+}
+
+.tabs button[aria-selected="true"] {
+	color: var(--btn-outline-text);
+	border-bottom-color: var(--btn-outline-border);
+}
+
+.tab-content {
+	padding: 1.5rem;
+	background: var(--bg-surface);
+	border: 1px solid var(--border-default);
+	border-radius: 6px;
+}

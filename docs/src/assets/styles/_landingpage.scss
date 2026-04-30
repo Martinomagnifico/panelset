@@ -1,0 +1,69 @@
+// Landing Page Styles
+
+html.intro {
+
+	height: 100%;
+	width: 100%;
+	padding: 0;
+	margin: 0;
+
+	body {
+		height: 100%;
+		width: 100%;
+		padding: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+
+	a.btn {
+		justify-self: center;
+		align-self: center;
+
+		background: var(--btn-primary-bg);
+		color: var(--btn-primary-text);
+		border: none;
+		padding: 0.5rem 1rem;
+		border-radius: 4px;
+		font-size: 1rem;
+		line-height: 1.5;
+		min-height: 40px;;
+		cursor: pointer;
+		transition: background-color 0.2s;
+		
+		&.chevron {
+			gap: 0.5rem;
+			padding-right: 0.5rem;
+		}
+
+		&:hover {
+			text-decoration: none;
+			background: var(--btn-primary-hover);
+		}
+
+
+	}
+
+	.docs-content {
+		flex: 1;
+		padding: var(--standard-padding);
+		text-align: center;
+
+		.container {
+
+			width: 100%;
+			margin: auto auto;
+			gap: var(--standard-padding);
+		}
+		.example {
+			text-align: left;
+		}
+
+		p.lead {
+			font-size: 1.25rem;
+			opacity: 0.9;
+		}
+
+	}
+}

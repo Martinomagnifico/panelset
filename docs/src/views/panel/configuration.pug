@@ -1,0 +1,388 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Panel — Configuration"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Panel configuration
+				p.lead Options via constructor, data attributes, or both
+
+	.lane
+		.container
+			+anchor Setting options
+
+			.title-text
+				h3 JavaScript options
+				p Pass an options object to the constructor or #[code init()].
+
+			+codeblock('JS').
+				Panel.init({ axis: 'horizontal', closeOnResize: true });
+
+				const panel = new Panel('#my-panel', {
+				  axis: 'vertical',
+				  transitions: true,
+				  autoFocus: 'first',
+				  returnFocus: true
+				});
+
+			.title-text
+				h3 Data attributes
+				p Configure individual panels directly in HTML.
+
+			+codeblock('HTML').
+				<div id="my-panel"
+				     data-panel
+				     data-panel-axis="horizontal"
+				     data-panel-close-on-resize
+				     data-panel-transitions="false"
+				     class="is-closed">
+				  <div class="panel-wrapper">...</div>
+				</div>
+
+			p JavaScript options and data attributes are both covered above. When both are set on the same element, data attributes take priority over JS options.
+
+			p Web component configuration uses plain attributes directly on #[code &lt;ps-panel&gt;] — no #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panel/examples/webcomponent.html") Web Component integration page] for full usage examples.
+
+	.lane
+		.container
+			+anchor Available options
+
+			p Plain attributes (e.g. #[code panel-axis], #[code panel-align]) are used when authoring with #[code &lt;ps-panel&gt;]. JavaScript options, data attributes, and plain attributes all map to the same underlying config.
+
+			.example.api
+				h3.code.method-signature axis: 'vertical' | 'horizontal'
+				p Which dimension animates. #[code vertical] animates #[code height]; #[code horizontal] animates #[code width].
+				h4 Default: #[code 'vertical']
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { axis: 'vertical' }]: show-more, accordions
+							li #[code { axis: 'horizontal' }]: sidebars, drawers
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-axis="vertical"]
+							li #[code data-panel-axis="horizontal"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-axis="vertical"]
+							li #[code panel-axis="horizontal"]
+
+			.example.api
+				h3.code.method-signature align: 'start' | 'center' | 'end'
+				p This is where the content sits within the clipped container as it animates. Useful for panels that reveal from the center or from the far edge.
+				h4 Default: #[code 'start']
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { align: 'start' }]: content grows from the top / left edge
+							li #[code { align: 'center' }]: content stays centered
+							li #[code { align: 'end' }]: content grows from the bottom / right edge
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-align="start"]
+							li #[code data-panel-align="center"]
+							li #[code data-panel-align="end"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-align="start"]
+							li #[code panel-align="center"]
+							li #[code panel-align="end"]
+
+			.example.api
+				h3.code.method-signature closeOnResize: boolean
+				p Closes the panel on resize. Useful for horizontal panels whose surrounding layout may break at different viewport widths.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { closeOnResize: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-close-on-resize]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-close-on-resize]
+
+			.example.api
+				h3.code.method-signature closeSiblings: boolean
+				p Close other open panels in the same #[code [data-panel-group]] when this panel opens. Can also be set on the group element itself with #[code data-panel-close-siblings].
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { closeSiblings: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-close-siblings]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-close-siblings]
+
+			.example.api
+				h3.code.method-signature transitions: boolean
+				p Enable or disable the CSS dimension transition.
+				h4 Default: #[code true]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { transitions: true }]
+							li #[code { transitions: false }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-transitions="false"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-transitions="false"]
+
+			.example.api
+				h3.code.method-signature autoFocus: false | true | 'heading' | 'first' | 'input'
+				p Move focus into the panel when it opens. This helps screen reader users know content has changed.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { autoFocus: false }]
+							li #[code { autoFocus: true }]
+							li #[code { autoFocus: 'heading' }]
+							li #[code { autoFocus: 'first' }]
+							li #[code { autoFocus: 'input' }]
+					.card
+						h4 Values
+						ul
+							li #[code false]: no focus movement
+							li #[code true]: focus the panel element itself
+							li #[code 'heading']: focus the first h1–h6
+							li #[code 'first']: focus the first focusable element (keyboard only)
+							li #[code 'input']: focus the first input/select/textarea (bypasses keyboard check)
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-auto-focus="true"]
+							li #[code data-panel-auto-focus="heading"]
+							li #[code data-panel-auto-focus="first"]
+							li #[code data-panel-auto-focus="input"]
+					.card
+						h4 Note
+						p When you pass the original #[code Event] to #[code open()] or #[code toggle()], keyboard and mouse events are distinguished, mouse clicks skip autofocus to prevent unwanted scroll.
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-auto-focus="true"]
+							li #[code panel-auto-focus="heading"]
+							li #[code panel-auto-focus="first"]
+							li #[code panel-auto-focus="input"]
+
+			.example.api
+				h3.code.method-signature returnFocus: boolean
+				p Return focus to the trigger element when the panel closes.
+				h4 Default: #[code true]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { returnFocus: true }]
+							li #[code { returnFocus: false }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-return-focus="false"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-return-focus="false"]
+
+			.example.api
+				h3.code.method-signature loadingDelay: number
+				p The milliseconds before the loading spinner appears during async content loading. Prevents spinner flash on fast connections.
+				h4 Default: #[code 300]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { loadingDelay: 300 }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-loading-delay="300"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-loading-delay="300"]
+
+			.example.api
+				h3.code.method-signature loadingHeight: number
+				p The pixel height the panel expands to while async content loads.
+				h4 Default: #[code 80]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { loadingHeight: 80 }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-loading-height="200"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-loading-height="200"]
+
+			.example.api
+				h3.code.method-signature persist: boolean
+				p When enabled, opening or closing a panel writes its state to #[code localStorage] and updates the #[code ?panel=] URL param via #[code history.replaceState]. On the next page load the panel is restored to its last state.
+				p URL params and localStorage are always read on load regardless of this option. #[code persist] only controls whether open/close #[em writes] state back.
+				p It can also be set on a #[code [data-panel-group]] element to apply to all direct panels in the group, without setting it individually on each panel.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { persist: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-persist]: on the panel element
+							li #[code data-panel-persist]: on a #[code [data-panel-group]] element
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-persist]
+				p The panel must have an #[code id] for #[code persist] to work.
+
+			.example.api
+				h3.code.method-signature debug: boolean
+				p Log open/close events to the console.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { debug: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-debug]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-debug]
+
+	.lane
+		.container
+			+anchor Grouping panels (accordion)
+
+			p Wrap related panels in an element with #[code data-panel-group]. When any panel in the group opens, Panel automatically closes all others. No extra JavaScript needed.
+
+			+codeblock('HTML').
+				<div data-panel-group>
+				  <h4><button aria-controls="acc-1" aria-expanded="false">Question 1</button></h4>
+				  <div id="acc-1" data-panel class="is-closed">
+				    <div class="panel-wrapper">Answer 1</div>
+				  </div>
+
+				  <h4><button aria-controls="acc-2" aria-expanded="false">Question 2</button></h4>
+				  <div id="acc-2" data-panel class="is-closed">
+				    <div class="panel-wrapper">Answer 2</div>
+				  </div>
+				</div>
+
+			p The wrapper can be any element. Multiple independent groups on the same page are supported. Each group only affects its own descendants.
+
+	.lane
+		.container
+			+anchor Implicit trigger wiring
+
+			p When a trigger and its panel sit next to each other in the markup, you can omit the #[code id] / #[code aria-controls] pair entirely. To achieve this, add #[code data-panel-trigger] to the button. Panel will find the next #[code [data-panel]] sibling, assign it a stable generated ID, and wire up #[code aria-controls] and #[code aria-expanded] automatically.
+
+			+codeblock('HTML').
+				<button data-panel-trigger>Toggle</button>
+				<div data-panel class="is-closed">
+				  <div class="panel-wrapper">Content</div>
+				</div>
+
+			p This is especially useful for repeated collapse patterns (accordions, catalogues) where inventing a unique ID for every item is pure boilerplate. The generated IDs (#[code panel-1], #[code panel-2], …) are stable within a page load and increment in DOM order.
+
+			p If the panel already has an #[code id], it is left unchanged. #[code data-panel-trigger] only assigns an ID when one is absent.
+
+	.lane
+		.container
+			+anchor Events
+
+			p Panel dispatches custom events on the panel element as it opens and closes. All events bubble and carry a #[code detail] object with a #[code trigger] property, which is the element that started the action (#[code null] when called programmatically).
+
+			table
+				thead
+					tr
+						th Event
+						th Fires when
+				tbody
+					tr
+						td #[code panel:beforeopen]
+						td Before the open animation starts. Attach a #[code Promise] to #[code detail.promise] to defer opening until async content is ready. Also exposes #[code detail.signal] (aborted if the open is cancelled).
+					tr
+						td #[code panel:opening]
+						td The open animation has started.
+					tr
+						td #[code panel:opened]
+						td The open animation has finished.
+					tr
+						td #[code panel:closing]
+						td The close animation has started.
+					tr
+						td #[code panel:closed]
+						td The close animation has finished.
+
+			+codeblock('JS').
+				document.querySelector('#my-panel').addEventListener('panel:opened', e => {
+				  console.log('Opened by', e.detail.trigger);
+				});
+
+				// Async content loading
+				document.querySelector('#my-panel').addEventListener('panel:beforeopen', e => {
+				  e.detail.promise = fetch('/content').then(r => r.text()).then(html => {
+				    e.currentTarget.querySelector('.panel-wrapper').innerHTML = html;
+				  });
+				});
+
+	.lane
+		.container
+			+anchor CSS variables
+
+			p Transitions are controlled by CSS custom properties set on the panel element or any ancestor. The same variables apply when using #[code &lt;ps-panel&gt;] — set them on the element directly or via CSS targeting #[code ps-panel].
+
+			+codeblock('CSS').
+				[data-panel] {
+				  --open-speed:          0.5s;        /* open transition duration */
+				  --open-timing:         ease-in-out; /* open easing function */
+				  --close-speed:         0.5s;        /* close transition duration */
+				  --close-timing:        ease-in-out; /* close easing function */
+				  --panel-width:         320px;       /* inner .panel-wrapper width (horizontal panels) */
+				  --closed-opacity:  0;           /* opacity of .panel-wrapper when closed/closing; set to 1 to disable the fade */
+				}
+
+
+append scripts
+	if isProd
+		script(src="/lib/panelset.js" vite-ignore)
+	else
+		script(type="module").
+			import { Panel } from 'panelset';

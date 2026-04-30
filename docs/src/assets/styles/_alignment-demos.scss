@@ -1,0 +1,69 @@
+
+.alignment-demos {
+	container-type: inline-size;
+	gap: 2rem;
+
+	.demo {
+		padding: 0;
+		overflow: hidden;
+		display: flex;
+		flex-direction: column;
+
+		&:has([data-panel-axis="horizontal"]) {
+			flex-direction: row;
+		}
+	}
+
+	.demo-body {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.demo-body, .panel-wrapper {
+		padding: 1rem;
+	}
+	[data-panel] {
+
+		// --open-speed: 0.25s;
+		--open-timing: ease-in-out;
+		// --close-speed: 0.25s;
+		--close-timing: ease-in-out;
+		--panel-width: 200px;
+
+
+		background: var(--bg-sidebar);
+		background: var(--bg-surface);
+		border-bottom: 1px solid var(--border-default);
+		&.is-closed {
+			border-bottom: none;
+		}
+
+		&[data-panel-axis="horizontal"] {
+			border-bottom: none;
+			border-right: 1px solid var(--border-default);
+			flex-shrink: 0;
+			
+			&.is-closed {
+				border-right: none;
+			}
+		}
+	}
+
+	[data-panel-body] + [data-panel-axis="horizontal"] {
+		border-right: none;
+		border-left: 1px solid var(--border-default);
+		&.is-closed {
+			border-left: none;
+		}
+	}
+
+
+}
+
+.flex {
+	display: flex;
+	gap: 1rem;
+	&.vertical {
+		flex-direction: column;
+	}
+}

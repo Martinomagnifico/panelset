@@ -1,0 +1,117 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Accordion"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Accordion
+				p.lead Grouped panels that expand and collapse vertically.
+
+	.lane
+		.container
+			+anchor Basic accordion
+			p By default each panel in a group is independent. Wrap them in #[code [data-panel-group]] to scope the group.
+
+
+			.example
+				.demo
+					ul(data-panel-group)
+						li
+							button.accordion-trigger(aria-controls="acc-basic-1" aria-expanded="false") Key Features
+							div#acc-basic-1(data-panel data-panel-axis="vertical" class="is-closed")
+								.panel-wrapper
+									ul
+										li This is our most important feature ever!
+
+						li
+							button.accordion-trigger(aria-controls="acc-basic-2" aria-expanded="false") Pricing Plans
+							div#acc-basic-2(data-panel data-panel-axis="vertical" class="is-closed")
+								.panel-wrapper
+									ul
+										li Starter Plan: Whenever you do not want to pay a lot.
+										li Professional Plan: Ideal for managers who like to spend money!
+
+						li
+							button.accordion-trigger(aria-controls="acc-basic-3" aria-expanded="false") Support Options
+							div#acc-basic-3(data-panel data-panel-axis="vertical" class="is-closed")
+								.panel-wrapper
+									ul
+										li If you send us an email, we will probably ignore it.
+										li We don’t even have a community forum.
+										li Opening an issue on GitHub is your next best option. Or even better: PR’s! You do the work!
+
+			+codeblock('HTML').
+				<ul data-panel-group>
+				  <li>
+				    <button aria-controls="acc-1" aria-expanded="false">Question 1</button>
+				    <div id="acc-1" data-panel data-panel-axis="vertical" class="is-closed">
+				      <div class="panel-wrapper">Answer 1</div>
+				    </div>
+				  </li>
+				</ul>
+
+			+codeblock('JS').
+				import { Panel } from 'panelset';
+				Panel.init();
+
+	.lane
+		.container
+			+anchor One open at a time
+			p Add #[code data-panel-close-siblings] to the group element to automatically close the other panels when one opens. No extra JavaScript needed.
+
+			.example
+				.demo
+					ul(data-panel-group data-panel-close-siblings)
+						li
+							button.accordion-trigger(aria-controls="acc-cs-1" aria-expanded="false") Key Features
+							div#acc-cs-1(data-panel data-panel-axis="vertical" class="is-closed")
+								.panel-wrapper
+									ul
+										li This is our most important feature ever!
+
+						li
+							button.accordion-trigger(aria-controls="acc-cs-2" aria-expanded="false") Pricing Plans
+							div#acc-cs-2(data-panel data-panel-axis="vertical" class="is-closed")
+								.panel-wrapper
+									ul
+										li Starter Plan: Whenever you do not want to pay a lot.
+										li Professional Plan: Ideal for managers who like to spend money!
+						li
+							button.accordion-trigger(aria-controls="acc-cs-3" aria-expanded="false") Support Options
+							div#acc-cs-3(data-panel data-panel-axis="vertical" class="is-closed")
+								.panel-wrapper
+									ul
+										li If you send us an email, we will probably ignore it.
+										li We don’t even have a community forum.
+										li Opening an issue on GitHub is your next best option. Or even better: PR’s! You do the work!
+
+
+			p You can also enable this per-panel via the #[code closeSiblings] JS option, or opt individual panels out with #[code data-panel-close-siblings="false"].
+
+			.card-row
+				.card
+					h4 HTML (group-level)
+					+codeblock('HTML').
+						<ul data-panel-group data-panel-close-siblings>
+						  ...
+						</ul>
+				.card
+					h4 JavaScript (init-level)
+					+codeblock('JS').
+						Panel.init('[data-panel]', { closeSiblings: true });
+
+			p
+				| For full details see #[a(href="/panel/configuration.html#grouping-panels-accordion") Grouping panels (accordion)] in the configuration reference.
+
+append scripts
+	if isProd
+		script(src="/lib/panelset.js" vite-ignore)
+		script.
+			Panel.init('.docs-content [data-panel]');
+	else
+		script(type="module").
+			import { Panel } from 'panelset';
+			Panel.init('.docs-content [data-panel]', { debug: true });
