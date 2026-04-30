@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
     const isProd = mode === 'production';
 
 	return {
+		base: isProd ? '/panelset/' : '/',
 		build: {
 	        outDir: "dist",
 	        emptyOutDir: false,
