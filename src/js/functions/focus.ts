@@ -1,10 +1,10 @@
 /**
  * The autoFocus mode. Pass to autoFocus() after opening a panel.
- * - true        → focus the panel element itself
- * - 'heading'   → focus the first heading (h1–h6)
- * - 'first'     → focus the first focusable element
- * - 'input'     → focus the first form field (bypasses keyboard-only check)
- * - function    → custom handler, called with the panel element
+ * - true        : focus the panel element itself
+ * - 'heading'   : focus the first heading (h1–h6)
+ * - 'first'     : focus the first focusable element
+ * - 'input'     : focus the first form field (bypasses keyboard-only check)
+ * - function    : custom handler, called with the panel element
  */
 export type AutoFocusMode =
 	| boolean

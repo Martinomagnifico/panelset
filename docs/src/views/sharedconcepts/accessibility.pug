@@ -156,46 +156,12 @@ block content
 								p Focus will land on the submit button when you arrive here via keyboard.
 								p Review your details and submit when ready.
 					.demo-controls(style="justify-content: space-between")
-						button#a11y-wizard-back(disabled) ← Back
-						button#a11y-wizard-next Next →
-
-			.title-text
-				h3 How the wizard navigation works
-				p The Back/Next/Submit buttons are plain buttons wired up with custom JS. There is no built-in wizard trigger in PanelSet. The pattern relies on three things: #[code getActive()] to know the current step, #[code show()] to navigate, and the #[code ps:activationcomplete] event to keep the controls in sync.
-
-			+codeblock('JS').
-				const steps  = ['step-1', 'step-2', 'step-3'];
-				const ps     = new PanelSet('#wizard', { autoFocus: 'first' });
-				const back   = document.getElementById('btn-back');
-				const next   = document.getElementById('btn-next');
-
-				function updateControls(panelId) {
-				  const idx    = steps.indexOf(panelId);
-				  const isLast = idx === steps.length - 1;
-				  back.disabled      = idx === 0;
-				  next.textContent   = isLast ? 'Submit' : 'Next →';
-				}
-
-				back.addEventListener('click', () => {
-				  const idx = steps.indexOf(ps.getActive());
-				  if (idx > 0) ps.show(steps[idx - 1], { event });
-				});
-
-				next.addEventListener('click', (event) => {
-				  const idx = steps.indexOf(ps.getActive());
-				  if (idx < steps.length - 1) {
-				    ps.show(steps[idx + 1], { event });
-				  } else {
-				    // handle submit
-				  }
-				});
-
-				// Keep controls in sync whenever a panel switch completes
-				document.getElementById('wizard').addEventListener('ps:activationcomplete', (e) => {
-				  updateControls(e.detail.panelId);
-				});
-
-				updateControls(steps[0]); // set initial state
+						button#a11y-wizard-back.btn.chevron.back(disabled)
+							+chevronback()
+							| Back
+						button#a11y-wizard-next.btn.chevron
+							| Next
+							+chevron()
 
 	.lane
 		.container
@@ -243,8 +209,8 @@ block content
 					    event,              // pass the event
 					    autoFocus: 'heading'
 					  });
-					  // keyboard → focuses heading
-					  // mouse click → no focus movement
+					  // keyboard: focuses heading
+					  // mouse click: no focus movement
 					});
 
 				.callout
@@ -278,75 +244,15 @@ block content
 append scripts
 	if isProd
 		script(src="/assets/scripts/example.js" vite-ignore)
+		script(src="/assets/scripts/example-accessibility.js" vite-ignore)
 		script(src="/lib/panelset.js" vite-ignore)
 		script.
 			new PanelSet('#a11y-heading-demo', { autoFocus: 'heading' });
-
-			const wizardSteps = ['a11y-f-panel-1', 'a11y-f-panel-2', 'a11y-f-panel-3'];
-			const wizardPs   = new PanelSet('#a11y-first-demo', { autoFocus: 'first' });
-			const backBtn    = document.getElementById('a11y-wizard-back');
-			const nextBtn    = document.getElementById('a11y-wizard-next');
-
-			function updateWizardControls(panelId) {
-				const idx = wizardSteps.indexOf(panelId);
-				const isLast = idx === wizardSteps.length - 1;
-				backBtn.disabled = idx === 0;
-				nextBtn.textContent = isLast ? 'Submit' : 'Next →';
-			}
-
-			backBtn.addEventListener('click', () => {
-				const idx = wizardSteps.indexOf(wizardPs.getActive());
-				if (idx > 0) wizardPs.show(wizardSteps[idx - 1], { event });
-			});
-
-			nextBtn.addEventListener('click', (event) => {
-				const idx = wizardSteps.indexOf(wizardPs.getActive());
-				if (idx < wizardSteps.length - 1) {
-					wizardPs.show(wizardSteps[idx + 1], { event });
-				} else {
-					alert('Submitted!');
-				}
-			});
-
-			document.getElementById('a11y-first-demo').addEventListener('ps:activationcomplete', (e) => {
-				updateWizardControls(e.detail.panelId);
-			});
-
-			updateWizardControls(wizardSteps[0]);
+			new PanelSet('#a11y-first-demo', { autoFocus: 'first' });
 	else
 		script(type="module" src="/src/assets/scripts/example.js")
+		script(type="module" src="/src/assets/scripts/example-accessibility.js")
 		script(type="module").
 			import { PanelSet } from 'panelset';
 			new PanelSet('#a11y-heading-demo', { autoFocus: 'heading' });
-
-			const wizardSteps = ['a11y-f-panel-1', 'a11y-f-panel-2', 'a11y-f-panel-3'];
-			const wizardPs   = new PanelSet('#a11y-first-demo', { autoFocus: 'first' });
-			const backBtn    = document.getElementById('a11y-wizard-back');
-			const nextBtn    = document.getElementById('a11y-wizard-next');
-
-			function updateWizardControls(panelId) {
-				const idx = wizardSteps.indexOf(panelId);
-				const isLast = idx === wizardSteps.length - 1;
-				backBtn.disabled = idx === 0;
-				nextBtn.textContent = isLast ? 'Submit' : 'Next →';
-			}
-
-			backBtn.addEventListener('click', () => {
-				const idx = wizardSteps.indexOf(wizardPs.getActive());
-				if (idx > 0) wizardPs.show(wizardSteps[idx - 1], { event });
-			});
-
-			nextBtn.addEventListener('click', (event) => {
-				const idx = wizardSteps.indexOf(wizardPs.getActive());
-				if (idx < wizardSteps.length - 1) {
-					wizardPs.show(wizardSteps[idx + 1], { event });
-				} else {
-					alert('Submitted!');
-				}
-			});
-
-			document.getElementById('a11y-first-demo').addEventListener('ps:activationcomplete', (e) => {
-				updateWizardControls(e.detail.panelId);
-			});
-
-			updateWizardControls(wizardSteps[0]);
+			new PanelSet('#a11y-first-demo', { autoFocus: 'first' });

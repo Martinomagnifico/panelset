@@ -97,7 +97,7 @@ block content
 
 				  const panelId = button.getAttribute('aria-controls');
 				  const panel = document.getElementById(panelId);
-				  const container = panel?.closest('ps-panelset'); // ← instead of '[data-panelset]'
+				  const container = panel?.closest('ps-panelset'); // instead of '[data-panelset]'
 
 				  container?.panelSet?.show(panelId, { event });
 				});
@@ -117,8 +117,8 @@ block content
 			+codeblock('JS').
 				import { register } from 'panelset';
 
-				register();         // → <ps-panel>, <ps-panelset>
-				register('acme'); // → <acme-panel>, <acme-panelset>
+				register();         // <ps-panel>, <ps-panelset>
+				register('solar'); // <solar-panel>, <solar-panelset>
 
 			p #[code register()] is safe to call multiple times — it skips any name that is already defined.
 

@@ -7,6 +7,9 @@ body {
 	font-weight: 400;
 	font-size: 1rem;
 	line-height: 1.5;
+	text-rendering: optimizeLegibility;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 button {
@@ -32,6 +35,7 @@ h2,
 h3,
 h4 {
 	line-height: 1.2;
+	color: var(--heading-color);
 	&:first-child {
 		margin-top: 0;
 	}
@@ -312,9 +316,16 @@ dl a {
 h1, h2, h3, h4, h5, a, button {
 	outline: 3px solid transparent;
 	border-radius: 4px;
-	transition: all 0.25s ease-in-out;
+	transition: all 0.125s ease-in-out;
 	outline-offset: 0;
 }
+h3, h4, h5, p a, .heading-anchor a {
+	outline: 2px solid transparent;
+	&:focus-visible {
+		outline: 2px solid var(--link-focus);
+	}
+}
+
 input {
 	transition: all 0.25s ease-in-out;
 	font-size: inherit;
@@ -336,6 +347,8 @@ input {
 		}
 	}
 }
+
+h1, h2, h3, h4, h5 {}
 
 .docs-sidebar a,
 button,

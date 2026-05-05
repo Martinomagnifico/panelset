@@ -53,4 +53,5 @@ aside.docs-sidebar
 											a(class=(active ? "active" : "") href=link.href tabindex=(active ? "-1" : false)) #{link.label || link.text}
 
 	.sidebar-about-wrap
-		a.sidebar-about(href="/about.html" class=(pagetitle === "About / Buy me a coffee" ? "active" : "")) About / Buy me a coffee
+		a.sidebar-about(href="/about.html" class=(pagetitle === "About / Buy me a coffee" ? "active" : "")) 
+			| About / #[+coffee()] Buy me a coffee

@@ -8,6 +8,13 @@
 
 	a, button {
 		border-radius: 0.25rem;
+		display: flex;
+		align-items: center;
+		svg {
+			stroke-width: 1.6px;
+			width: 20px;
+			height: 20px;
+		}
 	}
 
 	// Responsive
@@ -123,6 +130,9 @@
 		&[aria-expanded="false"] svg {
 			transform: rotate(-180deg);
 		}
+		&:hover {
+			color: var(--btn-primary-hover);
+		}
 	}
 
 	.sidebar-about-wrap {
@@ -144,7 +154,6 @@
 	}
 
 	.sidebar-about {
-		display: block;
 		padding: 0.25em 0.75em;
 		color: var(--sidebar-item-text);
 
@@ -159,6 +168,9 @@
 			color: var(--sidebar-item-active-text);
 			font-weight: 600;
 			pointer-events: none;
+		}
+		svg {
+			margin: 0 0.25em;
 		}
 	}
 
@@ -192,7 +204,7 @@
 				//text-transform: uppercase;
 				letter-spacing: 0.05em;
 				color: var(--sidebar-item-text);
-				opacity: 0.5;
+				opacity: 0.8;
 				padding: 1rem 0.75rem 0;
 				margin: 0;
 			}

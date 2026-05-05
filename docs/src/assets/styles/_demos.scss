@@ -188,18 +188,35 @@
         align-self: auto;
       }
 
-
-			svg {
+			svg.chevron {
         stroke-width: 1.44px;
 				transform: translateX(-4px);
 				transition: transform 0.2s ease-in-out;
+				will-change: transform;
+			}
+
+			&:not(:has(svg)) {
+				padding-right: 1rem;
+			}
+
+			&.back {
+				padding-right: 1rem;
+				padding-left: 0.5rem;
+
+				svg.chevron {
+					transform: translateX(4px);
+				}
 			}
 		}
 
 		&:hover {
 			text-decoration: none;
-			svg {
+			svg.chevron {
 				transform: translateX(4px);
+			}
+
+			&.back svg.chevron {
+				transform: translateX(-4px);
 			}
 		}
 }
@@ -240,6 +257,7 @@
   &:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+    pointer-events: none;
   }
 
   &.secondary {

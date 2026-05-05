@@ -1,35 +1,36 @@
 :root {
-  --color-green-50:  oklch(0.97 0.022 165);
-  --color-green-100: oklch(0.91 0.045 165);
-  --color-green-200: oklch(0.82 0.082 165);
-  --color-green-300: oklch(0.72 0.115 165);
-  --color-green-400: oklch(0.64 0.128 165);
-  --color-green-500: oklch(0.58 0.130 165); /* Base Shade */
-  --color-green-600: oklch(0.48 0.115 165);
-  --color-green-650: oklch(0.44 0.105 165);
-  --color-green-700: oklch(0.39 0.095 165);
-  --color-green-800: oklch(0.29 0.070 165);
-  --color-green-900: oklch(0.21 0.045 165);
+  --color-tint-0:   oklch(0.98 0.010 245);
+  --color-tint-50:  oklch(0.97 0.022 245);
+  --color-tint-100: oklch(0.91 0.045 245);
+  --color-tint-200: oklch(0.82 0.082 245);
+  --color-tint-300: oklch(0.72 0.115 245);
+  --color-tint-400: oklch(0.64 0.128 245);
+  --color-tint-500: oklch(0.58 0.130 245); /* Base Shade */
+  --color-tint-600: oklch(0.48 0.115 245);
+  --color-tint-650: oklch(0.44 0.105 245);
+  --color-tint-700: oklch(0.39 0.095 245);
+  --color-tint-800: oklch(0.29 0.070 245);
+  --color-tint-900: oklch(0.21 0.045 245);
 
-  --color-gray-25:  oklch(0.99 0.008 165);
-  --color-gray-50:  oklch(0.97 0.009 165);
-  --color-gray-100: oklch(0.94 0.010 165);
-  --color-gray-200: oklch(0.89 0.011 165);
-  --color-gray-300: oklch(0.79 0.012 165);
-  --color-gray-400: oklch(0.64 0.013 165);
-  --color-gray-500: oklch(0.47 0.015 165);
-  --color-gray-600: oklch(0.35 0.017 165);
-  --color-gray-700: oklch(0.24 0.018 165);
-  --color-gray-750: oklch(0.20 0.018 165);
-  --color-gray-800: oklch(0.15 0.019 165);
-  --color-gray-850: oklch(0.13 0.019 165);
-  --color-gray-900: oklch(0.10 0.020 165);
-  --color-gray-950: oklch(0.07 0.022 165);
+  --color-gray-25:  oklch(0.99 0.008 245);
+  --color-gray-50:  oklch(0.97 0.009 245);
+  --color-gray-100: oklch(0.94 0.010 245 );
+  --color-gray-200: oklch(0.89 0.011 245);
+  --color-gray-300: oklch(0.79 0.012 245);
+  --color-gray-400: oklch(0.64 0.013 245);
+  --color-gray-500: oklch(0.47 0.015 245);
+  --color-gray-600: oklch(0.35 0.017 245);
+  --color-gray-700: oklch(0.24 0.018 245);
+  --color-gray-750: oklch(0.20 0.018 245);
+  --color-gray-800: oklch(0.15 0.019 245);
+  --color-gray-850: oklch(0.13 0.019 245);
+  --color-gray-900: oklch(0.10 0.020 245);
+  --color-gray-950: oklch(0.07 0.022 245);
 
 }
 
 :root {
-    /* Primaries & Grays (Light Mode Defaults) */
+  --heading-color: var(--color-gray-800);
   --bg-surface: var(--color-gray-25);
   --bg-surface-tint: var(--color-gray-50);
   --bg-sidebar: var(--color-gray-50);
@@ -37,36 +38,37 @@
   --fg-default: var(--color-gray-800);
   --fg-muted: var(--color-gray-600);
   
-  --link-focus: var(--color-green-600);
+  --link-focus: var(--color-tint-600);
   --border-default: var(--color-gray-200);
 
-  /* Plain Button - Defaults */
-  --btn-plain-text: var(--color-green-600);
-  --btn-plain-hover-bg: oklch(from var(--color-green-500) l c h / 0.1);
+  /* Plain */
+  --btn-plain-text: var(--color-tint-500);
+  --btn-plain-hover-bg: oklch(from var(--color-tint-500) l c h / 0.1);
 
-  /* Primary Solid - Light Mode */
-  --btn-primary-bg: var(--color-green-500);
-  --btn-primary-text: oklch(0.98 0.01 165); /* High-contrast near-white */
-  --btn-primary-hover: var(--color-green-650);
+  /* Solid */
+  --btn-primary-bg: var(--color-tint-500);
+  --btn-primary-text: oklch(0.98 0.01 240);
+  --btn-primary-hover: var(--color-tint-700);
 
-  /* Primary Outline - Light Mode */
-  --btn-outline-border: var(--color-green-500);
-  --btn-outline-text: var(--color-green-600);
-  --btn-outline-hover-bg: oklch(from var(--color-green-500) l c h / 0.1);
+  /* Outline */
+  --btn-outline-border: var(--color-tint-500);
+  --btn-outline-text: var(--color-tint-500);
+  --btn-outline-hover-bg: oklch(from var(--color-tint-500) l c h / 0.1);
 
   
   --bg-subtle: var(--color-gray-100);
 
-  /* Sidebar Semantic Colors */
+  /* Sidebar */
   --sidebar-item-text: var(--color-gray-600);
   --sidebar-item-hover-bg: var(--color-gray-100);
-  --sidebar-item-active-text: var(--color-green-600);
-  --sidebar-item-active-bg: oklch(from var(--color-green-500) l c h / 0.12);
+  --sidebar-item-active-text: var(--color-tint-600);
+  --sidebar-item-active-bg: oklch(from var(--color-tint-500) l c h / 0.12);
 
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
+    --heading-color: var(--color-gray-100);
     --bg-surface: var(--color-gray-800);
     --bg-surface-tint: var(--color-gray-750);
     --bg-sidebar: var(--color-gray-750);
@@ -75,30 +77,26 @@
     --fg-default: var(--color-gray-300);
     --fg-muted: var(--color-gray-500);
 
-    --link-focus: var(--color-green-300);
+    --link-focus: var(--color-tint-200);
     --border-default: var(--color-gray-700);
 
-    /* Plain Button - Dark mode */
-    --btn-plain-text: var(--color-green-300);
-    --btn-plain-hover-bg: oklch(from var(--color-green-400) l c h / 0.15);
+    /* Plain */
+    --btn-plain-text: var(--color-tint-300);
+    --btn-plain-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
 
-    /* Primary Solid - Dark Mode */
-    --btn-primary-bg: var(--color-green-400); /* Slightly brighter for dark bg */
-    --btn-primary-text: oklch(0.15 0.02 165); /* Dark text for light button */
-    --btn-primary-hover: var(--color-green-300);
+    /* Solid */
+    --btn-primary-hover: var(--color-tint-600);
 
-    /* Primary Outline - Dark Mode */
-    --btn-outline-border: var(--color-green-400);
-    --btn-outline-text: var(--color-green-300);
-    --btn-outline-hover-bg: oklch(from var(--color-green-400) l c h / 0.15);
+    /* Outline */
+    --btn-outline-border: var(--color-tint-400);
+    --btn-outline-text: var(--color-tint-300);
+    --btn-outline-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
 
-    /* Sidebar Semantic Colors */
-    --sidebar-item-text: var(--color-gray-400);
+    /* Sidebar */
+    --sidebar-item-text: var(--color-gray-300);
     --sidebar-item-hover-bg: var(--color-gray-700);
-    --sidebar-item-active-text: var(--color-green-300);
-    --sidebar-item-active-bg: oklch(from var(--color-green-400) l c h / 0.2);
-
-
+    --sidebar-item-active-text: var(--color-tint-300);
+    --sidebar-item-active-bg: oklch(from var(--color-tint-400) l c h / 0.2);
   }
 }
 

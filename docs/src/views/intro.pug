@@ -27,11 +27,6 @@ block content
 					+anchor Panel
 					p A single element that can be #[strong opened and closed]. Use it for sidebars, show-more blocks, accordions, or any element that expands and collapses.
 					p Triggers are any element with #[code aria-controls] pointing to the panel's ID. Any close buttons use #[code data-panel-close].
-					//-a.btn.bottom.chevron.solid(href="/panel/getting-started.html") 
-						| Panel docs
-						svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-							polyline(points="9 6 15 12 9 18")
-
 
 
 
@@ -40,11 +35,6 @@ block content
 					p A container that #[strong switches between] some panels. Use it for tabs, wizards, or multi-step interfaces.
 					p Only one panel is (fully) visible at a time. The container quietly animates its own height to match the incoming panel. 
 					p It can also be opened and closed as a whole, just like a regular Panel.
-					//-a.btn.bottom.chevron.solid(href="/panelset/getting-started.html") 
-						| PanelSet docs
-						svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-							polyline(points="9 6 15 12 9 18")
-
 
 
 				div
@@ -60,8 +50,7 @@ block content
 
 					a.btn.bottom.chevron.solid.block(href="/panel/getting-started.html") 
 						| Panel docs
-						svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-							polyline(points="9 6 15 12 9 18")
+						+chevron()
 
 
 
@@ -76,8 +65,7 @@ block content
 
 					a.btn.bottom.chevron.solid.block(href="/panelset/getting-started.html") 
 						| PanelSet docs
-						svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-							polyline(points="9 6 15 12 9 18")
+						+chevron()
 
 
 
@@ -117,9 +105,10 @@ block content
 			p PanelSet is free. If it saved you time, a coffee goes a long way.
 
 			a.btn.solid.chevron(href="https://ko-fi.com/martinomagnifico" target="_blank" rel="noopener")
-				| ☕ Support my work on Ko-fi
-				svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-					polyline(points="9 6 15 12 9 18")
+				+coffee()
+				| Support my work on Ko-fi
+				+chevron()
+
 
 
 

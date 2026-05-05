@@ -35,7 +35,7 @@ export function parseDataAttrs<T>(dataset: DOMStringMap, attrMap: AttrMap<T>): P
  * Parse plain element attributes into a partial config object.
  * Uses the same AttrMap as parseDataAttrs but reads from element.getAttribute()
  * instead of dataset. The datasetKey is converted from camelCase to kebab-case
- * to form the attribute name (e.g. "panelAxis" → "panel-axis").
+ * to form the attribute name (e.g. "panelAxis" > "panel-axis").
  */
 export function parseAttrs<T>(element: Element, attrMap: AttrMap<T>): Partial<T> {
 	const config: Partial<T> = {};

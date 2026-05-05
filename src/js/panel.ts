@@ -419,7 +419,7 @@ export class Panel {
 
 			if (Panel._nativeInterpolateSize) {
 				// Lock at an explicit px value so the rAF-triggered clear gives the
-				// browser a concrete before→auto pair to animate. Without this, removing
+				// browser a concrete before-to-auto pair to animate. Without this, removing
 				// is-closed and adding is-opening in the same synchronous task can leave
 				// both the before and after cascade values as 'auto' — no delta, no
 				// transition. @starting-style does not help here because it only applies

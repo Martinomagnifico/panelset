@@ -399,7 +399,7 @@ export class PanelSet {
 				if (isOpening) {
 					this.element.classList.remove('is-closed');
 					// Lock at an explicit px value so the rAF-triggered clear gives the
-					// browser a concrete before→auto pair to animate. Without this,
+					// browser a concrete before-to-auto pair to animate. Without this,
 					// removing is-closed and is-opening's height: auto land in the same
 					// synchronous task — no delta, no transition.
 					this.element.style.height = reverseStartHeight !== null ? `${reverseStartHeight}px` : '0px';
@@ -412,7 +412,7 @@ export class PanelSet {
 					});
 				} else {
 					// is-closing added above; CSS is-closing { height: 0 } with
-					// interpolate-size transitions from auto → 0 natively.
+					// interpolate-size transitions from auto to 0 natively.
 					requestAnimationFrame(() => {
 						Core.waitForTransition(this.element, 'height').then(() => {
 							if (signal.aborted) return;
@@ -426,7 +426,7 @@ export class PanelSet {
 					});
 				}
 			} else {
-				// JS fallback: measure → lock → animate → unlock
+				// JS fallback: measure > lock > animate > unlock
 				const targetHeight = isOpening ? this._measureHeight(this.pendingPanel) : 0;
 				const currentHeight = this.element.offsetHeight;
 				this.element.style.height = `${currentHeight}px`;
@@ -670,7 +670,7 @@ export class PanelSet {
 
 		this._isLoadingAsync = false;
 
-		this._log(`${prevPanel?.id || 'none'} → ${panelId}`);
+		this._log(`${prevPanel?.id || 'none'} > ${panelId}`);
 
 		const beforeOpenDetail: BeforeOpenEventDetail = {
 			panelId,

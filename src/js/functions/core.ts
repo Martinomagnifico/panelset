@@ -30,7 +30,7 @@ export class Core {
 	/**
 	 * Wait for the CSS transition on el to end. Always resolves — includes a
 	 * setTimeout fallback for cases where transitionend never fires (e.g. an
-	 * interrupted 0 → 0 transition where no actual change occurs).
+	 * interrupted 0 to 0 transition where no actual change occurs).
 	 */
 	static waitForTransition(el: HTMLElement, propertyName?: string): Promise<void> {
 		return new Promise(resolve => {
