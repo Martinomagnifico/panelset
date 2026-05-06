@@ -1,4 +1,3 @@
-
 .alignment-demos {
 	container-type: inline-size;
 	gap: 2rem;
@@ -22,18 +21,15 @@
 	.demo-body, .panel-wrapper {
 		padding: 1rem;
 	}
-	[data-panel] {
 
-		// --open-speed: 0.25s;
+	[data-panel] {
 		--open-timing: ease-in-out;
-		// --close-speed: 0.25s;
 		--close-timing: ease-in-out;
 		--panel-width: 200px;
 
-
-		background: var(--bg-sidebar);
 		background: var(--bg-surface);
 		border-bottom: 1px solid var(--border-default);
+
 		&.is-closed {
 			border-bottom: none;
 		}
@@ -42,7 +38,7 @@
 			border-bottom: none;
 			border-right: 1px solid var(--border-default);
 			flex-shrink: 0;
-			
+
 			&.is-closed {
 				border-right: none;
 			}
@@ -56,8 +52,6 @@
 			border-left: none;
 		}
 	}
-
-
 }
 
 .flex {

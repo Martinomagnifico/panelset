@@ -1,21 +1,13 @@
-/**
- * Documentation Styles
- * These styles are only for the docs site, not part of the library
- */
-
 @use "_variables.scss";
 @use "_base.scss";
 @use "_typography.scss";
 @use "_code.scss";
 @use "_demos.scss";
-@use "_alignment-demos.scss";
-// @use "_demos-alignment.scss";
-// @use "_demos-directions.scss";
-// @use "_demos-sidebar.scss";
+@use "_demos-alignment.scss";
+@use "_demos-async.scss";
 @use "_demos-panelset.scss";
 @use "_layout.scss";
 @use "_landingpage.scss";
 @use "_sidebar.scss";
 @use "_accordion.scss";
 @use "_close.scss";
-

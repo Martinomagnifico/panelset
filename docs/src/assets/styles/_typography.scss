@@ -1,7 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
 
-// Typography
-
 body {
 	font-family: "Source Sans 3", sans-serif;
 	font-weight: 400;
@@ -224,14 +222,12 @@ dl a {
 	}
 }
 
-
 @media (max-width: 576px) {
 	.borderbox:has(.twocol) {
 		width: 100%;
 		max-width: none;
 	}
 }
-
 
 .heading-anchor {
 	display: inline-flex;
@@ -308,7 +304,6 @@ dl a {
 	}
 }
 
-
 *:focus-visible {
 	outline: 3px solid var(--link-focus);
 }
@@ -335,7 +330,6 @@ input {
 	border-radius: 4px;
 	font-family: inherit;
 	font-weight: inherit;
-
 	outline: 2px solid transparent;
 	outline-offset: 0;
 
@@ -348,14 +342,11 @@ input {
 	}
 }
 
-h1, h2, h3, h4, h5 {}
-
 .docs-sidebar a,
 button,
 .btn {
 	line-height: 1.5rem;
 }
-
 
 button {
 	appearance: none;

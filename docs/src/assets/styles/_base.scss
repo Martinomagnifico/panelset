@@ -1,5 +1,8 @@
 
-// Reset & Base
+::selection {
+  background: color-mix(in srgb, var(--btn-outline-text), transparent 70%);
+}
+
 * {
   margin: 0;
   padding: 0;
@@ -13,13 +16,13 @@ body {
 }
 
 .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    padding: 0;
-    margin: -1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-    border: 0;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }

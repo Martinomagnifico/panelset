@@ -17,7 +17,6 @@
 		}
 	}
 
-	// Responsive
 	@media (min-width: 769px) {
 		position: sticky;
 		border-right: 1px solid var(--border-default);
@@ -25,7 +24,7 @@
 		height: 100vh;
 		overflow-y: auto;
 	}
-	// LOGO
+
 	.logo,
 	a.logo {
 		font-size: 1.5rem;
@@ -37,6 +36,7 @@
 			color: var(--btn-outline-text);
 		}
 	}
+
 	nav {
 		margin-top: 1rem;
 		display: flex;
@@ -53,7 +53,6 @@
 				background: var(--sidebar-item-hover-bg);
 				color: var(--sidebar-item-active-text);
 				text-decoration: none;
-				// box-shadow: 0 1px 10px rgba(0, 0, 0, 0.1);
 			}
 
 			&.active {
@@ -98,17 +97,13 @@
 				font-weight: 600;
 			}
 		}
-
 	}
 
 	.nav-section-toggle {
 		background: none;
 		border: none;
-
 		cursor: pointer;
-		font-size: 0.75rem;
 		font-family: inherit;
-		//text-transform: uppercase;
 		color: inherit;
 		width: 100%;
 		text-align: left;
@@ -123,8 +118,7 @@
 
 		svg {
 			flex-shrink: 0;
-			transition: transform var(--panel-speed, 0.5s)
-				var(--panel-timing, ease-in-out);
+			transition: transform var(--panel-speed, 0.5s) var(--panel-timing, ease-in-out);
 		}
 
 		&[aria-expanded="false"] svg {
@@ -175,12 +169,7 @@
 	}
 
 	[data-panel] .panel-wrapper {
-
-		// padding-top: var(--padding-small);
-		// padding-bottom: var(--padding-small);
-
 		padding: 0.5rem 0;
-
 
 		.section-links {
 			border-left: 1px solid var(--border-default);
@@ -201,7 +190,6 @@
 			.nav-examples-label {
 				border-top: 1px solid var(--border-default);
 				font-size: 0.7rem;
-				//text-transform: uppercase;
 				letter-spacing: 0.05em;
 				color: var(--sidebar-item-text);
 				opacity: 0.8;
@@ -210,6 +198,7 @@
 			}
 		}
 	}
+
 	.is-opening, .is-closing {
 		* {
 			pointer-events: none;

@@ -1,12 +1,6 @@
-::selection {
-  background: color-mix(in srgb, var(--btn-outline-text), transparent 70%);
-}
-
 .standard-padding {
   padding: var(--standard-padding);
 }
-
-// Example / demo containers 
 
 .example {
   position: relative;
@@ -62,11 +56,8 @@
   border: 2px solid var(--btn-outline-border);
 }
 .example.demo {
-  background: var(--bg-surface);
   background: var(--bg-surface-tint);
 }
-
-// Grid
 
 .grid-2,
 .grid-3 {
@@ -75,13 +66,12 @@
   grid-column-gap: 2rem;
   grid-row-gap: 2rem;
 
- & > div {
+  & > div {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 1rem;
- }
-
+  }
 }
 .grid-2 {
   grid-template-columns: repeat(2, 1fr);
@@ -97,12 +87,9 @@
   }
 }
 
-
-
 .card-row {
   display: flex;
   gap: 1.5rem;
-  // flex-wrap: wrap;
   flex-direction: column;
 
   @container (min-width: 800px) {
@@ -113,11 +100,8 @@
   }
 }
 
-
-
 .card {
   flex: 1;
-  // min-width: 300px;
   border: 1px solid var(--border-default);
   border-radius: 8px;
   padding: 1rem;
@@ -133,95 +117,89 @@
   &.no-padding {
     padding: 0;
   }
-
 }
 .btn.bottom {
   margin-top: auto;
 }
 
-
-
-
 .btn {
-		// justify-self: center;
-		// align-self: center;
-		border: none;
-		padding: 0.5rem 1rem;
-		border-radius: 4px;
-		font-size: 1rem;
-		line-height: 1.5;
-		min-height: 40px;;
-		cursor: pointer;
-		transition: all 0.2s ease-in-out;
-    
-    &.outline {
-      color: var(--btn-outline-text);
-      border: 1px solid currentColor;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 1rem;
+  line-height: 1.5;
+  min-height: 40px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
 
-      &:hover {
-        color: var(--btn-primary-hover);
-      }
+  &.outline {
+    color: var(--btn-outline-text);
+    border: 1px solid currentColor;
+
+    &:hover {
+      color: var(--btn-primary-hover);
+    }
+  }
+
+  &.solid {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    transition: background-color 0.2s;
+    outline-offset: 2px;
+
+    &:hover {
+      background: var(--btn-primary-hover);
+    }
+  }
+
+  &.chevron {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    padding-right: 0.5rem;
+    justify-content: space-between;
+    align-self: flex-start;
+
+    .card &, &.block {
+      align-self: auto;
     }
 
-    &.solid {
-      background: var(--btn-primary-bg);
-      color: var(--btn-primary-text);
-      transition: background-color 0.2s;
-      outline-offset: 2px;
+    svg.chevron {
+      stroke-width: 1.44px;
+      transform: translateX(-4px);
+      transition: transform 0.2s ease-in-out;
+      will-change: transform;
+    }
 
-      &:hover {
-        background: var(--btn-primary-hover);
+    &:not(:has(svg)) {
+      padding-right: 1rem;
+    }
+
+    &.back {
+      padding-right: 1rem;
+      padding-left: 0.5rem;
+
+      svg.chevron {
+        transform: translateX(4px);
       }
     }
-		
-		&.chevron {
-			display: flex;
-      flex-direction: row;
-      align-items: center;
+    &.icon-left {
+      padding-left: 0.5rem;
+    }
+  }
 
-			gap: 0.5rem;
-			padding-right: 0.5rem;
-      justify-content: space-between;
-      align-self: flex-start;
+  &:hover {
+    text-decoration: none;
+    svg.chevron {
+      transform: translateX(4px);
+    }
 
-      .card &, &.block{
-        align-self: auto;
-      }
-
-			svg.chevron {
-        stroke-width: 1.44px;
-				transform: translateX(-4px);
-				transition: transform 0.2s ease-in-out;
-				will-change: transform;
-			}
-
-			&:not(:has(svg)) {
-				padding-right: 1rem;
-			}
-
-			&.back {
-				padding-right: 1rem;
-				padding-left: 0.5rem;
-
-				svg.chevron {
-					transform: translateX(4px);
-				}
-			}
-		}
-
-		&:hover {
-			text-decoration: none;
-			svg.chevron {
-				transform: translateX(4px);
-			}
-
-			&.back svg.chevron {
-				transform: translateX(-4px);
-			}
-		}
+    &.back svg.chevron {
+      transform: translateX(-4px);
+    }
+  }
 }
-
-
 
 .demo-controls {
   display: flex;
@@ -263,11 +241,8 @@
   &.secondary {
     color: var(--bg-surface);
     background: var(--btn-outline-border);
-    
   }
 }
-
-// ─── Trigger label toggle (show-more pattern) 
 
 button[aria-expanded="false"] .when-open,
 button[aria-expanded="true"] .when-closed {

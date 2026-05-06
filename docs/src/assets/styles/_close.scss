@@ -1,17 +1,6 @@
-// button[data-panel-close] {
-// 	display: none;
-// }
-
-button[data-panel-close] {
-	display: flex;
-}
-
-button.close {
-	display: flex;
-}
-
 button.close,
 button[data-panel-close] {
+	display: flex;
 	color: var(--fg-muted);
 	--close-stroke-color: currentColor;
 	--close-stroke-width: 1.2;

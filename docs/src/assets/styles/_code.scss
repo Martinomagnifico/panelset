@@ -7,13 +7,13 @@ code, .code {
 	display: inline-block;
 }
 
-p code, li code , dl code, dt.code, td code {
+p code, li code, dl code, dt.code, td code {
 	background: var(--doc-code-transparent);
 	padding: 0em 0.3em;
-	font-size: 0.9em ;
+	font-size: 0.9em;
 }
 
-p code, li code  {
+p code, li code {
 	display: inline;
 }
 
@@ -37,7 +37,7 @@ pre {
 	}
 }
 
-.card pre, 
+.card pre,
 .card code,
 .code-block pre {
 	white-space: pre-wrap;
@@ -53,7 +53,7 @@ dl.horizontal {
 
 .code-block {
 	position: relative;
-	
+
 	.code-header {
 		background: var(--bg-subtle);
 		padding: 0.5rem 0.5rem 0.5rem 1rem;
@@ -67,18 +67,15 @@ dl.horizontal {
 		justify-content: space-between;
 		align-items: center;
 	}
-	
+
 	pre {
-		margin: 0;	
+		margin: 0;
 		border-radius: 0 0 6px 6px;
 	}
 	p + & {
 		margin-top: 1rem;
 	}
-
 }
-
-// HIGHLIGHTING CODE
 
 .hljs-ln td.hljs-ln-numbers {
 	-webkit-touch-callout: none;
@@ -100,13 +97,13 @@ pre code.hljs {
 	background: none;
 }
 
-.hljs-attribute, 
-.hljs-doctag, 
-.hljs-keyword, 
-.hljs-meta .hljs-keyword, 
-.hljs-name, 
-.hljs-selector-tag, 
-.hljs-section, 
+.hljs-attribute,
+.hljs-doctag,
+.hljs-keyword,
+.hljs-meta .hljs-keyword,
+.hljs-name,
+.hljs-selector-tag,
+.hljs-section,
 .hljs-title {
 	font-weight: 600;
 }
@@ -120,10 +117,9 @@ button.copy {
 	font-weight: 400;
 	color: var(--fg-muted);
 	cursor: pointer;
-
 	transition: background 0.2s, color 0.2s;
 	outline-width: 2px;
-	
+
 	&:hover {
 		background: var(--bg-surface);
 		color: var(--btn-primary-hover);
