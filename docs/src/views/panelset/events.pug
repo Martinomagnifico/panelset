@@ -89,6 +89,8 @@ block content
 					dd ID of the panel that is now active.
 					dt.code trigger: HTMLElement | null
 					dd The element that triggered the activation, or #[code null] if programmatic.
+					dt.code outgoingPanel: HTMLElement | null
+					dd The panel that was deactivated, or #[code null] on the first activation.
 				br
 				+codeblock('JavaScript').
 					container.addEventListener('ps:activationcomplete', e => {

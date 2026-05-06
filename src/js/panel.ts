@@ -21,6 +21,7 @@ export class Panel {
 	private _returnFocusTarget: HTMLElement | null = null;
 	private _anim = new Core();
 	private _listenerController = new AbortController();
+	private _activating = false;
 
 	static defaults: Required<PanelConfig> = {
 		axis: 'vertical',
@@ -32,6 +33,7 @@ export class Panel {
 		closeSiblings: false,
 		loadingDelay: 300,
 		loadingHeight: 80,
+		interruptible: true,
 		persist: false,
 		debug: false,
 	};
@@ -45,9 +47,10 @@ export class Panel {
 		returnFocus:   ['panelReturnFocus',   'boolean'],
 		closeSiblings: ['panelCloseSiblings', 'boolean'],
 		loadingDelay:  ['panelLoadingDelay',  'number'],
-		loadingHeight: ['panelLoadingHeight', 'number'],
-		persist:       ['panelPersist',       'boolean'],
-		debug:         ['panelDebug',         'boolean'],
+		loadingHeight:  ['panelLoadingHeight',  'number'],
+		interruptible:  ['panelInterruptible',  'boolean'],
+		persist:        ['panelPersist',        'boolean'],
+		debug:          ['panelDebug',          'boolean'],
 	};
 
 	// True when the browser supports interpolate-size: allow-keywords.
@@ -247,6 +250,7 @@ export class Panel {
 	}
 
 	private _dispatch(name: string) {
+		if (name === 'panel:opened' || name === 'panel:closed') this._activating = false;
 		const detail: PanelEventDetail = { trigger: this._returnFocusTarget };
 		this.element.dispatchEvent(new CustomEvent(name, { detail, bubbles: true }));
 	}
@@ -263,7 +267,9 @@ export class Panel {
 
 	async open(event?: Event) {
 		if (this.isOpen && !this.element.classList.contains('is-closing')) return;
+		if (this.config.interruptible === false && this._activating) return;
 
+		this._activating = true;
 		const signal  = this._anim.start();
 		const cssProp = this._cssProp();
 
@@ -486,7 +492,9 @@ export class Panel {
 
 	close() {
 		if (!this.isOpen) return;
+		if (this.config.interruptible === false && this._activating) return;
 
+		this._activating = true;
 		this.element.setAttribute('inert', '');
 		this._setTriggerState(false);
 

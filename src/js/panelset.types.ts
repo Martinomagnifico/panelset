@@ -14,6 +14,7 @@ export interface PanelSetConfig {
 	returnFocus?: boolean;
 	autoFocus?: AutoFocusMode;
 	persist?: boolean;
+	interruptible?: boolean;
 	debug?: boolean;
 }
 
@@ -33,6 +34,7 @@ export interface BeforeOpenEventDetail {
 export interface ActivationEventDetail {
 	panelId: string;
 	trigger: HTMLElement | null;
+	outgoingPanel: HTMLElement | null;
 }
 
 export interface ActivationAbortedEventDetail {

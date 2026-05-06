@@ -247,6 +247,24 @@ block content
 							li #[code panel-loading-height="200"]
 
 			.example.api
+				h3.code.method-signature interruptible: boolean
+				p When set to #[code false], new open or close attempts are ignored while an animation or content load is in progress. The current animation completes first.
+				h4 Default: #[code true]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { interruptible: false }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-interruptible="false"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-interruptible="false"]
+
+			.example.api
 				h3.code.method-signature persist: boolean
 				p When enabled, opening or closing a panel writes its state to #[code localStorage] and updates the #[code ?panel=] URL param via #[code history.replaceState]. On the next page load the panel is restored to its last state.
 				p URL params and localStorage are always read on load regardless of this option. #[code persist] only controls whether open/close #[em writes] state back.

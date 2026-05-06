@@ -171,6 +171,24 @@ block content
 							li #[code loading-delay="300"]
 
 			.example.api
+				h3.code.method-signature interruptible: boolean
+				p When set to #[code false], new activation attempts are ignored while a transition or content load is in progress. The current activation completes first.
+				h4 Default: #[code true]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { interruptible: false }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-interruptible="false"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code interruptible="false"]
+
+			.example.api
 				h3.code.method-signature autoFocus: false | true | 'heading' | 'first' | 'input'
 				p Move focus into the incoming panel after activation.
 				h4 Default: #[code false]

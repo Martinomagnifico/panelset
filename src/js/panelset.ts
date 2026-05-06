@@ -56,6 +56,7 @@ export class PanelSet {
 		returnFocus: false,
 		autoFocus: false,
 		persist: false,
+		interruptible: true,
 		debug: false
 	};
 
@@ -70,6 +71,7 @@ export class PanelSet {
 	private _animShow    = new Core(); // panel switching + async content
 	private _animOpenClose = new Core(); // container open/close
 	private _isLoadingAsync: boolean = false;
+	private _activating: boolean = false;
 	private _returnFocusTarget: HTMLElement | null = null;
 
 	private static readonly _nativeInterpolateSize =
@@ -84,6 +86,7 @@ export class PanelSet {
 		loadingDelay:  ['loadingDelay',  'number'],
 		returnFocus:   ['returnFocus',   'boolean'],
 		persist:       ['panelPersist',  'boolean'],
+		interruptible: ['interruptible', 'boolean'],
 		debug:         ['debug',         'boolean'],
 	};
 
@@ -335,6 +338,15 @@ export class PanelSet {
 			if (!panel.id) return;
 			document.querySelectorAll<HTMLElement>(`[aria-controls="${panel.id}"]`).forEach(trigger => {
 				trigger.setAttribute('aria-selected', String(panel === activePanel));
+			});
+		});
+	}
+
+	private _setTriggersActivating(active: boolean): void {
+		this.panels.forEach(panel => {
+			if (!panel.id) return;
+			document.querySelectorAll<HTMLElement>(`[aria-controls="${panel.id}"]`).forEach(trigger => {
+				trigger.classList.toggle('is-activating', active);
 			});
 		});
 	}
@@ -591,6 +603,8 @@ export class PanelSet {
 	 * @param options - Configuration options for this activation
 	 */
 	async show(panelId: string, options?: ShowOptions): Promise<void> {
+		if (this.config.interruptible === false && this._activating) return;
+
 		const {
 			event,
 			transition = true,
@@ -635,6 +649,9 @@ export class PanelSet {
 			this.open({ event, transition, autoFocus: finalAutoFocus });
 			return;
 		}
+
+		this._activating = true;
+		if (this.config.interruptible === false) this._setTriggersActivating(true);
 
 		const prevPanel = this.pendingPanel;
 		const prevPanelId = prevPanel?.id;
@@ -758,6 +775,8 @@ export class PanelSet {
 					console.error('Panel load error:', error);
 				}
 
+				this._activating = false;
+				if (this.config.interruptible === false) this._setTriggersActivating(false);
 				return;
 			}
 
@@ -771,9 +790,12 @@ export class PanelSet {
 			return;
 		}
 
+		const outgoingPanel = this.activePanel;
+
 		this._dispatch<ActivationEventDetail>('ps:activationstart', {
 			panelId,
-			trigger: resolvedTrigger
+			trigger: resolvedTrigger,
+			outgoingPanel
 		});
 
 		const shouldTransition = transition !== false && this.config.transitions !== false;
@@ -792,8 +814,6 @@ export class PanelSet {
 		if (heightTransition) {
 			this.element.style.height = `${startHeight}px`;
 		}
-
-		const outgoingPanel = this.activePanel;
 
 		newPanel.hidden = false;
 		newPanel.setAttribute('inert', '');
@@ -842,9 +862,12 @@ export class PanelSet {
 					this._handleAutoFocus(newPanel, finalAutoFocus, event);
 				}
 
+				this._activating = false;
+				if (this.config.interruptible === false) this._setTriggersActivating(false);
 				this._dispatch<ActivationEventDetail>('ps:activationcomplete', {
 					panelId,
-					trigger: resolvedTrigger
+					trigger: resolvedTrigger,
+					outgoingPanel
 				});
 			});
 		});

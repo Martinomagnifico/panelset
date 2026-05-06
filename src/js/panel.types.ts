@@ -10,6 +10,7 @@ export interface PanelConfig {
 	closeSiblings?: boolean;
 	loadingDelay?: number;
 	loadingHeight?: number;
+	interruptible?: boolean;
 	persist?: boolean;
 	debug?: boolean;
 }

@@ -41,10 +41,11 @@
   --border-default: var(--color-gray-200);
 
   --btn-plain-text: var(--color-tint-500);
+  --btn-plain-text-hover: var(--color-tint-700);
   --btn-plain-hover-bg: oklch(from var(--color-tint-500) l c h / 0.1);
 
   --btn-primary-bg: var(--color-tint-500);
-  --btn-primary-text: oklch(0.98 0.01 240);
+  --btn-primary-text: var(--color-tint-0);
   --btn-primary-hover: var(--color-tint-700);
 
   --btn-outline-border: var(--color-tint-500);
@@ -57,6 +58,10 @@
   --sidebar-item-hover-bg: var(--color-gray-100);
   --sidebar-item-active-text: var(--color-tint-600);
   --sidebar-item-active-bg: oklch(from var(--color-tint-500) l c h / 0.12);
+
+  --demo-btn-bg: white;
+  --demo-btn-text: var(--color-tint-500);
+  --demo-btn-text-hover: var(--color-tint-700);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -74,8 +79,10 @@
     --border-default: var(--color-gray-700);
 
     --btn-plain-text: var(--color-tint-300);
+    --btn-plain-text-hover: var(--color-tint-200);
     --btn-plain-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
 
+    --btn-primary-text: var(--color-tint-50);
     --btn-primary-hover: var(--color-tint-600);
 
     --btn-outline-border: var(--color-tint-400);
@@ -86,6 +93,11 @@
     --sidebar-item-hover-bg: var(--color-gray-700);
     --sidebar-item-active-text: var(--color-tint-300);
     --sidebar-item-active-bg: oklch(from var(--color-tint-400) l c h / 0.2);
+
+    --demo-btn-bg: var(--color-tint-900);
+    --demo-btn-text: var(--color-tint-300);
+    --demo-btn-text-hover: var(--color-tint-100);
+
   }
 }
 

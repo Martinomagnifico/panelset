@@ -1,6 +1,10 @@
 // Custom element defaults to display:inline; force block so height/overflow work.
 ps-panelset { display: block; }
 
+.is-activating {
+    pointer-events: none;
+}
+
 :is([data-panelset], ps-panelset) {
     position: relative;
     transition: height calc((var(--fadein-speed) + var(--fadein-delay)) * var(--height-duration-ratio)) var(--transition-timing);
