@@ -18,41 +18,41 @@ block content
 
 			+codeblock('CSS').
 				[data-panel] {
-				  --open-speed:      0.5s;
-				  --open-timing:     ease-in-out;
-				  --close-speed:     0.5s;
-				  --close-timing:    ease-in-out;
-				  --closed-opacity:  0;
+				  --ps-open-speed:      0.4s;
+				  --ps-open-timing:     ease-in-out;
+				  --ps-close-speed:     0.4s;
+				  --ps-close-timing:    ease-in-out;
+				  --ps-closed-opacity:  0;
 				}
 
 			dl.horizontal
-				dt #[code --open-speed]
-				dd Open transition duration. Default: #[code 0.5s].
-				dt #[code --open-timing]
+				dt #[code --ps-open-speed]
+				dd Open transition duration. Default: #[code 0.4s].
+				dt #[code --ps-open-timing]
 				dd Open easing function. Default: #[code ease-in-out].
-				dt #[code --close-speed]
-				dd Close transition duration. Default: #[code 0.5s].
-				dt #[code --close-timing]
+				dt #[code --ps-close-speed]
+				dd Close transition duration. Default: #[code 0.4s].
+				dt #[code --ps-close-timing]
 				dd Close easing function. Default: #[code ease-in-out].
-				dt #[code --closed-opacity]
+				dt #[code --ps-closed-opacity]
 				dd Opacity of #[code .panel-wrapper] when closed or closing. Default: #[code 0] (fades out). Set to #[code 1] to disable the inner fade.
 
 	.lane
 		.container
 			+anchor Default speed
 
-			.example
+			.card
 				.demo
 					button(aria-controls="panel-demo" aria-expanded="false") Toggle panel
 					div#panel-demo(data-panel data-panel-axis="vertical" class="is-closed")
 						.panel-wrapper
-							p This panel uses the default transition speed of #[code 0.5s]. As it opens, the container grows to its natural height while the inner content fades in. As it closes, the content fades out and the container shrinks back to zero.
+							p This panel uses the default transition speed of #[code 0.4s]. As it opens, the container grows to its natural height while the inner content fades in. As it closes, the content fades out and the container shrinks back to zero.
 
 	.lane
 		.container
 			+anchor Slower transitions
 
-			.example
+			.card
 				.demo
 					button(aria-controls="panel-slow-demo" aria-expanded="false") Toggle panel
 					div#panel-slow-demo(data-panel data-panel-axis="vertical" class="is-closed")
@@ -61,17 +61,17 @@ block content
 
 				+codeblock('CSS').
 					#panel-slow-demo {
-					  --open-speed:  1s;
-					  --close-speed: 1s;
+					  --ps-open-speed:  1s;
+					  --ps-close-speed: 1s;
 					}
 
 	.lane
 		.container
 			+anchor No fade
 
-			p Set #[code --closed-opacity: 1] to keep the content fully visible while the container grows and shrinks.
+			p Set #[code --ps-closed-opacity: 1] to keep the content fully visible while the container grows and shrinks.
 
-			.example
+			.card
 				.demo
 					button(aria-controls="panel-nofade-demo" aria-expanded="false") Toggle panel
 					div#panel-nofade-demo(data-panel data-panel-axis="vertical" class="is-closed")
@@ -80,7 +80,7 @@ block content
 
 				+codeblock('CSS').
 					#panel-nofade-demo {
-					  --closed-opacity: 1;
+					  --ps-closed-opacity: 1;
 					}
 
 	.lane
@@ -98,11 +98,11 @@ block content
 append styles
 	style.
 		#panel-slow-demo {
-			--open-speed:  1s;
-			--close-speed: 1s;
+			--ps-open-speed:  1s;
+			--ps-close-speed: 1s;
 		}
 		#panel-nofade-demo {
-			--closed-opacity: 1;
+			--ps-closed-opacity: 1;
 		}
 
 append scripts

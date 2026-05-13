@@ -1,30 +1,25 @@
-/* Note: All timing values must include a unit (e.g. '0s', not '0') */
+:root {
+    /* Panel & PanelSet */
+    --ps-open-speed:     0.4s;
+    --ps-open-timing:    ease-in-out;
+    --ps-close-speed:    0.4s;
+    --ps-close-timing:   ease-in-out;
 
-:is([data-panel], ps-panel) {
-    --open-speed:          0.5s;
-    --open-timing:         ease-in-out;
-    --close-speed:         0.5s;
-    --close-timing:        ease-in-out;
-    --panel-width:         320px;  /* inner .panel-wrapper width (hori panels) */
-    --closed-opacity:  0;      /* opacity of .panel-wrapper when closed/closing; set to 1 to disable the fade */
-}
+    /* Panel only */
+    --ps-panel-width:    320px;  /* inner .panel-wrapper width (horizontal panels) */
+    --ps-closed-opacity: 0;      /* set to 1 to keep content visible while closed/closing */
 
-:is([data-panelset], ps-panelset) {
-    --fadeout-speed: 0.25s;
-    --fadein-speed: 0.25s;
-    --fadein-delay: 0.25s;
-    --height-duration-ratio: 1;
-    --transition-timing: ease-in-out;
-    --fadeout-timing: ease-in;
-    --fadein-timing: ease-in-out;
-    --loading-panel-opacity: 0.1;
-    
-    --close-speed: 0.5s;
-    --open-speed: 0.5s;
-    --open-timing: ease-in-out;
-    --close-timing: ease-in-out;
-    
-    /* Calculated durations for loading phases */
-    --loading-dim-duration: calc(var(--fadeout-speed) * (1 - var(--loading-panel-opacity)));
-    --loading-fadeout-duration: calc(var(--fadeout-speed) * var(--loading-panel-opacity));
+    /* PanelSet */
+    --ps-fadeout-speed:          0.2s;
+    --ps-fadein-speed:           0.2s;
+    --ps-fadein-delay:           0.2s;
+    --ps-height-duration-ratio:  1;
+    --ps-transition-timing:      ease-in-out;
+    --ps-fadeout-timing:         ease-in;
+    --ps-fadein-timing:          ease-in-out;
+    --ps-loading-panel-opacity:  0.1;
+
+    /* Calculated — override these directly if you change the loading vars above */
+    --ps-loading-dim-duration:     calc(var(--ps-fadeout-speed) * (1 - var(--ps-loading-panel-opacity)));
+    --ps-loading-fadeout-duration: calc(var(--ps-fadeout-speed) * var(--ps-loading-panel-opacity));
 }

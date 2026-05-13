@@ -3,9 +3,6 @@ extends /views/templates/layouts/_base
 append variables
 	- pagetitle = "PanelSet — Transitions"
 
-append styles
-	link(rel="stylesheet" href="/src/assets/styles/tabs.scss")
-
 block content
 	.lane
 		.container
@@ -22,52 +19,52 @@ block content
 			+codeblock('CSS').
 				[data-panelset] {
 				  /* Panel opacity fades */
-				  --fadeout-speed:         0.25s;
-				  --fadeout-timing:        ease-in;
-				  --fadein-speed:          0.25s;
-				  --fadein-timing:         ease-in-out;
-				  --fadein-delay:          0.25s;
+				  --ps-fadeout-speed:         0.25s;
+				  --ps-fadeout-timing:        ease-in;
+				  --ps-fadein-speed:          0.25s;
+				  --ps-fadein-timing:         ease-in-out;
+				  --ps-fadein-delay:          0.25s;
 
 				  /* Container height animation */
-				  --height-duration-ratio: 1;        /* height duration = fadeout × ratio */
-				  --transition-timing:     ease-in-out;
+				  --ps-height-duration-ratio: 1;        /* height duration = fadeout × ratio */
+				  --ps-transition-timing:     ease-in-out;
 
 				  /* Open/close (closable PanelSet only) */
-				  --open-speed:            0.5s;
-				  --open-timing:           ease-in-out;
-				  --close-speed:           0.5s;
-				  --close-timing:          ease-in-out;
+				  --ps-open-speed:            0.4s;
+				  --ps-open-timing:           ease-in-out;
+				  --ps-close-speed:           0.4s;
+				  --ps-close-timing:          ease-in-out;
 				}
 
 			dl.horizontal
-				dt #[code --fadeout-speed]
+				dt #[code --ps-fadeout-speed]
 				dd Duration of the outgoing panel fade. Default: #[code 0.25s].
-				dt #[code --fadeout-timing]
+				dt #[code --ps-fadeout-timing]
 				dd Easing for the fade-out. Default: #[code ease-in].
-				dt #[code --fadein-speed]
+				dt #[code --ps-fadein-speed]
 				dd Duration of the incoming panel fade. Default: #[code 0.25s].
-				dt #[code --fadein-timing]
+				dt #[code --ps-fadein-timing]
 				dd Easing for the fade-in. Default: #[code ease-in-out].
-				dt #[code --fadein-delay]
+				dt #[code --ps-fadein-delay]
 				dd Delay before the incoming panel starts fading in. Default: #[code 0.25s].
-				dt #[code --height-duration-ratio]
-				dd Multiplier on the height transition duration relative to #[code --fadeout-speed]. Default: #[code 1].
-				dt #[code --transition-timing]
+				dt #[code --ps-height-duration-ratio]
+				dd Multiplier on the height transition duration relative to #[code --ps-fadeout-speed]. Default: #[code 1].
+				dt #[code --ps-transition-timing]
 				dd Easing for the height change during tab switching. Default: #[code ease-in-out].
-				dt #[code --open-speed]
-				dd Height transition duration when opening a closable PanelSet. Default: #[code 0.5s].
-				dt #[code --open-timing]
+				dt #[code --ps-open-speed]
+				dd Height transition duration when opening a closable PanelSet. Default: #[code 0.4s].
+				dt #[code --ps-open-timing]
 				dd Easing when opening. Default: #[code ease-in-out].
-				dt #[code --close-speed]
-				dd Height transition duration when closing. Default: #[code 0.5s].
-				dt #[code --close-timing]
+				dt #[code --ps-close-speed]
+				dd Height transition duration when closing. Default: #[code 0.4s].
+				dt #[code --ps-close-timing]
 				dd Easing when closing. Default: #[code ease-in-out].
 
 	.lane
 		.container
 			+anchor Default speed
 
-			.example
+			.card
 				.demo
 					.demo-controls
 						button(aria-controls="demo-panel-1") Short panel
@@ -79,9 +76,9 @@ block content
 		.container
 			+anchor Slower transitions
 
-			p Both fade-out and fade-in set to 1 second. Because #[code --fadein-delay] is also 1 second, the panels transition sequentially. The outgoing panel fully fades out before the incoming one fades in. Total time: 2 seconds.
+			p Both fade-out and fade-in set to 1 second. Because #[code --ps-fadein-delay] is also 1 second, the panels transition sequentially. The outgoing panel fully fades out before the incoming one fades in. Total time: 2 seconds.
 
-			.example
+			.card
 				.demo
 					.demo-controls
 						button(aria-controls="slowdemo-panel-1") Short panel
@@ -91,18 +88,18 @@ block content
 
 				+codeblock('CSS').
 					#slowdemo {
-					  --fadeout-speed: 1s;
-					  --fadein-speed:  1s;
-					  --fadein-delay:  1s;
+					  --ps-fadeout-speed: 1s;
+					  --ps-fadein-speed:  1s;
+					  --ps-fadein-delay:  1s;
 					}
 
 	.lane
 		.container
 			+anchor Crossfading
 
-			p Setting #[code --fadein-delay: 0s] makes both panels fade simultaneously, creating a crossfade. Total time matches whichever fade is longer.
+			p Setting #[code --ps-fadein-delay: 0s] makes both panels fade simultaneously, creating a crossfade. Total time matches whichever fade is longer.
 
-			.example
+			.card
 				.demo
 					.demo-controls
 						button(aria-controls="crossfade-panel-1") Short panel
@@ -112,9 +109,9 @@ block content
 
 				+codeblock('CSS').
 					#crossfade {
-					  --fadeout-speed: 2s;
-					  --fadein-speed:  2s;
-					  --fadein-delay:  0s;
+					  --ps-fadeout-speed: 2s;
+					  --ps-fadein-speed:  2s;
+					  --ps-fadein-delay:  0s;
 					}
 
 	.lane
@@ -134,14 +131,14 @@ block content
 append styles
 	style.
 		#slowdemo {
-			--fadeout-speed: 1s;
-			--fadein-speed:  1s;
-			--fadein-delay:  1s;
+			--ps-fadeout-speed: 1s;
+			--ps-fadein-speed:  1s;
+			--ps-fadein-delay:  1s;
 		}
 		#crossfade {
-			--fadeout-speed: 2s;
-			--fadein-speed:  2s;
-			--fadein-delay:  0s;
+			--ps-fadeout-speed: 2s;
+			--ps-fadein-speed:  2s;
+			--ps-fadein-delay:  0s;
 		}
 
 append scripts

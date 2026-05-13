@@ -57,6 +57,7 @@ export class PanelSet {
 		autoFocus: false,
 		persist: false,
 		interruptible: true,
+		manageTriggers: true,
 		debug: false
 	};
 
@@ -84,10 +85,12 @@ export class PanelSet {
 		closeOnTab:    ['closeOnTab',    'boolean'],
 		loadingHeight: ['loadingHeight', 'number'],
 		loadingDelay:  ['loadingDelay',  'number'],
-		returnFocus:   ['returnFocus',   'boolean'],
-		persist:       ['panelPersist',  'boolean'],
-		interruptible: ['interruptible', 'boolean'],
-		debug:         ['debug',         'boolean'],
+		autoFocus:      ['autoFocus',      'string'],
+		returnFocus:    ['returnFocus',    'boolean'],
+		persist:        ['panelPersist',   'boolean'],
+		interruptible:  ['interruptible',  'boolean'],
+		manageTriggers: ['manageTriggers', 'boolean'],
+		debug:          ['debug',          'boolean'],
 	};
 
 	/**
@@ -269,7 +272,7 @@ export class PanelSet {
 		});
 		this.element.style.height = '';
 		this._updateHighestPanel();
-		this._updateTabTriggers(this.activePanel);
+		if (this.config.manageTriggers) this._updateTabTriggers(this.activePanel);
 	}
 	
 
@@ -366,15 +369,17 @@ export class PanelSet {
 		this.element.style.height = '';
 		this.element.classList.remove('is-transitioning');
 		this.activePanel = newPanel;
-		this._updateTabTriggers(newPanel);
+		if (this.config.manageTriggers) this._updateTabTriggers(newPanel);
 	}
 
 	private _resolveAutoFocus(resolvedTrigger: HTMLElement | null, autoFocus?: AutoFocusMode): AutoFocusMode | undefined {
-		const attrValue = resolvedTrigger?.getAttribute('data-auto-focus');
-		if (attrValue != null) {
-			if (attrValue === 'true') return true;
-			if (attrValue === 'false') return false;
-			if (attrValue === 'heading' || attrValue === 'first' || attrValue === 'input') return attrValue as AutoFocusMode;
+		if (this.config.manageTriggers) {
+			const attrValue = resolvedTrigger?.getAttribute('data-auto-focus');
+			if (attrValue != null) {
+				if (attrValue === 'true') return true;
+				if (attrValue === 'false') return false;
+				if (attrValue === 'heading' || attrValue === 'first' || attrValue === 'input') return attrValue as AutoFocusMode;
+			}
 		}
 		if (autoFocus !== undefined) return autoFocus;
 		return this.config.autoFocus;
@@ -385,7 +390,7 @@ export class PanelSet {
 	}
 
 	// Shared helper for open/close
-	private _animateOpenClose(isOpening: boolean, withTransition: boolean): void {
+	private _animateOpenClose(isOpening: boolean, withTransition: boolean, event?: Event): void {
 		const action = isOpening ? 'opening' : 'closing';
 		const oppositeClass = `is-${isOpening ? 'closing' : 'opening'}`;
 		const actionClass = `is-${action}`;
@@ -394,12 +399,11 @@ export class PanelSet {
 
 		const signal = this._animOpenClose.start();
 
-		// Capture mid-animation height before removing the opposite class so we
-		// can resume from the current painted position when reversing.
+		// Capture position before removing the opposite class — needed to resume
+		// from where it is, not from the start, when reversing mid-animation.
 		const isReversing = this.element.classList.contains(oppositeClass);
 		const reverseStartHeight = isReversing ? this.element.offsetHeight : null;
 
-		// Remove opposite state if interrupting
 		this.element.classList.remove(oppositeClass);
 
 		if (isOpening) this.element.removeAttribute('inert');
@@ -410,28 +414,41 @@ export class PanelSet {
 			if (PanelSet._nativeInterpolateSize) {
 				if (isOpening) {
 					this.element.classList.remove('is-closed');
-					// Lock at an explicit px value so the rAF-triggered clear gives the
-					// browser a concrete before-to-auto pair to animate. Without this,
-					// removing is-closed and is-opening's height: auto land in the same
-					// synchronous task — no delta, no transition.
+					// Lock at px first so the rAF clear gives the browser a concrete
+					// before state. Without it, is-closed removal and is-opening's
+					// height: auto land in the same task — no delta, no transition.
 					this.element.style.height = reverseStartHeight !== null ? `${reverseStartHeight}px` : '0px';
 					requestAnimationFrame(() => {
-						this.element.style.height = ''; // CSS height: auto (from is-opening) takes over
+						this.element.style.height = ''; // is-opening's height: auto takes over
 						Core.waitForTransition(this.element, 'height').then(() => {
 							if (signal.aborted) return;
-							this.element.classList.remove(actionClass);
+							// Wait for the wrapper opacity transition too — its GPU layer
+							// keeps the clip alive in WebKit until it finishes.
+							const wrapperDone = this.panelWrapper
+								? Core.waitForTransition(this.panelWrapper)
+								: Promise.resolve();
+							wrapperDone.then(() => {
+								if (signal.aborted) return;
+								this.element.classList.remove(actionClass);
+								void this.element.offsetHeight;
+							});
 						});
 					});
 				} else {
-					// is-closing added above; CSS is-closing { height: 0 } with
-					// interpolate-size transitions from auto to 0 natively.
+					// Lock at px — interpolate-size alone can't animate auto → 0 in Firefox.
+					this.element.style.height = reverseStartHeight !== null
+						? `${reverseStartHeight}px`
+						: `${this.element.offsetHeight}px`;
 					requestAnimationFrame(() => {
+						this.element.style.height = ''; // is-closing's height: 0 takes over
 						Core.waitForTransition(this.element, 'height').then(() => {
 							if (signal.aborted) return;
 							this.element.classList.remove(actionClass);
+							void this.element.offsetHeight;
 							this.element.classList.add('is-closed');
 							this.element.setAttribute('inert', '');
-							if (this.config.returnFocus && this._returnFocusTarget) {
+							const byPointer = event instanceof PointerEvent && event.pointerType !== '';
+							if (this.config.returnFocus && this._returnFocusTarget && !byPointer) {
 								this._returnFocusTarget.focus();
 							}
 						});
@@ -443,7 +460,13 @@ export class PanelSet {
 				const currentHeight = this.element.offsetHeight;
 				this.element.style.height = `${currentHeight}px`;
 
-				if (isOpening) this.element.classList.remove('is-closed');
+				if (isOpening) {
+					this.element.classList.remove('is-closed');
+				} else {
+					// Force a flush so the Npx lock is committed before the rAF
+					// changes to 0px. Without it Firefox sees auto → 0px — non-animatable.
+					void getComputedStyle(this.element).height;
+				}
 
 				requestAnimationFrame(() => {
 					this.element.style.height = `${targetHeight}px`;
@@ -452,10 +475,12 @@ export class PanelSet {
 						if (signal.aborted) return;
 						this.element.style.height = '';
 						this.element.classList.remove(actionClass);
+						void this.element.offsetHeight;
 						if (!isOpening) {
 							this.element.classList.add('is-closed');
 							this.element.setAttribute('inert', '');
-							if (this.config.returnFocus && this._returnFocusTarget) {
+							const byPointer = event instanceof PointerEvent && event.pointerType !== '';
+							if (this.config.returnFocus && this._returnFocusTarget && !byPointer) {
 								this._returnFocusTarget.focus();
 							}
 						}
@@ -468,7 +493,8 @@ export class PanelSet {
 			} else {
 				this.element.classList.add('is-closed');
 				this.element.setAttribute('inert', '');
-				if (this.config.returnFocus && this._returnFocusTarget) {
+				const byPointer = event instanceof PointerEvent && event.pointerType !== '';
+				if (this.config.returnFocus && this._returnFocusTarget && !byPointer) {
 					this._returnFocusTarget.focus();
 				}
 			}
@@ -537,7 +563,8 @@ export class PanelSet {
 	 */
 	close(options?: ShowOptions): void {
 		const {
-			transition = true
+			transition = true,
+			event
 		} = options || {};
 
 		if (!this.config.closable) {
@@ -552,7 +579,7 @@ export class PanelSet {
 		if (isClosed && !isOpening) return;
 		if (this.element.classList.contains('is-transitioning') && !isLoading) return;
 
-		this._animateOpenClose(false, transition);
+		this._animateOpenClose(false, transition, event);
 	}
 
 
@@ -575,7 +602,7 @@ export class PanelSet {
 			// Just pass through to open() - it handles priority cascade
 			this.open({ event, transition, autoFocus });
 		} else {
-			this.close({ transition });
+			this.close({ transition, event });
 		}
 	}
 
@@ -634,7 +661,7 @@ export class PanelSet {
 				this.open({ event, transition, autoFocus: finalAutoFocus });
 			} else if (this.config.closable && this.config.closeOnTab) {
 				// Clicking the active tab while open: close if closeOnTab is enabled
-				this.close({ transition });
+				this.close({ transition, event });
 			}
 			return;
 		}
@@ -651,12 +678,12 @@ export class PanelSet {
 		}
 
 		this._activating = true;
-		if (this.config.interruptible === false) this._setTriggersActivating(true);
+		if (this.config.manageTriggers && this.config.interruptible === false) this._setTriggersActivating(true);
 
 		const prevPanel = this.pendingPanel;
 		const prevPanelId = prevPanel?.id;
 		this.pendingPanel = newPanel;
-		this._updateTabTriggers(newPanel);
+		if (this.config.manageTriggers) this._updateTabTriggers(newPanel);
 
 		this._persistState(panelId);
 
@@ -713,8 +740,8 @@ export class PanelSet {
 
 				// Add is-loading immediately so the wrapper dims without flash.
 			// The spinner's appearance is delayed via CSS transition-delay
-			// (--loading-delay) so it only shows for slow loads, without a JS timer.
-			this.element.style.setProperty('--loading-delay', `${this.config.loadingDelay}ms`);
+			// (--ps-loading-delay) so it only shows for slow loads, without a JS timer.
+			this.element.style.setProperty('--ps-loading-delay', `${this.config.loadingDelay}ms`);
 			this.element.classList.add('is-loading');
 
 			const hasPreviousPanel = this.activePanel && this.activePanel !== newPanel;
@@ -755,7 +782,7 @@ export class PanelSet {
 				if (signal.aborted) {
 					this._log(`Aborted during load: ${panelId}`);
 					this.element.classList.remove('is-loading');
-					this.element.style.removeProperty('--loading-delay');
+					this.element.style.removeProperty('--ps-loading-delay');
 					return;
 				}
 
@@ -769,19 +796,19 @@ export class PanelSet {
 				const err = error as Error;
 				this._log(`Load failed: ${err.message}`);
 				this.element.classList.remove('is-loading');
-				this.element.style.removeProperty('--loading-delay');
+				this.element.style.removeProperty('--ps-loading-delay');
 
 				if (err.name !== 'AbortError') {
 					console.error('Panel load error:', error);
 				}
 
 				this._activating = false;
-				if (this.config.interruptible === false) this._setTriggersActivating(false);
+				if (this.config.manageTriggers && this.config.interruptible === false) this._setTriggersActivating(false);
 				return;
 			}
 
 			this.element.classList.remove('is-loading');
-			this.element.style.removeProperty('--loading-delay');
+			this.element.style.removeProperty('--ps-loading-delay');
 			this.element.classList.remove('is-opening');
 		}
 
@@ -827,7 +854,11 @@ export class PanelSet {
 			outgoingPanel.setAttribute('inert', '');
 		}
 
-		requestAnimationFrame(() => {
+		// Double rAF: first frame commits incoming (opacity:0) state to the
+		// rendering pipeline; second frame adds active (opacity:1) so the
+		// fade-in transition fires. Single rAF causes Firefox to skip the
+		// transition and show the new panel at full opacity immediately.
+		requestAnimationFrame(() => requestAnimationFrame(() => {
 			newPanel.classList.add('active');
 			if (outgoingPanel && outgoingPanel !== newPanel) {
 				outgoingPanel.classList.remove('incoming');
@@ -863,14 +894,14 @@ export class PanelSet {
 				}
 
 				this._activating = false;
-				if (this.config.interruptible === false) this._setTriggersActivating(false);
+				if (this.config.manageTriggers && this.config.interruptible === false) this._setTriggersActivating(false);
 				this._dispatch<ActivationEventDetail>('ps:activationcomplete', {
 					panelId,
 					trigger: resolvedTrigger,
 					outgoingPanel
 				});
 			});
-		});
+		}));
 	}
 
 }

@@ -14,8 +14,9 @@ block content
 		.container
 			+anchor Constructor
 
-			.example.api
+			.card.api
 				h3.code new Panel(elementOrSelector: HTMLElement | string, options?: PanelConfig)
+				hr
 				p Creates a new Panel instance.
 				h4 Parameters:
 				dl
@@ -33,8 +34,9 @@ block content
 		.container
 			+anchor Instance methods
 
-			.example.api
+			.card.api
 				h3.code panel.open(event?): Promise&lt;void&gt;
+				hr
 				p Opens the panel. No-op if already open.
 				h4 Parameters:
 				dl
@@ -43,20 +45,23 @@ block content
 				h4 Returns:
 				p Promise that resolves when the opening transition completes.
 
-			.example.api
+			.card.api
 				h3.code panel.close(): void
+				hr
 				p Closes the panel. No-op if already closed.
 
-			.example.api
+			.card.api
 				h3.code panel.toggle(event?): void
+				hr
 				p Opens the panel if closed, closes it if open. Reverses a mid-animation close if called while closing.
 				h4 Parameters:
 				dl
 					dt.code event (optional)
 					dd The triggering event. Used for keyboard detection.
 
-			.example.api
+			.card.api
 				h3.code panel.onBeforeOpen(handler, options?): void
+				hr
 				p Registers a handler for async content loading before the panel opens. The handler runs before every open unless #[code once: true] is set.
 				h4 Parameters:
 				dl
@@ -71,32 +76,37 @@ block content
 					  el.querySelector('.panel-wrapper').innerHTML = html;
 					}, { once: true });
 
-			.example.api
+			.card.api
 				h3.code panel.destroy(): void
+				hr
 				p Tears down the instance: aborts any in-progress animation, removes all event listeners, resets the element to closed state, and clears the #[code element.panel] reference so the element can be re-initialised.
 
 	.lane
 		.container
 			+anchor Instance properties
 
-			.example.api
+			.card.api
 				h3.code panel.isOpen: boolean
+				hr
 				p #[strong Read-only.] #[code true] if the panel is open or mid-open-animation.
 
-			.example.api
+			.card.api
 				h3.code panel.element: HTMLElement
+				hr
 				p #[strong Read-only.] The #[code [data-panel]] DOM element.
 
-			.example.api
+			.card.api
 				h3.code panel.config: PanelConfig
+				hr
 				p #[strong Read-only.] The merged configuration object (1. defaults 2. data attributes 3. constructor options).
 
 	.lane
 		.container
 			+anchor Static methods
 
-			.example.api
+			.card.api
 				h3.code Panel.init(selectorOrOptions?, options?): Panel[]
+				hr
 				p Auto-initialises all panels matching the selector. Also wires up #[code [data-panel-trigger]] / #[code [data-panel]] implicit pairs.
 				h4 Parameters:
 				dl

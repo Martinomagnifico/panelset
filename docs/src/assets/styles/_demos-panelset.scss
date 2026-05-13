@@ -6,7 +6,7 @@
   svg {
     flex-shrink: 0;
     transform: rotate(-180deg);
-    transition: transform var(--close-speed, 0.5s) var(--close-timing, ease-in-out);
+    transition: transform var(--ps-close-speed, 0.4s) var(--ps-close-timing, ease-in-out);
   }
 
   &[aria-selected="true"] svg {
@@ -22,27 +22,41 @@
 .demo {
   hr {
     border: none;
-    height: 2px;
-    background: var(--btn-outline-border);
+    height: 3px;
+    background: var(--special-normal);
     border-radius: 2px;
     position: relative;
     z-index: 5;
   }
 
   #demo-closable {
+
+    --ps-fadeout-speed: 0.2s;
+    --ps-fadein-speed: 0.2s;
+    --ps-fadein-delay: 0.2s;
+
+    --ps-close-speed: 0.4s;
+    --ps-open-speed: 0.4s;
+
     margin-left: 1rem;
     margin-right: 1rem;
-    margin-top: -2px;
-    border: 2px solid var(--btn-outline-border);
-    background: var(--bg-surface);
-    overflow: hidden;
-    border-radius: 0 0 8px 8px;
+    margin-top: -3px;
+    border: 3px solid var(--special-normal);
+    background: var(--demo-surface);
+   
+    border-radius: 0 0 12px 12px;
+
+
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
-    position: absolute !important;
+    position: absolute;
     width: calc(100% - 4rem);
     left: 1rem;
     right: 1rem;
     z-index: 4;
+
+    &.is-opening, &.is-closing {
+      // border-radius: 0;
+    }
 
     &.is-closing, &.is-closed {
       border-color: transparent;

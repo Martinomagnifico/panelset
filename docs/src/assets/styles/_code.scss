@@ -1,10 +1,22 @@
 
 code, .code {
-	background: var(--bg-subtle);
+	background: var(--bg-surface-tint-contrast);
+
+	.card & {
+		background: var(--bg-surface);
+	}
+
 	padding: 0.2em 0.4em;
 	border-radius: 3px;
 	font-size: 1em;
 	display: inline-block;
+}
+
+.card .card {
+	border-radius: 4px;
+	code, .code {
+		background: var(--bg-surface-tint-contrast);
+	}
 }
 
 p code, li code, dl code, dt.code, td code {
@@ -13,13 +25,13 @@ p code, li code, dl code, dt.code, td code {
 	font-size: 0.9em;
 }
 
-p code, li code {
+p code, li code, h3.code, dt.code {
 	display: inline;
+	align-self: start;
 }
 
 pre {
-	background: var(--bg-surface-tint);
-	border: 1px solid var(--border-default);
+	// background: var(--bg-surface-tint);
 	border-radius: 6px;
 	padding: 1rem;
 	overflow-x: auto;
@@ -53,16 +65,23 @@ dl.horizontal {
 
 .code-block {
 	position: relative;
+	border-radius: 6px;
+	background: var(--bg-surface-tint-contrast);
+
+	.card & {
+		background: var(--bg-surface);
+	}
+	// box-shadow: 0 0 10px var(--border-default);
 
 	.code-header {
-		background: var(--bg-subtle);
+		// background: var(--bg-surface-tint);
 		padding: 0.5rem 0.5rem 0.5rem 1rem;
-		border: 1px solid var(--border-default);
-		border-bottom: none;
+		border-bottom: 1px solid var(--border-default);
+		// border-bottom: none;
 		border-radius: 6px 6px 0 0;
 		font-size: 0.875rem;
 		font-weight: 600;
-		color: var(--fg-muted);
+		color: var(--text-muted);
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
@@ -75,6 +94,11 @@ dl.horizontal {
 	p + & {
 		margin-top: 1rem;
 	}
+}
+
+.example .code-block pre, 
+.api .code-block pre {
+	background: var(--bg-surface);
 }
 
 .hljs-ln td.hljs-ln-numbers {
@@ -109,23 +133,19 @@ pre code.hljs {
 }
 
 button.copy {
-	background: var(--border-default);
+	background: var(--btn-primary-bg);
 	border: none;
 	border-radius: 3px;
 	padding: 0.2rem 0.5rem;
 	font-size: 1rem;
 	font-weight: 400;
-	color: var(--fg-muted);
+	color: var(--btn-primary-text);
 	cursor: pointer;
 	transition: background 0.2s, color 0.2s;
 	outline-width: 2px;
+	outline-offset: 2px;
 
 	&:hover {
-		background: var(--bg-surface);
-		color: var(--btn-primary-hover);
-	}
-	&.copied {
-		background: var(--btn-outline-text);
-		color: var(--btn-primary-text);
+		background: var(--btn-primary-hover);
 	}
 }

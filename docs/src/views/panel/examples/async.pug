@@ -22,7 +22,7 @@ block content
 
 			p The panel below fetches a random recipe from a public API when opened. A simulated delay makes the spinner visible. With #[code { once: true }] the content is cached, so reopening the panel skips the fetch.
 
-			.example
+			.card
 				.demo
 					button(aria-controls="async-panel-recipe" aria-expanded="false") Load recipe
 					div#async-panel-recipe(
@@ -66,7 +66,7 @@ block content
 		.container
 			+anchor Event detail properties
 
-			.example.api
+			.card.api
 				dl
 					dt signal
 					dd #[code AbortSignal]: pass to #[code fetch()] so in-flight requests cancel if the user closes the panel before it opens.

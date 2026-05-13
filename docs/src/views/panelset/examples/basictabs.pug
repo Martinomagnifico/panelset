@@ -3,10 +3,6 @@ extends /views/templates/layouts/_base
 append variables
 	- pagetitle = "Basic tabs"
 
-append styles
-	link(rel="stylesheet" href="/src/assets/styles/tabs.scss")
-
-
 block content
 	.lane
 		.container
@@ -18,7 +14,7 @@ block content
 		.container
 			+anchor Live demo
 
-			.example
+			.card
 
 				.demo
 					nav.tabs(role="tablist" aria-label="Content sections")
@@ -67,7 +63,3 @@ append scripts
 		script(type="module").
 			import PanelSet from 'panelset';
 			PanelSet.init({debug: true });
-
-
-prepend styles
-	link(rel="stylesheet" href="/src/assets/styles/tabs.scss")

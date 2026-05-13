@@ -6,6 +6,7 @@ export function log(prefix: string, element: HTMLElement, debug: boolean, messag
 	console.log(`[${prefix}] "${element.id || 'no id'}" -`, message);
 }
 
+
 let _interpolateSizeLogged = false;
 
 /**

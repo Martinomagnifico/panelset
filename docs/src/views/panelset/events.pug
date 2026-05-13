@@ -14,110 +14,100 @@ block content
 		.container
 			+anchor Available events
 
-			.example.api
-				h3.code.method-signature ps:ready
-				p Fires when the PanelSet instance is fully initialised.
-				h4 Detail:
-				dl
-					dt.code container: HTMLElement
-					dd The #[code [data-panelset]] container element.
-					dt.code instance: PanelSet
-					dd The PanelSet instance.
-				br
-				+codeblock('JavaScript').
-					document.addEventListener('ps:ready', e => {
-					  console.log('Initialised:', e.detail.container.id);
-					  console.log('Panel count:', e.detail.instance.panels.length);
-					});
+			.column.gap-1(data-panel-group data-panel-close-siblings)
+				+apiEvent("ps:ready")
+					p Fires when the PanelSet instance is fully initialised.
+					h4 Detail:
+					dl
+						dt.code container: HTMLElement
+						dd The #[code [data-panelset]] container element.
+						dt.code instance: PanelSet
+						dd The PanelSet instance.
+					+codeblock('JavaScript').
+						document.addEventListener('ps:ready', e => {
+						  console.log('Initialised:', e.detail.container.id);
+						  console.log('Panel count:', e.detail.instance.panels.length);
+						});
 
-			.example.api
-				h3.code.method-signature ps:beforeopen
-				p Fires before a panel activation begins. Attach a promise to #[code e.detail.promise] to delay the transition until async content is ready.
-				h4 Detail:
-				dl
-					dt.code panelId: string
-					dd ID of the panel being activated.
-					dt.code targetPanel: HTMLElement
-					dd The panel element being activated.
-					dt.code outgoingPanel: HTMLElement | null
-					dd The panel being deactivated, or #[code null] if none.
-					dt.code signal: AbortSignal
-					dd Aborted if the user triggers a different panel before this one loads.
-					dt.code promise: Promise | null
-					dd Set this to a promise to delay activation.
-				br
-				+codeblock('JavaScript').
-					container.addEventListener('ps:beforeopen', e => {
-					  const { targetPanel, signal } = e.detail;
-					  if (targetPanel.dataset.loaded === 'true') return;
-					  e.detail.promise = fetch(`/api/panel/${targetPanel.id}`, { signal })
-					    .then(r => r.text())
-					    .then(html => {
-					      targetPanel.innerHTML = html;
-					      targetPanel.dataset.loaded = 'true';
-					    });
-					});
-				p Or use the convenience method:
-				+codeblock('JavaScript').
-					panelSet.onBeforeOpen((targetPanel, signal) => {
-					  return fetch(`/api/panel/${targetPanel.id}`, { signal })
-					    .then(r => r.text())
-					    .then(html => targetPanel.innerHTML = html);
-					}, { once: true });
+				+apiEvent("ps:beforeopen")
+					p Fires before a panel activation begins. Attach a promise to #[code e.detail.promise] to delay the transition until async content is ready.
+					h4 Detail:
+					dl
+						dt.code panelId: string
+						dd ID of the panel being activated.
+						dt.code targetPanel: HTMLElement
+						dd The panel element being activated.
+						dt.code outgoingPanel: HTMLElement | null
+						dd The panel being deactivated, or #[code null] if none.
+						dt.code signal: AbortSignal
+						dd Aborted if the user triggers a different panel before this one loads.
+						dt.code promise: Promise | null
+						dd Set this to a promise to delay activation.
+					+codeblock('JavaScript').
+						container.addEventListener('ps:beforeopen', e => {
+						  const { targetPanel, signal } = e.detail;
+						  if (targetPanel.dataset.loaded === 'true') return;
+						  e.detail.promise = fetch(`/api/panel/${targetPanel.id}`, { signal })
+						    .then(r => r.text())
+						    .then(html => {
+						      targetPanel.innerHTML = html;
+						      targetPanel.dataset.loaded = 'true';
+						    });
+						});
+					p Or use the convenience method:
+					+codeblock('JavaScript').
+						panelSet.onBeforeOpen((targetPanel, signal) => {
+						  return fetch(`/api/panel/${targetPanel.id}`, { signal })
+						    .then(r => r.text())
+						    .then(html => targetPanel.innerHTML = html);
+						}, { once: true });
 
-			.example.api
-				h3.code.method-signature ps:activationstart
-				p Fires when activation is committed and transitions are about to begin (after async loading, if any).
-				h4 Detail:
-				dl
-					dt.code panelId: string
-					dd ID of the panel being activated.
-					dt.code trigger: HTMLElement | null
-					dd The element that triggered the activation, or #[code null] if programmatic.
-				br
-				+codeblock('JavaScript').
-					container.addEventListener('ps:activationstart', e => {
-					  console.log('Activating:', e.detail.panelId);
-					});
+				+apiEvent("ps:activationstart")
+					p Fires when activation is committed and transitions are about to begin (after async loading, if any).
+					h4 Detail:
+					dl
+						dt.code panelId: string
+						dd ID of the panel being activated.
+						dt.code trigger: HTMLElement | null
+						dd The element that triggered the activation, or #[code null] if programmatic.
+					+codeblock('JavaScript').
+						container.addEventListener('ps:activationstart', e => {
+						  console.log('Activating:', e.detail.panelId);
+						});
 
-			.example.api
-				h3.code.method-signature ps:activationcomplete
-				p Fires when the height and panel transitions have both finished.
-				h4 Detail:
-				dl
-					dt.code panelId: string
-					dd ID of the panel that is now active.
-					dt.code trigger: HTMLElement | null
-					dd The element that triggered the activation, or #[code null] if programmatic.
-					dt.code outgoingPanel: HTMLElement | null
-					dd The panel that was deactivated, or #[code null] on the first activation.
-				br
-				+codeblock('JavaScript').
-					container.addEventListener('ps:activationcomplete', e => {
-					  console.log('Now active:', e.detail.panelId);
-					});
+				+apiEvent("ps:activationcomplete")
+					p Fires when the height and panel transitions have both finished.
+					h4 Detail:
+					dl
+						dt.code panelId: string
+						dd ID of the panel that is now active.
+						dt.code trigger: HTMLElement | null
+						dd The element that triggered the activation, or #[code null] if programmatic.
+						dt.code outgoingPanel: HTMLElement | null
+						dd The panel that was deactivated, or #[code null] on the first activation.
+					+codeblock('JavaScript').
+						container.addEventListener('ps:activationcomplete', e => {
+						  console.log('Now active:', e.detail.panelId);
+						});
 
-			.example.api
-				h3.code.method-signature ps:activationaborted
-				p Fires when an in-progress activation is interrupted by a new one.
-				h4 Detail:
-				dl
-					dt.code panelId: string
-					dd ID of the panel whose activation was aborted.
-					dt.code trigger: HTMLElement | null
-					dd The element that triggered the aborted activation.
-				br
-				+codeblock('JavaScript').
-					container.addEventListener('ps:activationaborted', e => {
-					  console.log('Aborted:', e.detail.panelId);
-					});
-
+				+apiEvent("ps:activationaborted")
+					p Fires when an in-progress activation is interrupted by a new one.
+					h4 Detail:
+					dl
+						dt.code panelId: string
+						dd ID of the panel whose activation was aborted.
+						dt.code trigger: HTMLElement | null
+						dd The element that triggered the aborted activation.
+					+codeblock('JavaScript').
+						container.addEventListener('ps:activationaborted', e => {
+						  console.log('Aborted:', e.detail.panelId);
+						});
 
 	.lane
 		.container
 			+anchor Examples
 
-			.example
+			.card
 				p Switching to the Video tab plays the video. Switching away pauses it and resets the position. Activation events are logged to the console.
 				.demo
 					.demo-controls
@@ -161,9 +151,11 @@ append scripts
 		script(src="/lib/panelset.js" vite-ignore)
 		script.
 			PanelSet.init();
+			Panel.init();
 	else
 		script(type="module" src="/src/assets/scripts/example.js")
 		script(type="module" src="/src/assets/scripts/example-panelset-events.js")
 		script(type="module").
-			import { PanelSet } from 'panelset';
+			import { PanelSet, Panel } from 'panelset';
 			PanelSet.init({ debug: true });
+			Panel.init();

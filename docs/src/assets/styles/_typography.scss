@@ -33,7 +33,7 @@ h2,
 h3,
 h4 {
 	line-height: 1.2;
-	color: var(--heading-color);
+	color: var(--text-heading);
 	&:first-child {
 		margin-top: 0;
 	}
@@ -100,7 +100,8 @@ dl a {
 	text-decoration: underline;
 }
 
-.example,
+.example, 
+.card,
 .lane {
 	ul,
 	ol {
@@ -110,15 +111,11 @@ dl a {
 		margin: 0;
 		counter-reset: list;
 
-		* + & {
-			margin-top: var(--spacing-md);
-		}
-
 		--li-gap: 0.33em;
 		--col-gap: 4em;
 
 		li {
-			padding-left: var(--spacing-lg);
+			padding-left: 0;
 			position: relative;
 
 			& + li {
@@ -162,13 +159,23 @@ dl a {
 			border-bottom: 1px solid var(--border-default);
 
 			code {
-				font-size: 1em;
+				font-size: 0.9em;
 			}
 		}
 
 		th {
 			border-bottom-width: 2px;
 		}
+	}
+}
+
+.card {
+
+	* + ul {
+		padding-top: var(---padding-medium);
+	}
+	ul + * {
+		margin-top: var(--padding-medium);
 	}
 }
 
@@ -306,7 +313,7 @@ dl a {
 }
 
 *:focus-visible {
-	outline: 3px solid var(--link-focus);
+	outline: 2px solid var(--link-focus);
 }
 
 h1, h2, h3, h4, h5, a, button {
@@ -327,19 +334,24 @@ input {
 	font-size: inherit;
 	line-height: 150%;
 	padding: 2px 6px;
-	border: 1px solid var(--color-gray-300);
+	border: 1px solid var(--border-default);
 	border-radius: 4px;
 	font-family: inherit;
 	font-weight: inherit;
 	outline: 2px solid transparent;
 	outline-offset: 0;
+	background: none;
+	color: inherit;
 
 	&:focus, &:focus-visible {
-		border-color: var(--btn-outline-text);
-		outline: 2px solid var(--btn-outline-text);
+		border-color: var(--color-special-tint-600);
+		outline: 2px solid var(--color-special-tint-600);
 		&::placeholder {
 			opacity: 0;
 		}
+	}
+	* + & {
+		margin-top: 0.5rem;
 	}
 }
 

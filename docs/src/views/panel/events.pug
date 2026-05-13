@@ -14,62 +14,57 @@ block content
 		.container
 			+anchor Available events
 
-			.example.api
-				h3.code.method-signature panel:beforeopen
-				p Fires before the panel opens. Attach a promise to #[code e.detail.promise] to delay opening until async content is ready.
-				h4 Detail:
-				dl
-					dt.code trigger: HTMLElement | null
-					dd The element that initiated the open, or #[code null] if opened programmatically.
-					dt.code signal: AbortSignal
-					dd Aborted if the open is cancelled before the promise resolves.
-					dt.code promise: Promise | null
-					dd Set this to a promise to delay the open.
-				br
-				+codeblock('JavaScript').
-					panelEl.addEventListener('panel:beforeopen', e => {
-					  e.detail.promise = fetch('/api/content', { signal: e.detail.signal })
-					    .then(r => r.text())
-					    .then(html => { panelEl.querySelector('.panel-wrapper').innerHTML = html; });
-					});
-				p Or use the convenience method:
-				+codeblock('JavaScript').
-					panel.onBeforeOpen(async (el, signal) => {
-					  const html = await fetch('/content', { signal }).then(r => r.text());
-					  el.querySelector('.panel-wrapper').innerHTML = html;
-					}, { once: true });
+			.column.gap-1(data-panel-group data-panel-close-siblings)
+				+apiEvent("panel:beforeopen")
+					p Fires before the panel opens. Attach a promise to #[code e.detail.promise] to delay opening until async content is ready.
+					h4 Detail:
+					dl
+						dt.code trigger: HTMLElement | null
+						dd The element that initiated the open, or #[code null] if opened programmatically.
+						dt.code signal: AbortSignal
+						dd Aborted if the open is cancelled before the promise resolves.
+						dt.code promise: Promise | null
+						dd Set this to a promise to delay the open.
+					+codeblock('JavaScript').
+						panelEl.addEventListener('panel:beforeopen', e => {
+						  e.detail.promise = fetch('/api/content', { signal: e.detail.signal })
+						    .then(r => r.text())
+						    .then(html => { panelEl.querySelector('.panel-wrapper').innerHTML = html; });
+						});
+					p Or use the convenience method:
+					+codeblock('JavaScript').
+						panel.onBeforeOpen(async (el, signal) => {
+						  const html = await fetch('/content', { signal }).then(r => r.text());
+						  el.querySelector('.panel-wrapper').innerHTML = html;
+						}, { once: true });
 
-			.example.api
-				h3.code.method-signature panel:opening
-				p Fires when the open animation begins.
-				h4 Detail:
-				dl
-					dt.code trigger: HTMLElement | null
-					dd The element that initiated the open, or #[code null] if opened programmatically.
+				+apiEvent("panel:opening")
+					p Fires when the open animation begins.
+					h4 Detail:
+					dl
+						dt.code trigger: HTMLElement | null
+						dd The element that initiated the open, or #[code null] if opened programmatically.
 
-			.example.api
-				h3.code.method-signature panel:opened
-				p Fires when the panel is fully open (transition complete).
-				h4 Detail:
-				dl
-					dt.code trigger: HTMLElement | null
-					dd The element that initiated the open, or #[code null] if opened programmatically.
+				+apiEvent("panel:opened")
+					p Fires when the panel is fully open (transition complete).
+					h4 Detail:
+					dl
+						dt.code trigger: HTMLElement | null
+						dd The element that initiated the open, or #[code null] if opened programmatically.
 
-			.example.api
-				h3.code.method-signature panel:closing
-				p Fires when the close animation begins.
-				h4 Detail:
-				dl
-					dt.code trigger: HTMLElement | null
-					dd The element that last opened the panel, or #[code null] if closed programmatically.
+				+apiEvent("panel:closing")
+					p Fires when the close animation begins.
+					h4 Detail:
+					dl
+						dt.code trigger: HTMLElement | null
+						dd The element that last opened the panel, or #[code null] if closed programmatically.
 
-			.example.api
-				h3.code.method-signature panel:closed
-				p Fires when the panel is fully closed (transition complete).
-				h4 Detail:
-				dl
-					dt.code trigger: HTMLElement | null
-					dd The element that last opened the panel, or #[code null] if closed programmatically.
+				+apiEvent("panel:closed")
+					p Fires when the panel is fully closed (transition complete).
+					h4 Detail:
+					dl
+						dt.code trigger: HTMLElement | null
+						dd The element that last opened the panel, or #[code null] if closed programmatically.
 
 	.lane
 		.container
@@ -88,7 +83,7 @@ block content
 		.container
 			+anchor Examples
 
-			.example
+			.card
 				p Opening this panel plays the video. Closing it pauses playback and resets the position. Events are logged to the console.
 				.demo
 					button(aria-controls="ev-video-panel") Open
@@ -118,4 +113,3 @@ append scripts
 		script(type="module").
 			import { Panel } from 'panelset';
 			Panel.init({ debug: true });
-

@@ -14,8 +14,9 @@ block content
 		.container
 			+anchor Constructor
 
-			.example.api
+			.card.api
 				h3.code new PanelSet(elementOrSelector: HTMLElement | string, options?: PanelSetConfig)
+				hr
 				p Creates a new PanelSet instance.
 				h4 Parameters:
 				dl
@@ -33,8 +34,9 @@ block content
 		.container
 			+anchor Instance methods
 
-			.example.api
+			.card.api
 				h3.code panelSet.show(panelId: string, options?): Promise&lt;void&gt;
+				hr
 				p Activates a panel by ID. No-op if the panel is already active (unless #[code closeOnTab] is enabled).
 				h4 Parameters:
 				dl
@@ -56,28 +58,32 @@ block content
 					  panelSet.show('panel-2', { event, autoFocus: 'heading' });
 					});
 
-			.example.api
+			.card.api
 				h3.code panelSet.open(options?): void
+				hr
 				p Opens a closable PanelSet (#[code closable: true] required). No-op if already open.
 				h4 Parameters:
 				dl
 					dt.code options (optional)
 					dd #[code event], #[code transition], #[code autoFocus]: same as #[code show()].
 
-			.example.api
+			.card.api
 				h3.code panelSet.close(options?): void
+				hr
 				p Closes a closable PanelSet. No-op if already closed.
 				h4 Parameters:
 				dl
 					dt.code options (optional)
 					dd #[code transition?: boolean]
 
-			.example.api
+			.card.api
 				h3.code panelSet.toggle(options?): void
+				hr
 				p Opens if closed, closes if open. Same options as #[code open()].
 
-			.example.api
+			.card.api
 				h3.code panelSet.getActive(): string | null
+				hr
 				p Returns the ID of the currently active (or pending) panel, or #[code null].
 				br
 				+codeblock('JavaScript').
@@ -86,8 +92,9 @@ block content
 					  panelSet.show('step-3', { event });
 					}
 
-			.example.api
+			.card.api
 				h3.code panelSet.onBeforeOpen(handler, options?): void
+				hr
 				p Registers a handler for async content loading before panel activation.
 				h4 Parameters:
 				dl
@@ -107,28 +114,33 @@ block content
 		.container
 			+anchor Instance properties
 
-			.example.api
+			.card.api
 				h3.code panelSet.element: HTMLElement
+				hr
 				p #[strong Read-only.] The #[code [data-panelset]] container element.
 
-			.example.api
+			.card.api
 				h3.code panelSet.panels: HTMLElement[]
+				hr
 				p #[strong Read-only.] Array of all #[code [role="tabpanel"]] elements in this PanelSet.
 
-			.example.api
+			.card.api
 				h3.code panelSet.activePanel: HTMLElement
+				hr
 				p #[strong Read-only.] The currently visible panel element.
 
-			.example.api
+			.card.api
 				h3.code panelSet.config: PanelSetConfig
+				hr
 				p #[strong Read-only.] The merged configuration object (1. defaults 2. data attributes 3. constructor options).
 
 	.lane
 		.container
 			+anchor Static methods
 
-			.example.api
+			.card.api
 				h3.code PanelSet.init(selectorOrOptions?, options?): PanelSet[]
+				hr
 				p Auto-initialises all panelsets matching the selector. Stores the instance on each container as #[code container.panelSet].
 				h4 Parameters:
 				dl
@@ -147,8 +159,9 @@ block content
 					// Access instance later via the element
 					document.getElementById('my-tabs').panelSet.show('panel-2');
 
-			.example.api
+			.card.api
 				h3.code PanelSet.defaults: PanelSetConfig
+				hr
 				p #[strong Static property.] Default configuration applied to all new instances. Modify to change defaults globally.
 				br
 				+codeblock('JavaScript').

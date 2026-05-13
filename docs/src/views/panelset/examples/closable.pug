@@ -16,7 +16,7 @@ block content
 				p Below is an example of a script that uses some data-attributes to handle the open, close, and toggle actions. All they do is call the respective methods on the instance. You may choose your own attributes and code.
 
 
-			.example
+			.card
 				.demo
 					.demo-controls
 						button(aria-controls="demo-closable-panel-1" aria-selected="true")
@@ -46,7 +46,6 @@ block content
 						button.secondary(data-panelset-close="#demo-closable") Close
 						button.secondary(data-panelset-open="#demo-closable") Open
 						button.secondary(data-panelset-toggle="#demo-closable") Toggle
-
 					#demo-closable(data-panelset data-closable data-close-on-tab)
 						// Panels here
 

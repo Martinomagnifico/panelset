@@ -2,19 +2,22 @@
   padding: var(--standard-padding);
 }
 
-.example {
+.example, .api {
   position: relative;
   display: flex;
   flex-direction: column;
   padding: var(--standard-padding);
-  border: 2px solid var(--border-default);
   border-radius: 16px;
   gap: 1rem;
-  background: var(--bg-surface);
-
+  background: var(--bg-surface-tint);
+  
   h2 {
     margin: 0;
     font-size: 1.5rem;
+  }
+
+  h3 + hr {
+    margin-top: 0.5rem;
   }
 
   @media (max-width: 768px) {
@@ -24,39 +27,137 @@
   .code-block + * {
     margin-top: 1rem;
   }
+}
 
-  &.api {
-    gap: 0;
+.api {
+  gap: 0;
 
-    h3.code {
-      font-size: 1.2rem;
-      color: var(--btn-primary-hover);
-      margin-bottom: 0.5rem;
+
+  h3.code {
+    font-size: 1.2rem;
+    color: var(--btn-primary-hover);
+  }
+
+  h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.25rem;
+    margin-top: 1rem;
+    &.code {
+          color: var(--btn-primary-hover);
+    }
+  }
+
+  dt {
+    font-weight: 600;
+    margin-top: 0.5rem;
+    font-size: 0.9em;
+  }
+
+  .api-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 0.25rem 0;
+    cursor: pointer;
+    text-align: left;
+    gap: 1rem;
+    outline-offset: 6px;
+    outline-color: transparent;
+
+    &:focus {
+      outline-color: transparent;
+          outline-color: pink;
     }
 
-    h4 {
-      font-size: 1.1rem;
-      margin-bottom: 0.25rem;
-      margin-top: 1rem;
+    &:focus-visible {
+      outline: 3px solid var(--btn-primary-hover);
     }
 
-    dt {
-      font-weight: 600;
-      margin-top: 0.5rem;
-      font-size: 0.9em;
+    h3.code, h4.code {
+      flex: 1;
+      margin-bottom: 0;
+      align-self: start;
+    }
+
+    .chevron {
+      transition: transform var(--ps-open-speed) var(--ps-open-timing);
+      flex-shrink: 0;
+      color: var(--text-muted);
+      transform: rotate(-90deg);
+    }
+
+
+    &[aria-expanded="true"] .chevron {
+      transform: rotate(90deg);
     }
   }
 }
 
-.demo {
+.column {
+  display: flex;
+  flex-direction: column;
+}
+.gap-1 {
+  gap: 1rem;
+}
+.gap-2 {
+  gap: 2rem;
+}
+
+.card {
+  border: 3px solid transparent;
+}
+
+.card.no-padding {
+  transition: all var(--ps-open-speed) var(--ps-open-timing);
+
+  padding: 0;
+  gap: 0;
+
+  &:has([aria-expanded="true"]) {
+    background: var(--bg-surface-tint);
+    background: var(--demo-btn-bg);
+    border-color: var(--border-default)
+  }
+
+  button.api-trigger {
+    padding: var(--padding-medium);
+
+    h3.code, h4.code {
+      background: none;
+      padding: 0;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+  }
+  .panel-wrapper {
+    padding-top: 0;
+  }
+  
+  .card-content {
+    padding: var(--padding-medium);
+    border-top: 1px solid var(--border-default);
+
+    // .card {
+    //   border: 1px solid var(--border-default);
+    // }
+  }
+}
+
+.demo, .card.demo {
   position: relative;
-  background: var(--bg-surface-tint);
+  background: var(--demo-surface-tint);
   border-radius: 8px;
   padding: var(--standard-padding);
-  border: 2px solid var(--btn-outline-border);
+
+  border: 3px solid var(--special-normal);
+
 }
 .example.demo {
-  background: var(--bg-surface-tint);
+  background: var(--demo-surface-tint);
 }
 
 .grid-2,
@@ -92,6 +193,7 @@
   gap: 1.5rem;
   flex-direction: column;
 
+
   @container (min-width: 800px) {
     flex-direction: row;
     .card {
@@ -102,10 +204,9 @@
 
 .card {
   flex: 1;
-  border: 1px solid var(--border-default);
   border-radius: 8px;
   padding: 1rem;
-  background: var(--bg-surface-tint);
+  background: var(--bg-surface-tint-contrast);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
@@ -114,8 +215,9 @@
     margin-top: 0;
     margin-bottom: 0.5rem;
   }
-  &.no-padding {
-    padding: 0;
+
+  .card {
+    background: var(--bg-surface);
   }
 }
 .btn.bottom {
@@ -220,19 +322,23 @@
 }
 
 .demo button {
-  border: 2px solid currentColor;
+  border: 3px solid var(--special-normal);
   background: var(--demo-btn-bg);
-  color: var(--demo-btn-text);
+  color: var(--special-hover);
+  // box-shadow: 0 0 0 var(--special-shadow);
   padding: 0.25rem 1rem;
   border-radius: 24px;
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: color 0.2s;
+  transition: color 0.2s, background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
   outline-offset: 1px;
 
   &:hover {
-    color: var(--demo-btn-text-hover);
+    box-shadow: 0 4px 8px var(--special-shadow);
+  }
+  &:hover, &:focus-visible {
+    border-color: var(--special-hover);
   }
 
   &:disabled {
@@ -241,10 +347,7 @@
     pointer-events: none;
   }
 
-  &.secondary {
-    color: var(--bg-surface);
-    background: var(--btn-outline-border);
-  }
+
 }
 
 button[aria-expanded="false"] .when-open,

@@ -54,7 +54,7 @@ export class Panel {
 	};
 
 	// True when the browser supports interpolate-size: allow-keywords.
-	// When set, CSS animates height/width 0 ↔ auto natively and the JS
+	// When set, CSS animates height/width 0 to/from auto natively and the JS
 	// measure-animate cycle is skipped (open/close just toggle state classes).
 	private static readonly _nativeInterpolateSize =
 		typeof CSS !== 'undefined' && CSS.supports('interpolate-size: allow-keywords');
@@ -315,9 +315,9 @@ export class Panel {
 		if (body) lockBody(body);
 
 		// Add is-loading immediately — wrapper starts at opacity:0 so no flash.
-		// The spinner itself is delayed via CSS --loading-delay so it only appears
+		// The spinner itself is delayed via CSS --ps-loading-delay so it only appears
 		// for slow loads, without any JS timer involved.
-		this.element.style.setProperty('--loading-delay', `${this.config.loadingDelay}ms`);
+		this.element.style.setProperty('--ps-loading-delay', `${this.config.loadingDelay}ms`);
 		this.element.classList.add('is-loading');
 
 		let openTransition: Promise<void> | undefined;
@@ -343,7 +343,7 @@ export class Panel {
 			// AbortError or content error — fall through to signal check below
 		} finally {
 			this.element.classList.remove('is-loading');
-			this.element.style.removeProperty('--loading-delay');
+			this.element.style.removeProperty('--ps-loading-delay');
 			if (needsPositionLock) this.element.style.position = '';
 		}
 
@@ -402,13 +402,21 @@ export class Panel {
 		cssProp: 'height' | 'width',
 		event?:  Event
 	) {
-		// If we're interrupting a close mid-animation, capture the current
-		// rendered size before removing is-closing — that class carries the
-		// transition rule, so removing it snaps the element to the inline '0px'.
-		const isReversingClose  = this.element.classList.contains('is-closing');
-		const reverseStartSize  = isReversingClose
+		const isReversingClose = this.element.classList.contains('is-closing');
+		const reverseStartSize = isReversingClose
 			? (cssProp === 'height' ? this.element.offsetHeight : this.element.offsetWidth)
 			: null;
+
+		// Measure before touching classes. scrollHeight reads natural size without
+		// committing it as the CSS "from" state. offsetHeight after the class swap
+		// would lock the element at full height — Firefox sees height → height
+		// and skips the transition.
+		const cs0        = getComputedStyle(this.element);
+		const scrollSize = cssProp === 'height' ? this.element.scrollHeight : this.element.scrollWidth;
+		const borderSize = cssProp === 'height'
+			? (parseFloat(cs0.borderTopWidth)  || 0) + (parseFloat(cs0.borderBottomWidth) || 0)
+			: (parseFloat(cs0.borderLeftWidth) || 0) + (parseFloat(cs0.borderRightWidth)  || 0);
+		const target = scrollSize + borderSize;
 
 		this.element.classList.remove('is-closed', 'is-closing');
 		this.element.removeAttribute('inert');
@@ -422,51 +430,21 @@ export class Panel {
 
 		if (this.config.transitions) {
 			this.element.classList.add('is-opening');
+			this.element.style[cssProp] = reverseStartSize !== null ? `${reverseStartSize}px` : '0px';
+			if (body) lockBody(body);
 
-			if (Panel._nativeInterpolateSize) {
-				// Lock at an explicit px value so the rAF-triggered clear gives the
-				// browser a concrete before-to-auto pair to animate. Without this, removing
-				// is-closed and adding is-opening in the same synchronous task can leave
-				// both the before and after cascade values as 'auto' — no delta, no
-				// transition. @starting-style does not help here because it only applies
-				// to elements transitioning from display:none or first render.
-				// Deferring to rAF also keeps this frame in sync with any sibling close
-				// animation queued by _closeGroupSiblings().
-				this.element.style[cssProp] = reverseStartSize !== null ? `${reverseStartSize}px` : '0px';
-				if (body) lockBody(body);
-
-				requestAnimationFrame(() => {
-					this.element.style[cssProp] = ''; // CSS height: auto (from is-opening) takes over
-					Core.waitForTransition(this.element, cssProp).then(() => {
-						if (signal.aborted) return;
-						this.element.classList.remove('is-opening');
-						this._dispatch('panel:opened');
-						this._log('Opened');
-						this._handleAutoFocus(event);
-					});
+			requestAnimationFrame(() => {
+				this.element.style[cssProp] = `${target}px`;
+				void getComputedStyle(this.element)[cssProp];
+				Core.waitForTransition(this.element, cssProp).then(() => {
+					if (signal.aborted) return;
+					this.element.style[cssProp] = '';
+					this.element.classList.remove('is-opening');
+					this._dispatch('panel:opened');
+					this._log('Opened');
+					this._handleAutoFocus(event);
 				});
-			} else {
-				// JS fallback: measure natural size, lock start at 0 (or mid-close
-				// offset), then drive to the target in rAF so the browser has a
-				// painted start value before the transition begins.
-				this.element.style[cssProp] = '';
-				const target = cssProp === 'height' ? this.element.offsetHeight : this.element.offsetWidth;
-				this.element.style[cssProp] = reverseStartSize !== null ? `${reverseStartSize}px` : '0px';
-				if (body) lockBody(body);
-
-				requestAnimationFrame(() => {
-					this.element.style[cssProp] = `${target}px`;
-
-					Core.waitForTransition(this.element, cssProp).then(() => {
-						if (signal.aborted) return;
-						this.element.style[cssProp] = '';
-						this.element.classList.remove('is-opening');
-						this._dispatch('panel:opened');
-						this._log('Opened');
-						this._handleAutoFocus(event);
-					});
-				});
-			}
+			});
 		} else {
 			this._dispatch('panel:opened');
 			this._log('Opened');
@@ -490,7 +468,7 @@ export class Panel {
 		);
 	}
 
-	close() {
+	close(event?: Event) {
 		if (!this.isOpen) return;
 		if (this.config.interruptible === false && this._activating) return;
 
@@ -512,7 +490,8 @@ export class Panel {
 			this._persistState(false);
 			this._dispatch('panel:closed');
 			this._log('Closed');
-			if (this.config.returnFocus && this._returnFocusTarget) {
+			const byPointer = event instanceof PointerEvent && event.pointerType !== '';
+			if (this.config.returnFocus && this._returnFocusTarget && !byPointer) {
 				this._returnFocusTarget.focus();
 			}
 		};
@@ -522,40 +501,27 @@ export class Panel {
 			return;
 		}
 
-		if (Panel._nativeInterpolateSize) {
-			// Defer is-closing to rAF so it lands in the same frame as any sibling
-			// open animation queued via _closeGroupSiblings(). Both transitions then
-			// start together rather than the close leading by one frame.
-			requestAnimationFrame(() => {
-				this.element.classList.add('is-closing');
-				Core.waitForTransition(this.element, prop).then(() => {
-					if (signal.aborted) return;
-					finish();
-				});
+		const current = prop === 'height' ? this.element.offsetHeight : this.element.offsetWidth;
+		this.element.style[prop] = `${current}px`;
+		this.element.classList.add('is-closing');
+		// Force a flush so Firefox sees { is-closing, height: Npx } as a committed
+		// state. Without it the lock is overwritten in the rAF and Firefox sees
+		// auto → 0px in one step — non-animatable, so it jumps.
+		void getComputedStyle(this.element)[prop];
+		requestAnimationFrame(() => {
+			this.element.style[prop] = '0px';
+			Core.waitForTransition(this.element, prop).then(() => {
+				if (signal.aborted) return;
+				finish();
 			});
-		} else {
-			// JS fallback: lock at current px, then animate to 0 in rAF so the
-			// browser has a painted start value before the transition begins.
-			const current = prop === 'height' ? this.element.offsetHeight : this.element.offsetWidth;
-			this.element.style[prop] = `${current}px`;
-
-			requestAnimationFrame(() => {
-				this.element.classList.add('is-closing');
-				this.element.style[prop] = '0px';
-
-				Core.waitForTransition(this.element, prop).then(() => {
-					if (signal.aborted) return;
-					finish();
-				});
-			});
-		}
+		});
 	}
 
 	toggle(event?: Event) {
 		if (this.element.classList.contains('is-closing')) {
 			this.open(event); // reverse: re-open from mid-close
 		} else if (this.isOpen) {
-			this.close();
+			this.close(event);
 		} else {
 			if (event?.target) {
 				this._returnFocusTarget =
@@ -567,32 +533,23 @@ export class Panel {
 	}
 
 	/**
-	 * Tear down this Panel instance: abort any in-progress animation, remove
-	 * all event listeners, reset element state, and clear the element.panel
-	 * reference so the element can be re-initialised with new options.
+	 * Tear down this instance. Removes listeners, resets element state, and
+	 * clears element.panel so Panel.init() can re-bind it.
 	 */
 	destroy() {
-		// Abort any in-progress animation; pending .then() callbacks check
-		// signal.aborted and bail out cleanly.
-		this._anim.start();
-
-		// Remove all event listeners added in _bindTriggers() in one call.
+		this._anim.start(); // pending .then() callbacks check signal.aborted
 		this._listenerController.abort();
 
-		// Force the element back to a clean closed state.
 		this.element.classList.remove('is-opening', 'is-closing', 'is-loading');
 		this.element.classList.add('is-closed');
 		this.element.style[this._cssProp()] = '';
 		this.element.setAttribute('inert', '');
 
-		// Restore trigger state and unlock any pinned body content.
 		this._setTriggerState(false);
 		const body = findBody(this.element);
 		if (body) unlockBody(body);
 
-		// Clear the element back-reference so Panel.init() will re-bind it.
 		delete this.element.panel;
-
 		this._log('Destroyed');
 	}
 }

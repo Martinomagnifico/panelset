@@ -7,8 +7,7 @@ ps-panelset { display: block; }
 
 :is([data-panelset], ps-panelset) {
     position: relative;
-    transition: height calc((var(--fadein-speed) + var(--fadein-delay)) * var(--height-duration-ratio)) var(--transition-timing);
-    will-change: height;
+    transition: height calc((var(--ps-fadein-speed) + var(--ps-fadein-delay)) * var(--ps-height-duration-ratio)) var(--ps-transition-timing);
     box-sizing: border-box;
 
     .panel-wrapper {
@@ -27,20 +26,20 @@ ps-panelset { display: block; }
     }
     
     &.is-opening {
-        transition: height var(--open-speed) var(--open-timing), box-shadow var(--open-speed) var(--open-timing), border-color var(--open-speed) var(--open-timing);
+        transition: height var(--ps-open-speed) var(--ps-open-timing), box-shadow var(--ps-open-speed) var(--ps-open-timing), border-color var(--ps-open-speed) var(--ps-open-timing);
         
         .panel-wrapper {
-            transition: opacity var(--open-speed) var(--open-timing);
-            transition-delay: calc(0.5 * var(--open-speed));
+            transition: opacity var(--ps-open-speed) var(--ps-open-timing);
+            transition-delay: calc(0.5 * var(--ps-open-speed));
             opacity: 1;
         }
     }
     
     &.is-closing {
-        transition: height var(--close-speed) var(--close-timing), box-shadow var(--close-speed) var(--close-timing), border-color var(--open-speed) var(--open-timing);
+        transition: height var(--ps-close-speed) var(--ps-close-timing), box-shadow var(--ps-close-speed) var(--ps-close-timing), border-color var(--ps-open-speed) var(--ps-open-timing);
         
         .panel-wrapper {
-            transition: opacity var(--close-speed) var(--close-timing);
+            transition: opacity var(--ps-close-speed) var(--ps-close-timing);
             opacity: 0;
         }
     }
@@ -56,13 +55,13 @@ ps-panelset { display: block; }
         margin: 0;
 
         &.fade {
-            transition: opacity var(--fadeout-speed) var(--fadeout-timing);
+            transition: opacity var(--ps-fadeout-speed) var(--ps-fadeout-timing);
             pointer-events: none;
 
             &.incoming {
-                transition-duration: var(--fadein-speed);
-                transition-delay: var(--fadein-delay);
-                transition-timing-function: var(--fadein-timing);
+                transition-duration: var(--ps-fadein-speed);
+                transition-delay: var(--ps-fadein-delay);
+                transition-timing-function: var(--ps-fadein-timing);
             }
         }
 
@@ -81,6 +80,7 @@ ps-panelset { display: block; }
     }
     &.is-transitioning, &.is-opening, &.is-closing {
         overflow: hidden;
+        will-change: height;
     }
 
     // Alignment
@@ -127,13 +127,13 @@ ps-panelset { display: block; }
 
 @media (prefers-reduced-motion: reduce) {
     :is([data-panelset], ps-panelset) {
-        --fadeout-speed: 0s !important;
-        --fadein-speed: 0s !important;
-        --fadein-delay: 0s !important;
-        --loading-dim-duration: 0s !important;
-        --loading-fadeout-duration: 0s !important;
-        --close-speed: 0s !important;
-        --open-speed: 0s !important;
+        --ps-fadeout-speed: 0s !important;
+        --ps-fadein-speed: 0s !important;
+        --ps-fadein-delay: 0s !important;
+        --ps-loading-dim-duration: 0s !important;
+        --ps-loading-fadeout-duration: 0s !important;
+        --ps-close-speed: 0s !important;
+        --ps-open-speed: 0s !important;
         
         transition: none !important;
         

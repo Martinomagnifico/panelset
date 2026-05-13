@@ -23,11 +23,11 @@
 	}
 
 	[data-panel] {
-		--open-timing: ease-in-out;
-		--close-timing: ease-in-out;
-		--panel-width: 200px;
+		--ps-open-timing: ease-in-out;
+		--ps-close-timing: ease-in-out;
+		--ps-panel-width: 200px;
 
-		background: var(--bg-surface);
+		background: var(--demo-surface);
 		border-bottom: 1px solid var(--border-default);
 
 		&.is-closed {

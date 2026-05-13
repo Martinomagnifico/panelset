@@ -1,13 +1,13 @@
 button.close,
 button[data-panel-close] {
 	display: flex;
-	color: var(--fg-muted);
+	color: var(--text-muted);
 	--close-stroke-color: currentColor;
 	--close-stroke-width: 1.2;
 	--close-mainlength: 16px;
 
 	&:hover {
-		color: var(--fg-default);
+		color: var(--text-default);
 	}
 
 	font-weight: normal;
@@ -62,7 +62,7 @@ button[data-panel-close] {
 	&:focus:before {
 		width: 32px;
 		height: 32px;
-		background: var(--color-gray-100);
+		background: var(--color-tint-100);
 	}
 	&:hover svg {
 		line {

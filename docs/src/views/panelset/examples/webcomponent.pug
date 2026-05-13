@@ -3,8 +3,6 @@ extends /views/templates/layouts/_base
 append variables
 	- pagetitle = "PanelSet — Web Component"
 
-append styles
-	link(rel="stylesheet" href="/src/assets/styles/tabs.scss")
 
 block content
 	.lane
@@ -56,7 +54,7 @@ block content
 
 			p A tab interface using #[code &lt;ps-panelset&gt;] with plain attributes. Attribute names are the camelCase dataset key converted to kebab-case: #[code data-panelset-align] becomes #[code panelset-align].
 
-			.example
+			.card
 
 				.demo
 					nav.tabs(role="tablist" aria-label="Content sections")
@@ -131,6 +129,3 @@ append scripts
 			import { register } from 'panelset';
 			register();
 		script(type="module" src="/src/assets/scripts/example-wc-tabs.js")
-
-prepend styles
-	link(rel="stylesheet" href="/src/assets/styles/tabs.scss")

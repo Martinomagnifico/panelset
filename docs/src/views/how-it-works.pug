@@ -14,7 +14,7 @@ block content
 		.container
 			+anchor The problem
 
-			p It would be nice if CSS could transition elements between 0 and their natural size. Or have parent elements transition their size based on which child is visible. While there are already some advances in getting browsers ready to handle this (see the #[a(href="#interpolatesize") interpolate-size] section), it is not fully supported, and it also does not work in a generic way for all transitions. If you think differently, let me know.
+			p It would be nice if CSS could transition elements between 0 and their natural size. Or have parent elements transition their size based on which child is visible. While there are already some advances in getting browsers ready to handle this (see the #[a(href="#interpolatesize") interpolate-size] section), it is not fully supported, and it also does not work in a generic way for all transitions. 
 			
 			p There are a few approaches that are commonly used now, each with tradeoffs:
 
@@ -22,30 +22,14 @@ block content
 		.container
 			+anchor Common approaches
 
-			.example.api
+			.card.api
 				h3 Per-frame JavaScript
-				p Measure the target, then step to it on every animation frame.
 
-				+codeblock('JavaScript').
-					// Runs 60 times (or whatever the browser supports) per second
-					function animate(el, targetHeight, duration) {
-					  const start = el.offsetHeight;
-					  const startTime = performance.now();
-
-					  function step(now) {
-					    const progress = Math.min((now - startTime) / duration, 1);
-					    el.style.height = (start + (targetHeight - start) * progress) + 'px';
-					    if (progress < 1) requestAnimationFrame(step);
-					  }
-
-					  requestAnimationFrame(step);
-					}
-				p Used by: Older Bootstrap, jQuery UI, many hand-rolled implementations.
 				h4 Drawbacks:
 				ul
 					li Sixty layout recalculations per second, not a nice experience there. It will stutter on most devices. A nightmare on mobile.
 
-			.example.api
+			.card.api
 				h3 The max-height hack
 				p Pick a number (for example 2000px) that's at least bigger than your content. The browser will transition the max-height. This is a pure CSS solution with no JavaScript.
 
@@ -62,7 +46,7 @@ block content
 				ul
 					li Broken easing: the timing is counting towards the maximum size, not the actual content size. In the above example, the user will not see the '-out' part of the easing curve at all because the content has already stopped the growing.
 
-			.example.api
+			.card.api
 				h3 The CSS Grid workaround
 				p Transition #[code grid-template-rows] between #[code 0fr] and #[code 1fr]. The inner element uses #[code overflow: hidden] to clip the collapsed state. This is quite a smart trick.
 				+codeblock('CSS').
@@ -87,7 +71,7 @@ block content
 		.container
 			+anchor The lock-measure–animate–unlock (LMAU) cycle
 
-			p Panel and PanelSet use explicit values throughout. ‘Explicit’ sounds fancy, but it just means using pixel values instead of #[code auto]. It is the same basic approach as used in for example react-collapse, but extended here to horizontal axes and panel switching. The sequence is the same for both:
+			p Panel and PanelSet use explicit values throughout. ‘Explicit’ sounds fancy, but it just means using real or relative values instead of #[code auto]. It is the same basic approach as used in for example react-collapse, but extended here to horizontal axes and panel switching. The sequence is the same for both:
 
 			ol
 				li
@@ -115,7 +99,7 @@ block content
 				nextPanel.hidden = false;
 				const targetHeight = nextPanel.offsetHeight;
 
-				// 3. Animate (inside rAF so the start state is painted first)
+				// 3. Animate
 				requestAnimationFrame(() => {
 				  container.style.height = targetHeight + 'px';
 				});

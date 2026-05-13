@@ -15,6 +15,7 @@ export interface PanelSetConfig {
 	autoFocus?: AutoFocusMode;
 	persist?: boolean;
 	interruptible?: boolean;
+	manageTriggers?: boolean;
 	debug?: boolean;
 }
 

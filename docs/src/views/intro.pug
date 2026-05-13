@@ -68,6 +68,36 @@ block content
 						+chevron()
 
 
+	hr
+
+	.lane
+		.container
+			+anchor Features
+
+			.grid-3
+				.card
+					h4 CSS-driven animation
+					p JS measures and sets a pixel value. After that, the browser animates. No JS animation loop.
+
+				.card
+					h4 Async content
+					p Pass a promise to #[code onBeforeOpen()] and the panel waits. A spinner appears if loading takes longer than #[code loadingDelay] ms.
+
+				.card
+					h4 Interrupt-safe
+					p Click again mid-animation and it reverses from exactly where it is. No jumping.
+
+				.card
+					h4 Accessible
+					p #[code aria-expanded], #[code aria-controls], #[code aria-selected], #[code inert] — all handled. Add keyboard navigation, #[code autoFocus] and #[code returnFocus] as needed.
+
+				.card
+					h4 Persist &amp; deep-link
+					p Add #[code persist: true] and the active panel survives reloads. State goes into #[code localStorage] and the #[code ?panel=] URL parameter.
+
+				.card
+					h4 Reduced motion
+					p Respects #[code prefers-reduced-motion]. Users who prefer less motion get instant state changes instead.
 
 
 	hr

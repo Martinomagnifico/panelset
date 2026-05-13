@@ -170,9 +170,9 @@ ps.onBeforeOpen((targetPanel, signal) => {
 
 ```css
 [data-panel] {
-  --open-speed:   0.5s;
+  --open-speed:   0.4s;
   --open-timing:  ease-in-out;
-  --close-speed:  0.5s;
+  --close-speed:  0.4s;
   --close-timing: ease-in-out;
   --panel-width:  320px; /* horizontal panels */
 }
@@ -185,8 +185,8 @@ ps.onBeforeOpen((targetPanel, signal) => {
   --fadeout-speed:  0.25s;
   --fadein-speed:   0.25s;
   --fadein-delay:   0.25s;
-  --open-speed:     0.5s;
-  --close-speed:    0.5s;
+  --open-speed:     0.4s;
+  --close-speed:    0.4s;
   --open-timing:    ease-in-out;
   --close-timing:   ease-in-out;
   --transition-timing: ease-in-out;

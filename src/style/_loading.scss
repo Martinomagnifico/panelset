@@ -6,26 +6,26 @@
     &::after {
         content: '';
         position: absolute;
-        top: var(--spinner-top, 50%);
-        bottom: var(--spinner-bottom, auto);
-        left: var(--spinner-left, 50%);
-        right: var(--spinner-right, auto);
+        top: var(--ps-spinner-top, 50%);
+        bottom: var(--ps-spinner-bottom, auto);
+        left: var(--ps-spinner-left, 50%);
+        right: var(--ps-spinner-right, auto);
         width: 40px;
         height: 40px;
-        transform: var(--spinner-transform, translate(-50%, -50%));
+        transform: var(--ps-spinner-transform, translate(-50%, -50%));
         border: 4px solid rgba(0, 0, 0, 0.1);
         border-top-color: rgba(0, 100, 255, 0.8);
         border-radius: 50%;
         opacity: 0;
         pointer-events: none;
-        transition: opacity var(--loading-dim-duration) var(--transition-timing);
+        transition: opacity var(--ps-loading-dim-duration) var(--ps-transition-timing);
         animation: spin 0.8s linear infinite;
         animation-play-state: running;
         z-index: 11;
     }
     
     .panel-wrapper {
-        transition: opacity var(--fadeout-speed) var(--transition-timing) var(--fadein-speed);
+        transition: opacity var(--ps-fadeout-speed) var(--ps-transition-timing) var(--ps-fadein-speed);
     }
 }
 
@@ -34,12 +34,12 @@
 
     &::after {
         opacity: 1;
-        transition: opacity var(--loading-dim-duration) var(--transition-timing) var(--loading-delay, 0s);
+        transition: opacity var(--ps-loading-dim-duration) var(--ps-transition-timing) var(--ps-loading-delay, 0s);
     }
     
     .panel-wrapper {
-        transition: opacity var(--fadeout-speed) var(--transition-timing);
-        opacity: var(--loading-panel-opacity);
+        transition: opacity var(--ps-fadeout-speed) var(--ps-transition-timing);
+        opacity: var(--ps-loading-panel-opacity);
     }
 }
 

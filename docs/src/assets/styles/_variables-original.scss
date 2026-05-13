@@ -1,0 +1,125 @@
+:root {
+  --color-tint-0:   oklch(0.98 0.010 245);
+  --color-tint-50:  oklch(0.97 0.022 245);
+  --color-tint-100: oklch(0.91 0.045 245);
+  --color-tint-200: oklch(0.82 0.082 245);
+  --color-tint-300: oklch(0.72 0.115 245);
+  --color-tint-400: oklch(0.64 0.128 245);
+  --color-tint-500: oklch(0.58 0.130 245);
+  --color-tint-600: oklch(0.48 0.115 245);
+  --color-tint-650: oklch(0.44 0.105 245);
+  --color-tint-700: oklch(0.39 0.095 245);
+  --color-tint-800: oklch(0.29 0.070 245);
+  --color-tint-900: oklch(0.21 0.045 245);
+
+
+  --color-gray-0:  oklch(0.992 0.005 245);  
+  --color-gray-25:  oklch(0.99 0.008 245);
+  --color-gray-50:  oklch(0.97 0.009 245);
+  --color-gray-100: oklch(0.94 0.010 245);
+  --color-gray-200: oklch(0.89 0.011 245);
+  --color-gray-300: oklch(0.79 0.012 245);
+  --color-gray-400: oklch(0.64 0.013 245);
+  --color-gray-500: oklch(0.47 0.015 245);
+  --color-gray-600: oklch(0.35 0.017 245);
+  --color-gray-700: oklch(0.24 0.018 245);
+  --color-gray-750: oklch(0.20 0.018 245);
+  --color-gray-800: oklch(0.15 0.019 245);
+  --color-gray-850: oklch(0.13 0.019 245);
+  --color-gray-900: oklch(0.10 0.020 245);
+  --color-gray-950: oklch(0.07 0.022 245);
+}
+
+:root {
+  --heading-color: var(--color-gray-800);
+  --bg-surface: var(--color-gray-25);
+  --bg-surface-tint: var(--color-gray-50);
+  --bg-sidebar: var(--color-gray-50);
+
+  --fg-default: var(--color-gray-800);
+  --fg-muted: var(--color-gray-600);
+
+  --link-focus: var(--color-tint-600);
+  --border-default: var(--color-gray-200);
+
+  --btn-plain-text: var(--color-tint-500);
+  --btn-plain-text-hover: var(--color-tint-700);
+  --btn-plain-hover-bg: oklch(from var(--color-tint-500) l c h / 0.1);
+
+  --btn-primary-bg: var(--color-tint-500);
+  --btn-primary-text: var(--color-tint-0);
+  --btn-primary-hover: var(--color-tint-700);
+
+  --btn-outline-border: var(--color-tint-500);
+  --btn-outline-text: var(--color-tint-500);
+  --btn-outline-hover-bg: oklch(from var(--color-tint-500) l c h / 0.1);
+
+  --bg-subtle: var(--color-gray-100);
+
+  --sidebar-item-text: var(--color-gray-600);
+  --sidebar-item-hover-bg: var(--color-gray-100);
+  --sidebar-item-active-text: var(--color-tint-600);
+  --sidebar-item-active-bg: oklch(from var(--color-tint-500) l c h / 0.12);
+
+  --demo-btn-bg: white;
+  --demo-btn-text: var(--color-tint-500);
+  --demo-btn-text-hover: var(--color-tint-700);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --heading-color: var(--color-gray-100);
+    --bg-surface: var(--color-gray-800);
+    --bg-surface-tint: var(--color-gray-750);
+    --bg-sidebar: var(--color-gray-750);
+    --bg-subtle: var(--color-gray-700);
+
+    --fg-default: var(--color-gray-300);
+    --fg-muted: var(--color-gray-500);
+
+    --link-focus: var(--color-tint-200);
+    --border-default: var(--color-gray-700);
+
+    --btn-plain-text: var(--color-tint-300);
+    --btn-plain-text-hover: var(--color-tint-200);
+    --btn-plain-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
+
+    --btn-primary-text: var(--color-tint-50);
+    --btn-primary-hover: var(--color-tint-600);
+
+    --btn-outline-border: var(--color-tint-400);
+    --btn-outline-text: var(--color-tint-300);
+    --btn-outline-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
+
+    --sidebar-item-text: var(--color-gray-300);
+    --sidebar-item-hover-bg: var(--color-gray-700);
+    --sidebar-item-active-text: var(--color-tint-300);
+    --sidebar-item-active-bg: oklch(from var(--color-tint-400) l c h / 0.2);
+
+    --demo-btn-bg: var(--color-tint-900);
+    --demo-btn-text: var(--color-tint-300);
+    --demo-btn-text-hover: var(--color-tint-100);
+
+  }
+}
+
+:root {
+  --doc-max-width: 1000px;
+
+  --doc-sidebar-width: 200px;
+  --doc-code-transparent: #a5a5a533;
+
+  --padding-large: 1.25rem;
+  --padding-medium: 1rem;
+  --padding-small: 0.75rem;
+
+  --standard-padding: var(--padding-small);
+
+  @media (min-width: 480px) {
+    --standard-padding: var(--padding-medium);
+  }
+  @media (min-width: 769px) {
+    --standard-padding: var(--padding-large);
+    --doc-sidebar-width: 256px;
+  }
+}

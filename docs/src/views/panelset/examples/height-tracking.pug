@@ -3,8 +3,6 @@ extends /views/templates/layouts/_base
 append variables
 	- pagetitle = "Height tracking"
 
-append styles
-	link(rel="stylesheet" href="/src/assets/styles/tabs.scss")
 
 block content
 	.lane
@@ -16,29 +14,29 @@ block content
 	.lane
 		.container
 			h2 Live demo
-			p In this demo, we position the panelset and a row of buttons inside a centered interface. The first example doesn't have tracking enabled, so you can see how the interface height changes as you switch panels, which might be annoying to use. The second example has tracking enabled, so the interface height stays consistent.
+			p In this demo, we position the panelset and a row of buttons inside a centered interface. The first example doesn't have tracking enabled, so you can see how the interface height changes as you switch panels, #[strong which might be annoying to use, because the tab buttons move away from the cursor]. The second example has tracking enabled, so the interface height stays consistent.
 			p Note that the max height (or the height/min-height of your container) is determined by the tallest panel, so if you have a lot of content in one panel, it will make the entire interface taller. Use this option when you want to avoid any height changes, but be mindful of resulting panels with empty space under it.
 
 
-			.example
+			.card
 				h4 Tracking off
 				.demo.largeparent
-					nav.tabs(role="tablist" aria-label="Content sections")
-						button(role="tab" aria-controls="notracking-panel-1" aria-selected="true") Features
-						button(role="tab" aria-controls="notracking-panel-2") Pricing
-						button(role="tab" aria-controls="notracking-panel-3") Support
 					.tabinterface
+						nav.tabs(role="tablist" aria-label="Content sections")
+							button(role="tab" aria-controls="notracking-panel-1" aria-selected="true") Features
+							button(role="tab" aria-controls="notracking-panel-2") Pricing
+							button(role="tab" aria-controls="notracking-panel-3") Support
 						+examplepanelset('notracking').tab-content
 
 				h4 Tracking on
 				.demo.largeparent
-
-					nav.tabs(role="tablist" aria-label="Content sections")
-						button(role="tab" aria-controls="demo-panel-1" aria-selected="true") Features
-						button(role="tab" aria-controls="demo-panel-2") Pricing
-						button(role="tab" aria-controls="demo-panel-3") Support
-					.tabinterface(data-panelset-trackheight)
-						+examplepanelset('demo').tab-content
+					.tabinterface
+						nav.tabs(role="tablist" aria-label="Content sections")
+							button(role="tab" aria-controls="demo-panel-1" aria-selected="true") Features
+							button(role="tab" aria-controls="demo-panel-2") Pricing
+							button(role="tab" aria-controls="demo-panel-3") Support
+						div(data-panelset-trackheight)
+							+examplepanelset('demo').tab-content
 
 
 				+codeblock('HTML')
@@ -46,14 +44,15 @@ block content
 						button(role="tab" aria-controls="demo-panel-1" aria-selected="true") Features
 						button(role="tab" aria-controls="demo-panel-2") Pricing
 						button(role="tab" aria-controls="demo-panel-3") Support
-					.tabinterface(data-panelset-trackheight)
+					div(data-panelset-trackheight)
 						+examplepanelset('demo').tab-content
+
 
 				h3 How to use it
 				p To enable height tracking, simply add the #[code data-panelset-trackheight] attribute to any parent container of the #[code data-panelset] element. This will make PanelSet calculate the tallest panel and add a CSS variable #[code --ps-max-height] on that parent container. You need to use that variable yourself in your styling, either as a height or min-height to see the effect:
 
 				+codeblock('CSS').
-					.tabinterface {
+					[data-panelset-trackheight] {
 					    height: var(--ps-max-height);
 					}
 
@@ -102,7 +101,7 @@ append scripts
 append styles
 	style.
 		.largeparent {
-			height: 400px;
+			min-height: 400px;
 			display: flex;
 			flex-direction: column;
 			padding: 1rem;
@@ -112,48 +111,7 @@ append styles
 
 		.tabinterface {
 			width: min(100%, 500px);
+		}
+		[data-panelset-trackheight] {
 			height: var(--ps-max-height);
-		}
-
-		/* Tab-specific styles for this example */
-		.tabs {
-			width: min(100%, 500px);
-			padding: 0 0.5rem;
-			display: flex;
-			box-sizing: border-box;
-		}
-		
-		.tabs button {
-			background: transparent;
-			border: none;
-			border-bottom: 3px solid transparent;
-			padding: 0.75rem 1.5rem;
-			font-size: 1rem;
-			font-weight: 500;
-			color: #6b7280;
-			cursor: pointer;
-			transition: all 0.2s;
-		}
-
-		@media (max-width: 540px) {
-			.tabs button {
-				padding: 0.75rem 1rem;
-			}
-		}
-			
-		.tabs button:hover {
-			color: #3b82f6;
-			background: #f9fafb;
-		}
-		
-		.tabs button[aria-selected="true"] {
-			color: #3b82f6;
-			border-bottom-color: #3b82f6;
-		}
-		
-		.tab-content {
-			padding: 1.5rem;
-			background: white;
-			border: 1px solid #e5e7eb;
-			border-radius: 6px;
 		}

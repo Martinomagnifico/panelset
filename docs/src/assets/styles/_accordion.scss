@@ -9,8 +9,8 @@ ul[data-panel-group] {
   }
 
   > li {
-    border: 1px solid var(--btn-outline-border);
-    background: var(--bg-surface);
+    border: 1px solid var(--special-normal);
+    background: var(--demo-surface);
     border-radius: 4px;
 
     &:before {

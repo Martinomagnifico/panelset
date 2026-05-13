@@ -17,13 +17,13 @@ block content
 
 			p #[code Panel] manages #[code aria-expanded] on all trigger elements (#[code [aria-controls]]) automatically. It also uses the #[code inert] attribute on closed panels to remove them from the tab order and accessibility tree without affecting layout.
 
-			.example.api
+			.card.api
 				h3 Trigger markup
 				+codeblock('HTML').
 					<!-- aria-expanded is set automatically by Panel -->
 					<button aria-controls="my-panel" aria-expanded="false">Toggle</button>
 
-			.example.api
+			.card.api
 				h3 Panel markup
 				p Use #[code role="dialog"] for modal-like sidebars, #[code role="region"] for inline panels.
 				+codeblock('HTML').
@@ -34,7 +34,7 @@ block content
 					  </div>
 					</div>
 
-			.example.api
+			.card.api
 				h3 Focus management
 				p Use #[code autoFocus] to move focus into the panel on open, and #[code returnFocus] to return it to the trigger on close.
 				+codeblock('JS').
@@ -49,7 +49,7 @@ block content
 
 			p PanelSet manages #[code aria-selected] automatically on all #[code [aria-controls]] trigger elements. It is set immediately when a tab switch is committed, before the animation ends. The #[code inert] attribute is applied to the closed container and to panels that are not yet visible during a transition.
 
-			.example.api
+			.card.api
 				h3 What PanelSet does automatically
 
 				table.table
@@ -68,7 +68,7 @@ block content
 							td Closable panelset is closed
 							td Adds #[code inert] to the container, removing it and its contents from the tab order entirely
 
-			.example.api
+			.card.api
 				h3 What you still need to provide
 
 				ul
@@ -80,7 +80,7 @@ block content
 		.container
 			+anchor('h2') PanelSet - required markup
 
-			.example.api
+			.card.api
 				h3 Panel elements
 				p Every panel must have #[code role="tabpanel"] and a unique #[code id].
 				+codeblock('HTML').
@@ -89,7 +89,7 @@ block content
 					  <div role="tabpanel" id="panel-2" aria-labelledby="tab-2"><!-- Content --></div>
 					</div>
 
-			.example.api
+			.card.api
 				h3 Tab buttons
 				p For proper tab interfaces, wrap buttons in a #[code role="tablist"] with #[code role="tab"] and #[code aria-controls].
 				+codeblock('HTML').
@@ -107,7 +107,7 @@ block content
 			+anchor('h3', 'a11y-heading') autoFocus: 'heading'
 			p Focus moves to the first heading in the incoming panel. Headings must have #[code tabindex="-1"] to be programmatically focusable.
 
-			.example
+			.card
 				.demo
 					.demo-controls
 						button(aria-controls="a11y-h-panel-1") Panel 1
@@ -117,8 +117,8 @@ block content
 						.panel-wrapper
 							div.active(role="tabpanel" id="a11y-h-panel-1" aria-labelledby="a11y-h-tab-1")
 								h3(tabindex="-1") Key Features
-								p Switch to this panel with keyboard to see focus land on this heading.
-								a(href="#a11y-heading") A focusable link in this panel
+								p Switch to this panel with keyboard to see focus land on this heading. Here is #[a(href="#a11y-heading") A focusable link in this panel].
+								
 							div(role="tabpanel" id="a11y-h-panel-2" hidden aria-labelledby="a11y-h-tab-2")
 								h3(tabindex="-1") Pricing Plans
 								p Switch to this panel with keyboard to see focus land on this heading.
@@ -131,7 +131,7 @@ block content
 			+anchor('h3', 'a11y-first') autoFocus: 'first'
 			p Focus moves to the first focusable element. Kind of ideal for wizard steps where you want the user in the form immediately.
 
-			.example
+			.card
 				.demo
 					.demo-controls
 						button(aria-controls="a11y-f-panel-1") Step 1
@@ -163,13 +163,43 @@ block content
 							| Next
 							+chevron()
 
+			+anchor('h3', 'a11y-input') autoFocus: 'input'
+			p Focus moves to the first #[code input], #[code select], or #[code textarea] in the incoming panel — for #[strong all] users, not just keyboard. Unlike #[code 'first'], mouse and touch activations also land in the field. Use this when the entire point of opening the panel is to fill something in, like a search box or login form.
+
+			.card
+				.demo
+					.demo-controls
+						button(aria-controls="a11y-i-panel-1") Search
+						button(aria-controls="a11y-i-panel-2") Sign in
+						button(aria-controls="a11y-i-panel-3") Notes
+					div#a11y-input-demo(data-panelset)
+						.panel-wrapper
+							div.active(role="tabpanel" id="a11y-i-panel-1" aria-label="Search")
+								h3 Search
+								p Try opening this panel with your mouse — focus lands on the field immediately.
+								label
+									| Search:
+									input(type="search" placeholder="Type to search…")
+							div(role="tabpanel" id="a11y-i-panel-2" hidden aria-label="Sign in")
+								h3 Sign in
+								p Works the same way here. Click the button above with your mouse and start typing.
+								label
+									| Email:
+									input(type="email" placeholder="you@example.com")
+							div(role="tabpanel" id="a11y-i-panel-3" hidden aria-label="Notes")
+								h3 Notes
+								p A textarea counts too.
+								label
+									| Note:
+									textarea(placeholder="Type a note…")
+
 	.lane
 		.container
 			+anchor('h2') autoFocus options
 
 			p Both #[code Panel] and #[code PanelSet] support the same #[code autoFocus] values.
 
-			.example.api
+			.card.api
 				table.table
 					thead
 						tr
@@ -198,7 +228,7 @@ block content
 							td Nothing (no focus movement)
 							td Page load, mouse-only interfaces
 
-			.example.api
+			.card.api
 				h3 Keyboard vs. mouse detection
 
 				p When you pass the #[code event] to #[code show()], PanelSet only moves focus on keyboard activation (Enter/Space). Mouse clicks skip the focus movement, preventing unwanted scroll.
@@ -222,7 +252,7 @@ block content
 
 			p Every panel needs an accessible name so screen readers can announce what content is being shown.
 
-			.example.api
+			.card.api
 				h3 aria-labelledby (recommended for tabs)
 				p Links the panel to its tab button. The button’s text becomes the panel’s accessible name, which is announced when the panel is shown.
 				+codeblock('HTML').
@@ -232,7 +262,7 @@ block content
 					  <!-- Content -->
 					</div>
 
-			.example.api
+			.card.api
 				h3 aria-label (for panels without tabs)
 				p Use for wizard steps, sub-panels, or any panel without a corresponding tab.
 				+codeblock('HTML').
@@ -249,6 +279,7 @@ append scripts
 		script.
 			new PanelSet('#a11y-heading-demo', { autoFocus: 'heading' });
 			new PanelSet('#a11y-first-demo', { autoFocus: 'first' });
+			new PanelSet('#a11y-input-demo', { autoFocus: 'input' });
 	else
 		script(type="module" src="/src/assets/scripts/example.js")
 		script(type="module" src="/src/assets/scripts/example-accessibility.js")
@@ -256,3 +287,4 @@ append scripts
 			import { PanelSet } from 'panelset';
 			new PanelSet('#a11y-heading-demo', { autoFocus: 'heading' });
 			new PanelSet('#a11y-first-demo', { autoFocus: 'first' });
+			new PanelSet('#a11y-input-demo', { autoFocus: 'input' });

@@ -7,13 +7,13 @@ ps-panel { display: block; }
 	&::after {
 		content: '';
 		position: absolute;
-		top: var(--spinner-top, 50%);
-		bottom: var(--spinner-bottom, auto);
-		left: var(--spinner-left, 50%);
-		right: var(--spinner-right, auto);
+		top: var(--ps-spinner-top, 50%);
+		bottom: var(--ps-spinner-bottom, auto);
+		left: var(--ps-spinner-left, 50%);
+		right: var(--ps-spinner-right, auto);
 		width: 32px;
 		height: 32px;
-		transform: var(--spinner-transform, translate(-50%, -50%));
+		transform: var(--ps-spinner-transform, translate(-50%, -50%));
 		border: 3px solid rgba(0, 0, 0, 0.1);
 		border-top-color: rgba(0, 100, 255, 0.8);
 		border-radius: 50%;
@@ -30,42 +30,42 @@ ps-panel { display: block; }
 	}
 
 	// Wrapper hidden when closed; fades in when opening, out when closing.
-	// Set --closed-opacity: 1 to disable the fade (content stays opaque throughout).
+	// Set --ps-closed-opacity: 1 to disable the fade (content stays opaque throughout).
 	&.is-closed .panel-wrapper {
-		opacity: var(--closed-opacity, 0);
+		opacity: var(--ps-closed-opacity, 0);
 		pointer-events: none;
 	}
 
 	&.is-opening .panel-wrapper {
 		opacity: 1;
-		transition: opacity var(--open-speed) var(--open-timing);
+		transition: opacity var(--ps-open-speed) var(--ps-open-timing);
 	}
 
 	&.is-closing .panel-wrapper {
-		opacity: var(--closed-opacity, 0);
-		transition: opacity var(--close-speed) var(--close-timing);
+		opacity: var(--ps-closed-opacity, 0);
+		transition: opacity var(--ps-close-speed) var(--ps-close-timing);
 	}
 
 	&.is-closed, &.is-opening, &.is-closing { overflow: hidden; }
 
 	// Vertical is the default
 	&.is-closed  { height: 0 !important; }
-	&.is-opening { transition: height var(--open-speed) var(--open-timing); }
-	&.is-closing { transition: height var(--close-speed) var(--close-timing); }
+	&.is-opening { transition: height var(--ps-open-speed) var(--ps-open-timing); }
+	&.is-closing { transition: height var(--ps-close-speed) var(--ps-close-timing); }
 
 	// Horizontal overrides — resets height and switches to width
 	&[data-panel-axis="horizontal"] {
 		flex-shrink: 0;
 
 		&.is-closed  { width: 0 !important; height: auto !important; }
-		&.is-opening { transition: width var(--open-speed) var(--open-timing); }
-		&.is-closing { transition: width var(--close-speed) var(--close-timing); }
+		&.is-opening { transition: width var(--ps-open-speed) var(--ps-open-timing); }
+		&.is-closing { transition: width var(--ps-close-speed) var(--ps-close-timing); }
 
 		// Keep inner content at its natural width so it doesn't reflow
 		// while the container animates.
 		.panel-wrapper {
-			width: var(--panel-width, 320px);
-			min-width: var(--panel-width, 320px);
+			width: var(--ps-panel-width, 320px);
+			min-width: var(--ps-panel-width, 320px);
 			height: 100%;
 		}
 	}
@@ -131,7 +131,7 @@ ps-panel { display: block; }
 
 	&::after {
 		opacity: 1;
-		transition: opacity 0.2s ease var(--loading-delay, 0s);
+		transition: opacity 0.2s ease var(--ps-loading-delay, 0s);
 	}
 
 	.panel-wrapper {
@@ -152,24 +152,16 @@ ps-panel { display: block; }
 @supports (interpolate-size: allow-keywords) {
 	:is([data-panel], ps-panel) {
 		interpolate-size: allow-keywords;
-	}
 
-	// Vertical default
-	:is([data-panel], ps-panel) {
-		&.is-opening {
-			height: auto;
-
-			// Declare the starting value explicitly so the browser knows to
-			// begin from 0 even if no prior is-closed rule was in effect.
-			@starting-style { height: 0; }
-		}
-
+		// JS drives the animation: inline 0px → rAF → inline target_px.
+		// No CSS height on is-opening: a competing CSS auto value causes Firefox
+		// to skip the transition even when an explicit px target is set inline.
+		// is-closing uses height:0 (a concrete value) so the px→0 transition fires.
 		&.is-closing { height: 0; }
 	}
 
-	// Horizontal overrides — switches axis, resets height to auto
+	// Horizontal overrides — closes on the width axis
 	:is([data-panel], ps-panel)[data-panel-axis="horizontal"] {
-		&.is-opening { width: auto; height: auto; @starting-style { width: 0; } }
 		&.is-closing { width: 0; height: auto; }
 	}
 }
