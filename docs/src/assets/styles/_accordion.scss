@@ -6,6 +6,9 @@ ul[data-panel-group] {
   button[aria-controls] {
     font-size: 1.2rem;
     font-weight: 500;
+    &:hover {
+      box-shadow: none;
+    }
   }
 
   > li {
@@ -25,6 +28,21 @@ ul[data-panel-group] {
       border-radius: 4px;
       color: inherit;
       background: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+
+      .chevron {
+        flex-shrink: 0;
+        will-change: transform;
+        transition: transform var(--ps-open-speed) var(--ps-open-timing);
+        transform: rotate(-90deg);
+      }
+
+      &[aria-expanded="true"] .chevron {
+        transform: rotate(90deg);
+      }
     }
     .panel-wrapper {
       padding: var(--padding-medium);

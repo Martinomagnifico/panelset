@@ -4,9 +4,39 @@
 	min-height: 100vh;
 }
 
-.lane {
-	padding: 2rem 0;
+.lane, section {
+	padding: 3rem 0;
 }
+
+.lane.hr {
+	padding: 0;
+}
+
+section {
+	.container:first-child {
+		position: relative;
+
+		&:before {
+			content: "";
+			position: absolute;
+			top: -3rem;
+			left: var(--standard-padding);
+			right: var(--standard-padding);
+			width: calc(100% - var(--standard-padding) * 2);
+			height: 1px;
+			background: var(--border-default);
+		}
+	}
+	&.no-hr {
+		.container:first-child:before {
+			display: none;
+		}
+	}
+	& + hr {
+		margin: 0;
+	}
+}
+
 .container {
 	width: 100%;
 	max-width: 1024px;

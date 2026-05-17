@@ -54,10 +54,6 @@
     right: 1rem;
     z-index: 4;
 
-    &.is-opening, &.is-closing {
-      // border-radius: 0;
-    }
-
     &.is-closing, &.is-closed {
       border-color: transparent;
       box-shadow: 0 0 4px rgba(0, 0, 0, 0);

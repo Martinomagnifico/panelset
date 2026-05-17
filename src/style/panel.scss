@@ -3,6 +3,7 @@ ps-panel { display: block; }
 
 :is([data-panel], ps-panel) {
 	box-sizing: border-box;
+	display: flow-root;
 
 	&::after {
 		content: '';
@@ -43,7 +44,7 @@ ps-panel { display: block; }
 
 	&.is-closing .panel-wrapper {
 		opacity: var(--ps-closed-opacity, 0);
-		transition: opacity var(--ps-close-speed) var(--ps-close-timing);
+		transition: opacity var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing));
 	}
 
 	&.is-closed, &.is-opening, &.is-closing { overflow: hidden; }
@@ -51,7 +52,7 @@ ps-panel { display: block; }
 	// Vertical is the default
 	&.is-closed  { height: 0 !important; }
 	&.is-opening { transition: height var(--ps-open-speed) var(--ps-open-timing); }
-	&.is-closing { transition: height var(--ps-close-speed) var(--ps-close-timing); }
+	&.is-closing { transition: height var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)); }
 
 	// Horizontal overrides — resets height and switches to width
 	&[data-panel-axis="horizontal"] {
@@ -59,7 +60,7 @@ ps-panel { display: block; }
 
 		&.is-closed  { width: 0 !important; height: auto !important; }
 		&.is-opening { transition: width var(--ps-open-speed) var(--ps-open-timing); }
-		&.is-closing { transition: width var(--ps-close-speed) var(--ps-close-timing); }
+		&.is-closing { transition: width var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)); }
 
 		// Keep inner content at its natural width so it doesn't reflow
 		// while the container animates.

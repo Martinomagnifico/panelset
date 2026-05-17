@@ -14,11 +14,39 @@ declare global {
 	}
 }
 
+function trueSiblings(
+	item: HTMLElement,
+	opts: {
+		groupSelector: string;
+		scopeSelector?: string;
+		itemSelector:  string;
+		filter?:       (el: HTMLElement) => boolean;
+	}
+): HTMLElement[] {
+	const { groupSelector, scopeSelector = groupSelector, itemSelector, filter } = opts;
+
+	const belongsToGroup = (el: HTMLElement, group: HTMLElement): boolean => {
+		if (el.closest(scopeSelector) !== group) return false;
+		const parentItem = el.parentElement?.closest<HTMLElement>(itemSelector);
+		return !parentItem || !group.contains(parentItem);
+	};
+
+	const group = item.closest<HTMLElement>(groupSelector);
+	if (!group || !belongsToGroup(item, group)) return [];
+
+	return [...group.querySelectorAll<HTMLElement>(itemSelector)].filter(sibling =>
+		sibling !== item &&
+		belongsToGroup(sibling, group) &&
+		(filter ? filter(sibling) : true)
+	);
+}
+
 export class Panel {
 	element: HTMLElement;
 	config: Required<PanelConfig>;
 
 	private _returnFocusTarget: HTMLElement | null = null;
+	private _tempCloseGroup: HTMLElement | null = null;
 	private _anim = new Core();
 	private _listenerController = new AbortController();
 	private _activating = false;
@@ -86,8 +114,8 @@ export class Panel {
 				while (el && !el.hasAttribute('data-panel')) el = el.previousElementSibling as HTMLElement | null;
 			}
 			const next = el;
-			if (!next || next.id) return;
-			next.id = `panel-${++Panel._autoIdCounter}`;
+			if (!next) return;
+			if (!next.id) next.id = `panel-${++Panel._autoIdCounter}`;
 			trigger.setAttribute('aria-controls', next.id);
 			trigger.setAttribute('aria-expanded', 'false');
 		});
@@ -221,26 +249,38 @@ export class Panel {
 		);
 	}
 
+	private _cleanupTempClose() {
+		if (!this._tempCloseGroup) return;
+		this._tempCloseGroup.style.removeProperty('--ps-tempclose-speed');
+		this._tempCloseGroup.style.removeProperty('--ps-tempclose-timing');
+		this._tempCloseGroup = null;
+	}
+
 	private _closeGroupSiblings() {
-		const group = this.element.closest('[data-panel-group]');
+		const group = this.element.closest<HTMLElement>('[data-panel-group]');
 		const groupClose = group?.hasAttribute('data-panel-close-siblings') ?? false;
 		if (!this.config.closeSiblings && !groupClose) return;
-		const scope = group ?? this.element.parentElement;
-		if (!scope) return;
-		// Use el.panel as the definitive filter — set by Panel's constructor on
-		// every instance regardless of element tag or data-attributes.
-		// With a group: search all descendants, skip nested-group panels.
-		// Without a group: limit to direct children.
-		const candidates = group
-			? scope.querySelectorAll<HTMLElement>('*')
-			: (scope.children as HTMLCollectionOf<HTMLElement>);
-		Array.from(candidates).forEach(el => {
-			if (el === this.element) return;
-			if (group && el.closest('[data-panel-group]') !== scope) return;
-			if (el.panel?.isOpen) {
-				el.panel._returnFocusTarget = null;
-				el.panel.close();
-			}
+
+		const toClose: HTMLElement[] = group
+			? trueSiblings(this.element, {
+				groupSelector: '[data-panel-group]',
+				itemSelector:  '[data-panel]',
+				filter:        el => !!el.panel?.isOpen,
+			})
+			: Array.from(this.element.parentElement?.children ?? [])
+				.filter((el): el is HTMLElement =>
+					el instanceof HTMLElement && el !== this.element && !!el.panel?.isOpen
+				);
+
+		if (toClose.length && group) {
+			group.style.setProperty('--ps-tempclose-speed', 'var(--ps-open-speed)');
+			group.style.setProperty('--ps-tempclose-timing', 'var(--ps-open-timing)');
+			this._tempCloseGroup = group;
+		}
+
+		toClose.forEach(el => {
+			el.panel!._returnFocusTarget = null;
+			el.panel!.close();
 		});
 	}
 
@@ -352,7 +392,8 @@ export class Panel {
 		// Measure natural size now that content has landed. Clear the loading-height
 		// inline style so the CSS value takes over; for the JS fallback we re-lock
 		// at the loading height immediately after measuring the target.
-		const current = cssProp === 'height' ? this.element.offsetHeight : this.element.offsetWidth;
+		const currentRect = this.element.getBoundingClientRect();
+		const current = cssProp === 'height' ? currentRect.height : currentRect.width;
 		this.element.style[cssProp] = '';
 
 		if (this.config.transitions) {
@@ -370,7 +411,8 @@ export class Panel {
 			} else {
 				// JS fallback: measure auto size, re-lock at loading height, then
 				// animate to the target in rAF.
-				const target = cssProp === 'height' ? this.element.offsetHeight : this.element.offsetWidth;
+				const targetRect = this.element.getBoundingClientRect();
+				const target = cssProp === 'height' ? targetRect.height : targetRect.width;
 				this.element.style[cssProp] = `${current}px`;
 
 				requestAnimationFrame(() => {
@@ -404,22 +446,22 @@ export class Panel {
 	) {
 		const isReversingClose = this.element.classList.contains('is-closing');
 		const reverseStartSize = isReversingClose
-			? (cssProp === 'height' ? this.element.offsetHeight : this.element.offsetWidth)
+			? this.element.getBoundingClientRect()[cssProp === 'height' ? 'height' : 'width']
 			: null;
-
-		// Measure before touching classes. scrollHeight reads natural size without
-		// committing it as the CSS "from" state. offsetHeight after the class swap
-		// would lock the element at full height — Firefox sees height → height
-		// and skips the transition.
-		const cs0        = getComputedStyle(this.element);
-		const scrollSize = cssProp === 'height' ? this.element.scrollHeight : this.element.scrollWidth;
-		const borderSize = cssProp === 'height'
-			? (parseFloat(cs0.borderTopWidth)  || 0) + (parseFloat(cs0.borderBottomWidth) || 0)
-			: (parseFloat(cs0.borderLeftWidth) || 0) + (parseFloat(cs0.borderRightWidth)  || 0);
-		const target = scrollSize + borderSize;
 
 		this.element.classList.remove('is-closed', 'is-closing');
 		this.element.removeAttribute('inert');
+
+		// Use getBoundingClientRect for sub-pixel precision. offsetHeight/offsetWidth
+		// round to integers; the fractional mismatch causes a visible snap when the
+		// inline style is removed at the end of the transition.
+		const rect       = this.element.getBoundingClientRect();
+		const naturalSize = cssProp === 'height' ? rect.height : rect.width;
+		const cs0        = getComputedStyle(this.element);
+		const borderSize = cssProp === 'height'
+			? (parseFloat(cs0.borderTopWidth)  || 0) + (parseFloat(cs0.borderBottomWidth) || 0)
+			: (parseFloat(cs0.borderLeftWidth) || 0) + (parseFloat(cs0.borderRightWidth)  || 0);
+		const target = naturalSize + borderSize;
 
 		this._setTriggerState(true);
 		this._persistState(true);
@@ -429,24 +471,31 @@ export class Panel {
 		const body = findBody(this.element);
 
 		if (this.config.transitions) {
-			this.element.classList.add('is-opening');
+			// Lock at 0 before adding is-opening so the height snaps without
+			// triggering a transition. is-opening is added after so the transition
+			// rule is only active for the 0 → target rAF step.
 			this.element.style[cssProp] = reverseStartSize !== null ? `${reverseStartSize}px` : '0px';
+			this.element.classList.add('is-opening');
 			if (body) lockBody(body);
+			// Force a flush so Firefox commits the locked 0px state before the rAF.
+			// Without it Firefox sees auto → target in one step — non-animatable, so it jumps.
+			void getComputedStyle(this.element)[cssProp];
 
 			requestAnimationFrame(() => {
 				this.element.style[cssProp] = `${target}px`;
-				void getComputedStyle(this.element)[cssProp];
 				Core.waitForTransition(this.element, cssProp).then(() => {
 					if (signal.aborted) return;
 					this.element.style[cssProp] = '';
 					this.element.classList.remove('is-opening');
 					this._dispatch('panel:opened');
+					this._cleanupTempClose();
 					this._log('Opened');
 					this._handleAutoFocus(event);
 				});
 			});
 		} else {
 			this._dispatch('panel:opened');
+			this._cleanupTempClose();
 			this._log('Opened');
 			this._handleAutoFocus(event);
 		}
@@ -501,7 +550,8 @@ export class Panel {
 			return;
 		}
 
-		const current = prop === 'height' ? this.element.offsetHeight : this.element.offsetWidth;
+		const rect    = this.element.getBoundingClientRect();
+		const current = prop === 'height' ? rect.height : rect.width;
 		this.element.style[prop] = `${current}px`;
 		this.element.classList.add('is-closing');
 		// Force a flush so Firefox sees { is-closing, height: Npx } as a committed

@@ -10,313 +10,311 @@ block content
 				h1 PanelSet configuration
 				p.lead Options via constructor, data attributes, or both
 
-	.lane
-		.container
-			+anchor Setting options
+	+section("Setting options")
+		.title-text
+			h3 JavaScript options
 
-			.title-text
-				h3 JavaScript options
+		+codeblock('JS').
+			PanelSet.init({ closable: true, closeOnTab: true });
 
-			+codeblock('JS').
-				PanelSet.init({ closable: true, closeOnTab: true });
+			const ps = new PanelSet('#my-tabs', {
+			  transitions: true,
+			  closable: false,
+			  closeOnTab: false,
+			  autoFocus: 'heading',
+			  returnFocus: true
+			});
 
-				const ps = new PanelSet('#my-tabs', {
-				  transitions: true,
-				  closable: false,
-				  closeOnTab: false,
-				  autoFocus: 'heading',
-				  returnFocus: true
-				});
+		.title-text
+			h3 Data attributes
 
-			.title-text
-				h3 Data attributes
+		+codeblock('HTML').
+			<div data-panelset
+			     data-transitions="false"
+			     data-closable
+			     data-loading-height="300"
+			     data-debug>
+			  <!-- panels -->
+			</div>
 
-			+codeblock('HTML').
-				<div data-panelset
-				     data-transitions="false"
-				     data-closable
-				     data-loading-height="300"
-				     data-debug>
-				  <!-- panels -->
-				</div>
+		p JavaScript options and data attributes are both covered above. When both are set on the same element, data attributes take priority over JS options.
 
-			p JavaScript options and data attributes are both covered above. When both are set on the same element, data attributes take priority over JS options.
+		p Web component configuration uses plain attributes directly on #[code &lt;ps-panelset&gt;] — no #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panelset/examples/webcomponent.html") Web Component integration page] for full usage examples.
 
-			p Web component configuration uses plain attributes directly on #[code &lt;ps-panelset&gt;] — no #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panelset/examples/webcomponent.html") Web Component integration page] for full usage examples.
+	+section("Available options")
+		p Plain attributes (e.g. #[code transitions], #[code closable], #[code panelset-align]) are used when authoring with #[code &lt;ps-panelset&gt;]. JavaScript options, data attributes, and plain attributes all map to the same underlying config.
+		.column.gap-1(data-panel-group data-panel-close-siblings)
+			+apiOption("align: 'start' | 'center' | 'end'")
+				p Where panels sit within the container while it is opening or closing. Only visible during the open/close animation.
+				h4 Default: #[code 'start']
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { align: 'start' }]
+							li #[code { align: 'center' }]
+							li #[code { align: 'end' }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panelset-align="start"]
+							li #[code data-panelset-align="center"]
+							li #[code data-panelset-align="end"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panelset-align="start"]
+							li #[code panelset-align="center"]
+							li #[code panelset-align="end"]
 
-	.lane
-		.container
-			+anchor Available options
+			+apiOption("autoFocus: false | true | 'heading' | 'first' | 'input'")
+				p Move focus into the incoming panel after activation.
+				ul
+					li #[code false]: no focus movement
+					li #[code true]: focus the panel element itself
+					li #[code 'heading']: first h1–h6 in the panel
+					li #[code 'first']: first focusable element (keyboard events only)
+					li #[code 'input']: first form field (bypasses keyboard-only check)
+				p Priority order: #[code show()] call &gt; trigger attribute &gt; element attribute &gt; JS config.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { autoFocus: false }]
+							li #[code { autoFocus: true }]
+							li #[code { autoFocus: 'heading' }]
+							li #[code { autoFocus: 'first' }]
+							li #[code { autoFocus: 'input' }]
+					.card
+						h4 Data attribute
+						p On the PanelSet element — default for all activations:
+						ul
+							li #[code data-auto-focus="heading"]
+							li #[code data-auto-focus="first"]
+							li #[code data-auto-focus="input"]
+						p On a trigger button — overrides the element default for that activation:
+						ul
+							li #[code &lt;button aria-controls="..." data-auto-focus="input"&gt;]
+					.card
+						h4 Web Component attribute
+						p On the #[code &lt;ps-panelset&gt;] element:
+						ul
+							li #[code auto-focus="heading"]
+						p Per-trigger override works the same way — #[code data-auto-focus] on the button.
 
-			p Plain attributes (e.g. #[code transitions], #[code closable], #[code panelset-align]) are used when authoring with #[code &lt;ps-panelset&gt;]. JavaScript options, data attributes, and plain attributes all map to the same underlying config.
-			.column.gap-1(data-panel-group data-panel-close-siblings)
-				+apiOption("align: 'start' | 'center' | 'end'")
-					p Where panels sit within the container while it is opening or closing. Only visible during the open/close animation.
-					h4 Default: #[code 'start']
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { align: 'start' }]
-								li #[code { align: 'center' }]
-								li #[code { align: 'end' }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-panelset-align="start"]
-								li #[code data-panelset-align="center"]
-								li #[code data-panelset-align="end"]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code panelset-align="start"]
-								li #[code panelset-align="center"]
-								li #[code panelset-align="end"]
+			+apiOption("closable: boolean")
+				p When enabled, the entire PanelSet can be opened and closed (height: 0). Use #[code open()], #[code close()], and #[code toggle()] to control it.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { closable: true }]
+							li #[code { closable: false }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-closable]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code closable]
 
-				+apiOption("autoFocus: false | true | 'heading' | 'first' | 'input'")
-					p Move focus into the incoming panel after activation.
-					ul
-						li #[code false]: no focus movement
-						li #[code true]: focus the panel element itself
-						li #[code 'heading']: first h1–h6 in the panel
-						li #[code 'first']: first focusable element (keyboard events only)
-						li #[code 'input']: first form field (bypasses keyboard-only check)
-					p Priority order: #[code show()] call &gt; trigger attribute &gt; element attribute &gt; JS config.
-					h4 Default: #[code false]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { autoFocus: false }]
-								li #[code { autoFocus: true }]
-								li #[code { autoFocus: 'heading' }]
-								li #[code { autoFocus: 'first' }]
-								li #[code { autoFocus: 'input' }]
-						.card
-							h4 Data attribute
-							p On the PanelSet element — default for all activations:
-							ul
-								li #[code data-auto-focus="heading"]
-								li #[code data-auto-focus="first"]
-								li #[code data-auto-focus="input"]
-							p On a trigger button — overrides the element default for that activation:
-							ul
-								li #[code &lt;button aria-controls="..." data-auto-focus="input"&gt;]
-						.card
-							h4 Web Component attribute
-							p On the #[code &lt;ps-panelset&gt;] element:
-							ul
-								li #[code auto-focus="heading"]
-							p Per-trigger override works the same way — #[code data-auto-focus] on the button.
+			+apiOption("closeOnTab: boolean")
+				p When enabled (requires #[code closable: true]), clicking the currently active tab closes the PanelSet. Any tab button also opens it when closed. Clicking a different tab silently switches to that panel first, then opens.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { closable: true, closeOnTab: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-close-on-tab]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code close-on-tab]
 
-				+apiOption("closable: boolean")
-					p When enabled, the entire PanelSet can be opened and closed (height: 0). Use #[code open()], #[code close()], and #[code toggle()] to control it.
-					h4 Default: #[code false]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { closable: true }]
-								li #[code { closable: false }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-closable]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code closable]
+			+apiOption("debug: boolean")
+				p Log activation events to the console.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { debug: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-debug]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code debug]
 
-				+apiOption("closeOnTab: boolean")
-					p When enabled (requires #[code closable: true]), clicking the currently active tab closes the PanelSet. Any tab button also opens it when closed. Clicking a different tab silently switches to that panel first, then opens.
-					h4 Default: #[code false]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { closable: true, closeOnTab: true }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-close-on-tab]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code close-on-tab]
+			+apiOption("interruptible: boolean")
+				p When set to #[code false], new activation attempts are ignored while a transition or content load is in progress. The current activation completes first.
+				p For user experience, setting this to #[code false] is #[strong not] recommended, but it is imaginable that certain flows might want to enforce a strict sequence of activations.
+				h4 Default: #[code true]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { interruptible: false }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-interruptible="false"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code interruptible="false"]
 
-				+apiOption("debug: boolean")
-					p Log activation events to the console.
-					h4 Default: #[code false]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { debug: true }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-debug]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code debug]
+			+apiOption("loadingDelay: number")
+				p Milliseconds before the loading spinner appears. Prevents spinner flash on fast connections.
+				h4 Default: #[code 300]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { loadingDelay: 300 }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-loading-delay="300"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code loading-delay="300"]
 
-				+apiOption("interruptible: boolean")
-					p When set to #[code false], new activation attempts are ignored while a transition or content load is in progress. The current activation completes first.
-					p For user experience, setting this to #[code false] is #[strong not] recommended, but it is imaginable that certain flows might want to enforce a strict sequence of activations.
-					h4 Default: #[code true]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { interruptible: false }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-interruptible="false"]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code interruptible="false"]
+			+apiOption("loadingHeight: number")
+				p Placeholder height in pixels while async content loads and no previous panel is visible.
+				h4 Default: #[code 200]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { loadingHeight: 200 }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-loading-height="300"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code loading-height="300"]
 
-				+apiOption("loadingDelay: number")
-					p Milliseconds before the loading spinner appears. Prevents spinner flash on fast connections.
-					h4 Default: #[code 300]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { loadingDelay: 300 }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-loading-delay="300"]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code loading-delay="300"]
+			+apiOption("manageTriggers: boolean")
+				p When set to #[code false], PanelSet stops updating #[code aria-selected] and the #[code is-activating] class on trigger elements, and ignores #[code data-auto-focus] attributes on triggers.
+				p Intended for wrapper libraries that own their own trigger state — like the upcoming #[code tabSet] — and drive PanelSet entirely through #[code show()]. For standalone use, leave this at the default.
+				h4 Default: #[code true]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { manageTriggers: false }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-manage-triggers="false"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code manage-triggers="false"]
 
-				+apiOption("loadingHeight: number")
-					p Placeholder height in pixels while async content loads and no previous panel is visible.
-					h4 Default: #[code 200]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { loadingHeight: 200 }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-loading-height="300"]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code loading-height="300"]
+			+apiOption("persist: boolean")
+				p When enabled, switching panels writes the active panel ID to #[code localStorage] and updates the #[code ?panel=] URL param via #[code history.replaceState]. On the next page load (with or without a URL param) the last active panel is restored automatically.
+				p URL params are always read on load regardless of this option. #[code persist] only controls whether navigation #[em writes] state back.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { persist: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-persist]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-persist]
+				p The container must have an #[code id] for #[code persist] to work. Without one, there is nothing to key the localStorage entry or the URL param against.
 
-				+apiOption("manageTriggers: boolean")
-					p When set to #[code false], PanelSet stops updating #[code aria-selected] and the #[code is-activating] class on trigger elements, and ignores #[code data-auto-focus] attributes on triggers.
-					p Intended for wrapper libraries that own their own trigger state — like the upcoming #[code tabSet] — and drive PanelSet entirely through #[code show()]. For standalone use, leave this at the default.
-					h4 Default: #[code true]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { manageTriggers: false }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-manage-triggers="false"]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code manage-triggers="false"]
+			+apiOption("returnFocus: boolean")
+				p Return focus to the trigger that opened the PanelSet when it closes.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { returnFocus: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-return-focus]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code return-focus]
 
-				+apiOption("persist: boolean")
-					p When enabled, switching panels writes the active panel ID to #[code localStorage] and updates the #[code ?panel=] URL param via #[code history.replaceState]. On the next page load (with or without a URL param) the last active panel is restored automatically.
-					p URL params are always read on load regardless of this option. #[code persist] only controls whether navigation #[em writes] state back.
-					h4 Default: #[code false]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { persist: true }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-panel-persist]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code panel-persist]
-					p The container must have an #[code id] for #[code persist] to work. Without one, there is nothing to key the localStorage entry or the URL param against.
+			+apiOption("transitions: boolean | { height: boolean, panels: boolean }")
+				p Enable or disable transitions. Pass an object to control height and panel fade-in/out independently.
+				h4 Default: #[code true]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { transitions: true }]: all transitions on
+							li #[code { transitions: false }]: all transitions off
+							li #[code { transitions: { height : false } }]: height only off
+							li #[code { transitions: { panels : false } }]: panel fades only off
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-transitions="false"]
+							li #[code data-transitions='{"height" : false}']
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code transitions="false"]
+							li #[code transitions='{"height" : false}']
 
-				+apiOption("returnFocus: boolean")
-					p Return focus to the trigger that opened the PanelSet when it closes.
-					h4 Default: #[code false]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { returnFocus: true }]
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-return-focus]
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code return-focus]
+	+section("CSS variables")
+		p All timing values must include a unit (#[code 0s] not #[code 0]). The same variables apply when using #[code &lt;ps-panelset&gt;] — set them on the element directly or via CSS targeting #[code ps-panelset].
 
-				+apiOption("transitions: boolean | { height: boolean, panels: boolean }")
-					p Enable or disable transitions. Pass an object to control height and panel fade-in/out independently.
-					h4 Default: #[code true]
-					.card-row
-						.card
-							h4 JavaScript
-							ul
-								li #[code { transitions: true }]: all transitions on
-								li #[code { transitions: false }]: all transitions off
-								li #[code { transitions: { height : false } }]: height only off
-								li #[code { transitions: { panels : false } }]: panel fades only off
-						.card
-							h4 Data attribute
-							ul
-								li #[code data-transitions="false"]
-								li #[code data-transitions='{"height" : false}']
-						.card
-							h4 Web Component attribute
-							ul
-								li #[code transitions="false"]
-								li #[code transitions='{"height" : false}']
+		+codeblock('CSS').
+			[data-panelset] {
+			  /* Panel fades */
+			  --ps-fadeout-speed:          0.25s;
+			  --ps-fadeout-timing:         ease-in;
+			  --ps-fadein-speed:           0.25s;
+			  --ps-fadein-timing:          ease-in-out;
+			  --ps-fadein-delay:           0.25s;
 
-	.lane
-		.container
-			+anchor CSS variables
+			  /* Container height animation */
+			  --ps-transition-timing:      ease-in-out;   /* tab-switch height */
+			  --ps-height-duration-ratio:  1;             /* height duration = fadeout × ratio */
+			  --ps-open-speed:             0.4s;
+			  --ps-open-timing:            ease-in-out;
+			  --ps-close-speed:            0.4s;
+			  --ps-close-timing:           ease-in-out;
 
-			p All timing values must include a unit (#[code 0s] not #[code 0]). The same variables apply when using #[code &lt;ps-panelset&gt;] — set them on the element directly or via CSS targeting #[code ps-panelset].
-
-			+codeblock('CSS').
-				[data-panelset] {
-				  /* Panel fades */
-				  --ps-fadeout-speed:          0.25s;
-				  --ps-fadeout-timing:         ease-in;
-				  --ps-fadein-speed:           0.25s;
-				  --ps-fadein-timing:          ease-in-out;
-				  --ps-fadein-delay:           0.25s;
-
-				  /* Container height animation */
-				  --ps-transition-timing:      ease-in-out;   /* tab-switch height */
-				  --ps-height-duration-ratio:  1;             /* height duration = fadeout × ratio */
-				  --ps-open-speed:             0.4s;
-				  --ps-open-timing:            ease-in-out;
-				  --ps-close-speed:            0.4s;
-				  --ps-close-timing:           ease-in-out;
-				}
+			  /* Loading spinner */
+			  --ps-spinner-size:           40px;
+			  --ps-spinner-thickness:      4px;
+			  --ps-spinner-track-color:    rgba(0, 0, 0, 0.1);
+			  --ps-spinner-color:          rgba(0, 100, 255, 0.8);
+			  --ps-spinner-speed:          0.8s;
+			}
 
 
 append scripts
 	if isProd
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			PanelSet.init();
 			Panel.init();

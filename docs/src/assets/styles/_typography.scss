@@ -33,20 +33,26 @@ h2,
 h3,
 h4 {
 	line-height: 1.2;
-	color: var(--text-heading);
 	&:first-child {
 		margin-top: 0;
 	}
-	padding: .25em 0;
+	padding: 0;
 }
 
 h1 {
 	font-weight: 300;
+	color: var(--text-heading-1);
 }
 h2,
 h3,
 h4 {
 	font-weight: 500;
+	color: var(--text-heading-2);
+}
+
+.card h3,
+.card h4 {
+	color: var(--text-heading-3);
 }
 
 h1 {
@@ -100,9 +106,10 @@ dl a {
 	text-decoration: underline;
 }
 
-.example, 
+.exampleee-TODO, 
 .card,
-.lane {
+.lane, 
+section {
 	ul,
 	ol {
 		list-style: none;
@@ -123,7 +130,7 @@ dl a {
 			}
 
 			&::before {
-				color: var(--btn-outline-text);
+				color: var(--text-tinted);
 				position: absolute;
 				margin-left: -1rem;
 			}
@@ -169,15 +176,6 @@ dl a {
 	}
 }
 
-.card {
-
-	* + ul {
-		padding-top: var(---padding-medium);
-	}
-	ul + * {
-		margin-top: var(--padding-medium);
-	}
-}
 
 .twocol {
 	--li-gap: 0.33em;
@@ -203,7 +201,7 @@ dl a {
 			content: '•';
 			display: inline-block;
 			display: flex;
-			color: var(--btn-outline-text);
+			color: var(--text-tinted);
 			position: absolute;
 			margin-left: -1em;
 			font-weight: bold;

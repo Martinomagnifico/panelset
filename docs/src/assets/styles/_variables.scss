@@ -33,11 +33,14 @@
   --color-special-tint-700: oklch(0.39 0.100 var(--special-hue));
   --color-special-tint-800: oklch(0.25 0.090 var(--special-hue));
   --color-special-tint-900: oklch(0.20 0.068 var(--special-hue));
-  --color-special-tint-950: oklch(0.15 0.038 var(--special-hue));
+  --color-special-tint-950: oklch(0.10 0.038 var(--special-hue));
 }
 
 :root {
-  --text-heading: var(--color-tint-950);
+  --text-heading-1: var(--color-tint-900);
+  --text-heading-2: var(--color-tint-700);
+  --text-heading-3: var(--color-tint-600);
+
   --bg-surface: var(--color-tint-25);
   --bg-surface-tint: var(--color-tint-50);
   --bg-surface-tint-contrast: var(--color-tint-100);
@@ -48,6 +51,7 @@
 
   --text-default: var(--color-tint-950);
   --text-muted: var(--color-tint-700);
+  --text-tinted: var(--color-tint-400);
 
   --link-focus: var(--color-tint-600);
   
@@ -61,9 +65,7 @@
   --btn-primary-text: var(--color-tint-0);
   --btn-primary-hover: var(--color-tint-600);
 
-  --btn-outline-border: var(--color-tint-500);
-  --btn-outline-text: var(--color-tint-500);
-  --btn-outline-hover-bg: oklch(from var(--color-tint-500) l c h / 0.1);
+
 
   --special-normal: var(--color-special-tint-400);
   --special-hover: var(--color-special-tint-600);
@@ -71,7 +73,7 @@
 
   .demo {
     --border-default: var(--color-special-tint-400);
-    --btn-outline-text: var(--color-special-tint-400);
+    --text-tinted: var(--color-special-tint-400);
     --link-focus: var(--color-special-tint-400);
 
     --btn-plain-text: var(--color-special-tint-600);
@@ -79,27 +81,25 @@
     --btn-plain-hover-bg: oklch(from var(--color-special-tint-500) l c h / 0.1);
   }
 
-  --bg-subtle: var(--color-tint-100);
-
   --sidebar-item-text: var(--color-tint-800);
-  --sidebar-item-hover-bg: var(--color-tint-150);
+  --sidebar-item-hover-bg: var(--color-tint-50);
+  --sidebar-item-hover-text: var(--color-tint-950);
   --sidebar-item-active-text: var(--color-tint-800);
   --sidebar-item-active-bg: oklch(from var(--color-tint-500) l c h / 0.12);
   --sidebar-item-active-bg: var(--color-tint-150);
 
   --demo-btn-bg: white;
-  --demo-btn-text: var(--color-tint-500);
-  --demo-btn-text-hover: var(--color-tint-700);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --text-heading: var(--color-tint-100);
-    --bg-surface: var(--color-tint-950);
+    --text-heading-1: var(--color-tint-100);
+    --text-heading-2: var(--color-tint-200);
+    --text-heading-3: var(--color-tint-300);
+    --bg-surface: var(--color-tint-900);
     --bg-surface-tint: var(--color-tint-900);
     --bg-surface-tint-contrast: var(--color-tint-800);
     --bg-sidebar: var(--color-tint-800);
-    --bg-subtle: var(--color-tint-800);
 
     --demo-surface: var(--color-special-tint-950);
     --demo-surface-tint: var(--color-special-tint-900);
@@ -117,18 +117,18 @@
     --btn-primary-text: var(--color-tint-50);
     --btn-primary-hover: var(--color-tint-600);
 
-    --btn-outline-border: var(--color-tint-400);
-    --btn-outline-text: var(--color-tint-300);
-    --btn-outline-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
+    --text-tinted: var(--color-tint-300);
 
-    --sidebar-item-text: var(--color-tint-100);
-    --sidebar-item-hover-bg: var(--color-tint-800);
-    --sidebar-item-active-text: var(--color-tint-300);
-    --sidebar-item-active-bg: oklch(from var(--color-tint-400) l c h / 0.2);
+    --sidebar-item-text: var(--color-tint-200);
+    --sidebar-item-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
+    --sidebar-item-hover-text: var(--color-tint-25);
+    --sidebar-item-active-text: var(--color-tint-50);
+    --sidebar-item-active-bg: var(--color-tint-700);
+
+
+
 
     --demo-btn-bg: var(--color-tint-900);
-    --demo-btn-text: var(--color-tint-300);
-    --demo-btn-text-hover: var(--color-tint-100);
 
     --special-normal: var(--color-special-tint-300);
     --special-hover: var(--color-special-tint-100);
@@ -137,7 +137,7 @@
     .demo {
       --border-default: var(--color-special-tint-700);
 
-      --btn-outline-text: var(--color-special-tint-200);
+      --text-tinted: var(--color-special-tint-200);
       --link-focus: var(--color-special-tint-200);
 
       --btn-plain-text: var(--color-special-tint-300);

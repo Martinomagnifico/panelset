@@ -38,7 +38,8 @@
 		line-height: 32px;
 		&:hover {
 			text-decoration: none;
-			color: var(--btn-outline-text);
+			color: var(--special-hover);
+			background: none;
 		}
 	}
 
@@ -56,7 +57,7 @@
 
 			&:hover {
 				background: var(--sidebar-item-hover-bg);
-				color: var(--sidebar-item-active-text);
+				color: var(--sidebar-item-hover-text);
 				text-decoration: none;
 			}
 
@@ -98,6 +99,7 @@
 		&:has(a.active) {
 			.nav-section-toggle {
 				font-weight: 600;
+				color: var(--sidebar-item-active-text);
 			}
 		}
 	}
@@ -128,7 +130,8 @@
 			transform: rotate(-180deg);
 		}
 		&:hover {
-			color: var(--sidebar-item-active-text);
+			background: var(--sidebar-item-hover-bg);
+			color: var(--sidebar-item-hover-text);
 		}
 	}
 
@@ -155,7 +158,7 @@
 
 		&:hover {
 			background: var(--sidebar-item-hover-bg);
-			color: var(--sidebar-item-active-text);
+			color: var(--sidebar-item-hover-text);
 			text-decoration: none;
 		}
 

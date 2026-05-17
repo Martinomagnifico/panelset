@@ -59,7 +59,7 @@ block content
 
 append scripts
 	if isProd
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			PanelSet.init();
 	else

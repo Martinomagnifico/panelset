@@ -53,6 +53,7 @@ ps-panelset { display: block; }
         width: 100%;
         box-sizing: border-box;
         margin: 0;
+        display: flow-root;
 
         &.fade {
             transition: opacity var(--ps-fadeout-speed) var(--ps-fadeout-timing);

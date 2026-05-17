@@ -10,52 +10,49 @@ block content
 				h1 Basic tabs example
 				p.lead The most common use case - a simple tabbed interface
 
-	.lane
-		.container
-			+anchor Live demo
+	+section("Live demo")
+		.card
 
-			.card
+			.demo
+				nav.tabs(role="tablist" aria-label="Content sections")
+					button(role="tab" aria-controls="demo-panel-1" aria-selected="true") Features
+					button(role="tab" aria-controls="demo-panel-2" aria-selected="false") Pricing
+					button(role="tab" aria-controls="demo-panel-3") Support
 
-				.demo
-					nav.tabs(role="tablist" aria-label="Content sections")
-						button(role="tab" aria-controls="demo-panel-1" aria-selected="true") Features
-						button(role="tab" aria-controls="demo-panel-2" aria-selected="false") Pricing
-						button(role="tab" aria-controls="demo-panel-3") Support
-
-					+examplepanelset('demo').tab-content
+				+examplepanelset('demo').tab-content(data-panel-persist)
 
 
-				+codeblock('HTML')
-					nav.tabs(role="tablist" aria-label="Content sections")
-						button(role="tab" aria-controls="demo-panel-1" aria-selected="true") Features
-						button(role="tab" aria-controls="demo-panel-2" aria-selected="false") Pricing
-						button(role="tab" aria-controls="demo-panel-3") Support
+			+codeblock('HTML')
+				nav.tabs(role="tablist" aria-label="Content sections")
+					button(role="tab" aria-controls="demo-panel-1" aria-selected="true") Features
+					button(role="tab" aria-controls="demo-panel-2" aria-selected="false") Pricing
+					button(role="tab" aria-controls="demo-panel-3") Support
 
-					+examplepanelset('demo').tab-content
+				+examplepanelset('demo').tab-content
 
-				+codeblock('JavaScript').
-					document.addEventListener('click', event => {
-					  const button = event.target.closest('button[aria-controls]');
-					  if (!button) return;
+			+codeblock('JavaScript').
+				document.addEventListener('click', event => {
+				  const button = event.target.closest('button[aria-controls]');
+				  if (!button) return;
 
-					  const tablist = button.closest('[role="tablist"]');
-					  tablist?.querySelectorAll('[role="tab"]').forEach(t => {
-					    t.setAttribute('aria-selected', 'false');
-					  });
-					  button.setAttribute('aria-selected', 'true');
+				  const tablist = button.closest('[role="tablist"]');
+				  tablist?.querySelectorAll('[role="tab"]').forEach(t => {
+				    t.setAttribute('aria-selected', 'false');
+				  });
+				  button.setAttribute('aria-selected', 'true');
 
-					  const panelId = button.getAttribute('aria-controls');
-					  const panel = document.getElementById(panelId);
-					  const container = panel?.closest('[data-panelset]');
+				  const panelId = button.getAttribute('aria-controls');
+				  const panel = document.getElementById(panelId);
+				  const container = panel?.closest('[data-panelset]');
 
-					  container?.panelSet?.show(panelId, { event, autoFocus: true });
-					});
+				  container?.panelSet?.show(panelId, { event, autoFocus: true });
+				});
 
 
 append scripts
 	if isProd
-		script(src="/assets/scripts/example-tabs.js" vite-ignore)
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}assets/scripts/example-tabs.js` vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			PanelSet.init();
 	else

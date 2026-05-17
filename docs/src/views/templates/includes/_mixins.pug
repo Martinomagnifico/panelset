@@ -2,7 +2,7 @@
 mixin apiEvent(name)
 	- const id = 'event-' + name.replace(/[^a-z0-9]/gi, '-').toLowerCase()
 	.card.api.no-padding
-		button.api-trigger(aria-controls=id aria-expanded="false")
+		button.card-trigger(aria-controls=id aria-expanded="false")
 			h4.code= name
 			+chevron()
 		div(id=id data-panel class="is-closed")
@@ -15,7 +15,7 @@ mixin apiOption(name)
 	- const optionName = name.split(':')[0].split('(')[0].trim()
 	- const id = 'option-' + optionName.replace(/[^a-z0-9]/gi, '-').toLowerCase()
 	.card.api.no-padding
-		button.api-trigger(aria-controls=id aria-expanded="false")
+		button.card-trigger(aria-controls=id aria-expanded="false")
 			h4.code= name
 			+chevron()
 		div(id=id data-panel class="is-closed")
@@ -24,16 +24,26 @@ mixin apiOption(name)
 					block
 
 
+mixin faq(title)
+	.card.no-padding
+		button.card-trigger(data-panel-trigger)
+			h3!= title
+			+chevron()
+		div(data-panel class="is-closed")
+			.panel-wrapper
+				.card-content
+					block
+
+
 mixin anchor(tag, id)
 	- tag = tag || 'h2'
+	- var title = ''
+	- if (attributes.title) title = attributes.title
 	- id = id || attributes.id || null
-	- var attrs = Object.assign({}, attributes); delete attrs.id;
-	- var oldBuf = pug_html; pug_html = '';
-	block
-	- var blockContent = pug_html; pug_html = oldBuf;
-	- if (!id) { id = blockContent.replace(/<[^>]*>/g, '').trim().toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, '-'); }
+	- var attrs = Object.assign({}, attributes); delete attrs.id; delete attrs.title;
+	- if (!id) { id = title.replace(/<[^>]*>/g, '').trim().toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, '-'); }
 	#{tag}.heading-anchor(id=id)&attributes(attrs)
-		!= blockContent
+		!= title
 		a(href=`#${id}` aria-label="Copy link to section" data-tooltip="Copy link")
 			svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
 				path(d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71")
@@ -45,6 +55,47 @@ mixin html
 	html(class=page.class, lang=page.language)
 		if block
 			block
+
+mixin lane-hr(title)
+	.lane.hr
+		.container
+			hr
+
+	if title || block
+		.lane
+			.container
+				if title
+					+anchor(title=title)
+				block
+
+
+mixin section(title, shorttitle)
+	- const shortestitle = shorttitle || title;
+	- const id = shortestitle.replace(/<[^>]*>/g, '').trim().toLowerCase().replace(/[^a-z0-9\s]/g, '').trim().replace(/\s+/g, '-');
+	section(id=id)
+		.container
+			if title
+				h2.heading-anchor!= title
+					a(href=`#${id}` aria-label="Copy link to section" data-tooltip="Copy link")
+						svg(xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round")
+							path(d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71")
+							path(d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71")
+			if block
+				block
+
+
+mixin lane(title)
+	.lane.hr
+		.container
+			hr
+
+	if title || block
+		.lane
+			.container
+				if title
+					+anchor(title=title)
+				block
+
 
 
 
@@ -165,10 +216,11 @@ mixin coffee()
 		path(d="M10.25 2.5S10 2.84 10 3.88c0 1.04 1 1.8 1 2.84 0 .42-.25 1-.25 1m2.25-7s-.5.44-.5 1.78 1.25 2.22 1.25 3.55c0 .52-.25 1.67-.25 1.67m2 .28c1.51.27 2.5.72 2.5 1.22a15 15 0 0 1 .14 1.67 8.82 8.82 0 0 1-.86 4.33 6 6 0 0 1-.35.63c1.87.46 3.07 1.17 3.07 1.97 0 1.38-3.58 3-8 3s-8-1.62-8-3c0-.8 1.2-1.51 3.07-1.97C5.76 13.8 5.7 11.28 6 9.22c0 .83 2.69 1.5 6 1.5s6-.67 6-1.5")
 		path(d="M18.14 10.89c1.11-.36 2.08-.5 2.64.33.15.22.22.5.22.83 0 1.27-.96 2.72-3.72 3.17M6 9.22c0-.5.99-.95 2.5-1.22m-1.43 7.85c.92 1.45 2.45 1.97 4.93 1.97s4.01-.52 4.93-1.97")
 
-mixin chevron()
-	svg.chevron(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-		polyline(points="9 6 15 12 9 18")
-		
-mixin chevronback()
-	svg.chevron(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-		polyline(points="15 6 9 12 15 18")
+mixin chevron(size, dir)
+	- size = size || 24
+	- var pts = { right: '9 6 15 12 9 18', left: '15 6 9 12 15 18', down: '6 9 12 15 18 9', up: '6 15 12 9 18 15' }
+	- var points = pts[dir] || pts.right
+	svg.chevron(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width=size height=size fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
+		polyline(points=points)
+
+

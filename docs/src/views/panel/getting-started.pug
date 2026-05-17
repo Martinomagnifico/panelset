@@ -10,124 +10,103 @@ block content
 				h1 Panel
 				p.lead A single element that opens and closes with a smooth transition.
 
-	.lane
-		.container
-			+anchor What Panel does
+	+section("What Panel does")
+		p #[code Panel] controls one element: it can be opened, closed, or toggled. The element animates its #[strong height] (vertical axis) or #[strong width] (horizontal axis) between 0 and its natural size.
 
-			p #[code Panel] controls one element: it can be opened, closed, or toggled. The element animates its #[strong height] (vertical axis) or #[strong width] (horizontal axis) between 0 and its natural size.
+		p Typical uses: show-more blocks, accordions, sidebars, drawers.
 
-			p Typical uses: show-more blocks, accordions, sidebars, drawers.
+	+section("Installation")
+		.code-block
+			.code-header Terminal
+			pre
+				code npm install panelset
 
-	.lane
-		.container
-			+anchor Installation
+		+codeblock('JS').
+			import { Panel } from 'panelset';
+			import 'panelset/style.css';
 
-			.code-block
-				.code-header Terminal
-				pre
-					code npm install panelset
+	+section("Markup")
+		p Add #[code data-panel] to your element and give it an #[code id]. Start it closed with #[code class="is-closed"]. Wrap the content in #[code .panel-wrapper].
 
-			+codeblock('JS').
-				import { Panel } from 'panelset';
-				import 'panelset/style.css';
+		+codeblock('HTML').
+			<!-- Trigger: any element with aria-controls pointing to the panel id -->
+			<button aria-controls="my-panel" aria-expanded="false">Toggle</button>
 
-	.lane
-		.container
-			+anchor Markup
-
-			p Add #[code data-panel] to your element and give it an #[code id]. Start it closed with #[code class="is-closed"]. Wrap the content in #[code .panel-wrapper].
-
-			+codeblock('HTML').
-				<!-- Trigger: any element with aria-controls pointing to the panel id -->
-				<button aria-controls="my-panel" aria-expanded="false">Toggle</button>
-
-				<!-- Panel element -->
-				<div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
-				  <div class="panel-wrapper">
-				    <p>Panel content goes here.</p>
-				  </div>
+			<!-- Panel element -->
+			<div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
+				<div class="panel-wrapper">
+				<p>Panel content goes here.</p>
 				</div>
+			</div>
 
-			p #[code aria-expanded] is managed automatically. Panel sets it to #[code true] or #[code false] on every open and close. One less thing to worry about.
+		p #[code aria-expanded] is managed automatically. Panel sets it to #[code true] or #[code false] on every open and close. One less thing to worry about.
 
-	.lane
-		.container
-			+anchor Initializing
+	+section("Initializing")
+		p Use the static #[code init()] method to initialize all matching elements at once, or create instances directly.
 
-			p Use the static #[code init()] method to initialize all matching elements at once, or create instances directly.
+		+codeblock('JS').
+			// Initialize all [data-panel] elements
+			Panel.init();
 
-			+codeblock('JS').
-				// Initialize all [data-panel] elements
-				Panel.init();
+			// With options
+			Panel.init({ debug: true });
 
-				// With options
-				Panel.init({ debug: true });
+			// Custom selector
+			Panel.init('[data-panel]', { transitions: false });
 
-				// Custom selector
-				Panel.init('[data-panel]', { transitions: false });
+			// Single instance
+			const panel = new Panel('#my-panel', { axis: 'vertical' });
 
-				// Single instance
-				const panel = new Panel('#my-panel', { axis: 'vertical' });
+			// Single instance by element reference
+			const el = document.getElementById('my-panel');
+			const panel = new Panel(el, { autoFocus: 'first' });
 
-				// Single instance by element reference
-				const el = document.getElementById('my-panel');
-				const panel = new Panel(el, { autoFocus: 'first' });
+	+section("Triggers and close buttons", "Triggers")
+		p Any element with #[code aria-controls="&lt;panel id here&gt;"] auto-binds a click handler on init. No extra JS needed. Add #[code data-panel-close] inside the panel for a close button.
 
-	.lane
-		.container
-			+anchor Triggers and close buttons
+		+codeblock('HTML').
+			<button aria-controls="my-panel" aria-expanded="false">Open</button>
 
-			p Any element with #[code aria-controls="<panel-id>"] auto-binds a click handler on init. No extra JS needed. Add #[code data-panel-close] inside the panel for a close button.
-
-			+codeblock('HTML').
-				<button aria-controls="my-panel" aria-expanded="false">Open</button>
-
-				<div id="my-panel" data-panel data-panel-axis="horizontal" class="is-closed">
-				  <div class="panel-wrapper" role="dialog" aria-label="Options">
-				    <button data-panel-close>Close</button>
-				    <p>Sidebar content.</p>
-				  </div>
+			<div id="my-panel" data-panel data-panel-axis="horizontal" class="is-closed">
+				<div class="panel-wrapper" role="dialog" aria-label="Options">
+				<button data-panel-close>Close</button>
+				<p>Sidebar content.</p>
 				</div>
+			</div>
 
-			p When a trigger and panel are adjacent siblings, you can skip the #[code id] / #[code aria-controls] pair entirely. Use #[code data-panel-trigger] on the button and Panel will generate and wire the ID automatically.
+		p When a trigger and panel are adjacent siblings, you can skip the #[code id] / #[code aria-controls] pair entirely. Use #[code data-panel-trigger] on the button and Panel will generate and wire the ID automatically.
 
-			+codeblock('HTML').
-				<button data-panel-trigger>Toggle</button>
-				<div data-panel class="is-closed">
-				  <div class="panel-wrapper">Content</div>
-				</div>
+		+codeblock('HTML').
+			<button data-panel-trigger>Toggle</button>
+			<div data-panel class="is-closed">
+				<div class="panel-wrapper">Content</div>
+			</div>
 
-	.lane
-		.container
-			+anchor Public API
+	+section("Public API", "API")
+		+codeblock('JS').
+			const panel = new Panel('#my-panel');
 
-			+codeblock('JS').
-				const panel = new Panel('#my-panel');
+			panel.open();    // open
+			panel.close();   // close
+			panel.toggle();  // toggle open/closed
 
-				panel.open();    // open
-				panel.close();   // close
-				panel.toggle();  // toggle open/closed
+			panel.isOpen;    // boolean (true if open or opening)
 
-				panel.isOpen;    // boolean (true if open or opening)
+	+section("Async content")
+		p Attach a handler to delay opening until content is ready. If loading takes longer than #[code loadingDelay]ms, a spinner appears.
 
-	.lane
-		.container
-			+anchor Async content
+		+codeblock('JS').
+			const panel = new Panel('#my-panel');
 
-			p Attach a handler to delay opening until content is ready. If loading takes longer than #[code loadingDelay]ms, a spinner appears.
-
-			+codeblock('JS').
-				const panel = new Panel('#my-panel');
-
-				panel.onBeforeOpen(async (el, signal) => {
-				  const res = await fetch('/api/content', { signal });
-				  el.querySelector('.panel-wrapper').innerHTML = await res.text();
-				}, { once: true }); // load once, cache forever
+			panel.onBeforeOpen(async (el, signal) => {
+				const res = await fetch('/api/content', { signal });
+				el.querySelector('.panel-wrapper').innerHTML = await res.text();
+			}, { once: true }); // load once, cache forever
 
 
 append scripts
 	if isProd
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			Panel.init('[data-panel]');
 	else

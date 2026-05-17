@@ -24,16 +24,16 @@ block content
 
 			.grid-2
 				.card
-					+anchor Panel
+					+anchor(title="Panel")
 					p A single element that can be #[strong opened and closed]. Use it for sidebars, show-more blocks, accordions, or any element that expands and collapses.
 					p Triggers are any element with #[code aria-controls] pointing to the panel's ID. Any close buttons use #[code data-panel-close].
 
 
 
 				.card
-					+anchor PanelSet
+					+anchor(title="PanelSet")
 					p A container that #[strong switches between] some panels. Use it for tabs, wizards, or multi-step interfaces.
-					p Only one panel is (fully) visible at a time. The container quietly animates its own height to match the incoming panel. 
+					p Only one panel is (fully) visible at a time. The container quietly animates its own height to match the incoming panel.
 					p It can also be opened and closed as a whole, just like a regular Panel.
 
 
@@ -48,7 +48,7 @@ block content
 								ul
 									li This is our most important feature ever!
 
-					a.btn.bottom.chevron.solid.block(href="/panel/getting-started.html") 
+					a.btn.bottom.chevron.solid.block(href="/panel/getting-started.html")
 						| Panel docs
 						+chevron()
 
@@ -63,75 +63,62 @@ block content
 							button(aria-controls="intro-ps-panel-3") Support
 						+examplepanelset('intro-ps')
 
-					a.btn.bottom.chevron.solid.block(href="/panelset/getting-started.html") 
+					a.btn.bottom.chevron.solid.block(href="/panelset/getting-started.html")
 						| PanelSet docs
 						+chevron()
 
 
-	hr
+	+section("Features")
+		.grid-3
+			.card
+				h4 CSS-driven animation
+				p JS measures and sets a pixel value. After that, the browser animates. No JS animation loop.
 
-	.lane
-		.container
-			+anchor Features
+			.card
+				h4 Async content
+				p Pass a promise to #[code onBeforeOpen()] and the panel waits. A spinner appears if loading takes longer than #[code loadingDelay] ms.
 
-			.grid-3
-				.card
-					h4 CSS-driven animation
-					p JS measures and sets a pixel value. After that, the browser animates. No JS animation loop.
+			.card
+				h4 Interrupt-safe
+				p Click again mid-animation and it reverses from exactly where it is. No jumping.
 
-				.card
-					h4 Async content
-					p Pass a promise to #[code onBeforeOpen()] and the panel waits. A spinner appears if loading takes longer than #[code loadingDelay] ms.
+			.card
+				h4 Accessible
+				p #[code aria-expanded], #[code aria-controls], #[code aria-selected], #[code inert] — all handled. Add keyboard navigation, #[code autoFocus] and #[code returnFocus] as needed.
 
-				.card
-					h4 Interrupt-safe
-					p Click again mid-animation and it reverses from exactly where it is. No jumping.
+			.card
+				h4 Persist &amp; deep-link
+				p Add #[code persist: true] and the active panel survives reloads. State goes into #[code localStorage] and the #[code ?panel=] URL parameter.
 
-				.card
-					h4 Accessible
-					p #[code aria-expanded], #[code aria-controls], #[code aria-selected], #[code inert] — all handled. Add keyboard navigation, #[code autoFocus] and #[code returnFocus] as needed.
-
-				.card
-					h4 Persist &amp; deep-link
-					p Add #[code persist: true] and the active panel survives reloads. State goes into #[code localStorage] and the #[code ?panel=] URL parameter.
-
-				.card
-					h4 Reduced motion
-					p Respects #[code prefers-reduced-motion]. Users who prefer less motion get instant state changes instead.
+			.card
+				h4 Reduced motion
+				p Respects #[code prefers-reduced-motion]. Users who prefer less motion get instant state changes instead.
 
 
-	hr
+	+section("Installation")
+		h3 Using NPM and imports
 
-	.lane
-		.container
-			+anchor Installation
+		.code-block
+			.code-header Terminal
+			pre
+				code npm install panelset
 
-			h3 Using NPM and imports
+		+codeblock('JS').
+			import { Panel, PanelSet } from 'panelset';
+			import 'panelset/style.css';
 
-			.code-block
-				.code-header Terminal
-				pre
-					code npm install panelset
+		h3 Using the normal JS and CSS files
+		p Download the latest CSS and JS files from the #[a(href="https://github.com/your-repo/panelset") GitHub repository]. Import it like this:
 
-			+codeblock('JS').
-				import { Panel, PanelSet } from 'panelset';
-				import 'panelset/style.css';
-
-			h3 Using the normal JS and CSS files
-			p Download the latest CSS and JS files from the #[a(href="https://github.com/your-repo/panelset") GitHub repository]. Import it like this:
-
-			+codeblock('HTML')
-				link(rel="stylesheet" href="path/to/panelset.css")
-				script(src="path/to/panelset.js")
+		+codeblock('HTML')
+			link(rel="stylesheet" href="path/to/panelset.css")
+			script(src="path/to/panelset.js")
 
 
 	hr
-
-	.lane
+	section.no-hr
 		.container
-
-			+anchor Support this project
-
+			+anchor(title="Support this project")
 			p PanelSet is free. If it saved you time, a coffee goes a long way.
 
 			a.btn.solid.chevron(href="https://ko-fi.com/martinomagnifico" target="_blank" rel="noopener")
@@ -144,8 +131,8 @@ block content
 
 append scripts
 	if isProd
-		script(src="/assets/scripts/example.js" vite-ignore)
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}assets/scripts/example.js` vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			PanelSet.init();
 			new Panel('#intro-panel');

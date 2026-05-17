@@ -19,7 +19,7 @@ code, .code {
 	}
 }
 
-p code, li code, dl code, dt.code, td code {
+p code, li code, dl code, dt.code, td code, h3 code {
 	background: var(--doc-code-transparent);
 	padding: 0em 0.3em;
 	font-size: 0.9em;
@@ -71,7 +71,6 @@ dl.horizontal {
 	.card & {
 		background: var(--bg-surface);
 	}
-	// box-shadow: 0 0 10px var(--border-default);
 
 	.code-header {
 		// background: var(--bg-surface-tint);
@@ -101,36 +100,34 @@ dl.horizontal {
 	background: var(--bg-surface);
 }
 
-.hljs-ln td.hljs-ln-numbers {
-	-webkit-touch-callout: none;
-	-webkit-user-select: none;
-	-khtml-user-select: none;
-	-moz-user-select: none;
-	-ms-user-select: none;
-	user-select: none;
-	text-align: right;
-	color: #ccc;
-	padding-right: 1.5rem;
-}
-.hljs-ln-code {
-	padding-left: 10px;
-}
-
-pre code.hljs {
+.hljs {
 	padding: 0;
 	background: none;
+
+	&-ln {
+		td.hljs-ln-numbers {
+			-webkit-touch-callout: none;
+			-webkit-user-select: none;
+			-khtml-user-select: none;
+			-moz-user-select: none;
+			-ms-user-select: none;
+			user-select: none;
+			text-align: right;
+			color: var(--text-muted);
+			opacity: 0.5;
+			padding-right: 1.5rem;
+		}
+		&-code {
+			padding-left: 10px;
+		}
+	}
+	&-attribute, &-doctag, &-keyword, &-meta &-keyword,
+	&-name, &-selector-tag, &-section, &-title {
+		font-weight: 600;
+	}
 }
 
-.hljs-attribute,
-.hljs-doctag,
-.hljs-keyword,
-.hljs-meta .hljs-keyword,
-.hljs-name,
-.hljs-selector-tag,
-.hljs-section,
-.hljs-title {
-	font-weight: 600;
-}
+
 
 button.copy {
 	background: var(--btn-primary-bg);

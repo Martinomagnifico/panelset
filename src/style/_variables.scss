@@ -19,6 +19,13 @@
     --ps-fadein-timing:          ease-in-out;
     --ps-loading-panel-opacity:  0.1;
 
+    /* Loading spinner */
+    --ps-spinner-size:           40px;
+    --ps-spinner-thickness:      4px;
+    --ps-spinner-track-color:    rgba(0, 0, 0, 0.1);
+    --ps-spinner-color:          rgba(0, 100, 255, 0.8);
+    --ps-spinner-speed:          0.8s;
+
     /* Calculated — override these directly if you change the loading vars above */
     --ps-loading-dim-duration:     calc(var(--ps-fadeout-speed) * (1 - var(--ps-loading-panel-opacity)));
     --ps-loading-fadeout-duration: calc(var(--ps-fadeout-speed) * var(--ps-loading-panel-opacity));

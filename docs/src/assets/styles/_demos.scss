@@ -32,7 +32,6 @@
 .api {
   gap: 0;
 
-
   h3.code {
     font-size: 1.2rem;
     color: var(--btn-primary-hover);
@@ -40,10 +39,8 @@
 
   h4 {
     font-size: 1.1rem;
-    margin-bottom: 0.25rem;
-    margin-top: 1rem;
     &.code {
-          color: var(--btn-primary-hover);
+      color: var(--btn-primary-hover);
     }
   }
 
@@ -52,47 +49,42 @@
     margin-top: 0.5rem;
     font-size: 0.9em;
   }
+}
 
-  .api-trigger {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    background: none;
-    border: none;
-    padding: 0.25rem 0;
-    cursor: pointer;
-    text-align: left;
-    gap: 1rem;
-    outline-offset: 6px;
-    outline-color: transparent;
+.card-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 0.25rem 0;
+  cursor: pointer;
+  text-align: left;
+  gap: 1rem;
+  outline-offset: 6px;
+  outline-color: transparent;
 
-    &:focus {
-      outline-color: transparent;
-          outline-color: pink;
-    }
+  &:focus-visible {
+    outline: 3px solid var(--btn-primary-hover);
+  }
 
-    &:focus-visible {
-      outline: 3px solid var(--btn-primary-hover);
-    }
+  h3, h4 {
+    flex: 1;
+    margin-bottom: 0;
+    align-self: start;
+  }
 
-    h3.code, h4.code {
-      flex: 1;
-      margin-bottom: 0;
-      align-self: start;
-    }
+  .chevron {
+    transition: transform var(--ps-open-speed) var(--ps-open-timing);
+    will-change: transform;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transform: rotate(-90deg);
+  }
 
-    .chevron {
-      transition: transform var(--ps-open-speed) var(--ps-open-timing);
-      flex-shrink: 0;
-      color: var(--text-muted);
-      transform: rotate(-90deg);
-    }
-
-
-    &[aria-expanded="true"] .chevron {
-      transform: rotate(90deg);
-    }
+  &[aria-expanded="true"] .chevron {
+    transform: rotate(90deg);
   }
 }
 
@@ -107,26 +99,22 @@
   gap: 2rem;
 }
 
-.card {
-  border: 3px solid transparent;
-}
-
 .card.no-padding {
   transition: all var(--ps-open-speed) var(--ps-open-timing);
 
   padding: 0;
   gap: 0;
 
-  &:has([aria-expanded="true"]) {
+  &:has(> button[aria-expanded="true"]) {
     background: var(--bg-surface-tint);
     background: var(--demo-btn-bg);
     border-color: var(--border-default)
   }
 
-  button.api-trigger {
+  button.card-trigger {
     padding: var(--padding-medium);
 
-    h3.code, h4.code {
+    h3, h4 {
       background: none;
       padding: 0;
       color: var(--text-muted);
@@ -140,10 +128,9 @@
   .card-content {
     padding: var(--padding-medium);
     border-top: 1px solid var(--border-default);
-
-    // .card {
-    //   border: 1px solid var(--border-default);
-    // }
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
 
@@ -210,10 +197,15 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  border: 3px solid transparent;
 
-  h4, .example & h4 {
-    margin-top: 0;
-    margin-bottom: 0.5rem;
+  * + h3,
+  * + h4 {
+    margin-top: var(--padding-medium);
+  }
+
+  ul + * {
+    margin-top: var(--padding-small);
   }
 
   .card {
@@ -235,15 +227,6 @@
   font-weight: 500;
 
   transition: all 0.2s ease-in-out;
-
-  &.outline {
-    color: var(--btn-outline-text);
-    border: 1px solid currentColor;
-
-    &:hover {
-      color: var(--btn-primary-hover);
-    }
-  }
 
   &.solid {
     background: var(--btn-primary-bg);
@@ -325,7 +308,6 @@
   border: 3px solid var(--special-normal);
   background: var(--demo-btn-bg);
   color: var(--special-hover);
-  // box-shadow: 0 0 0 var(--special-shadow);
   padding: 0.25rem 1rem;
   border-radius: 24px;
   font-size: 1rem;
@@ -346,11 +328,68 @@
     cursor: not-allowed;
     pointer-events: none;
   }
-
-
 }
+
 
 button[aria-expanded="false"] .when-open,
 button[aria-expanded="true"] .when-closed {
   display: none;
+}
+
+.raw-demo {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 16px;
+  // border: 1px dashed var(--text-default);
+  padding: 2px;
+
+  [data-panel], [data-panelset] {
+    background: white;
+    
+
+
+    .panel-wrapper {
+      padding-top: 0;
+    }
+  }
+
+
+  button {
+    all: revert;
+    font-size: 1rem;
+    border-radius: 0;
+    // border: initial;
+    // background: initial;
+    color: var(--text-default);
+    cursor: pointer;
+    font-family: Georgia, "Times New Roman", serif;
+    &:hover {
+      text-decoration: underline;
+      box-shadow: none;
+      border-color: black
+    }
+  }
+
+  h1, h2, h3, h4 {
+    color: var(--text-default);
+  }
+
+  .raw-demo-triggers {
+    display: block;
+  }
+
+  ul, ul li {
+    all: revert;
+    color: var(--text-default);
+  }
+  ul li:before {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+    .raw-demo {
+      [data-panel], [data-panelset] {
+        background: black;
+      }
+    }
 }

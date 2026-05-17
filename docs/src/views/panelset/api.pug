@@ -10,199 +10,184 @@ block content
 				h1 PanelSet API
 				p.lead Constructor, instance methods, properties, and static methods.
 
-	.lane
-		.container
-			+anchor Constructor
-
-			.card.api
-				h3.code new PanelSet(elementOrSelector: HTMLElement | string, options?: PanelSetConfig)
-				hr
-				p Creates a new PanelSet instance.
-				h4 Parameters:
-				dl
-					dt.code elementOrSelector
-					dd CSS selector string or HTMLElement reference to the #[code [data-panelset]] container.
-					dt.code options (optional)
-					dd Configuration object. See #[a(href="/panelset/configuration.html") PanelSet — Configuration] for all options.
-				br
-				+codeblock('JavaScript').
-					const ps = new PanelSet('#my-tabs');
-					const ps = new PanelSet('#my-tabs', { transitions: true, autoFocus: 'heading' });
-					const ps = new PanelSet(document.getElementById('my-tabs'));
-
-	.lane
-		.container
-			+anchor Instance methods
-
-			.card.api
-				h3.code panelSet.show(panelId: string, options?): Promise&lt;void&gt;
-				hr
-				p Activates a panel by ID. No-op if the panel is already active (unless #[code closeOnTab] is enabled).
-				h4 Parameters:
-				dl
-					dt.code panelId
-					dd ID of the panel to activate.
-					dt.code options (optional)
-					dd
-						ul
-							li #[code event?: Event]: Triggering event. Used for keyboard detection and trigger tracking.
-							li #[code transition?: boolean]: Whether to animate. Default: #[code true].
-							li #[code autoFocus?: AutoFocusMode]: Override the global #[code autoFocus] for this activation.
-				h4 Returns:
-				p Promise that resolves when the activation transition completes.
-				br
-				+codeblock('JavaScript').
-					panelSet.show('panel-2');
-					panelSet.show('panel-2', { transition: false });
-					button.addEventListener('click', event => {
-					  panelSet.show('panel-2', { event, autoFocus: 'heading' });
-					});
-
-			.card.api
-				h3.code panelSet.open(options?): void
-				hr
-				p Opens a closable PanelSet (#[code closable: true] required). No-op if already open.
-				h4 Parameters:
-				dl
-					dt.code options (optional)
-					dd #[code event], #[code transition], #[code autoFocus]: same as #[code show()].
-
-			.card.api
-				h3.code panelSet.close(options?): void
-				hr
-				p Closes a closable PanelSet. No-op if already closed.
-				h4 Parameters:
-				dl
-					dt.code options (optional)
-					dd #[code transition?: boolean]
-
-			.card.api
-				h3.code panelSet.toggle(options?): void
-				hr
-				p Opens if closed, closes if open. Same options as #[code open()].
-
-			.card.api
-				h3.code panelSet.getActive(): string | null
-				hr
-				p Returns the ID of the currently active (or pending) panel, or #[code null].
-				br
-				+codeblock('JavaScript').
-					const current = panelSet.getActive();
-					if (current === 'step-2') {
-					  panelSet.show('step-3', { event });
-					}
-
-			.card.api
-				h3.code panelSet.onBeforeOpen(handler, options?): void
-				hr
-				p Registers a handler for async content loading before panel activation.
-				h4 Parameters:
-				dl
-					dt.code handler
-					dd #[code (targetPanel: HTMLElement, signal: AbortSignal) => Promise&lt;void&gt; | void]: Return a promise to delay activation.
-					dt.code options (optional)
-					dd #[code { once?: boolean }]: If #[code true], the handler is skipped after the first successful load.
-				br
-				+codeblock('JavaScript').
-					panelSet.onBeforeOpen((targetPanel, signal) => {
-					  return fetch(`/api/${targetPanel.id}`, { signal })
-					    .then(r => r.text())
-					    .then(html => targetPanel.innerHTML = html);
-					}, { once: true });
-
-	.lane
-		.container
-			+anchor Instance properties
-
-			.card.api
-				h3.code panelSet.element: HTMLElement
-				hr
-				p #[strong Read-only.] The #[code [data-panelset]] container element.
-
-			.card.api
-				h3.code panelSet.panels: HTMLElement[]
-				hr
-				p #[strong Read-only.] Array of all #[code [role="tabpanel"]] elements in this PanelSet.
-
-			.card.api
-				h3.code panelSet.activePanel: HTMLElement
-				hr
-				p #[strong Read-only.] The currently visible panel element.
-
-			.card.api
-				h3.code panelSet.config: PanelSetConfig
-				hr
-				p #[strong Read-only.] The merged configuration object (1. defaults 2. data attributes 3. constructor options).
-
-	.lane
-		.container
-			+anchor Static methods
-
-			.card.api
-				h3.code PanelSet.init(selectorOrOptions?, options?): PanelSet[]
-				hr
-				p Auto-initialises all panelsets matching the selector. Stores the instance on each container as #[code container.panelSet].
-				h4 Parameters:
-				dl
-					dt.code selectorOrOptions (optional)
-					dd CSS selector string, or a config object (uses #[code '[data-panelset]'] selector).
-					dt.code options (optional)
-					dd Config object: only used when the first argument is a selector string.
-				h4 Returns:
-				p Array of created PanelSet instances.
-				br
-				+codeblock('JavaScript').
-					PanelSet.init();
-					PanelSet.init({ debug: true });
-					PanelSet.init('[data-panelset]', { autoFocus: 'heading' });
-
-					// Access instance later via the element
-					document.getElementById('my-tabs').panelSet.show('panel-2');
-
-			.card.api
-				h3.code PanelSet.defaults: PanelSetConfig
-				hr
-				p #[strong Static property.] Default configuration applied to all new instances. Modify to change defaults globally.
-				br
-				+codeblock('JavaScript').
-					PanelSet.defaults.autoFocus = 'heading';
-					PanelSet.defaults.debug = true;
-
-	.lane
-		.container
-			+anchor TypeScript types
-
+	+section("Constructor")
+		.card.api
+			h3.code new PanelSet(elementOrSelector: HTMLElement | string, options?: PanelSetConfig)
+			hr
+			p Creates a new PanelSet instance.
+			h4 Parameters:
+			dl
+				dt.code elementOrSelector
+				dd CSS selector string or HTMLElement reference to the #[code [data-panelset]] container.
+				dt.code options (optional)
+				dd Configuration object. See #[a(href="/panelset/configuration.html") PanelSet — Configuration] for all options.
+			br
 			+codeblock('JavaScript').
-				import {
-				  PanelSet,
-				  type PanelSetConfig,
-				  type ShowOptions,
-				  type HandlerOptions,
-				  type AsyncContentHandler,
-				  type ReadyEventDetail,
-				  type BeforeOpenEventDetail,
-				  type ActivationEventDetail,
-				  type ActivationAbortedEventDetail,
-				} from 'panelset';
+				const ps = new PanelSet('#my-tabs');
+				const ps = new PanelSet('#my-tabs', { transitions: true, autoFocus: 'heading' });
+				const ps = new PanelSet(document.getElementById('my-tabs'));
 
-				const config: PanelSetConfig = {
-				  transitions: { height: true, panels: false },
-				  closable: true,
-				  autoFocus: 'heading',
-				  persist: true,
-				};
-
-				const ps = new PanelSet('#my-tabs', config);
-
-				ps.element.addEventListener('ps:activationstart', e => {
-				  const event = e as CustomEvent<ActivationEventDetail>;
-				  console.log(event.detail.panelId);
+	+section("Instance methods")
+		.card.api
+			h3.code panelSet.show(panelId: string, options?): Promise&lt;void&gt;
+			hr
+			p Activates a panel by ID. No-op if the panel is already active (unless #[code closeOnTab] is enabled).
+			h4 Parameters:
+			dl
+				dt.code panelId
+				dd ID of the panel to activate.
+				dt.code options (optional)
+				dd
+					ul
+						li #[code event?: Event]: Triggering event. Used for keyboard detection and trigger tracking.
+						li #[code transition?: boolean]: Whether to animate. Default: #[code true].
+						li #[code autoFocus?: AutoFocusMode]: Override the global #[code autoFocus] for this activation.
+			h4 Returns:
+			p Promise that resolves when the activation transition completes.
+			br
+			+codeblock('JavaScript').
+				panelSet.show('panel-2');
+				panelSet.show('panel-2', { transition: false });
+				button.addEventListener('click', event => {
+				  panelSet.show('panel-2', { event, autoFocus: 'heading' });
 				});
+
+		.card.api
+			h3.code panelSet.open(options?): void
+			hr
+			p Opens a closable PanelSet (#[code closable: true] required). No-op if already open.
+			h4 Parameters:
+			dl
+				dt.code options (optional)
+				dd #[code event], #[code transition], #[code autoFocus]: same as #[code show()].
+
+		.card.api
+			h3.code panelSet.close(options?): void
+			hr
+			p Closes a closable PanelSet. No-op if already closed.
+			h4 Parameters:
+			dl
+				dt.code options (optional)
+				dd #[code transition?: boolean]
+
+		.card.api
+			h3.code panelSet.toggle(options?): void
+			hr
+			p Opens if closed, closes if open. Same options as #[code open()].
+
+		.card.api
+			h3.code panelSet.getActive(): string | null
+			hr
+			p Returns the ID of the currently active (or pending) panel, or #[code null].
+			br
+			+codeblock('JavaScript').
+				const current = panelSet.getActive();
+				if (current === 'step-2') {
+				  panelSet.show('step-3', { event });
+				}
+
+		.card.api
+			h3.code panelSet.onBeforeOpen(handler, options?): void
+			hr
+			p Registers a handler for async content loading before panel activation.
+			h4 Parameters:
+			dl
+				dt.code handler
+				dd #[code (targetPanel: HTMLElement, signal: AbortSignal) => Promise&lt;void&gt; | void]: Return a promise to delay activation.
+				dt.code options (optional)
+				dd #[code { once?: boolean }]: If #[code true], the handler is skipped after the first successful load.
+			br
+			+codeblock('JavaScript').
+				panelSet.onBeforeOpen((targetPanel, signal) => {
+				  return fetch(`/api/${targetPanel.id}`, { signal })
+				    .then(r => r.text())
+				    .then(html => targetPanel.innerHTML = html);
+				}, { once: true });
+
+	+section("Instance properties")
+		.card.api
+			h3.code panelSet.element: HTMLElement
+			hr
+			p #[strong Read-only.] The #[code [data-panelset]] container element.
+
+		.card.api
+			h3.code panelSet.panels: HTMLElement[]
+			hr
+			p #[strong Read-only.] Array of all #[code [role="tabpanel"]] elements in this PanelSet.
+
+		.card.api
+			h3.code panelSet.activePanel: HTMLElement
+			hr
+			p #[strong Read-only.] The currently visible panel element.
+
+		.card.api
+			h3.code panelSet.config: PanelSetConfig
+			hr
+			p #[strong Read-only.] The merged configuration object (1. defaults 2. data attributes 3. constructor options).
+
+	+section("Static methods")
+		.card.api
+			h3.code PanelSet.init(selectorOrOptions?, options?): PanelSet[]
+			hr
+			p Auto-initialises all panelsets matching the selector. Stores the instance on each container as #[code container.panelSet].
+			h4 Parameters:
+			dl
+				dt.code selectorOrOptions (optional)
+				dd CSS selector string, or a config object (uses #[code '[data-panelset]'] selector).
+				dt.code options (optional)
+				dd Config object: only used when the first argument is a selector string.
+			h4 Returns:
+			p Array of created PanelSet instances.
+			br
+			+codeblock('JavaScript').
+				PanelSet.init();
+				PanelSet.init({ debug: true });
+				PanelSet.init('[data-panelset]', { autoFocus: 'heading' });
+
+				// Access instance later via the element
+				document.getElementById('my-tabs').panelSet.show('panel-2');
+
+		.card.api
+			h3.code PanelSet.defaults: PanelSetConfig
+			hr
+			p #[strong Static property.] Default configuration applied to all new instances. Modify to change defaults globally.
+			br
+			+codeblock('JavaScript').
+				PanelSet.defaults.autoFocus = 'heading';
+				PanelSet.defaults.debug = true;
+
+	+section("TypeScript types")
+		+codeblock('JavaScript').
+			import {
+			  PanelSet,
+			  type PanelSetConfig,
+			  type ShowOptions,
+			  type HandlerOptions,
+			  type AsyncContentHandler,
+			  type ReadyEventDetail,
+			  type BeforeOpenEventDetail,
+			  type ActivationEventDetail,
+			  type ActivationAbortedEventDetail,
+			} from 'panelset';
+
+			const config: PanelSetConfig = {
+			  transitions: { height: true, panels: false },
+			  closable: true,
+			  autoFocus: 'heading',
+			  persist: true,
+			};
+
+			const ps = new PanelSet('#my-tabs', config);
+
+			ps.element.addEventListener('ps:activationstart', e => {
+			  const event = e as CustomEvent<ActivationEventDetail>;
+			  console.log(event.detail.panelId);
+			});
 
 
 append scripts
 	if isProd
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			PanelSet.init();
 	else

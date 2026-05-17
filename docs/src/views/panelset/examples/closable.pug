@@ -21,16 +21,13 @@ block content
 					.demo-controls
 						button(aria-controls="demo-closable-panel-1" aria-selected="true")
 							span Panel 1
-							svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-								polyline(points="6 9 12 15 18 9")
+							+chevron(16, 'down')
 						button(aria-controls="demo-closable-panel-2")
 							span Panel 2
-							svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-								polyline(points="6 9 12 15 18 9")
+							+chevron(16, 'down')
 						button(aria-controls="demo-closable-panel-3")
 							span Panel 3
-							svg(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
-								polyline(points="6 9 12 15 18 9")
+							+chevron(16, 'down')
 						button.secondary(data-panelset-close="#demo-closable") Close
 						button.secondary(data-panelset-open="#demo-closable") Open
 						button.secondary(data-panelset-toggle="#demo-closable") Toggle
@@ -89,8 +86,8 @@ block content
 
 append scripts
 	if isProd
-		script(src="/assets/scripts/example-closable.js" vite-ignore)
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}assets/scripts/example-closable.js` vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			PanelSet.init();
 	else

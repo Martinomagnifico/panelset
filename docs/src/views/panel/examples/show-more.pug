@@ -39,48 +39,43 @@ block content
 				import { Panel } from 'panelset';
 				Panel.init();
 
-	.lane
-		.container
-			+anchor Changing the trigger
-			p Because the trigger connects to the panel by #[code id], the two elements can appear in any order in the DOM. Here the expandable area sits #[em above] the trigger, and the button label changes between "Show more" and "Show less" using an #[code aria-expanded]-driven CSS rule — no JavaScript required.
+	+section("Changing the trigger")
+		p Because the trigger connects to the panel by #[code id], the two elements can appear in any order in the DOM. Here the expandable area sits #[em above] the trigger, and the button label changes between "Show more" and "Show less" using an #[code aria-expanded]-driven CSS rule — no JavaScript required.
 
-			.card
-				.demo
-					article.show-more-article
-						button(aria-controls="docs-show-more-trigger" aria-expanded="false")
-							span.when-closed Show more
-							span.when-open Show less
-						div#docs-show-more-trigger(data-panel data-panel-axis="vertical" class="is-closed")
-							.panel-wrapper
-								p Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
+		.card
+			.demo
+				article.show-more-article
+					button(aria-controls="docs-show-more-trigger" aria-expanded="false")
+						span.when-closed Show more
+						span.when-open Show less
+					div#docs-show-more-trigger(data-panel data-panel-axis="vertical" class="is-closed")
+						.panel-wrapper
+							p Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
-	
+		+codeblock('HTML').
+			<article>
+			  <button aria-controls="my-panel" aria-expanded="false">
+			    <span class="when-closed">Show more</span>
+			    <span class="when-open">Show less</span>
+			  </button>
+			  <div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
+			    <div class="panel-wrapper">
+			      <p>Hidden content here.</p>
+			    </div>
+			  </div>
+			</article>
 
+		+codeblock('CSS').
+			button[aria-expanded="false"] .when-open,
+			button[aria-expanded="true"] .when-closed { display: none; }
 
-			+codeblock('HTML').
-				<article>
-				  <button aria-controls="my-panel" aria-expanded="false">
-				    <span class="when-closed">Show more</span>
-				    <span class="when-open">Show less</span>
-				  </button>
-				  <div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
-				    <div class="panel-wrapper">
-				      <p>Hidden content here.</p>
-				    </div>
-				  </div>
-				</article>
-
-			+codeblock('CSS').
-				button[aria-expanded="false"] .when-open,
-				button[aria-expanded="true"] .when-closed { display: none; }
-
-			+codeblock('JS').
-				import { Panel } from 'panelset';
-				Panel.init();
+		+codeblock('JS').
+			import { Panel } from 'panelset';
+			Panel.init();
 
 append scripts
 	if isProd
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			Panel.init('.docs-content [data-panel]');
 	else

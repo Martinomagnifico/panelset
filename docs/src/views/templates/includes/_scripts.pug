@@ -3,9 +3,9 @@ block scripts
 	script(src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.6.0/highlightjs-line-numbers.min.js")
 
 	if isProd
-		script(src="/assets/scripts/copybutton.js" vite-ignore)
-		script(src="/assets/scripts/anchorlink.js" vite-ignore)
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}assets/scripts/copybutton.js` vite-ignore)
+		script(src=`${basePath}assets/scripts/anchorlink.js` vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			Panel.init('.docs-sidebar [data-panel]', { returnFocus: false });
 

@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
     const isProd = mode === 'production';
 
 	return {
-		base: isProd ? '/panelset/' : '/',
+		base: '/',
 		build: {
 	        outDir: "dist",
 	        emptyOutDir: false,
@@ -72,6 +72,7 @@ export default defineConfig(({ mode }) => {
 	            root: "src",
 	            globals: {
 	                isProd: isProd,
+	                basePath: '/',
 	                sidebar: navData,
 	            },
 	            options: {

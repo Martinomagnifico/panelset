@@ -44,35 +44,31 @@ block content
 				h1=pagetitle
 				p.lead When panels open up, they can be aligned in different ways. This page explores the different options for panel alignment and how they interact with the main content. 
 
-				br
-				p.lead In the below examples, the opening panels are all #[em pushing] the main content away.
-				
-				p.lead It is always possible to have the panels absolutely positioned, so that they appear #[em over] the content. We are not showing that here.
 
-	.lane
-		.container
-			h2 Vertical panels
+			p In the below examples, the opening panels are all #[strong pushing] the main content away. It is always possible to have the panels absolutely positioned, so that they appear #[strong over] the content. We are #[em NOT] showing that here.
 
-			.card.alignment-demos
+	+section("Vertical panels")
+
+		.card.alignment-demos
 
 
-				.grid-3
-					.flex.vertical
-						h5 #[code data-panel-align="start"]
-						.demo
-							+alignment('example-2', 'vertical', 'start', 'start')
-					.flex.vertical
-						h5 #[code data-panel-align="center"]
-						.demo
-							+alignment('example-3', 'vertical', 'center', 'start')
-					.flex.vertical
-						h5 #[code data-panel-align="end"]
-						.demo
-							+alignment('example-4', 'vertical', 'end', 'start')
-	
-	.lane
-		.container
-			h2 Horizontal panels
+			.grid-3
+				.flex.vertical
+					h5 #[code data-panel-align="start"]
+					.demo
+						+alignment('example-2', 'vertical', 'start', 'start')
+				.flex.vertical
+					h5 #[code data-panel-align="center"]
+					.demo
+						+alignment('example-3', 'vertical', 'center', 'start')
+				.flex.vertical
+					h5 #[code data-panel-align="end"]
+					.demo
+						+alignment('example-4', 'vertical', 'end', 'start')
+
+	+section("Horizontal panels")
+
+		.card.alignment-demos
 
 			p Horizontal panels push differently from vertical ones: the page has a maximum width, so the panel squeezes the content instead of pushing it out of frame. Text wraps in front of your eyes. #[strong Some people, me included, might find that annoying]. This can be fixed by pinning the content elements in place, which is explained in the next section.
 			br
@@ -93,29 +89,29 @@ block content
 					.demo
 						+alignment('example-7', 'horizontal', 'end', 'start')
 
-	.lane
-		.container
-			h2 Horizontal panels, pinned content
-			p The above examples show how panels can be aligned in different ways, and how #[strong annoying] the squeezing of content can be. This can be fixed by pinning the content elements in place. Those elements will then not resize, but just move out of the way, according to alignment rules. Note that this only works for horizontal panels.
+	+section("Horizontal panels, pinned content")
 
-			p Add #[code data-panel-body] to the main content wrapper, #[code data-panel-pin="start"] or #[code "end"] to the elements you want to pin, and #[code data-panel-close-on-resize] to the panel if you want it to close when the layout changes.
 
-			.card.alignment-demos
-				.demo
-					+alignment('example-8', 'horizontal', 'start', 'start', 'start')
-				+codeblock('HTML')
-					+alignment('example-8', 'horizontal', 'start', 'start', 'start')
+		p The above examples show how panels can be aligned in different ways, and how #[strong annoying] the squeezing of content can be. This can be fixed by pinning the content elements in place. Those elements will then not resize, but just move out of the way, according to alignment rules. Note that this only works for horizontal panels.
 
-			.card.alignment-demos
-				.demo
-					+alignment('example-9', 'horizontal', 'end', 'end', 'end')
-				+codeblock('HTML')
-					+alignment('example-9', 'horizontal', 'end', 'end', 'end')
+		p Add #[code data-panel-body] to the main content wrapper, #[code data-panel-pin="start"] or #[code "end"] to the elements you want to pin, and #[code data-panel-close-on-resize] to the panel if you want it to close when the layout changes.
+
+		.card.alignment-demos
+			.demo
+				+alignment('example-8', 'horizontal', 'start', 'start', 'start')
+			+codeblock('HTML')
+				+alignment('example-8', 'horizontal', 'start', 'start', 'start')
+
+		.card.alignment-demos
+			.demo
+				+alignment('example-9', 'horizontal', 'end', 'end', 'end')
+			+codeblock('HTML')
+				+alignment('example-9', 'horizontal', 'end', 'end', 'end')
 
 
 append scripts
 	if isProd
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			Panel.init('.docs-content [data-panel]');
 	else

@@ -8,17 +8,13 @@ block content
 		.container
 			.page-header
 				h1 Async panels
-				p.lead Load panel content on-demand with promises, fetch, or heavy computation
+				p.lead Load panel content with promises, fetch, or heavy computation
 
 	.lane
 		.container
 			.title-text
-				+anchor Overview
 				p PanelSet supports async content loading through the #[code ps:beforeopen] event.
 
-	.lane
-		.container
-			+anchor onBeforeOpen()
 
 			.title-text
 				p Use #[code onBeforeOpen()] to add async loading:
@@ -47,167 +43,150 @@ block content
 					dt options.once
 					dd #[code true] loads once and caches; #[code false] always reloads. Default: #[code false]
 
-	.lane
-		.container
-			+anchor Live example
-			p This example uses a 'slowfetch' to mimic a slow network request to fetch recipe data. renderRecipe formats it into HTML.
+	+section("Live example")
+		p This example uses a 'slowfetch' to mimic a slow network request to fetch recipe data. renderRecipe formats it into HTML.
 
-			.card
-				.demo
-					.demo-controls
-						button(aria-controls="async-panel-1") Panel 1 (Static)
-						button(aria-controls="async-panel-2") Panel 2 (Fetch Recipe)
-						button(aria-controls="async-panel-3") Panel 3 (Static)
+		.card
+			.demo
+				.demo-controls
+					button(aria-controls="async-panel-1") Panel 1 (Static)
+					button(aria-controls="async-panel-2") Panel 2 (Fetch Recipe)
+					button(aria-controls="async-panel-3") Panel 3 (Static)
 
-					#async-demo(data-panelset data-empty-panel-height="300" data-loading-delay="200")
-						.panel-wrapper
-							#async-panel-1(role="tabpanel" class="active" data-loaded="true")
-								h3 Static Content
-								p This panel has pre-loaded content.
+				#async-demo(data-panelset data-empty-panel-height="300" data-loading-delay="200")
+					.panel-wrapper
+						#async-panel-1(role="tabpanel" class="active" data-loaded="true")
+							h3 Static Content
+							p This panel has pre-loaded content.
 
-							#async-panel-2(role="tabpanel" hidden)
-								// Empty - will load async
+						#async-panel-2(role="tabpanel" hidden)
+							// Empty - will load async
 
-							#async-panel-3(role="tabpanel" hidden)
-								h3 Another Static Panel
-								p More pre-loaded content.
-
-				+codeblock('JS').
-					asyncPanelSet.onBeforeOpen((targetPanel, signal) => {
-					    if (targetPanel.id === 'async-panel-2') {
-					        return slowfetch(`https://dummyjson.com/recipes/${randomIntFromInterval(1, 10)}`, { signal })
-					            .then(response => response.json())
-					            .then(data => {
-					                targetPanel.innerHTML = renderRecipe(data);
-					            });
-					    }
-					});
-
-	.lane
-		.container
-			+anchor Heavy computation
-
-			.title-text
-				p Works for CPU-heavy operations too, not just network requests:
+						#async-panel-3(role="tabpanel" hidden)
+							h3 Another Static Panel
+							p More pre-loaded content.
 
 			+codeblock('JS').
-				panelSet.onBeforeOpen((targetPanel, signal) => {
-				  if (targetPanel.id === 'heavy-calc') {
-				    return new Promise((resolve) => {
-				      // Simulate heavy calculation
-				      setTimeout(() => {
-				        const result = fibonacci(40); // Actually slow!
-				        targetPanel.innerHTML = `
-				          <h3>Calculation Complete</h3>
-				          <p>Fibonacci(40) = ${result}</p>
-				        `;
-				        resolve();
-				      }, 2000);
-				    });
-				  }
+				asyncPanelSet.onBeforeOpen((targetPanel, signal) => {
+				    if (targetPanel.id === 'async-panel-2') {
+				        return slowfetch(`https://dummyjson.com/recipes/${randomIntFromInterval(1, 10)}`, { signal })
+				            .then(response => response.json())
+				            .then(data => {
+				                targetPanel.innerHTML = renderRecipe(data);
+				            });
+				    }
 				});
 
-				function fibonacci(n) {
-				  if (n <= 1) return n;
-				  return fibonacci(n - 1) + fibonacci(n - 2);
-				}
+	+section("Heavy computation")
+		p Works for CPU-heavy operations too, not just network requests:
 
-	.lane
-		.container
-			.title-text
-				+anchor Using the event directly
-				p Or listen to the event directly:
+		+codeblock('JS').
+			panelSet.onBeforeOpen((targetPanel, signal) => {
+			  if (targetPanel.id === 'heavy-calc') {
+			    return new Promise((resolve) => {
+			      // Simulate heavy calculation
+			      setTimeout(() => {
+			        const result = fibonacci(40); // Actually slow!
+			        targetPanel.innerHTML = `
+			          <h3>Calculation Complete</h3>
+			          <p>Fibonacci(40) = ${result}</p>
+			        `;
+			        resolve();
+			      }, 2000);
+			    });
+			  }
+			});
 
-			+codeblock('JS').
-				container.addEventListener('ps:beforeopen', (e) => {
-				  const { panelId, targetPanel, signal } = e.detail;
+			function fibonacci(n) {
+			  if (n <= 1) return n;
+			  return fibonacci(n - 1) + fibonacci(n - 2);
+			}
 
-				  // Skip if already loaded
-				  if (targetPanel.dataset.loaded === 'true') return;
+	+section("Using the event directly")
+		p Or listen to the event directly:
 
-				  // Set the promise property to delay activation
-				  e.detail.promise = fetch(`/api/panel/${panelId}`, { signal })
-				    .then(response => response.text())
-				    .then(html => {
-				      targetPanel.innerHTML = html;
-				      targetPanel.dataset.loaded = 'true';
-				    });
-				});
+		+codeblock('JS').
+			container.addEventListener('ps:beforeopen', (e) => {
+			  const { panelId, targetPanel, signal } = e.detail;
 
-			.card.api
-				h3 Event detail properties
-				dl
-					dt panelId
-					dd String - ID of the panel being activated
+			  // Skip if already loaded
+			  if (targetPanel.dataset.loaded === 'true') return;
 
-					dt targetPanel
-					dd HTMLElement - The panel element
+			  // Set the promise property to delay activation
+			  e.detail.promise = fetch(`/api/panel/${panelId}`, { signal })
+			    .then(response => response.text())
+			    .then(html => {
+			      targetPanel.innerHTML = html;
+			      targetPanel.dataset.loaded = 'true';
+			    });
+			});
 
-					dt outgoingPanel
-					dd HTMLElement | null - The panel being deactivated
+		.card.api
+			h3 Event detail properties
+			dl
+				dt panelId
+				dd String - ID of the panel being activated
 
-					dt signal
-					dd AbortSignal - Use with fetch to cancel if user clicks away
+				dt targetPanel
+				dd HTMLElement - The panel element
 
-					dt promise
-					dd Promise | null - Set this to delay activation until it resolves
+				dt outgoingPanel
+				dd HTMLElement | null - The panel being deactivated
 
-	.lane
-		.container
-			+anchor Loading states
+				dt signal
+				dd AbortSignal - Use with fetch to cancel if user clicks away
 
-			.title-text
-				h3 Loading spinner
-				p During async operations, PanelSet shows a loading spinner. Configure the delay to prevent flashing on fast connections:
+				dt promise
+				dd Promise | null - Set this to delay activation until it resolves
 
-			+codeblock('JS').
-				const panelSet = new PanelSet('#my-panelset', {
-				  loadingDelay: 300  // Wait 300ms before showing spinner
-				});
+	+section("Loading states")
+		.title-text
+			h3 Loading spinner
+			p During async operations, PanelSet shows a loading spinner. Configure the delay to prevent flashing on fast connections:
 
-			.title-text
-				p Or via data attribute:
+		+codeblock('JS').
+			const panelSet = new PanelSet('#my-panelset', {
+			  loadingDelay: 300  // Wait 300ms before showing spinner
+			});
 
-			+codeblock('HTML').
-				<div data-panelset data-loading-delay="300">
+		.title-text
+			p Or via data attribute:
 
-			.title-text
-				h3 Empty panel height
-				p Set a minimum height during loading (shows spinner in that space):
+		+codeblock('HTML').
+			<div data-panelset data-loading-delay="300">
 
-			+codeblock('JS').
-				const panelSet = new PanelSet('#my-panelset', {
-				  loadingHeight: 200  // 200px minimum during load
-				});
+		.title-text
+			h3 Empty panel height
+			p Set a minimum height during loading (shows spinner in that space):
 
-	.lane
-		.container
-			+anchor Abort handling
+		+codeblock('JS').
+			const panelSet = new PanelSet('#my-panelset', {
+			  loadingHeight: 200  // 200px minimum during load
+			});
 
-			.title-text
-				p When users click away during loading, the operation is automatically aborted via the AbortSignal:
+	+section("Abort handling")
+		p When users click away during loading, the operation is automatically aborted via the AbortSignal:
 
-			+codeblock('JS').
-				panelSet.onBeforeOpen((targetPanel, signal) => {
-				  // Pass signal to fetch - automatically cancels on abort
-				  return fetch('/api/data', { signal })
-				    .then(/* ... */);
-				});
+		+codeblock('JS').
+			panelSet.onBeforeOpen((targetPanel, signal) => {
+			  // Pass signal to fetch - automatically cancels on abort
+			  return fetch('/api/data', { signal })
+			    .then(/* ... */);
+			});
 
-			.title-text
-				p The #[code ps:activationaborted] event fires when an async load is cancelled:
+		p The #[code ps:activationaborted] event fires when an async load is cancelled:
 
-			+codeblock('JS').
-				container.addEventListener('ps:activationaborted', (e) => {
-				  console.log('Load cancelled:', e.detail.panelId);
-				  // Clean up, show message, etc.
-				});
+		+codeblock('JS').
+			container.addEventListener('ps:activationaborted', (e) => {
+			  console.log('Load cancelled:', e.detail.panelId);
+			  // Clean up, show message, etc.
+			});
 
 
 append scripts
 	if isProd
-		script(src="/assets/scripts/example-async.js" vite-ignore)
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}assets/scripts/example-async.js` vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			PanelSet.init();
 	else

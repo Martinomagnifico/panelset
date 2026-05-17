@@ -10,130 +10,112 @@ block content
 				h1 PanelSet
 				p.lead A container that switches between panels, with smooth transitions and fades.
 
-	.lane
-		.container
-			+anchor What PanelSet does
+	+section("What PanelSet does")
+		p #[code PanelSet] manages a group of panels where only one is visible at a time. When you activate a new panel, the outgoing one fades out, the container animates its height to match the incoming one, and the new panel fades in.
 
-			p #[code PanelSet] manages a group of panels where only one is visible at a time. When you activate a new panel, the outgoing one fades out, the container animates its height to match the incoming one, and the new panel fades in.
+		p Typical uses: tabs, wizards, steppers, multi-step forms.
 
-			p Typical uses: tabs, wizards, steppers, multi-step forms.
+		.callout
+			p #[strong Not the same as Panel.] #[code Panel] opens and closes a single element. #[code PanelSet] switches between several. See the #[a(href="/intro.html") Intro] for the distinction.
 
-			.callout
-				p #[strong Not the same as Panel.] #[code Panel] opens and closes a single element. #[code PanelSet] switches between several. See the #[a(href="/intro.html") Intro] for the distinction.
+	+section("Installation")
+		.code-block
+			.code-header Terminal
+			pre
+				code npm install panelset
 
-	.lane
-		.container
-			+anchor Installation
+		+codeblock('JS').
+			import { PanelSet } from 'panelset';
+			import 'panelset/style.css';
 
-			.code-block
-				.code-header Terminal
-				pre
-					code npm install panelset
+	+section("Markup")
+		p Add #[code data-panelset] to the container. Each panel needs a unique #[code id] and #[code role="tabpanel"]. Mark the initially active panel with #[code class="active"] and all others with #[code hidden]. Wrap panel content in #[code .panel-wrapper] (auto-generated if missing).
 
-			+codeblock('JS').
-				import { PanelSet } from 'panelset';
-				import 'panelset/style.css';
+		.card
+			.demo
+				.demo-controls
+					button(aria-controls="gs-panel-1") Features
+					button(aria-controls="gs-panel-2") Pricing
+					button(aria-controls="gs-panel-3") Support
+				+examplepanelset('gs')
 
-	.lane
-		.container
-			+anchor Markup
+		+codeblock('HTML').
+			<div data-panelset>
+			  <div class="panel-wrapper">
 
-			p Add #[code data-panelset] to the container. Each panel needs a unique #[code id] and #[code role="tabpanel"]. Mark the initially active panel with #[code class="active"] and all others with #[code hidden]. Wrap panel content in #[code .panel-wrapper] (auto-generated if missing).
+			    <div role="tabpanel" id="panel-1" aria-label="Features" class="active">
+			      <h3>Features</h3>
+			      <p>Content...</p>
+			    </div>
 
-			.card
-				.demo
-					.demo-controls
-						button(aria-controls="gs-panel-1") Features
-						button(aria-controls="gs-panel-2") Pricing
-						button(aria-controls="gs-panel-3") Support
-					+examplepanelset('gs')
+			    <div role="tabpanel" id="panel-2" aria-label="Pricing" hidden>
+			      <h3>Pricing</h3>
+			      <p>Content...</p>
+			    </div>
 
-			+codeblock('HTML').
-				<div data-panelset>
-				  <div class="panel-wrapper">
+			  </div>
+			</div>
 
-				    <div role="tabpanel" id="panel-1" aria-label="Features" class="active">
-				      <h3>Features</h3>
-				      <p>Content...</p>
-				    </div>
+	+section("Initializing")
+		+codeblock('JS').
+			// All [data-panelset] elements, default options
+			PanelSet.init();
 
-				    <div role="tabpanel" id="panel-2" aria-label="Pricing" hidden>
-				      <h3>Pricing</h3>
-				      <p>Content...</p>
-				    </div>
+			// With options
+			PanelSet.init({ debug: true });
 
-				  </div>
-				</div>
+			// Custom selector
+			PanelSet.init('#my-tabs');
 
-	.lane
-		.container
-			+anchor Initializing
+			// Both
+			PanelSet.init('#my-tabs', { autoFocus: 'heading' });
 
-			+codeblock('JS').
-				// All [data-panelset] elements, default options
-				PanelSet.init();
+			// Direct instance
+			const ps = new PanelSet('#my-tabs', { closable: true });
 
-				// With options
-				PanelSet.init({ debug: true });
+	+section("Activating panels")
+		p Use the #[code show()] method. Always pass the original event so PanelSet can detect keyboard vs. mouse for focus management.
 
-				// Custom selector
-				PanelSet.init('#my-tabs');
+		+codeblock('JS').
+			// From a click handler
+			button.addEventListener('click', event => {
+			  panelSet.show('panel-2', { event });
+			});
 
-				// Both
-				PanelSet.init('#my-tabs', { autoFocus: 'heading' });
+		p For accessible tab interfaces, use #[code aria-controls] on the trigger buttons.
 
-				// Direct instance
-				const ps = new PanelSet('#my-tabs', { closable: true });
+		+codeblock('JS').
+			document.addEventListener('click', event => {
+			  const btn = event.target.closest('button[aria-controls]');
+			  if (!btn) return;
 
-	.lane
-		.container
-			+anchor Activating panels
+			  const panelId = btn.getAttribute('aria-controls');
+			  const container = document.getElementById(panelId)?.closest('[data-panelset]');
+			  container?.panelSet?.show(panelId, { event });
+			});
 
-			p Use the #[code show()] method. Always pass the original event so PanelSet can detect keyboard vs. mouse for focus management.
+		p #[strong Bonus:] PanelSet automatically manages #[code aria-selected] and #[code tabindex] for elements with #[code role="tab"].
 
-			+codeblock('JS').
-				// From a click handler
-				button.addEventListener('click', event => {
-				  panelSet.show('panel-2', { event });
-				});
+	+section("Public API", "API")
+		+codeblock('JS').
+			const ps = new PanelSet('#my-tabs');
 
-			p For accessible tab interfaces, use #[code aria-controls] on the trigger buttons.
+			ps.show('panel-2', { event });   // activate a panel
+			ps.open({ event });              // open (if closable: true)
+			ps.close();                      // close (if closable: true)
+			ps.toggle({ event });            // toggle open/closed (if closable: true)
+			ps.getActive();                  // 'panel-2' (current panel ID)
 
-			+codeblock('JS').
-				document.addEventListener('click', event => {
-				  const btn = event.target.closest('button[aria-controls]');
-				  if (!btn) return;
-
-				  const panelId = btn.getAttribute('aria-controls');
-				  const container = document.getElementById(panelId)?.closest('[data-panelset]');
-				  container?.panelSet?.show(panelId, { event });
-				});
-
-			p #[strong Bonus:] PanelSet automatically manages #[code aria-selected] and #[code tabindex] for elements with #[code role="tab"].
-
-	.lane
-		.container
-			+anchor Public API
-
-			+codeblock('JS').
-				const ps = new PanelSet('#my-tabs');
-
-				ps.show('panel-2', { event });   // activate a panel
-				ps.open({ event });              // open (if closable: true)
-				ps.close();                      // close (if closable: true)
-				ps.toggle({ event });            // toggle open/closed (if closable: true)
-				ps.getActive();                  // 'panel-2' (current panel ID)
-
-				ps.element   // the container HTMLElement
-				ps.config    // the merged config object
-				ps.panels    // array of panel HTMLElements
-				ps.activePanel  // the currently visible panel element
+			ps.element   // the container HTMLElement
+			ps.config    // the merged config object
+			ps.panels    // array of panel HTMLElements
+			ps.activePanel  // the currently visible panel element
 
 
 append scripts
 	if isProd
-		script(src="/assets/scripts/example.js" vite-ignore)
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}assets/scripts/example.js` vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			PanelSet.init();
 	else

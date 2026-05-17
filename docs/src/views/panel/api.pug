@@ -10,142 +10,127 @@ block content
 				h1 Panel API
 				p.lead Constructor, instance methods, properties, and static methods.
 
-	.lane
-		.container
-			+anchor Constructor
-
-			.card.api
-				h3.code new Panel(elementOrSelector: HTMLElement | string, options?: PanelConfig)
-				hr
-				p Creates a new Panel instance.
-				h4 Parameters:
-				dl
-					dt.code elementOrSelector
-					dd CSS selector string or HTMLElement reference to the #[code [data-panel]] element.
-					dt.code options (optional)
-					dd Configuration object. See #[a(href="/panel/configuration.html") Panel - Configuration] for all options.
-				br
-				+codeblock('JavaScript').
-					const panel = new Panel('#my-panel');
-					const panel = new Panel('#my-panel', { axis: 'horizontal' });
-					const panel = new Panel(document.getElementById('my-panel'));
-
-	.lane
-		.container
-			+anchor Instance methods
-
-			.card.api
-				h3.code panel.open(event?): Promise&lt;void&gt;
-				hr
-				p Opens the panel. No-op if already open.
-				h4 Parameters:
-				dl
-					dt.code event (optional)
-					dd The triggering event. When passed, #[code autoFocus] only fires on keyboard events. Mouse clicks are ignored, preventing unwanted scroll.
-				h4 Returns:
-				p Promise that resolves when the opening transition completes.
-
-			.card.api
-				h3.code panel.close(): void
-				hr
-				p Closes the panel. No-op if already closed.
-
-			.card.api
-				h3.code panel.toggle(event?): void
-				hr
-				p Opens the panel if closed, closes it if open. Reverses a mid-animation close if called while closing.
-				h4 Parameters:
-				dl
-					dt.code event (optional)
-					dd The triggering event. Used for keyboard detection.
-
-			.card.api
-				h3.code panel.onBeforeOpen(handler, options?): void
-				hr
-				p Registers a handler for async content loading before the panel opens. The handler runs before every open unless #[code once: true] is set.
-				h4 Parameters:
-				dl
-					dt.code handler
-					dd #[code (el: HTMLElement, signal: AbortSignal) => Promise&lt;void&gt; | void]: Return a promise to delay opening.
-					dt.code options (optional)
-					dd #[code { once?: boolean }]: If #[code true], the handler is skipped after the first successful load (#[code dataset.loaded === 'true']).
-				br
-				+codeblock('JavaScript').
-					panel.onBeforeOpen(async (el, signal) => {
-					  const html = await fetch('/api/content', { signal }).then(r => r.text());
-					  el.querySelector('.panel-wrapper').innerHTML = html;
-					}, { once: true });
-
-			.card.api
-				h3.code panel.destroy(): void
-				hr
-				p Tears down the instance: aborts any in-progress animation, removes all event listeners, resets the element to closed state, and clears the #[code element.panel] reference so the element can be re-initialised.
-
-	.lane
-		.container
-			+anchor Instance properties
-
-			.card.api
-				h3.code panel.isOpen: boolean
-				hr
-				p #[strong Read-only.] #[code true] if the panel is open or mid-open-animation.
-
-			.card.api
-				h3.code panel.element: HTMLElement
-				hr
-				p #[strong Read-only.] The #[code [data-panel]] DOM element.
-
-			.card.api
-				h3.code panel.config: PanelConfig
-				hr
-				p #[strong Read-only.] The merged configuration object (1. defaults 2. data attributes 3. constructor options).
-
-	.lane
-		.container
-			+anchor Static methods
-
-			.card.api
-				h3.code Panel.init(selectorOrOptions?, options?): Panel[]
-				hr
-				p Auto-initialises all panels matching the selector. Also wires up #[code [data-panel-trigger]] / #[code [data-panel]] implicit pairs.
-				h4 Parameters:
-				dl
-					dt.code selectorOrOptions (optional)
-					dd CSS selector string, or a config object (uses #[code '[data-panel]'] selector).
-					dt.code options (optional)
-					dd Config object, only used when the first argument is a selector string.
-				h4 Returns:
-				p Array of created Panel instances.
-				br
-				+codeblock('JavaScript').
-					Panel.init();
-					Panel.init({ debug: true });
-					Panel.init('[data-panel]', { axis: 'vertical' });
-
-	.lane
-		.container
-			+anchor TypeScript types
-
+	+section("Constructor")
+		.card.api
+			h3.code new Panel(elementOrSelector: HTMLElement | string, options?: PanelConfig)
+			hr
+			p Creates a new Panel instance.
+			h4 Parameters:
+			dl
+				dt.code elementOrSelector
+				dd CSS selector string or HTMLElement reference to the #[code [data-panel]] element.
+				dt.code options (optional)
+				dd Configuration object. See #[a(href="/panel/configuration.html") Panel - Configuration] for all options.
+			br
 			+codeblock('JavaScript').
-				import {
-				  Panel,
-				  type PanelConfig,
-				} from 'panelset';
+				const panel = new Panel('#my-panel');
+				const panel = new Panel('#my-panel', { axis: 'horizontal' });
+				const panel = new Panel(document.getElementById('my-panel'));
 
-				const config: PanelConfig = {
-				  axis: 'horizontal',
-				  transitions: true,
-				  autoFocus: 'first',
-				  returnFocus: true,
-				  persist: true,
-				};
+	+section("Instance methods")
+		.card.api
+			h3.code panel.open(event?): Promise&lt;void&gt;
+			hr
+			p Opens the panel. No-op if already open.
+			h4 Parameters:
+			dl
+				dt.code event (optional)
+				dd The triggering event. When passed, #[code autoFocus] only fires on keyboard events. Mouse clicks are ignored, preventing unwanted scroll.
+			h4 Returns:
+			p Promise that resolves when the opening transition completes.
 
-				const panel = new Panel('#my-panel', config);
+		.card.api
+			h3.code panel.close(): void
+			hr
+			p Closes the panel. No-op if already closed.
+
+		.card.api
+			h3.code panel.toggle(event?): void
+			hr
+			p Opens the panel if closed, closes it if open. Reverses a mid-animation close if called while closing.
+			h4 Parameters:
+			dl
+				dt.code event (optional)
+				dd The triggering event. Used for keyboard detection.
+
+		.card.api
+			h3.code panel.onBeforeOpen(handler, options?): void
+			hr
+			p Registers a handler for async content loading before the panel opens. The handler runs before every open unless #[code once: true] is set.
+			h4 Parameters:
+			dl
+				dt.code handler
+				dd #[code (el: HTMLElement, signal: AbortSignal) => Promise&lt;void&gt; | void]: Return a promise to delay opening.
+				dt.code options (optional)
+				dd #[code { once?: boolean }]: If #[code true], the handler is skipped after the first successful load (#[code dataset.loaded === 'true']).
+			br
+			+codeblock('JavaScript').
+				panel.onBeforeOpen(async (el, signal) => {
+				  const html = await fetch('/api/content', { signal }).then(r => r.text());
+				  el.querySelector('.panel-wrapper').innerHTML = html;
+				}, { once: true });
+
+		.card.api
+			h3.code panel.destroy(): void
+			hr
+			p Tears down the instance: aborts any in-progress animation, removes all event listeners, resets the element to closed state, and clears the #[code element.panel] reference so the element can be re-initialised.
+
+	+section("Instance properties")
+		.card.api
+			h3.code panel.isOpen: boolean
+			hr
+			p #[strong Read-only.] #[code true] if the panel is open or mid-open-animation.
+
+		.card.api
+			h3.code panel.element: HTMLElement
+			hr
+			p #[strong Read-only.] The #[code [data-panel]] DOM element.
+
+		.card.api
+			h3.code panel.config: PanelConfig
+			hr
+			p #[strong Read-only.] The merged configuration object (1. defaults 2. data attributes 3. constructor options).
+
+	+section("Static methods")
+		.card.api
+			h3.code Panel.init(selectorOrOptions?, options?): Panel[]
+			hr
+			p Auto-initialises all panels matching the selector. Also wires up #[code [data-panel-trigger]] / #[code [data-panel]] implicit pairs.
+			h4 Parameters:
+			dl
+				dt.code selectorOrOptions (optional)
+				dd CSS selector string, or a config object (uses #[code '[data-panel]'] selector).
+				dt.code options (optional)
+				dd Config object, only used when the first argument is a selector string.
+			h4 Returns:
+			p Array of created Panel instances.
+			br
+			+codeblock('JavaScript').
+				Panel.init();
+				Panel.init({ debug: true });
+				Panel.init('[data-panel]', { axis: 'vertical' });
+
+	+section("TypeScript types")
+		+codeblock('JavaScript').
+			import {
+			  Panel,
+			  type PanelConfig,
+			} from 'panelset';
+
+			const config: PanelConfig = {
+			  axis: 'horizontal',
+			  transitions: true,
+			  autoFocus: 'first',
+			  returnFocus: true,
+			  persist: true,
+			};
+
+			const panel = new Panel('#my-panel', config);
 
 
 append scripts
 	if isProd
-		script(src="/lib/panelset.js" vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
 	else
 		script(type="module").
 			import { Panel } from 'panelset';
