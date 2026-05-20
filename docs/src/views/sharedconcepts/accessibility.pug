@@ -25,10 +25,10 @@ block content
 			p Use #[code role="dialog"] for modal-like sidebars, #[code role="region"] for inline panels.
 			+codeblock('HTML').
 				<div id="my-panel" data-panel data-panel-axis="horizontal" class="is-closed">
-				  <div class="panel-wrapper" role="dialog" aria-label="Settings">
-				    <button data-panel-close aria-label="Close Settings">✕</button>
-				    <!-- content -->
-				  </div>
+					<div class="panel-wrapper" role="dialog" aria-label="Settings">
+						<button data-panel-close aria-label="Close Settings">✕</button>
+						<!-- content -->
+					</div>
 				</div>
 
 		.card.api
@@ -36,8 +36,8 @@ block content
 			p Use #[code autoFocus] to move focus into the panel on open, and #[code returnFocus] to return it to the trigger on close.
 			+codeblock('JS').
 				new Panel('#my-panel', {
-				  autoFocus: 'first',   // focus first focusable element on open
-				  returnFocus: true     // return focus to trigger on close
+					autoFocus: 'first',   // focus first focusable element on open
+					returnFocus: true     // return focus to trigger on close
 				});
 
 	+section("PanelSet - accessibility", "PanelSet")
@@ -76,8 +76,8 @@ block content
 			p Every panel must have #[code role="tabpanel"] and a unique #[code id].
 			+codeblock('HTML').
 				<div data-panelset>
-				  <div role="tabpanel" id="panel-1" aria-labelledby="tab-1"><!-- Content --></div>
-				  <div role="tabpanel" id="panel-2" aria-labelledby="tab-2"><!-- Content --></div>
+					<div role="tabpanel" id="panel-1" aria-labelledby="tab-1"><!-- Content --></div>
+					<div role="tabpanel" id="panel-2" aria-labelledby="tab-2"><!-- Content --></div>
 				</div>
 
 		.card.api
@@ -85,8 +85,8 @@ block content
 			p For proper tab interfaces, wrap buttons in a #[code role="tablist"] with #[code role="tab"] and #[code aria-controls].
 			+codeblock('HTML').
 				<nav role="tablist" aria-label="Settings sections">
-				  <button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true">Overview</button>
-				  <button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false">Security</button>
+					<button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true">Overview</button>
+					<button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false">Security</button>
 				</nav>
 
 	+section("PanelSet - focus management", "Focus management")
@@ -152,7 +152,10 @@ block content
 						+chevron()
 
 		+anchor('h3', 'a11y-input')(title="autoFocus: 'input'")
-		p Focus moves to the first #[code input], #[code select], or #[code textarea] in the incoming panel. #[strong Note that this is for ALL users], not just keyboard.
+		p Focus moves to the first #[code input], #[code select], or #[code textarea] in the incoming panel. 
+		.callout 
+			+warning()
+			p #[strong Note]: this moves the focus for ALL users, not just keyboard.
 
 		.card
 			.demo
@@ -212,15 +215,16 @@ block content
 
 			+codeblock('JS').
 				button.addEventListener('click', (event) => {
-				  panelSet.show('panel-2', {
-				    event,              // pass the event
-				    autoFocus: 'heading'
-				  });
-				  // keyboard: focuses heading
-				  // mouse click: no focus movement
+					panelSet.show('panel-2', {
+						event,              // pass the event
+						autoFocus: 'heading'
+					});
+					// keyboard: focuses heading
+					// mouse click: no focus movement
 				});
 
 			.callout
+				+warning()
 				p #[strong Best practice:] Always pass #[code event] to #[code show()]. Without it, #[code autoFocus] fires on every activation including mouse clicks, which can cause unwanted scrolling on mobile.
 
 	+section("Labeling panels")
@@ -233,7 +237,7 @@ block content
 				<button role="tab" id="tab-overview" aria-controls="panel-overview">Overview</button>
 
 				<div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview">
-				  <!-- Content -->
+					<!-- Content -->
 				</div>
 
 		.card.api
@@ -241,7 +245,7 @@ block content
 			p Use for wizard steps, sub-panels, or any panel without a corresponding tab.
 			+codeblock('HTML').
 				<div role="tabpanel" id="step-2" aria-label="Step 2: Contact Information">
-				  <!-- Content -->
+					<!-- Content -->
 				</div>
 
 

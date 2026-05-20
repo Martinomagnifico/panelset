@@ -4,6 +4,10 @@ code, .code {
 
 	.card & {
 		background: var(--bg-surface);
+		background: var(--doc-code-transparent);
+	}
+	.card .card & {
+		background: var(--doc-code-transparent);
 	}
 
 	padding: 0.2em 0.4em;
@@ -15,7 +19,7 @@ code, .code {
 .card .card {
 	border-radius: 4px;
 	code, .code {
-		background: var(--bg-surface-tint-contrast);
+		//background: var(--bg-surface-tint-contrast);
 	}
 }
 
@@ -94,6 +98,14 @@ dl.horizontal {
 		margin-top: 1rem;
 	}
 }
+.container {
+	> p {
+		margin-top: 1rem;
+	}
+	> p + .code-block {
+		margin-top: 0;
+	}
+}
 
 .example .code-block pre, 
 .api .code-block pre {
@@ -101,8 +113,13 @@ dl.horizontal {
 }
 
 .hljs {
-	padding: 0;
-	background: none;
+	tab-size: 2;
+
+	pre &:is(code),
+	pre &:-webkit-any(code) {
+		padding: 0;
+		background: none;
+	}
 
 	&-ln {
 		td.hljs-ln-numbers {
@@ -116,6 +133,7 @@ dl.horizontal {
 			color: var(--text-muted);
 			opacity: 0.5;
 			padding-right: 1.5rem;
+			vertical-align: top;
 		}
 		&-code {
 			padding-left: 10px;
@@ -126,6 +144,13 @@ dl.horizontal {
 		font-weight: 600;
 	}
 }
+
+// pre code.hljs {
+// 	padding: 0;
+// 	background: none;
+// }
+
+
 
 
 

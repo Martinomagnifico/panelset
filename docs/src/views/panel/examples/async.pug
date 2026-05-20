@@ -7,14 +7,12 @@ block content
 	.lane
 		.container
 			.page-header
-				h1 Async panel
-				p.lead Load panel content on demand. Fetch data, run heavy computation, or do anything async before the panel opens.
+				h1 Async panels
+				p.lead Load panel content with promises, fetch, or heavy computation
 
-	+section("Overview")
-		p Panel supports async content loading via the #[code panel:beforeopen] event. Attach a promise to #[code event.detail.promise] (or use the #[code onBeforeOpen()] convenience method) and the panel waits for it to resolve before animating open. While loading, a spinner appears after #[code loadingDelay] ms.
 
-	+section("Live example")
-		p The panel below fetches a random recipe from a public API when opened. A simulated delay makes the spinner visible. With #[code { once: true }] the content is cached, so reopening the panel skips the fetch.
+	+section("Live demo")
+
 
 		.card
 			.demo
@@ -32,25 +30,28 @@ block content
 				const panel = new Panel('#async-panel-recipe');
 
 				panel.onBeforeOpen((el, signal) => {
-				  return slowFetch('https://dummyjson.com/recipes/1', { signal })
-				    .then(r => r.json())
-				    .then(data => {
-				      el.querySelector('.panel-wrapper').innerHTML = renderRecipe(data);
-				    });
+					return slowFetch('https://dummyjson.com/recipes/1', { signal })
+						.then(r => r.json())
+						.then(data => {
+							el.querySelector('.panel-wrapper').innerHTML = renderRecipe(data);
+						});
 				}, { once: true });
+
+			p The panel below fetches a random recipe from a public API when opened. A simulated delay makes the spinner visible. With #[code { once: true }] the content is cached, so reopening the panel skips the fetch.
+
 
 	+section("Using the event directly")
 		p For more control, listen to #[code panel:beforeopen] on the element:
 
 		+codeblock('JS').
 			document.querySelector('#my-panel').addEventListener('panel:beforeopen', e => {
-			  const { signal } = e.detail;
+				const { signal } = e.detail;
 
-			  e.detail.promise = fetch('/api/content', { signal })
-			    .then(r => r.text())
-			    .then(html => {
-			      e.currentTarget.querySelector('.panel-wrapper').innerHTML = html;
-			    });
+				e.detail.promise = fetch('/api/content', { signal })
+					.then(r => r.text())
+					.then(html => {
+						e.currentTarget.querySelector('.panel-wrapper').innerHTML = html;
+					});
 			});
 
 	+section("Event detail properties")

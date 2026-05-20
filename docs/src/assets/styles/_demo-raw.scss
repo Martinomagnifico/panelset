@@ -1,0 +1,55 @@
+
+.raw-demo {
+
+  &, *, &::before, &::after, *::before, *::after {
+    all: revert;
+  }
+
+  font-family: Georgia, "Times New Roman", serif;
+  padding: 2px;
+
+  [data-panel], [data-panelset] {
+    background: white;
+    
+    .panel-wrapper {
+      padding-top: 0;
+    }
+  }
+
+  button {
+    all: revert;
+    font-size: 1rem;
+    border-radius: 0;
+    
+    font-family: Georgia, "Times New Roman", serif;
+    &:hover {
+      text-decoration: underline;
+      box-shadow: none;
+      border-color: black
+    }
+  }
+
+  h1, h2, h3, h4 {
+    color: var(--text-default);
+  }
+
+  .raw-demo-triggers {
+    display: block;
+  }
+
+  ul, ul li {
+    all: revert;
+    color: var(--text-default);
+  }
+  ul li:before {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+    .raw-demo {
+      [data-panel], [data-panelset] {
+        background: black;
+      }
+    }
+}

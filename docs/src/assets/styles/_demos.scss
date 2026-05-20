@@ -1,32 +1,12 @@
-.standard-padding {
-  padding: var(--standard-padding);
+// Suppress transitions on the parent container and everything inside it
+// when a panel is snap-opened from a URL parameter or localStorage.
+:has(> [data-panel].is-restored),
+:has(> [data-panel].is-restored) * {
+  transition: none !important;
 }
 
-.example, .api {
-  position: relative;
-  display: flex;
-  flex-direction: column;
+.standard-padding {
   padding: var(--standard-padding);
-  border-radius: 16px;
-  gap: 1rem;
-  background: var(--bg-surface-tint);
-  
-  h2 {
-    margin: 0;
-    font-size: 1.5rem;
-  }
-
-  h3 + hr {
-    margin-top: 0.5rem;
-  }
-
-  @media (max-width: 768px) {
-    padding: 1rem;
-  }
-
-  .code-block + * {
-    margin-top: 1rem;
-  }
 }
 
 .api {
@@ -46,46 +26,27 @@
 
   dt {
     font-weight: 600;
-    margin-top: 0.5rem;
     font-size: 0.9em;
-  }
-}
+    display: inline-block;
 
-.card-trigger {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  background: none;
-  border: none;
-  padding: 0.25rem 0;
-  cursor: pointer;
-  text-align: left;
-  gap: 1rem;
-  outline-offset: 6px;
-  outline-color: transparent;
-
-  &:focus-visible {
-    outline: 3px solid var(--btn-primary-hover);
+    margin-top: 0.5rem;
+    &:not(:first-child) {
+      margin-top: 1rem;
+    }
   }
 
-  h3, h4 {
-    flex: 1;
-    margin-bottom: 0;
-    align-self: start;
+  p:where(:not(:first-child)) {
+    margin-top: 1rem;
   }
 
-  .chevron {
-    transition: transform var(--ps-open-speed) var(--ps-open-timing);
-    will-change: transform;
-    flex-shrink: 0;
-    color: var(--text-muted);
-    transform: rotate(-90deg);
+  hr + p, h4 + p {
+    margin-top: 0;
   }
 
-  &[aria-expanded="true"] .chevron {
-    transform: rotate(90deg);
+  dl + .code-block {
+    margin-top: 1.5rem;
   }
+
 }
 
 .column {
@@ -99,40 +60,6 @@
   gap: 2rem;
 }
 
-.card.no-padding {
-  transition: all var(--ps-open-speed) var(--ps-open-timing);
-
-  padding: 0;
-  gap: 0;
-
-  &:has(> button[aria-expanded="true"]) {
-    background: var(--bg-surface-tint);
-    background: var(--demo-btn-bg);
-    border-color: var(--border-default)
-  }
-
-  button.card-trigger {
-    padding: var(--padding-medium);
-
-    h3, h4 {
-      background: none;
-      padding: 0;
-      color: var(--text-muted);
-      line-height: 1.5;
-    }
-  }
-  .panel-wrapper {
-    padding-top: 0;
-  }
-  
-  .card-content {
-    padding: var(--padding-medium);
-    border-top: 1px solid var(--border-default);
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-}
 
 .demo, .card.demo {
   position: relative;
@@ -175,43 +102,6 @@
   }
 }
 
-.card-row {
-  display: flex;
-  gap: 1.5rem;
-  flex-direction: column;
-
-
-  @container (min-width: 800px) {
-    flex-direction: row;
-    .card {
-      word-break: break-word;
-    }
-  }
-}
-
-.card {
-  flex: 1;
-  border-radius: 8px;
-  padding: 1rem;
-  background: var(--bg-surface-tint-contrast);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  border: 3px solid transparent;
-
-  * + h3,
-  * + h4 {
-    margin-top: var(--padding-medium);
-  }
-
-  ul + * {
-    margin-top: var(--padding-small);
-  }
-
-  .card {
-    background: var(--bg-surface);
-  }
-}
 .btn.bottom {
   margin-top: auto;
 }
@@ -334,62 +224,4 @@
 button[aria-expanded="false"] .when-open,
 button[aria-expanded="true"] .when-closed {
   display: none;
-}
-
-.raw-demo {
-  font-family: Georgia, "Times New Roman", serif;
-  font-size: 16px;
-  // border: 1px dashed var(--text-default);
-  padding: 2px;
-
-  [data-panel], [data-panelset] {
-    background: white;
-    
-
-
-    .panel-wrapper {
-      padding-top: 0;
-    }
-  }
-
-
-  button {
-    all: revert;
-    font-size: 1rem;
-    border-radius: 0;
-    // border: initial;
-    // background: initial;
-    color: var(--text-default);
-    cursor: pointer;
-    font-family: Georgia, "Times New Roman", serif;
-    &:hover {
-      text-decoration: underline;
-      box-shadow: none;
-      border-color: black
-    }
-  }
-
-  h1, h2, h3, h4 {
-    color: var(--text-default);
-  }
-
-  .raw-demo-triggers {
-    display: block;
-  }
-
-  ul, ul li {
-    all: revert;
-    color: var(--text-default);
-  }
-  ul li:before {
-    display: none;
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-    .raw-demo {
-      [data-panel], [data-panelset] {
-        background: black;
-      }
-    }
 }

@@ -12,6 +12,7 @@ export interface PanelConfig {
 	loadingHeight?: number;
 	interruptible?: boolean;
 	persist?: boolean;
+	deepLink?: boolean;
 	debug?: boolean;
 }
 

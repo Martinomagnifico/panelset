@@ -14,38 +14,30 @@ block content
 		.card
 
 			.demo
-				nav.tabs(role="tablist" aria-label="Content sections")
-					button(role="tab" aria-controls="demo-panel-1" aria-selected="true") Features
-					button(role="tab" aria-controls="demo-panel-2" aria-selected="false") Pricing
-					button(role="tab" aria-controls="demo-panel-3") Support
-
+				+exampletabset('demo', true)
 				+examplepanelset('demo').tab-content(data-panel-persist)
 
 
 			+codeblock('HTML')
-				nav.tabs(role="tablist" aria-label="Content sections")
-					button(role="tab" aria-controls="demo-panel-1" aria-selected="true") Features
-					button(role="tab" aria-controls="demo-panel-2" aria-selected="false") Pricing
-					button(role="tab" aria-controls="demo-panel-3") Support
-
+				+exampletabset('demo', true)
 				+examplepanelset('demo').tab-content
 
 			+codeblock('JavaScript').
 				document.addEventListener('click', event => {
-				  const button = event.target.closest('button[aria-controls]');
-				  if (!button) return;
+					const button = event.target.closest('button[aria-controls]');
+					if (!button) return;
 
-				  const tablist = button.closest('[role="tablist"]');
-				  tablist?.querySelectorAll('[role="tab"]').forEach(t => {
-				    t.setAttribute('aria-selected', 'false');
-				  });
-				  button.setAttribute('aria-selected', 'true');
+					const tablist = button.closest('[role="tablist"]');
+					tablist?.querySelectorAll('[role="tab"]').forEach(t => {
+						t.setAttribute('aria-selected', 'false');
+					});
+					button.setAttribute('aria-selected', 'true');
 
-				  const panelId = button.getAttribute('aria-controls');
-				  const panel = document.getElementById(panelId);
-				  const container = panel?.closest('[data-panelset]');
+					const panelId = button.getAttribute('aria-controls');
+					const panel = document.getElementById(panelId);
+					const container = panel?.closest('[data-panelset]');
 
-				  container?.panelSet?.show(panelId, { event, autoFocus: true });
+					container?.panelSet?.show(panelId, { event, autoFocus: true });
 				});
 
 

@@ -16,6 +16,7 @@ block content
 		p Typical uses: tabs, wizards, steppers, multi-step forms.
 
 		.callout
+			+warning()
 			p #[strong Not the same as Panel.] #[code Panel] opens and closes a single element. #[code PanelSet] switches between several. See the #[a(href="/intro.html") Intro] for the distinction.
 
 	+section("Installation")
@@ -33,7 +34,8 @@ block content
 
 		.card
 			.demo
-				.demo-controls
+				+exampletabset('gs')
+				//-.demo-controls
 					button(aria-controls="gs-panel-1") Features
 					button(aria-controls="gs-panel-2") Pricing
 					button(aria-controls="gs-panel-3") Support
@@ -41,19 +43,19 @@ block content
 
 		+codeblock('HTML').
 			<div data-panelset>
-			  <div class="panel-wrapper">
+				<div class="panel-wrapper">
 
-			    <div role="tabpanel" id="panel-1" aria-label="Features" class="active">
-			      <h3>Features</h3>
-			      <p>Content...</p>
-			    </div>
+					<div role="tabpanel" id="panel-1" aria-label="Features" class="active">
+						<h3>Features</h3>
+						<p>Content...</p>
+					</div>
 
-			    <div role="tabpanel" id="panel-2" aria-label="Pricing" hidden>
-			      <h3>Pricing</h3>
-			      <p>Content...</p>
-			    </div>
+					<div role="tabpanel" id="panel-2" aria-label="Pricing" hidden>
+						<h3>Pricing</h3>
+						<p>Content...</p>
+					</div>
 
-			  </div>
+				</div>
 			</div>
 
 	+section("Initializing")
@@ -79,19 +81,19 @@ block content
 		+codeblock('JS').
 			// From a click handler
 			button.addEventListener('click', event => {
-			  panelSet.show('panel-2', { event });
+				panelSet.show('panel-2', { event });
 			});
 
 		p For accessible tab interfaces, use #[code aria-controls] on the trigger buttons.
 
 		+codeblock('JS').
 			document.addEventListener('click', event => {
-			  const btn = event.target.closest('button[aria-controls]');
-			  if (!btn) return;
+				const btn = event.target.closest('button[aria-controls]');
+				if (!btn) return;
 
-			  const panelId = btn.getAttribute('aria-controls');
-			  const container = document.getElementById(panelId)?.closest('[data-panelset]');
-			  container?.panelSet?.show(panelId, { event });
+				const panelId = btn.getAttribute('aria-controls');
+				const container = document.getElementById(panelId)?.closest('[data-panelset]');
+				container?.panelSet?.show(panelId, { event });
 			});
 
 		p #[strong Bonus:] PanelSet automatically manages #[code aria-selected] and #[code tabindex] for elements with #[code role="tab"].

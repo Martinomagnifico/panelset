@@ -63,6 +63,7 @@ export class Panel {
 		loadingHeight: 80,
 		interruptible: true,
 		persist: false,
+		deepLink: false,
 		debug: false,
 	};
 
@@ -78,6 +79,7 @@ export class Panel {
 		loadingHeight:  ['panelLoadingHeight',  'number'],
 		interruptible:  ['panelInterruptible',  'boolean'],
 		persist:        ['panelPersist',        'boolean'],
+		deepLink:       ['panelDeeplink',       'boolean'],
 		debug:          ['panelDebug',          'boolean'],
 	};
 
@@ -154,6 +156,12 @@ export class Panel {
 			this.element.classList.remove('is-closed');
 			this.element.removeAttribute('inert');
 			this._setTriggerState(true);
+			// is-restored is present for exactly one paint so CSS can suppress
+			// transitions on parent/sibling elements. Double rAF ensures the class
+			// survives the first paint before being removed.
+			this.element.classList.add('is-restored');
+			requestAnimationFrame(() => requestAnimationFrame(() => this.element.classList.remove('is-restored')));
+			this._dispatch('panel:opened');
 		} else if (!this.isOpen) {
 			this.element.setAttribute('inert', '');
 		}
@@ -186,21 +194,33 @@ export class Panel {
 		if (!this.element.id) return;
 
 		let groupPersist = false;
+		let groupDeepLink = false;
 		let el = this.element.parentElement;
 
 		while (el) {
 			if (el.hasAttribute('data-panel')) break;
 			if (el.hasAttribute('data-panel-group')) {
 				groupPersist = el.hasAttribute('data-panel-persist');
+				groupDeepLink = el.hasAttribute('data-panel-deeplink');
 				break;
 			}
 			el = el.parentElement;
 		}
 
-		if (!this.config.persist && !groupPersist) return;
+		const hasPersist = this.config.persist || groupPersist;
+		const hasDeepLink = this.config.deepLink || groupDeepLink;
 
-		writeStored(`panel:${this.element.id}`, open ? 'open' : 'closed');
-		this._updatePanelParam(open);
+		if (hasPersist) {
+			writeStored(`panel:${this.element.id}`, open ? 'open' : 'closed');
+		}
+
+		if (hasDeepLink) {
+			this._updatePanelParam(open);
+		} else if (!open && this._parsePanelParam()) {
+			// No deepLink configured: on close, still clean up a stale ?panel= ID
+			// left by a snap-open so the URL doesn't keep reopening the panel.
+			this._updatePanelParam(false);
+		}
 	};
 
 	private _resolveInitialState = (): boolean => {
@@ -233,7 +253,7 @@ export class Panel {
 
 		if (this.config.closeOnResize) {
 			window.addEventListener('resize', () => {
-				if (!this.isOpen) return;
+				if (!this.isOpen || this.element.classList.contains('is-closing')) return;
 				const body = findBody(this.element);
 				if (body) unlockBody(body);
 				this.close();
@@ -451,6 +471,11 @@ export class Panel {
 
 		this.element.classList.remove('is-closed', 'is-closing');
 		this.element.removeAttribute('inert');
+
+		// When reversing a close, the inline style left by close() (e.g. '0px' after
+		// its rAF fired) is still present. Clear it before measuring so getBoundingClientRect
+		// returns the true natural size, not the locked/animating value.
+		if (isReversingClose) this.element.style[cssProp] = '';
 
 		// Use getBoundingClientRect for sub-pixel precision. offsetHeight/offsetWidth
 		// round to integers; the fractional mismatch causes a visible snap when the

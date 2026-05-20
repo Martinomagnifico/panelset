@@ -1,7 +1,7 @@
 // Custom element defaults to display:inline; force block so height/overflow work.
 ps-panel { display: block; }
 
-:is([data-panel], ps-panel) {
+[data-panel], ps-panel {
 	box-sizing: border-box;
 	display: flow-root;
 
@@ -77,7 +77,7 @@ ps-panel { display: block; }
 // align: start is the default (normal block flow, no extra CSS needed).
 
 // Vertical alignment (default)
-:is([data-panel], ps-panel) {
+[data-panel], ps-panel {
 	&[data-panel-align="center"] {
 		display: flex;
 		flex-direction: column;
@@ -127,7 +127,7 @@ ps-panel { display: block; }
 // while content loads. When is-loading is removed, is-opening's rule resumes
 // and the wrapper fades in — matching PanelSet's is-closed/is-opening pattern.
 
-:is([data-panel], ps-panel).is-loading {
+[data-panel].is-loading, ps-panel.is-loading {
 	cursor: wait;
 
 	&::after {
@@ -151,7 +151,7 @@ ps-panel { display: block; }
 // Fallback: the JS pixel-locking cycle in panel.ts handles all other browsers.
 
 @supports (interpolate-size: allow-keywords) {
-	:is([data-panel], ps-panel) {
+	[data-panel], ps-panel {
 		interpolate-size: allow-keywords;
 
 		// JS drives the animation: inline 0px → rAF → inline target_px.
@@ -162,7 +162,7 @@ ps-panel { display: block; }
 	}
 
 	// Horizontal overrides — closes on the width axis
-	:is([data-panel], ps-panel)[data-panel-axis="horizontal"] {
+	[data-panel][data-panel-axis="horizontal"], ps-panel[data-panel-axis="horizontal"] {
 		&.is-closing { width: 0; height: auto; }
 	}
 }
@@ -170,7 +170,7 @@ ps-panel { display: block; }
 // Reduced motion
 
 @media (prefers-reduced-motion: reduce) {
-	:is([data-panel], ps-panel) {
+	[data-panel], ps-panel {
 		transition: none !important;
 	}
 }

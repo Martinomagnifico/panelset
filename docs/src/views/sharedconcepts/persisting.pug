@@ -8,27 +8,64 @@ block content
 		.container
 			.page-header
 				h1 Persisting state
-				p.lead By default, panel state resets on every page load. The #[code persist] option changes that.
+				p.lead Remember states across page loads.
 
 	+section("What persist does")
 		p Without #[code persist], Panel and PanelSet read the state on load but never write it back. Open a panel, refresh the page, and it resets. Enable #[code persist] and that changes: opening and closing is saved to localStorage, so the panel comes back where you left it.
 
-		p It also updates the #[code ?panel=] URL param via #[code history.replaceState], keeping the address bar in sync. No new history entry is created.
+		p To also keep the address bar in sync (so users can copy and share a link to the current state), enable #[code deepLink: true] alongside it. The two options are independent: you can use either one without the other.
+
+
+	+section("Live demos")
+
+		.grid-2
+
+			div
+				h3 Persist in Panel
+				.demo
+					button(aria-controls="panelpersist" aria-expanded="false") Toggle panel
+
+					div#panelpersist.is-closed(data-panel data-panel-persist)
+						.panel-wrapper
+							h3= example1Title
+							+example-1-content
+
+			div
+				h3 Persist in PanelSet
+				.demo
+					+exampletabset('panelsetpersist')
+					+examplepanelset('panelsetpersist')(data-panel-persist)
+
+		p Play around with the two examples above, and reload the page. The Panel and PanelSet examples both come back in the same state you left them.
 
 	+section("Enabling persist")
-		.title-text
-			h3 JavaScript
+		h3 localStorage only
 
 		+codeblock('JavaScript').
 			new Panel('#sidebar', { persist: true });
 			new PanelSet('#tabs', { persist: true });
 
-		.title-text
-			h3 Data attribute
+		h3 URL param only
+
+		+codeblock('JavaScript').
+			new Panel('#sidebar', { deepLink: true });
+			new PanelSet('#tabs', { deepLink: true });
+
+		h3 Both
+
+		+codeblock('JavaScript').
+			new Panel('#sidebar', { persist: true, deepLink: true });
+			new PanelSet('#tabs', { persist: true, deepLink: true });
+
+		h3 Data attributes
 
 		+codeblock('HTML').
 			<div id="sidebar" data-panel data-panel-persist class="is-closed">...</div>
 			<div id="tabs" data-panelset data-panel-persist>...</div>
+
+			<!-- deepLink equivalents -->
+			<div id="sidebar" data-panel data-panel-deeplink class="is-closed">...</div>
+			<div id="tabs" data-panelset data-panel-deeplink>...</div>
 
 		p PanelSet requires an #[code id] on the container. Without one, there is nothing to key the localStorage entry against.
 
@@ -37,28 +74,28 @@ block content
 
 		+codeblock('HTML').
 			<div data-panel-group data-panel-persist>
-			  <div>
-			    <button aria-controls="faq-1">Question 1</button>
-			    <div id="faq-1" data-panel class="is-closed">
-			      <div class="panel-wrapper">Answer 1</div>
-			    </div>
-			  </div>
-			  <div>
-			    <button aria-controls="faq-2">Question 2</button>
-			    <div id="faq-2" data-panel class="is-closed">
-			      <div class="panel-wrapper">Answer 2</div>
-			    </div>
-			  </div>
+				<div>
+					<button aria-controls="faq-1">Question 1</button>
+					<div id="faq-1" data-panel class="is-closed">
+						<div class="panel-wrapper">Answer 1</div>
+					</div>
+				</div>
+				<div>
+					<button aria-controls="faq-2">Question 2</button>
+					<div id="faq-2" data-panel class="is-closed">
+						<div class="panel-wrapper">Answer 2</div>
+					</div>
+				</div>
 			</div>
 
 	+section("How state is restored on load", "State restoration")
 		p On every page load, both components check two sources in order:
 
 		ol
-			li #[strong URL param] (#[code ?panel=]): always wins if present, regardless of #[code persist]
-			li #[strong localStorage]: used when no URL param is present
+			li #[strong URL param] (#[code ?panel=]): always wins if present, regardless of configuration
+			li #[strong localStorage]: used when no URL param is present and #[code persist] is enabled
 
-		p #[code persist] only controls whether navigating writes state back. Reading always happens.
+		p Reading always happens. #[code persist] and #[code deepLink] only control whether open/close #[em writes] state back.
 
 		p See #[a(href="/sharedconcepts/deep-linking.html") Deep linking] for how to link directly to a panel state from an external link.
 
@@ -74,9 +111,25 @@ block content
 			tbody
 				tr
 					td PanelSet
-					td #[code ps:<container-id>]
+					td #[code ps:&lt;container-id&gt;]
 					td #[code ps:main-tabs]
 				tr
 					td Panel
-					td #[code panel:<element-id>]
+					td #[code panel:&lt;element-id&gt;]
 					td #[code panel:sidebar]
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}assets/scripts/example.js` vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			Panel.init();
+			PanelSet.init();
+			//- new Panel('#intro-panel');
+	else
+		script(type="module" src="/src/assets/scripts/example.js")
+		script(type="module").
+			import { PanelSet, Panel } from 'panelset';
+			Panel.init({ debug: true });
+			PanelSet.init({ debug: true });

@@ -22,8 +22,8 @@ block content
 					dd The PanelSet instance.
 				+codeblock('JavaScript').
 					document.addEventListener('ps:ready', e => {
-					  console.log('Initialised:', e.detail.container.id);
-					  console.log('Panel count:', e.detail.instance.panels.length);
+						console.log('Initialised:', e.detail.container.id);
+						console.log('Panel count:', e.detail.instance.panels.length);
 					});
 
 			+apiEvent("ps:beforeopen")
@@ -42,21 +42,21 @@ block content
 					dd Set this to a promise to delay activation.
 				+codeblock('JavaScript').
 					container.addEventListener('ps:beforeopen', e => {
-					  const { targetPanel, signal } = e.detail;
-					  if (targetPanel.dataset.loaded === 'true') return;
-					  e.detail.promise = fetch(`/api/panel/${targetPanel.id}`, { signal })
-					    .then(r => r.text())
-					    .then(html => {
-					      targetPanel.innerHTML = html;
-					      targetPanel.dataset.loaded = 'true';
-					    });
+						const { targetPanel, signal } = e.detail;
+						if (targetPanel.dataset.loaded === 'true') return;
+						e.detail.promise = fetch(`/api/panel/${targetPanel.id}`, { signal })
+							.then(r => r.text())
+							.then(html => {
+								targetPanel.innerHTML = html;
+								targetPanel.dataset.loaded = 'true';
+							});
 					});
 				p Or use the convenience method:
 				+codeblock('JavaScript').
 					panelSet.onBeforeOpen((targetPanel, signal) => {
-					  return fetch(`/api/panel/${targetPanel.id}`, { signal })
-					    .then(r => r.text())
-					    .then(html => targetPanel.innerHTML = html);
+						return fetch(`/api/panel/${targetPanel.id}`, { signal })
+							.then(r => r.text())
+							.then(html => targetPanel.innerHTML = html);
 					}, { once: true });
 
 			+apiEvent("ps:activationstart")
@@ -69,7 +69,7 @@ block content
 					dd The element that triggered the activation, or #[code null] if programmatic.
 				+codeblock('JavaScript').
 					container.addEventListener('ps:activationstart', e => {
-					  console.log('Activating:', e.detail.panelId);
+						console.log('Activating:', e.detail.panelId);
 					});
 
 			+apiEvent("ps:activationcomplete")
@@ -84,7 +84,7 @@ block content
 					dd The panel that was deactivated, or #[code null] on the first activation.
 				+codeblock('JavaScript').
 					container.addEventListener('ps:activationcomplete', e => {
-					  console.log('Now active:', e.detail.panelId);
+						console.log('Now active:', e.detail.panelId);
 					});
 
 			+apiEvent("ps:activationaborted")
@@ -97,7 +97,7 @@ block content
 					dd The element that triggered the aborted activation.
 				+codeblock('JavaScript').
 					container.addEventListener('ps:activationaborted', e => {
-					  console.log('Aborted:', e.detail.panelId);
+						console.log('Aborted:', e.detail.panelId);
 					});
 
 	+section("Examples")
@@ -116,25 +116,25 @@ block content
 								source(src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4")
 			+codeblock('JavaScript').
 				document.addEventListener('click', event => {
-				  const button = event.target.closest('button[aria-controls]');
-				  if (!button) return;
-				  const panelId = button.getAttribute('aria-controls');
-				  const container = document.getElementById(panelId)?.closest('[data-panelset]');
-				  container?.panelSet?.show(panelId, { event });
+					const button = event.target.closest('button[aria-controls]');
+					if (!button) return;
+					const panelId = button.getAttribute('aria-controls');
+					const container = document.getElementById(panelId)?.closest('[data-panelset]');
+					container?.panelSet?.show(panelId, { event });
 				});
 
 				const demo  = document.getElementById('ev-vid-demo');
 				const video = demo.querySelector('video');
 
 				demo.addEventListener('ps:activationstart', e => {
-				  if (e.detail.panelId !== 'ev-vid-panel-2') video.pause();
+					if (e.detail.panelId !== 'ev-vid-panel-2') video.pause();
 				});
 				demo.addEventListener('ps:activationcomplete', e => {
-				  if (e.detail.panelId === 'ev-vid-panel-2') {
-				    video.play();
-				  } else {
-				    video.currentTime = 0;
-				  }
+					if (e.detail.panelId === 'ev-vid-panel-2') {
+						video.play();
+					} else {
+						video.currentTime = 0;
+					}
 				});
 
 

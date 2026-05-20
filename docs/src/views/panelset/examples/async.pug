@@ -10,42 +10,8 @@ block content
 				h1 Async panels
 				p.lead Load panel content with promises, fetch, or heavy computation
 
-	.lane
-		.container
-			.title-text
-				p PanelSet supports async content loading through the #[code ps:beforeopen] event.
 
-
-			.title-text
-				p Use #[code onBeforeOpen()] to add async loading:
-
-			+codeblock('JS').
-				const panelSet = new PanelSet('#my-panelset');
-
-				panelSet.onBeforeOpen((targetPanel, signal) => {
-				  // Return a promise to delay activation
-				  return fetch(`/api/content/${targetPanel.id}`, { signal })
-				    .then(response => response.text())
-				    .then(html => {
-				      targetPanel.innerHTML = html;
-				    });
-				}, { once: true }); // Load once, cache forever
-
-			.card.api
-				h3 Parameters
-				dl
-					dt targetPanel
-					dd The HTMLElement being activated
-
-					dt signal
-					dd AbortSignal for canceling the operation if user clicks away
-
-					dt options.once
-					dd #[code true] loads once and caches; #[code false] always reloads. Default: #[code false]
-
-	+section("Live example")
-		p This example uses a 'slowfetch' to mimic a slow network request to fetch recipe data. renderRecipe formats it into HTML.
-
+	+section("Live demo")
 		.card
 			.demo
 				.demo-controls
@@ -68,38 +34,70 @@ block content
 
 			+codeblock('JS').
 				asyncPanelSet.onBeforeOpen((targetPanel, signal) => {
-				    if (targetPanel.id === 'async-panel-2') {
-				        return slowfetch(`https://dummyjson.com/recipes/${randomIntFromInterval(1, 10)}`, { signal })
-				            .then(response => response.json())
-				            .then(data => {
-				                targetPanel.innerHTML = renderRecipe(data);
-				            });
-				    }
+					if (targetPanel.id === 'async-panel-2') {
+						return slowfetch(`https://dummyjson.com/recipes/${randomIntFromInterval(1, 10)}`, { signal })
+							.then(response => response.json())
+							.then(data => {
+								targetPanel.innerHTML = renderRecipe(data);
+							});
+					}
 				});
+
+			p The above example uses a 'slowfetch' to mimic a slow network request to fetch recipe data. renderRecipe formats it into HTML.
+
+	+section("The onBeforeOpen() callback")
+
+			.title-text
+				p Use #[code onBeforeOpen()] to add async loading:
+
+			+codeblock('JS').
+				const panelSet = new PanelSet('#my-panelset');
+
+				panelSet.onBeforeOpen((targetPanel, signal) => {
+					// Return a promise to delay activation
+					return fetch(`/api/content/${targetPanel.id}`, { signal })
+						.then(response => response.text())
+						.then(html => {
+							targetPanel.innerHTML = html;
+						});
+				}, { once: true }); // Load once, cache forever
+
+			.card.api
+				h3 Parameters
+				dl
+					dt targetPanel
+					dd The HTMLElement being activated
+
+					dt signal
+					dd AbortSignal for canceling the operation if user clicks away
+
+					dt options.once
+					dd #[code true] loads once and caches; #[code false] always reloads. Default: #[code false]
+
 
 	+section("Heavy computation")
 		p Works for CPU-heavy operations too, not just network requests:
 
 		+codeblock('JS').
 			panelSet.onBeforeOpen((targetPanel, signal) => {
-			  if (targetPanel.id === 'heavy-calc') {
-			    return new Promise((resolve) => {
-			      // Simulate heavy calculation
-			      setTimeout(() => {
-			        const result = fibonacci(40); // Actually slow!
-			        targetPanel.innerHTML = `
-			          <h3>Calculation Complete</h3>
-			          <p>Fibonacci(40) = ${result}</p>
-			        `;
-			        resolve();
-			      }, 2000);
-			    });
-			  }
+				if (targetPanel.id === 'heavy-calc') {
+					return new Promise((resolve) => {
+						// Simulate heavy calculation
+						setTimeout(() => {
+							const result = fibonacci(40); // Actually slow!
+							targetPanel.innerHTML = `
+								<h3>Calculation Complete</h3>
+								<p>Fibonacci(40) = ${result}</p>
+							`;
+							resolve();
+						}, 2000);
+					});
+				}
 			});
 
 			function fibonacci(n) {
-			  if (n <= 1) return n;
-			  return fibonacci(n - 1) + fibonacci(n - 2);
+				if (n <= 1) return n;
+				return fibonacci(n - 1) + fibonacci(n - 2);
 			}
 
 	+section("Using the event directly")
@@ -107,18 +105,18 @@ block content
 
 		+codeblock('JS').
 			container.addEventListener('ps:beforeopen', (e) => {
-			  const { panelId, targetPanel, signal } = e.detail;
+				const { panelId, targetPanel, signal } = e.detail;
 
-			  // Skip if already loaded
-			  if (targetPanel.dataset.loaded === 'true') return;
+				// Skip if already loaded
+				if (targetPanel.dataset.loaded === 'true') return;
 
-			  // Set the promise property to delay activation
-			  e.detail.promise = fetch(`/api/panel/${panelId}`, { signal })
-			    .then(response => response.text())
-			    .then(html => {
-			      targetPanel.innerHTML = html;
-			      targetPanel.dataset.loaded = 'true';
-			    });
+				// Set the promise property to delay activation
+				e.detail.promise = fetch(`/api/panel/${panelId}`, { signal })
+					.then(response => response.text())
+					.then(html => {
+						targetPanel.innerHTML = html;
+						targetPanel.dataset.loaded = 'true';
+					});
 			});
 
 		.card.api
@@ -146,7 +144,7 @@ block content
 
 		+codeblock('JS').
 			const panelSet = new PanelSet('#my-panelset', {
-			  loadingDelay: 300  // Wait 300ms before showing spinner
+				loadingDelay: 300  // Wait 300ms before showing spinner
 			});
 
 		.title-text
@@ -161,7 +159,7 @@ block content
 
 		+codeblock('JS').
 			const panelSet = new PanelSet('#my-panelset', {
-			  loadingHeight: 200  // 200px minimum during load
+				loadingHeight: 200  // 200px minimum during load
 			});
 
 	+section("Abort handling")
@@ -169,17 +167,17 @@ block content
 
 		+codeblock('JS').
 			panelSet.onBeforeOpen((targetPanel, signal) => {
-			  // Pass signal to fetch - automatically cancels on abort
-			  return fetch('/api/data', { signal })
-			    .then(/* ... */);
+				// Pass signal to fetch - automatically cancels on abort
+				return fetch('/api/data', { signal })
+					.then(/* ... */);
 			});
 
 		p The #[code ps:activationaborted] event fires when an async load is cancelled:
 
 		+codeblock('JS').
 			container.addEventListener('ps:activationaborted', (e) => {
-			  console.log('Load cancelled:', e.detail.panelId);
-			  // Clean up, show message, etc.
+				console.log('Load cancelled:', e.detail.panelId);
+				// Clean up, show message, etc.
 			});
 
 

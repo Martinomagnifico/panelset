@@ -42,12 +42,9 @@ block content
 		.container
 			.page-header
 				h1=pagetitle
-				p.lead When panels open up, they can be aligned in different ways. This page explores the different options for panel alignment and how they interact with the main content. 
+				p.lead Open panels has effect on inner and outer content.
 
-
-			p In the below examples, the opening panels are all #[strong pushing] the main content away. It is always possible to have the panels absolutely positioned, so that they appear #[strong over] the content. We are #[em NOT] showing that here.
-
-	+section("Vertical panels")
+	+section("Live demo (vertical)")
 
 		.card.alignment-demos
 
@@ -66,28 +63,36 @@ block content
 					.demo
 						+alignment('example-4', 'vertical', 'end', 'start')
 
-	+section("Horizontal panels")
+
+
+			p In these examples, the opening panels are all #[strong pushing] the main content away. It is always possible to have the panels absolutely positioned, so that they appear #[strong over] the content. We are #[em NOT] showing that here.
+
+
+
+
+	+section("Live demo (horizontal)")
+
 
 		.card.alignment-demos
 
+			.flex.vertical
+				h5 #[code data-panel-align="start"]
+				.demo
+					+alignment('example-5', 'horizontal', 'start', 'start')
+			.flex.vertical
+				h5 #[code data-panel-align="center"]
+				.demo
+					+alignment('example-6', 'horizontal', 'center', 'start')
+			.flex.vertical
+				h5 #[code data-panel-align="end"]
+				.demo
+					+alignment('example-7', 'horizontal', 'end', 'start')
+
+
+
 			p Horizontal panels push differently from vertical ones: the page has a maximum width, so the panel squeezes the content instead of pushing it out of frame. Text wraps in front of your eyes. #[strong Some people, me included, might find that annoying]. This can be fixed by pinning the content elements in place, which is explained in the next section.
-			br
 
 
-			.card.alignment-demos
-
-				.flex.vertical
-					h5 #[code data-panel-align="start"]
-					.demo
-						+alignment('example-5', 'horizontal', 'start', 'start')
-				.flex.vertical
-					h5 #[code data-panel-align="center"]
-					.demo
-						+alignment('example-6', 'horizontal', 'center', 'start')
-				.flex.vertical
-					h5 #[code data-panel-align="end"]
-					.demo
-						+alignment('example-7', 'horizontal', 'end', 'start')
 
 	+section("Horizontal panels, pinned content")
 
@@ -96,12 +101,14 @@ block content
 
 		p Add #[code data-panel-body] to the main content wrapper, #[code data-panel-pin="start"] or #[code "end"] to the elements you want to pin, and #[code data-panel-close-on-resize] to the panel if you want it to close when the layout changes.
 
+		h3 Start aligned, pinned content
 		.card.alignment-demos
 			.demo
 				+alignment('example-8', 'horizontal', 'start', 'start', 'start')
 			+codeblock('HTML')
 				+alignment('example-8', 'horizontal', 'start', 'start', 'start')
 
+		h3 End aligned, pinned content
 		.card.alignment-demos
 			.demo
 				+alignment('example-9', 'horizontal', 'end', 'end', 'end')

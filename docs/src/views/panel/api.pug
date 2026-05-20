@@ -66,9 +66,19 @@ block content
 			br
 			+codeblock('JavaScript').
 				panel.onBeforeOpen(async (el, signal) => {
-				  const html = await fetch('/api/content', { signal }).then(r => r.text());
-				  el.querySelector('.panel-wrapper').innerHTML = html;
+					const html = await fetch('/api/content', { signal }).then(r => r.text());
+					el.querySelector('.panel-wrapper').innerHTML = html;
 				}, { once: true });
+
+			p You can also define the handler as a named function. This keeps the call site clean and lets you share the same function across multiple panels.
+
+			+codeblock('JavaScript').
+				async function loadContent(el, signal) {
+					const html = await fetch('/api/content', { signal }).then(r => r.text());
+					el.querySelector('.panel-wrapper').innerHTML = html;
+				}
+
+				panel.onBeforeOpen(loadContent, { once: true });
 
 		.card.api
 			h3.code panel.destroy(): void
@@ -112,17 +122,14 @@ block content
 
 	+section("TypeScript types")
 		+codeblock('JavaScript').
-			import {
-			  Panel,
-			  type PanelConfig,
-			} from 'panelset';
+			import { Panel, type PanelConfig } from 'panelset';
 
 			const config: PanelConfig = {
-			  axis: 'horizontal',
-			  transitions: true,
-			  autoFocus: 'first',
-			  returnFocus: true,
-			  persist: true,
+				axis: 'horizontal',
+				transitions: true,
+				autoFocus: 'first',
+				returnFocus: true,
+				persist: true,
 			};
 
 			const panel = new Panel('#my-panel', config);

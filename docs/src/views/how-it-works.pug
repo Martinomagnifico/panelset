@@ -62,7 +62,7 @@ block content
 			p Used by: Material Design, many modern CSS-only implementations.
 			h4 Drawbacks:
 			ul
-				li It only works from 0 to something. #[code 1fr] on one panel and #[code 1fr] on another do not transition between each other.
+				li It only works from 0 to something for a single panel. #[code 1fr] on one panel and #[code 2fr] on another do not transition between each other.
 				li The element needs to be assigned as a grid, even though it may not be a real grid. Grid is just used here because it accidentally results in the behaviour we are pursuing, not because the content calls for a grid layout. It’s a CSS hack.
 
 	+section("The lock-measure–animate–unlock (LMAU) cycle", "LMAU")
@@ -84,8 +84,7 @@ block content
 				| : once the transition ends, remove the inline style. The container is responsive again.
 
 		+codeblock('JavaScript').
-			// Simplified. The actual implementation handles AbortSignal,
-			// cross-axis constraints, and async content loading.
+			// Simplified.
 
 			// 1. Lock
 			container.style.height = container.offsetHeight + 'px';
@@ -112,18 +111,18 @@ block content
 		.grid-2
 			.card
 				h4 Expand and collapse
-				p Any element from #[code 0px] to its natural size, or back. The same as the Grid workaround, but with correct easing because the transition range matches the content range.
+				p Any element from 0 (height or width) to its natural size, or back. The same as the Grid workaround, but with correct easing because the transition range matches the content range.
 
 			.card
 				h4 Panel switching
-				p Switch between two panels that are both non-zero size. For example from a 200px panel to a 400px panel. The container animates smoothly between the measured values. In the mean time, transitions can be used for the inner panels.
+				p Switch between two panels that are both non-zero size. For example from a 200px panel to a 400px panel. The container animates smoothly between the values. In the mean time, transitions can be used for the inner panels.
 		
 		p CSS variables can be used to coordinate the container’s size change with the inner panels' content change. It just makes the developer’s life easier.
 
 
 	+section("Unstyled by design", "Unstyled")
 
-		p Most animation components come bundled with a design system: colours, borders, spacing, and component structure. Getting your own design in means fighting the library’s CSS. #[em Kill the Chakra].
+		p Most animation components come bundled with a design system: colours, borders, spacing, and component structure. Getting your own design in there means fighting the library’s CSS. #[em Kill the Chakra].
 
 		.grid-2
 			div
@@ -158,7 +157,7 @@ block content
 					li Works with Tailwind, CSS Modules, CSS-in-JS, anything
 					li Your design system, not the library's
 
-	+section("FAQ (or better: Remarks some people might have)", "FAQ")
+	+section("FAQ (<em>or: Remarks some people might have</em>)", "FAQ")
 		.column.gap-1(data-panel-group data-panel-close-siblings)
 			+faq("But you should use <code>interpolate-size: allow-keywords</code>")
 				h3 It is used, but not all browsers support it
@@ -172,8 +171,8 @@ block content
 
 				+codeblock('CSS').
 					@supports (interpolate-size: allow-keywords) {
-					    [data-panelset].is-opening { height: auto; }
-					    [data-panelset].is-closing { height: 0; }
+							[data-panelset].is-opening { height: auto; }
+							[data-panelset].is-closing { height: 0; }
 					}
 
 				h3 Inner panel swapping

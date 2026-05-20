@@ -56,6 +56,7 @@ export class PanelSet {
 		returnFocus: false,
 		autoFocus: false,
 		persist: false,
+		deepLink: false,
 		interruptible: true,
 		manageTriggers: true,
 		debug: false
@@ -88,6 +89,7 @@ export class PanelSet {
 		autoFocus:      ['autoFocus',      'string'],
 		returnFocus:    ['returnFocus',    'boolean'],
 		persist:        ['panelPersist',   'boolean'],
+		deepLink:       ['panelDeeplink',  'boolean'],
 		interruptible:  ['interruptible',  'boolean'],
 		manageTriggers: ['manageTriggers', 'boolean'],
 		debug:          ['debug',          'boolean'],
@@ -225,9 +227,15 @@ export class PanelSet {
 	};
 
 	private _persistState = (panelId: string): void => {
-		if (!this.config.persist || !this.element.id) return;
-		writeStored(`ps:${this.element.id}`, panelId);
-		this._updatePanelParam(panelId);
+		if (this.config.persist && this.element.id) writeStored(`ps:${this.element.id}`, panelId);
+		if (this.config.deepLink) {
+			this._updatePanelParam(panelId);
+		} else {
+			// No deepLink: clean up any stale ?panel= IDs left by a snap-open.
+			const myIds = new Set(this.panels.map(p => p.id).filter(Boolean));
+			const current = readPanelParam();
+			if (current.some(id => myIds.has(id))) writePanelParam(current.filter(id => !myIds.has(id)));
+		}
 	};
 
 	private _updatePanelParam = (panelId: string): void => {
@@ -573,10 +581,11 @@ export class PanelSet {
 		}
 
 		const isClosed = this.element.classList.contains('is-closed');
+		const isClosing = this.element.classList.contains('is-closing');
 		const isOpening = this.element.classList.contains('is-opening');
 		const isLoading = this.element.classList.contains('is-loading');
 
-		if (isClosed && !isOpening) return;
+		if ((isClosed || isClosing) && !isOpening) return;
 		if (this.element.classList.contains('is-transitioning') && !isLoading) return;
 
 		this._animateOpenClose(false, transition, event);
@@ -653,11 +662,12 @@ export class PanelSet {
 		}
 
 		const isClosed = this.element.classList.contains('is-closed');
+		const isClosing = this.element.classList.contains('is-closing');
 		const isLoading = this.element.classList.contains('is-loading');
 
 		if (newPanel === this.pendingPanel) {
-			if (isClosed) {
-				// Same panel, but closed: just open it
+			if (isClosed || isClosing) {
+				// Same panel, but closed or closing: open it
 				this.open({ event, transition, autoFocus: finalAutoFocus });
 			} else if (this.config.closable && this.config.closeOnTab) {
 				// Clicking the active tab while open: close if closeOnTab is enabled
@@ -667,7 +677,7 @@ export class PanelSet {
 		}
 
 		// Block tab switches during open/close animations (but not during async loading)
-		if ((this.element.classList.contains('is-opening') || this.element.classList.contains('is-closing')) && !isLoading) return;
+		if ((this.element.classList.contains('is-opening') || isClosing) && !isLoading) return;
 
 		// When closed: silently swap to the target panel, then open
 		if (isClosed) {

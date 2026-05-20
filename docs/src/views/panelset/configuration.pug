@@ -11,35 +11,33 @@ block content
 				p.lead Options via constructor, data attributes, or both
 
 	+section("Setting options")
-		.title-text
-			h3 JavaScript options
+		h3 JavaScript options
 
 		+codeblock('JS').
 			PanelSet.init({ closable: true, closeOnTab: true });
 
 			const ps = new PanelSet('#my-tabs', {
-			  transitions: true,
-			  closable: false,
-			  closeOnTab: false,
-			  autoFocus: 'heading',
-			  returnFocus: true
+				transitions: true,
+				closable: false,
+				closeOnTab: false,
+				autoFocus: 'heading',
+				returnFocus: true
 			});
 
-		.title-text
-			h3 Data attributes
+		h3 Data attributes
 
 		+codeblock('HTML').
 			<div data-panelset
-			     data-transitions="false"
-			     data-closable
-			     data-loading-height="300"
-			     data-debug>
-			  <!-- panels -->
+				data-transitions="false"
+				data-closable
+				data-loading-height="300"
+				data-debug>
+					<!-- panels -->
 			</div>
 
 		p JavaScript options and data attributes are both covered above. When both are set on the same element, data attributes take priority over JS options.
 
-		p Web component configuration uses plain attributes directly on #[code &lt;ps-panelset&gt;] — no #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panelset/examples/webcomponent.html") Web Component integration page] for full usage examples.
+		p Web component configuration uses plain attributes directly on #[code &lt;ps-panelset&gt;]. No #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panelset/examples/webcomponent.html") Web Component integration page] for full usage examples.
 
 	+section("Available options")
 		p Plain attributes (e.g. #[code transitions], #[code closable], #[code panelset-align]) are used when authoring with #[code &lt;ps-panelset&gt;]. JavaScript options, data attributes, and plain attributes all map to the same underlying config.
@@ -88,12 +86,12 @@ block content
 							li #[code { autoFocus: 'input' }]
 					.card
 						h4 Data attribute
-						p On the PanelSet element — default for all activations:
+						p On the PanelSet element (default for all activations):
 						ul
 							li #[code data-auto-focus="heading"]
 							li #[code data-auto-focus="first"]
 							li #[code data-auto-focus="input"]
-						p On a trigger button — overrides the element default for that activation:
+						p On a trigger button (overrides the element default for that activation):
 						ul
 							li #[code &lt;button aria-controls="..." data-auto-focus="input"&gt;]
 					.card
@@ -101,7 +99,7 @@ block content
 						p On the #[code &lt;ps-panelset&gt;] element:
 						ul
 							li #[code auto-focus="heading"]
-						p Per-trigger override works the same way — #[code data-auto-focus] on the button.
+						p Per-trigger override works the same way: #[code data-auto-focus] on the button.
 
 			+apiOption("closable: boolean")
 				p When enabled, the entire PanelSet can be opened and closed (height: 0). Use #[code open()], #[code close()], and #[code toggle()] to control it.
@@ -209,7 +207,7 @@ block content
 
 			+apiOption("manageTriggers: boolean")
 				p When set to #[code false], PanelSet stops updating #[code aria-selected] and the #[code is-activating] class on trigger elements, and ignores #[code data-auto-focus] attributes on triggers.
-				p Intended for wrapper libraries that own their own trigger state — like the upcoming #[code tabSet] — and drive PanelSet entirely through #[code show()]. For standalone use, leave this at the default.
+				p Intended for wrapper libraries that own their own trigger state and drive PanelSet entirely through #[code show()]. For standalone use, leave this at the default.
 				h4 Default: #[code true]
 				.card-row
 					.card
@@ -226,8 +224,7 @@ block content
 							li #[code manage-triggers="false"]
 
 			+apiOption("persist: boolean")
-				p When enabled, switching panels writes the active panel ID to #[code localStorage] and updates the #[code ?panel=] URL param via #[code history.replaceState]. On the next page load (with or without a URL param) the last active panel is restored automatically.
-				p URL params are always read on load regardless of this option. #[code persist] only controls whether navigation #[em writes] state back.
+				p When enabled, switching panels writes the active panel ID to #[code localStorage]. On the next page load the last active panel is restored automatically.
 				h4 Default: #[code false]
 				.card-row
 					.card
@@ -242,8 +239,27 @@ block content
 						h4 Web Component attribute
 						ul
 							li #[code panel-persist]
-				p The container must have an #[code id] for #[code persist] to work. Without one, there is nothing to key the localStorage entry or the URL param against.
+				p The container must have an #[code id] for #[code persist] to work.
 
+			+apiOption("deepLink: boolean")
+				p When enabled, switching panels updates the #[code ?panel=] URL param via #[code history.replaceState]. This keeps the address bar in sync so the current tab can be copied and shared. No new history entry is created.
+				p The #[code ?panel=] param is always read on load regardless of this option. #[code deepLink] only controls whether activation #[em writes] back to the URL.
+				p To combine shareable URLs with localStorage restoration, enable both #[code persist] and #[code deepLink].
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { deepLink: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-deeplink]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-deeplink]
+	
 			+apiOption("returnFocus: boolean")
 				p Return focus to the trigger that opened the PanelSet when it closes.
 				h4 Default: #[code false]
@@ -284,31 +300,33 @@ block content
 							li #[code transitions='{"height" : false}']
 
 	+section("CSS variables")
-		p All timing values must include a unit (#[code 0s] not #[code 0]). The same variables apply when using #[code &lt;ps-panelset&gt;] — set them on the element directly or via CSS targeting #[code ps-panelset].
+		p Transitions are controlled by CSS custom properties set on the element or any ancestor. All timing values must include a unit (#[code 0s] not #[code 0]). 
+
+		p These same variables apply when using #[code &lt;ps-panelset&gt;]. Set them on the element directly or via CSS targeting #[code ps-panelset].
 
 		+codeblock('CSS').
 			[data-panelset] {
-			  /* Panel fades */
-			  --ps-fadeout-speed:          0.25s;
-			  --ps-fadeout-timing:         ease-in;
-			  --ps-fadein-speed:           0.25s;
-			  --ps-fadein-timing:          ease-in-out;
-			  --ps-fadein-delay:           0.25s;
+				/* Panel fades */
+				--ps-fadeout-speed:          0.25s;
+				--ps-fadeout-timing:         ease-in;
+				--ps-fadein-speed:           0.25s;
+				--ps-fadein-timing:          ease-in-out;
+				--ps-fadein-delay:           0.25s;
 
-			  /* Container height animation */
-			  --ps-transition-timing:      ease-in-out;   /* tab-switch height */
-			  --ps-height-duration-ratio:  1;             /* height duration = fadeout × ratio */
-			  --ps-open-speed:             0.4s;
-			  --ps-open-timing:            ease-in-out;
-			  --ps-close-speed:            0.4s;
-			  --ps-close-timing:           ease-in-out;
+				/* Container height animation */
+				--ps-transition-timing:      ease-in-out;   /* tab-switch height */
+				--ps-height-duration-ratio:  1;             /* height duration = fadeout × ratio */
+				--ps-open-speed:             0.4s;
+				--ps-open-timing:            ease-in-out;
+				--ps-close-speed:            0.4s;
+				--ps-close-timing:           ease-in-out;
 
-			  /* Loading spinner */
-			  --ps-spinner-size:           40px;
-			  --ps-spinner-thickness:      4px;
-			  --ps-spinner-track-color:    rgba(0, 0, 0, 0.1);
-			  --ps-spinner-color:          rgba(0, 100, 255, 0.8);
-			  --ps-spinner-speed:          0.8s;
+				/* Loading spinner */
+				--ps-spinner-size:           40px;
+				--ps-spinner-thickness:      4px;
+				--ps-spinner-track-color:    rgba(0, 0, 0, 0.1);
+				--ps-spinner-color:          rgba(0, 100, 255, 0.8);
+				--ps-spinner-speed:          0.8s;
 			}
 
 

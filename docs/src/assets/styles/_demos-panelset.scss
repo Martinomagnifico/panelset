@@ -5,6 +5,7 @@
 
   svg {
     flex-shrink: 0;
+    will-change: transform;
     transform: rotate(-180deg);
     transition: transform var(--ps-close-speed, 0.4s) var(--ps-close-timing, ease-in-out);
   }
@@ -29,36 +30,37 @@
     z-index: 5;
   }
 
-  #demo-closable {
+  .demo-closable-frame {
+    --ps-open-speed: 3s;
+    --ps-close-speed: 3s;
+    --ps-fadeout-speed: 1.5s;
+    --ps-fadein-speed: 1.5s;
+    --ps-fadein-delay: 1.5s;
 
-    --ps-fadeout-speed: 0.2s;
-    --ps-fadein-speed: 0.2s;
-    --ps-fadein-delay: 0.2s;
-
-    --ps-close-speed: 0.4s;
-    --ps-open-speed: 0.4s;
-
-    margin-left: 1rem;
-    margin-right: 1rem;
-    margin-top: -3px;
-    border: 3px solid var(--special-normal);
+    --demo-border-width: 3px;
+    border: var(--demo-border-width) solid var(--special-normal);
+    border-top: none;
     background: var(--demo-surface);
-   
-    border-radius: 0 0 12px 12px;
-
-
+    border-radius: 0 0 8px 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
     position: absolute;
     width: calc(100% - 4rem);
-    left: 1rem;
-    right: 1rem;
+    margin-top: calc(var(--demo-border-width) * -1);
+
+    left: 2rem;
+    right: 2rem;
     z-index: 4;
+    transition:
+      border-color var(--ps-close-speed) var(--ps-transition-timing),
+      box-shadow var(--ps-close-speed) var(--ps-transition-timing);
 
-    &.is-closing, &.is-closed {
-      border-color: transparent;
-      box-shadow: 0 0 4px rgba(0, 0, 0, 0);
+    &:has(> [data-panelset].is-closing),
+    &:has(> [data-panelset].is-closed) {
+      box-shadow: 0 0 0 rgba(0, 0, 0, 0);
     }
+  }
 
+  #demo-closable {
     [role="tabpanel"] {
       padding: 1rem;
     }

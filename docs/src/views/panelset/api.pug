@@ -20,7 +20,7 @@ block content
 				dt.code elementOrSelector
 				dd CSS selector string or HTMLElement reference to the #[code [data-panelset]] container.
 				dt.code options (optional)
-				dd Configuration object. See #[a(href="/panelset/configuration.html") PanelSet — Configuration] for all options.
+				dd Configuration object. See #[a(href="/panelset/configuration.html") PanelSet, Configuration] for all options.
 			br
 			+codeblock('JavaScript').
 				const ps = new PanelSet('#my-tabs');
@@ -49,7 +49,7 @@ block content
 				panelSet.show('panel-2');
 				panelSet.show('panel-2', { transition: false });
 				button.addEventListener('click', event => {
-				  panelSet.show('panel-2', { event, autoFocus: 'heading' });
+					panelSet.show('panel-2', { event, autoFocus: 'heading' });
 				});
 
 		.card.api
@@ -83,7 +83,7 @@ block content
 			+codeblock('JavaScript').
 				const current = panelSet.getActive();
 				if (current === 'step-2') {
-				  panelSet.show('step-3', { event });
+					panelSet.show('step-3', { event });
 				}
 
 		.card.api
@@ -99,10 +99,20 @@ block content
 			br
 			+codeblock('JavaScript').
 				panelSet.onBeforeOpen((targetPanel, signal) => {
-				  return fetch(`/api/${targetPanel.id}`, { signal })
-				    .then(r => r.text())
-				    .then(html => targetPanel.innerHTML = html);
+					return fetch(`/api/${targetPanel.id}`, { signal })
+						.then(r => r.text())
+						.then(html => targetPanel.innerHTML = html);
 				}, { once: true });
+
+			p You can also define the handler as a named function. This keeps the call site clean and lets you share the same function across multiple panelsets.
+
+			+codeblock('JavaScript').
+				async function loadPanel(targetPanel, signal) {
+					const html = await fetch(`/api/${targetPanel.id}`, { signal }).then(r => r.text());
+					targetPanel.innerHTML = html;
+				}
+
+				panelSet.onBeforeOpen(loadPanel, { once: true });
 
 	+section("Instance properties")
 		.card.api
@@ -159,29 +169,29 @@ block content
 	+section("TypeScript types")
 		+codeblock('JavaScript').
 			import {
-			  PanelSet,
-			  type PanelSetConfig,
-			  type ShowOptions,
-			  type HandlerOptions,
-			  type AsyncContentHandler,
-			  type ReadyEventDetail,
-			  type BeforeOpenEventDetail,
-			  type ActivationEventDetail,
-			  type ActivationAbortedEventDetail,
+				PanelSet,
+				type PanelSetConfig,
+				type ShowOptions,
+				type HandlerOptions,
+				type AsyncContentHandler,
+				type ReadyEventDetail,
+				type BeforeOpenEventDetail,
+				type ActivationEventDetail,
+				type ActivationAbortedEventDetail,
 			} from 'panelset';
 
 			const config: PanelSetConfig = {
-			  transitions: { height: true, panels: false },
-			  closable: true,
-			  autoFocus: 'heading',
-			  persist: true,
+				transitions: { height: true, panels: false },
+				closable: true,
+				autoFocus: 'heading',
+				persist: true,
 			};
 
 			const ps = new PanelSet('#my-tabs', config);
 
 			ps.element.addEventListener('ps:activationstart', e => {
-			  const event = e as CustomEvent<ActivationEventDetail>;
-			  console.log(event.detail.panelId);
+				const event = e as CustomEvent<ActivationEventDetail>;
+				console.log(event.detail.panelId);
 			});
 
 

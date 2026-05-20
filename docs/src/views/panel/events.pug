@@ -24,15 +24,15 @@ block content
 					dd Set this to a promise to delay the open.
 				+codeblock('JavaScript').
 					panelEl.addEventListener('panel:beforeopen', e => {
-					  e.detail.promise = fetch('/api/content', { signal: e.detail.signal })
-					    .then(r => r.text())
-					    .then(html => { panelEl.querySelector('.panel-wrapper').innerHTML = html; });
+						e.detail.promise = fetch('/api/content', { signal: e.detail.signal })
+							.then(r => r.text())
+							.then(html => { panelEl.querySelector('.panel-wrapper').innerHTML = html; });
 					});
 				p Or use the convenience method:
 				+codeblock('JavaScript').
 					panel.onBeforeOpen(async (el, signal) => {
-					  const html = await fetch('/content', { signal }).then(r => r.text());
-					  el.querySelector('.panel-wrapper').innerHTML = html;
+						const html = await fetch('/content', { signal }).then(r => r.text());
+						el.querySelector('.panel-wrapper').innerHTML = html;
 					}, { once: true });
 
 			+apiEvent("panel:opening")
@@ -66,11 +66,11 @@ block content
 	+section("Listening to events")
 		+codeblock('JavaScript').
 			document.querySelector('#my-panel').addEventListener('panel:opened', e => {
-			  console.log('Opened by', e.detail.trigger);
+				console.log('Opened by', e.detail.trigger);
 			});
 
 			document.querySelector('#my-panel').addEventListener('panel:closed', () => {
-			  console.log('Panel closed');
+				console.log('Panel closed');
 			});
 
 	+section("Examples")

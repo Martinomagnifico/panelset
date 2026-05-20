@@ -40,7 +40,7 @@ Or via CDN (IIFE):
 
 ---
 
-## Panel — quick start
+## Panel, quick start
 
 ```html
 <button aria-controls="my-panel" aria-expanded="false">Toggle</button>
@@ -60,7 +60,7 @@ Panel.init();
 ### Accordion (group)
 
 ```html
-<div data-panel-group>
+<div data-panel-group data-panel-close-siblings>
   <button aria-controls="acc-1" aria-expanded="false">Item 1</button>
   <div id="acc-1" data-panel class="is-closed">
     <div class="panel-wrapper">Answer 1</div>
@@ -73,7 +73,7 @@ Panel.init();
 </div>
 ```
 
-No extra JavaScript needed — panels in a group close each other automatically.
+`data-panel-group` scopes the group. `data-panel-close-siblings` (or `closeSiblings: true`) makes opening one panel close the others.
 
 ### Panel options
 
@@ -86,6 +86,9 @@ No extra JavaScript needed — panels in a group close each other automatically.
 | `returnFocus` | `boolean` | `true` | Return focus to the trigger on close |
 | `closeSiblings` | `boolean` | `false` | Close other open panels in the same group |
 | `closeOnResize` | `boolean` | `false` | Close the panel when the window is resized |
+| `interruptible` | `boolean` | `true` | Allow a new open/close to interrupt an animation in progress |
+| `persist` | `boolean` | `false` | Save open/closed state to localStorage |
+| `deepLink` | `boolean` | `false` | Update the `?panel=` URL param on open/close |
 | `loadingDelay` | `number` | `300` | ms before spinner appears during async loading |
 | `loadingHeight` | `number` | `80` | px height while async content loads |
 | `debug` | `boolean` | `false` | Log events to the console |
@@ -108,7 +111,7 @@ panel.onBeforeOpen((el, signal) => {
 
 ---
 
-## PanelSet — quick start
+## PanelSet, quick start
 
 ```html
 <button aria-controls="panel-1">Tab 1</button>
@@ -144,6 +147,10 @@ document.addEventListener('click', e => {
 | `closeOnTab` | `boolean` | `false` | Clicking the active tab closes the container |
 | `autoFocus` | `false \| true \| 'heading' \| 'first' \| 'input'` | `false` | Move focus into the panel on activation |
 | `returnFocus` | `boolean` | `false` | Return focus to the trigger on close |
+| `interruptible` | `boolean` | `true` | Allow a new activation to interrupt one in progress |
+| `manageTriggers` | `boolean` | `true` | Let PanelSet update `aria-selected` and trigger state |
+| `persist` | `boolean` | `false` | Save the active panel ID to localStorage |
+| `deepLink` | `boolean` | `false` | Update the `?panel=` URL param on activation |
 | `loadingDelay` | `number` | `300` | ms before spinner appears during async loading |
 | `loadingHeight` | `number` | `200` | px height while async content loads |
 | `debug` | `boolean` | `false` | Log events to the console |
@@ -170,11 +177,12 @@ ps.onBeforeOpen((targetPanel, signal) => {
 
 ```css
 [data-panel] {
-  --open-speed:   0.4s;
-  --open-timing:  ease-in-out;
-  --close-speed:  0.4s;
-  --close-timing: ease-in-out;
-  --panel-width:  320px; /* horizontal panels */
+  --ps-open-speed:          0.4s;
+  --ps-open-timing:         ease-in-out;
+  --ps-close-speed:         0.4s;
+  --ps-close-timing:        ease-in-out;
+  --ps-panel-width:         320px;  /* horizontal panels */
+  --ps-closed-opacity:      0;      /* set to 1 to keep content visible while closed */
 }
 ```
 
@@ -182,14 +190,17 @@ ps.onBeforeOpen((targetPanel, signal) => {
 
 ```css
 [data-panelset] {
-  --fadeout-speed:  0.25s;
-  --fadein-speed:   0.25s;
-  --fadein-delay:   0.25s;
-  --open-speed:     0.4s;
-  --close-speed:    0.4s;
-  --open-timing:    ease-in-out;
-  --close-timing:   ease-in-out;
-  --transition-timing: ease-in-out;
+  --ps-fadeout-speed:         0.2s;
+  --ps-fadeout-timing:        ease-in;
+  --ps-fadein-speed:          0.2s;
+  --ps-fadein-timing:         ease-in-out;
+  --ps-fadein-delay:          0.2s;
+  --ps-height-duration-ratio: 1;
+  --ps-transition-timing:     ease-in-out;
+  --ps-open-speed:            0.4s;
+  --ps-open-timing:           ease-in-out;
+  --ps-close-speed:           0.4s;
+  --ps-close-timing:          ease-in-out;
 }
 ```
 

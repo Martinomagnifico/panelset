@@ -21,18 +21,18 @@ block content
 						button(aria-controls="docs-show-more" aria-expanded="false") Show more
 						div#docs-show-more(data-panel data-panel-axis="vertical" class="is-closed")
 							.panel-wrapper
-								p Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
+								p Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
 			+codeblock('HTML').
 				<article>
-				  <p>This is some introductory text.</p>
-				  <button aria-controls="my-panel" aria-expanded="false">Show more</button>
+					<p>This is some introductory text.</p>
+					<button aria-controls="my-panel" aria-expanded="false">Show more</button>
 
-				  <div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
-				    <div class="panel-wrapper">
-				      <p>Hidden content.</p>
-				    </div>
-				  </div>
+					<div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
+						<div class="panel-wrapper">
+							<p>Hidden content.</p>
+						</div>
+					</div>
 				</article>
 
 			+codeblock('JS').
@@ -40,7 +40,7 @@ block content
 				Panel.init();
 
 	+section("Changing the trigger")
-		p Because the trigger connects to the panel by #[code id], the two elements can appear in any order in the DOM. Here the expandable area sits #[em above] the trigger, and the button label changes between "Show more" and "Show less" using an #[code aria-expanded]-driven CSS rule — no JavaScript required.
+		p In the below example, the button label changes between "Show more" and "Show less" using an #[code aria-expanded]-driven CSS rule. No JavaScript required.
 
 		.card
 			.demo
@@ -54,15 +54,15 @@ block content
 
 		+codeblock('HTML').
 			<article>
-			  <button aria-controls="my-panel" aria-expanded="false">
-			    <span class="when-closed">Show more</span>
-			    <span class="when-open">Show less</span>
-			  </button>
-			  <div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
-			    <div class="panel-wrapper">
-			      <p>Hidden content here.</p>
-			    </div>
-			  </div>
+				<button aria-controls="my-panel" aria-expanded="false">
+					<span class="when-closed">Show more</span>
+					<span class="when-open">Show less</span>
+				</button>
+				<div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
+					<div class="panel-wrapper">
+						<p>Hidden content here.</p>
+					</div>
+				</div>
 			</article>
 
 		+codeblock('CSS').

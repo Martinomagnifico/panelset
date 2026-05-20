@@ -18,43 +18,34 @@ block content
 			.demo
 				ul(data-panel-group)
 					li
-						button.accordion-trigger(data-panel-trigger)
-							| Key Features
+						button.accordion-trigger(data-panel-trigger)= example1Title
 							+chevron()
 						div.is-closed(data-panel)
 							.panel-wrapper
-								ul
-									li This is our most important feature ever!
+								+example-1-content
 
 					li
-						button.accordion-trigger(data-panel-trigger)
-							| Pricing Plans
+						button.accordion-trigger(data-panel-trigger)= example2Title
 							+chevron()
 						div.is-closed(data-panel)
 							.panel-wrapper
-								ul
-									li Starter Plan: Whenever you do not want to pay a lot.
-									li Professional Plan: Ideal for managers who like to spend money!
+								+example-2-content
 
 					li
-						button.accordion-trigger(data-panel-trigger)
-							| Support Options
+						button.accordion-trigger(data-panel-trigger)= example3Title
 							+chevron()
 						div.is-closed(data-panel)
 							.panel-wrapper
-								ul
-									li If you send us an email, we will probably ignore it.
-									li We don’t even have a community forum.
-									li Opening an issue on GitHub is your next best option. Or even better: PR’s! You do the work!
+								+example-3-content
 
 		+codeblock('HTML').
 			<ul data-panel-group>
-			    <li>
-			        <button data-panel-trigger>Toggle</button>
-			        <div data-panel class="is-closed">
-			            <div class="panel-wrapper">Content</div>
-			        </div>
-			    </li>
+				<li>
+					<button data-panel-trigger>Toggle</button>
+					<div data-panel class="is-closed">
+						<div class="panel-wrapper">Content</div>
+					</div>
+				</li>
 			</ul>
 
 		+codeblock('JS').
@@ -69,8 +60,7 @@ block content
 			.demo
 				ul(data-panel-group data-panel-close-siblings)
 					li
-						button.accordion-trigger(data-panel-trigger)
-							| Key Features
+						button.accordion-trigger(data-panel-trigger)= example1Title
 							+chevron()
 						div.is-closed(data-panel)
 							.panel-wrapper
@@ -79,16 +69,17 @@ block content
 									li Support me with some coffee if you like this project: #[a(href="https://ko-fi.com/martinomagnifico") Buy me a coffee].
 
 					li
-						button.accordion-trigger(data-panel-trigger)
-							| Pricing Plans
+						button.accordion-trigger(data-panel-trigger)= example2Title
 							+chevron()
 						div.is-closed(data-panel)
 							.panel-wrapper
 								ul
+									li Starter Plan: Whenever you do not want to pay a lot.
 									li Support me with some coffee if you like this project: #[a(href="https://ko-fi.com/martinomagnifico") Buy me a coffee].
-									li This is our most important feature ever!
 
-			p Note: whenever this is set, the closing of any opened sibling will use the #[code --ps-open-speed] and #[code --ps-open-timing] CSS variables for its transition. This is because we want to avoid mismatched transitions that may result in a wobbly look. See the examples below: when any of the panels is open, clicking the other will not result in a surrounding container that changes height. Maybe a few subpixels, but that is to be expected. 
+			.callout 
+				+warning()
+				p #[strong Note]: whenever this is set, the closing of any opened sibling will use the #[code --ps-open-speed] and #[code --ps-open-timing] CSS variables for its transition. This is because we want to avoid mismatched transitions that may result in a wobbly look. See the examples above: when any of the panels is open, clicking the other will not result in a surrounding container that changes height. Maybe a few subpixels, but that is to be expected. 
 
 
 

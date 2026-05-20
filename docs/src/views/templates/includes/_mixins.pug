@@ -97,26 +97,42 @@ mixin lane(title)
 				block
 
 
+- const example1Title = "Key Features"
+- const example2Title = "Pricing Plans"
+- const example3Title = "Support Options"
 
-
-mixin example-1
-	h3 Key Features
+mixin example-1-content
 	ul
 		li This is our most important feature ever!
 
-mixin example-2
-	h3 Pricing Plans
+mixin example-2-content
 	ul
 		li Starter Plan: Whenever you do not want to pay a lot.
 		li Professional Plan: Ideal for managers who like to spend money!
-
-mixin example-3
-	h3 Support Options
+		
+mixin example-3-content
 	ul
 		li If you send us an email, we will probably ignore it.
 		li We don't even have a community forum.
 		li Opening an issue on GitHub is your next best option. Or even better: PR’s! You do the work!
 
+
+
+mixin example-1
+	h3= example1Title
+	+example-1-content
+
+mixin example-2
+	h3= example2Title
+	+example-2-content
+
+mixin example-3
+	h3= example3Title
+	+example-3-content
+
+mixin example-4
+	h3 Time for coffee!
+	p You found the hidden panel. Now support me if you like this project: #[a(href="https://ko-fi.com/martinomagnifico") Buy me a coffee].
 
 mixin examplepanelset(id, wc=false)
 	- const tag = wc ? 'ps-panelset' : 'div'
@@ -128,9 +144,27 @@ mixin examplepanelset(id, wc=false)
 			div(role="tabpanel", id=`${id}-panel-2`, hidden, aria-label="Pricing plans")
 				+example-2
 
-
 			div(role="tabpanel", id=`${id}-panel-3`, hidden, aria-label="Support options")
 				+example-3
+
+			if ee
+				div(role="tabpanel", id=`${id}-panel-4`, hidden, aria-label="Extra panel")
+					+example-4
+
+mixin exampletabset(id, tabs=false)
+
+	if tabs
+		nav.tabs(role="tablist" aria-label="Content sections")
+			button(role="tab" aria-controls=`${id}-panel-1` aria-selected="true") Features
+			button(role="tab" aria-controls=`${id}-panel-2`) Pricing
+			button(role="tab" aria-controls=`${id}-panel-3`) Support
+
+	else
+		.demo-controls
+			button(aria-controls=`${id}-panel-1`) Features
+			button(aria-controls=`${id}-panel-2`) Pricing
+			button(aria-controls=`${id}-panel-3`) Support
+
 
 mixin revealsrc(kind, thesource)
 	- let isProd = process.env.NODE_ENV === 'production';
@@ -163,7 +197,10 @@ mixin revealsrc(kind, thesource)
 			minIndent = 0;
 		}
 
-		const deindentedLines = lines.map(line => line.substring(minIndent));
+		const deindentedLines = lines.map(line => {
+			const s = line.substring(minIndent);
+			return s.replace(/^( {2})+/, m => '\t'.repeat(m.length / 2));
+		});
 		return deindentedLines.join('\n').trim();
 	};
 
@@ -212,9 +249,15 @@ mixin codeblock(type)
 
 
 mixin coffee()
-	svg(xmlns="http://www.w3.org/2000/svg" width="24" height="25" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="inherit" viewBox="0 0 24 25")
+	svg(xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="inherit" stroke-linecap="round" stroke-linejoin="round")
 		path(d="M10.25 2.5S10 2.84 10 3.88c0 1.04 1 1.8 1 2.84 0 .42-.25 1-.25 1m2.25-7s-.5.44-.5 1.78 1.25 2.22 1.25 3.55c0 .52-.25 1.67-.25 1.67m2 .28c1.51.27 2.5.72 2.5 1.22a15 15 0 0 1 .14 1.67 8.82 8.82 0 0 1-.86 4.33 6 6 0 0 1-.35.63c1.87.46 3.07 1.17 3.07 1.97 0 1.38-3.58 3-8 3s-8-1.62-8-3c0-.8 1.2-1.51 3.07-1.97C5.76 13.8 5.7 11.28 6 9.22c0 .83 2.69 1.5 6 1.5s6-.67 6-1.5")
 		path(d="M18.14 10.89c1.11-.36 2.08-.5 2.64.33.15.22.22.5.22.83 0 1.27-.96 2.72-3.72 3.17M6 9.22c0-.5.99-.95 2.5-1.22m-1.43 7.85c.92 1.45 2.45 1.97 4.93 1.97s4.01-.52 4.93-1.97")
+
+mixin warning()
+	svg(xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="inherit" stroke-linecap="round" stroke-linejoin="round")
+		path(d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3")
+		path(d="M12 9v4")
+		path(d="M12 17h.01")
 
 mixin chevron(size, dir)
 	- size = size || 24

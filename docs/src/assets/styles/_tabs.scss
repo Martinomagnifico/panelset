@@ -52,7 +52,7 @@
 		&:hover {
 			background: none;
 			box-shadow: 0 0 0 var(--special-shadow);
-			color: var(--special-normal);
+			color: var(--special-hover);
 
 			&:before {
 				background: var(--special-normal);
@@ -62,7 +62,6 @@
 
 		&[aria-selected="true"]{
 			color: var(--special-hover);
-			//border-bottom-color: var(--special-hover);
 
 			&:before {
 				background: var(--special-hover);

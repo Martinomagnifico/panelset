@@ -28,6 +28,8 @@ code,
 	}
 }
 
+
+
 h1,
 h2,
 h3,
@@ -38,6 +40,13 @@ h4 {
 	}
 	padding: 0;
 }
+
+.code-block + h3,
+.code-block + .title-text,
+* + h3 {
+	padding-top: var(--padding-small);
+}
+
 
 h1 {
 	font-weight: 300;
@@ -50,10 +59,6 @@ h4 {
 	color: var(--text-heading-2);
 }
 
-.card h3,
-.card h4 {
-	color: var(--text-heading-3);
-}
 
 h1 {
 	font-size: 2.5rem;
@@ -81,6 +86,10 @@ h4 {
 	font-size: 1.25rem;
 }
 
+.demo h3 + ul {
+	padding-top: var(--padding-small);
+}
+
 a {
 	color: var(--btn-plain-text);
 	font-weight: 500;
@@ -102,7 +111,8 @@ p.small, span.small {
 }
 
 p a,
-dl a {
+dl a,
+ol a {
 	text-decoration: underline;
 }
 
@@ -383,4 +393,30 @@ hr {
 		margin-top: 0;
 		margin-bottom: 0;
 	}
+}
+
+.callout {
+	border: 1px solid rgba(red, 0.25);
+	padding: 0.5rem;
+	padding-left: 2.5rem;
+	background: rgba(red, 0.05);
+	position: relative;
+	border-radius: 0.25rem;
+
+	svg {
+		stroke-width: 1.6px;
+		color: rgba(red, 0.5);
+		width: 24px;
+		height: 24px;
+		position: absolute;
+		left: 0.5rem;
+		padding: 2px;
+	}
+	a {
+		color: inherit;
+	}
+	.card & code {
+		background: var(--doc-code-transparent);
+	}
+
 }

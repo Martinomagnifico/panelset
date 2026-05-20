@@ -20,7 +20,7 @@
         { "text": "Async panel", "href": "/panel/examples/async.html" }
       ],
       "integrations": [
-        { "text": "Panel — Web Component", "label": "Web Component", "href": "/panel/examples/webcomponent.html" }
+        { "text": "Panel: Web Component", "label": "Web Component", "href": "/panel/examples/webcomponent.html" }
       ]
     },
     {
@@ -39,7 +39,7 @@
         { "text": "Height tracking", "href": "/panelset/examples/height-tracking.html" }
       ],
       "integrations": [
-        { "text": "PanelSet — Web Component", "label": "Web Component", "href": "/panelset/examples/webcomponent.html" }
+        { "text": "PanelSet: Web Component", "label": "Web Component", "href": "/panelset/examples/webcomponent.html" }
       ]
     },
     {

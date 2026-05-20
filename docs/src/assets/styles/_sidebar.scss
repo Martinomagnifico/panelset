@@ -30,15 +30,12 @@
 
 	.logo,
 	a.logo {
-		color: var(--color-special-tint-400);
-
 		font-size: 1.5rem;
 		font-weight: 500;
 		flex-shrink: 0;
 		line-height: 32px;
 		&:hover {
 			text-decoration: none;
-			color: var(--special-hover);
 			background: none;
 		}
 	}
@@ -95,13 +92,6 @@
 			border-top: 1px solid var(--border-default);
 			pointer-events: none;
 		}
-
-		&:has(a.active) {
-			.nav-section-toggle {
-				font-weight: 600;
-				color: var(--sidebar-item-active-text);
-			}
-		}
 	}
 
 	.nav-section-toggle {
@@ -129,10 +119,16 @@
 		&[aria-expanded="false"] svg {
 			transform: rotate(-180deg);
 		}
+		&.active {
+			font-weight: 600;
+			color: var(--sidebar-item-active-text);
+		}
 		&:hover {
 			background: var(--sidebar-item-hover-bg);
 			color: var(--sidebar-item-hover-text);
 		}
+
+
 	}
 
 	.sidebar-about-wrap {
@@ -194,10 +190,9 @@
 
 			.nav-examples-label {
 				border-top: 1px solid var(--border-default);
-				font-size: 0.7rem;
-				letter-spacing: 0.05em;
+				font-size: 0.9rem;
 				color: var(--sidebar-item-text);
-				opacity: 0.8;
+				opacity: 0.7;
 				padding: 1rem 0.75rem 0;
 				margin: 0;
 			}

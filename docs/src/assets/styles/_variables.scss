@@ -1,7 +1,7 @@
 :root {
-  --main-hue: 150.0;
-  --special-hue: calc(var(--main-hue) + 150);
-  --special-hue: mod(calc(var(--main-hue) + 150), 360);
+  --main-hue: 250.0;
+  --special-hue: calc(var(--main-hue) + 75);
+  --special-hue: mod(calc(var(--main-hue) + 75), 360);
 }
 
 :root {
@@ -27,7 +27,7 @@
   --color-special-tint-150: oklch(0.90 0.072 var(--special-hue));
   --color-special-tint-200: oklch(0.82 0.090 var(--special-hue));
   --color-special-tint-300: oklch(0.72 0.120 var(--special-hue));
-  --color-special-tint-400: oklch(0.64 0.150 var(--special-hue));
+  --color-special-tint-400: oklch(0.64 0.140 var(--special-hue));
   --color-special-tint-500: oklch(0.58 0.140 var(--special-hue));
   --color-special-tint-600: oklch(0.48 0.120 var(--special-hue));
   --color-special-tint-700: oklch(0.39 0.100 var(--special-hue));
@@ -65,7 +65,7 @@
   --btn-primary-text: var(--color-tint-0);
   --btn-primary-hover: var(--color-tint-600);
 
-
+  --doc-code-transparent: oklch(from var(--color-tint-700) l c h / 0.08);
 
   --special-normal: var(--color-special-tint-400);
   --special-hover: var(--color-special-tint-600);
@@ -79,12 +79,21 @@
     --btn-plain-text: var(--color-special-tint-600);
     --btn-plain-text-hover: var(--color-special-tint-700);
     --btn-plain-hover-bg: oklch(from var(--color-special-tint-500) l c h / 0.1);
+
+    --text-heading-1: var(--color-special-tint-900);
+    --text-heading-2: var(--color-special-tint-700);
+    --text-heading-3: var(--color-special-tint-600);
+
+    --text-muted: var(--color-special-tint-800);
+
   }
 
-  --sidebar-item-text: var(--color-tint-800);
+  --sidebar-item-text: var(--color-tint-700);
   --sidebar-item-hover-bg: var(--color-tint-50);
   --sidebar-item-hover-text: var(--color-tint-950);
   --sidebar-item-active-text: var(--color-tint-800);
+  --sidebar-item-active-text: var(--color-tint-600);
+
   --sidebar-item-active-bg: oklch(from var(--color-tint-500) l c h / 0.12);
   --sidebar-item-active-bg: var(--color-tint-150);
 
@@ -96,6 +105,7 @@
     --text-heading-1: var(--color-tint-100);
     --text-heading-2: var(--color-tint-200);
     --text-heading-3: var(--color-tint-300);
+
     --bg-surface: var(--color-tint-900);
     --bg-surface-tint: var(--color-tint-900);
     --bg-surface-tint-contrast: var(--color-tint-800);
@@ -118,6 +128,7 @@
     --btn-primary-hover: var(--color-tint-600);
 
     --text-tinted: var(--color-tint-300);
+    --doc-code-transparent: oklch(from var(--color-tint-100) l c h / 0.1);
 
     --sidebar-item-text: var(--color-tint-200);
     --sidebar-item-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
@@ -131,7 +142,7 @@
     --demo-btn-bg: var(--color-tint-900);
 
     --special-normal: var(--color-special-tint-300);
-    --special-hover: var(--color-special-tint-100);
+    --special-hover: var(--color-special-tint-25);
     --special-shadow: oklch(from var(--special-normal) l c h / 0.25);
 
     .demo {
@@ -143,6 +154,13 @@
       --btn-plain-text: var(--color-special-tint-300);
       --btn-plain-text-hover: var(--color-special-tint-100);
       --btn-plain-hover-bg: oklch(from var(--color-special-tint-400) l c h / 0.15);
+
+      --text-heading-1: var(--color-special-tint-100);
+      --text-heading-2: var(--color-special-tint-200);
+      --text-heading-3: var(--color-special-tint-300);
+
+      --text-muted: var(--color-special-tint-300);
+
     }
 
   }
@@ -152,7 +170,7 @@
   --doc-max-width: 1000px;
 
   --doc-sidebar-width: 200px;
-  --doc-code-transparent: #a5a5a533;
+ // --doc-code-transparent: oklch(from var(--color-tint-700) l c h / 0.08);
 
   --padding-large: 1.25rem;
   --padding-medium: 1rem;
