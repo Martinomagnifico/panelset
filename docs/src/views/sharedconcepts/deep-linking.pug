@@ -52,7 +52,7 @@ block content
 					.demo
 						button(aria-controls="paneldl" aria-expanded="false") Toggle panel
 
-						div#paneldl.is-closed(data-panel data-panel-deeplink)
+						div#paneldl(data-panel data-panel-deeplink)
 							.panel-wrapper
 								h3= example1Title
 								+example-1-content
@@ -64,7 +64,7 @@ block content
 							Panel.init({ deepLink: true });
 
 						+codeblock('HTML').
-							<div id="sidebar" data-panel data-panel-deeplink class="is-closed">...</div>
+							<div id="sidebar" data-panel data-panel-deeplink>...</div>
 
 
 

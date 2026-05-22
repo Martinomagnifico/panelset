@@ -21,7 +21,7 @@ mixin alignment-panel(uid, axis, align, pinned)
 	- if (pinned)
 		- pinned=true;
 
-	div(id=uid data-panel=true data-panel-axis=axis data-panel-align=align class="is-closed" data-panel-close-on-resize=pinned)
+	div(id=uid data-panel=true data-panel-axis=axis data-panel-align=align data-panel-close-on-resize=pinned)
 		.panel-wrapper(role="region" aria-label="Panel")
 			p This is the content of the panel. It may contain controls and/or maybe some extra information about the main content.
 

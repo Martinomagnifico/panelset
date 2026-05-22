@@ -5,7 +5,7 @@ mixin apiEvent(name)
 		button.card-trigger(aria-controls=id aria-expanded="false")
 			h4.code= name
 			+chevron()
-		div(id=id data-panel class="is-closed")
+		div(id=id data-panel)
 			.panel-wrapper
 				.card-content
 					block
@@ -18,7 +18,7 @@ mixin apiOption(name)
 		button.card-trigger(aria-controls=id aria-expanded="false")
 			h4.code= name
 			+chevron()
-		div(id=id data-panel class="is-closed")
+		div(id=id data-panel)
 			.panel-wrapper
 				.card-content
 					block
@@ -29,7 +29,7 @@ mixin faq(title)
 		button.card-trigger(data-panel-trigger)
 			h3!= title
 			+chevron()
-		div(data-panel class="is-closed")
+		div(data-panel)
 			.panel-wrapper
 				.card-content
 					block

@@ -153,7 +153,7 @@ export class Panel {
 
 		if (this._resolveInitialState()) {
 			// URL param or localStorage says open — snap open without animation
-			this.element.classList.remove('is-closed');
+			this.element.classList.add('is-open');
 			this.element.removeAttribute('inert');
 			this._setTriggerState(true);
 			// is-restored is present for exactly one paint so CSS can suppress
@@ -318,7 +318,7 @@ export class Panel {
 	// Public API
 
 	get isOpen(): boolean {
-		return !this.element.classList.contains('is-closed');
+		return this.element.classList.contains('is-open') || this.element.classList.contains('is-opening');
 	}
 
 
@@ -383,7 +383,7 @@ export class Panel {
 		// then adding is-opening creates a 1→0 opacity transition on the wrapper
 		// that makes content visible throughout Phase 1. Adding is-loading first
 		// ensures the wrapper is committed at opacity 0, so no transition fires.
-		this.element.classList.remove('is-closed', 'is-closing');
+		this.element.classList.remove('is-closing');
 		this.element.removeAttribute('inert');
 		this.element.classList.add('is-loading');
 
@@ -439,12 +439,16 @@ export class Panel {
 				Core.waitForTransition(this.element, cssProp).then(() => {
 					if (signal.aborted) return;
 					this.element.classList.remove('is-opening');
+					this.element.classList.add('is-open');
 					this._dispatch('panel:opened');
 					this._log('Opened');
 					this._handleAutoFocus(event);
 				});
 			} else {
 				// JS fallback: measure natural size, re-lock at loadingHeight, animate.
+				// Set to 'auto' before measuring — base CSS gives height:0 so the cleared
+				// inline style would return 0 from getBoundingClientRect.
+				this.element.style[cssProp] = 'auto';
 				const targetRect = this.element.getBoundingClientRect();
 				const target = cssProp === 'height' ? targetRect.height : targetRect.width;
 				this.element.style[cssProp] = `${current}px`;
@@ -457,6 +461,7 @@ export class Panel {
 						if (signal.aborted) return;
 						this.element.style[cssProp] = '';
 						this.element.classList.remove('is-opening');
+						this.element.classList.add('is-open');
 						this._dispatch('panel:opened');
 						this._log('Opened');
 						this._handleAutoFocus(event);
@@ -465,6 +470,7 @@ export class Panel {
 			}
 		} else {
 			this.element.classList.remove('is-opening');
+			this.element.classList.add('is-open');
 			this._dispatch('panel:opened');
 			this._log('Opened');
 			this._handleAutoFocus(event);
@@ -484,7 +490,7 @@ export class Panel {
 			? this.element.getBoundingClientRect()[cssProp === 'height' ? 'height' : 'width']
 			: null;
 
-		this.element.classList.remove('is-closed', 'is-closing');
+		this.element.classList.remove('is-closing');
 		this.element.removeAttribute('inert');
 
 		const body = findBody(this.element);
@@ -510,6 +516,7 @@ export class Panel {
 					Core.waitForTransition(this.element, cssProp).then(() => {
 						if (signal.aborted) return;
 						this.element.classList.remove('is-opening');
+						this.element.classList.add('is-open');
 						this._dispatch('panel:opened');
 						this._cleanupTempClose();
 						this._log('Opened');
@@ -523,9 +530,9 @@ export class Panel {
 				this._dispatch('panel:opening');
 				// JS fallback: measure natural size, lock at 0 (or reverse start), animate
 				// to target px, then clear inline on complete.
-				// Clear stale inline before measuring so getBoundingClientRect returns
-				// natural size, not the locked/animating value from a reversed close.
-				if (isReversingClose) this.element.style[cssProp] = '';
+				// Set to 'auto' so getBoundingClientRect returns the natural content size.
+				// The base CSS gives height:0, so without this the measured target would be 0.
+				this.element.style[cssProp] = 'auto';
 
 				const rect        = this.element.getBoundingClientRect();
 				const naturalSize = cssProp === 'height' ? rect.height : rect.width;
@@ -547,6 +554,7 @@ export class Panel {
 						if (signal.aborted) return;
 						this.element.style[cssProp] = '';
 						this.element.classList.remove('is-opening');
+						this.element.classList.add('is-open');
 						this._dispatch('panel:opened');
 						this._cleanupTempClose();
 						this._log('Opened');
@@ -559,6 +567,7 @@ export class Panel {
 			this._persistState(true);
 			this._closeGroupSiblings();
 			this._dispatch('panel:opening');
+			this.element.classList.add('is-open');
 			this._dispatch('panel:opened');
 			this._cleanupTempClose();
 			this._log('Opened');
@@ -597,8 +606,7 @@ export class Panel {
 		this._dispatch('panel:closing');
 
 		const finish = () => {
-			this.element.classList.remove('is-closing');
-			this.element.classList.add('is-closed');
+			this.element.classList.remove('is-closing', 'is-open', 'is-opening');
 			this.element.style[prop] = '';
 			if (body) unlockBody(body);
 			this._persistState(false);
@@ -618,6 +626,7 @@ export class Panel {
 		const rect    = this.element.getBoundingClientRect();
 		const current = prop === 'height' ? rect.height : rect.width;
 		this.element.style[prop] = `${current}px`;
+		this.element.classList.remove('is-opening', 'is-open');
 		this.element.classList.add('is-closing');
 		// Force a flush so Firefox sees { is-closing, height: Npx } as a committed
 		// state. Without it the lock is overwritten in the rAF and Firefox sees
@@ -655,8 +664,7 @@ export class Panel {
 		this._anim.start(); // pending .then() callbacks check signal.aborted
 		this._listenerController.abort();
 
-		this.element.classList.remove('is-opening', 'is-closing', 'is-loading');
-		this.element.classList.add('is-closed');
+		this.element.classList.remove('is-opening', 'is-closing', 'is-loading', 'is-open');
 		this.element.style[this._cssProp()] = '';
 		this.element.setAttribute('inert', '');
 

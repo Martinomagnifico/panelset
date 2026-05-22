@@ -127,14 +127,14 @@ block content
 			import 'panelset/style.css';
 
 	+section("Markup")
-		p Add #[code data-panel] to your element and give it an #[code id]. Start it closed with #[code class="is-closed"]. Wrap the content in #[code .panel-wrapper].
+		p Add #[code data-panel] to your element and give it an #[code id]. Panels start closed by default — no class required. Wrap the content in #[code .panel-wrapper].
 
 		+codeblock('HTML').
 			<!-- Trigger: any element with aria-controls pointing to the panel id -->
 			<button aria-controls="my-panel" aria-expanded="false">Toggle</button>
 
 			<!-- Panel element -->
-			<div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
+			<div id="my-panel" data-panel data-panel-axis="vertical">
 				<div class="panel-wrapper">
 				<p>Panel content goes here.</p>
 				</div>
@@ -168,7 +168,7 @@ block content
 		+codeblock('HTML').
 			<button aria-controls="my-panel" aria-expanded="false">Open</button>
 
-			<div id="my-panel" data-panel data-panel-axis="horizontal" class="is-closed">
+			<div id="my-panel" data-panel data-panel-axis="horizontal">
 				<div class="panel-wrapper" role="dialog" aria-label="Options">
 					<button data-panel-close>Close</button>
 					<p>Sidebar content.</p>
@@ -179,7 +179,7 @@ block content
 
 		+codeblock('HTML').
 			<button data-panel-trigger>Toggle</button>
-			<div data-panel class="is-closed">
+			<div data-panel>
 				<div class="panel-wrapper">Content</div>
 			</div>
 

@@ -30,7 +30,7 @@ block content
 			p Configure individual panels directly in HTML.
 
 		+codeblock('HTML').
-			<div id="my-panel" data-panel data-panel-axis="horizontal" data-panel-close-on-resize data-panel-transitions="false" class="is-closed">
+			<div id="my-panel" data-panel data-panel-axis="horizontal" data-panel-close-on-resize data-panel-transitions="false">
 				<div class="panel-wrapper">...</div>
 			</div>
 
@@ -309,12 +309,12 @@ block content
 		+codeblock('HTML').
 			<div data-panel-group>
 				<h4><button aria-controls="acc-1" aria-expanded="false">Question 1</button></h4>
-				<div id="acc-1" data-panel class="is-closed">
+				<div id="acc-1" data-panel>
 					<div class="panel-wrapper">Answer 1</div>
 				</div>
 
 				<h4><button aria-controls="acc-2" aria-expanded="false">Question 2</button></h4>
-				<div id="acc-2" data-panel class="is-closed">
+				<div id="acc-2" data-panel>
 					<div class="panel-wrapper">Answer 2</div>
 				</div>
 			</div>
@@ -324,12 +324,12 @@ block content
 		+codeblock('HTML').
 			<div data-panel-group data-panel-close-siblings>
 				<h4><button aria-controls="acc-1" aria-expanded="false">Question 1</button></h4>
-				<div id="acc-1" data-panel class="is-closed">
+				<div id="acc-1" data-panel>
 					<div class="panel-wrapper">Answer 1</div>
 				</div>
 
 				<h4><button aria-controls="acc-2" aria-expanded="false">Question 2</button></h4>
-				<div id="acc-2" data-panel class="is-closed">
+				<div id="acc-2" data-panel>
 					<div class="panel-wrapper">Answer 2</div>
 				</div>
 			</div>
@@ -341,7 +341,7 @@ block content
 
 		+codeblock('HTML').
 			<button data-panel-trigger>Toggle</button>
-			<div data-panel class="is-closed">
+			<div data-panel>
 				<div class="panel-wrapper">Content</div>
 			</div>
 

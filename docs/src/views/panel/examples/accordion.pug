@@ -20,21 +20,21 @@ block content
 					li
 						button.accordion-trigger(data-panel-trigger)= example1Title
 							+chevron()
-						div.is-closed(data-panel)
+						div(data-panel)
 							.panel-wrapper
 								+example-1-content
 
 					li
 						button.accordion-trigger(data-panel-trigger)= example2Title
 							+chevron()
-						div.is-closed(data-panel)
+						div(data-panel)
 							.panel-wrapper
 								+example-2-content
 
 					li
 						button.accordion-trigger(data-panel-trigger)= example3Title
 							+chevron()
-						div.is-closed(data-panel)
+						div(data-panel)
 							.panel-wrapper
 								+example-3-content
 
@@ -44,7 +44,7 @@ block content
 				<ul data-panel-group>
 					<li>
 						<button data-panel-trigger>Toggle</button>
-						<div data-panel class="is-closed">
+						<div data-panel>
 							<div class="panel-wrapper">Content</div>
 						</div>
 					</li>
@@ -61,7 +61,7 @@ block content
 					li
 						button.accordion-trigger(data-panel-trigger)= example1Title
 							+chevron()
-						div.is-closed(data-panel)
+						div(data-panel)
 							.panel-wrapper
 								ul
 									li This is our most important feature ever!
@@ -70,7 +70,7 @@ block content
 					li
 						button.accordion-trigger(data-panel-trigger)= example2Title
 							+chevron()
-						div.is-closed(data-panel)
+						div(data-panel)
 							.panel-wrapper
 								ul
 									li Starter Plan: Whenever you do not want to pay a lot.

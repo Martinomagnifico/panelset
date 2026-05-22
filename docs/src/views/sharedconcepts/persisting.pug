@@ -55,7 +55,7 @@ block content
 					.demo
 						button(aria-controls="panelpersist" aria-expanded="false") Toggle panel
 
-						div#panelpersist.is-closed(data-panel data-panel-persist)
+						div#panelpersist(data-panel data-panel-persist)
 							.panel-wrapper
 								h3= example1Title
 								+example-1-content
@@ -67,7 +67,7 @@ block content
 							Panel.init({ persist: true });
 
 						+codeblock('HTML').
-							<div id="sidebar" data-panel data-panel-persist class="is-closed">...</div>
+							<div id="sidebar" data-panel data-panel-persist>...</div>
 
 				div
 					h3 Persist in PanelSet

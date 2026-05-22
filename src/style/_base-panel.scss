@@ -4,17 +4,26 @@ ps-panel { display: block; }
 [data-panel], ps-panel {
 	box-sizing: border-box;
 	display: flow-root;
+	height: 0;
+	overflow: hidden;
 
 	.panel-wrapper {
 		position: relative;
 		z-index: 0;
-	}
-
-	// Wrapper hidden when closed; fades in when opening, out when closing.
-	// Set --ps-closed-opacity: 1 to disable the fade (content stays opaque throughout).
-	&.is-closed .panel-wrapper {
+		// Fades in when opening, out when closing.
+		// Set --ps-closed-opacity: 1 to disable the fade (content stays opaque throughout).
 		opacity: var(--ps-closed-opacity, 0);
 		pointer-events: none;
+	}
+
+	&.is-open {
+		height: auto;
+		overflow: visible;
+
+		.panel-wrapper {
+			opacity: 1;
+			pointer-events: auto;
+		}
 	}
 
 	&.is-opening .panel-wrapper {
@@ -27,22 +36,22 @@ ps-panel { display: block; }
 		transition: opacity var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing));
 	}
 
-	&.is-closed, 
-	&.is-opening, 
-	&.is-closing { 
+	&.is-opening,
+	&.is-closing {
 		overflow: hidden;
 	}
 
 	// Vertical is the default
-	&.is-closed  { height: 0 !important; }
 	&.is-opening { transition: height var(--ps-open-speed) var(--ps-open-timing); }
 	&.is-closing { transition: height var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)); }
 
 	// Horizontal overrides — resets height and switches to width
 	&[data-panel-axis="horizontal"] {
 		flex-shrink: 0;
+		width: 0;
+		height: auto;
 
-		&.is-closed  { width: 0 !important; height: auto !important; }
+		&.is-open    { width: auto; }
 		&.is-opening { transition: width var(--ps-open-speed) var(--ps-open-timing); }
 		&.is-closing { transition: width var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)); }
 

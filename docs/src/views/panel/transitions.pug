@@ -38,7 +38,7 @@ block content
 		.card
 			.demo
 				button(aria-controls="panel-demo" aria-expanded="false") Toggle panel
-				div#panel-demo(data-panel data-panel-axis="vertical" class="is-closed")
+				div#panel-demo(data-panel data-panel-axis="vertical")
 					.panel-wrapper
 						p This panel uses the default transition speed of #[code 0.4s]. As it opens, the container grows to its natural height while the inner content fades in. As it closes, the content fades out and the container shrinks back to zero.
 
@@ -46,7 +46,7 @@ block content
 		.card
 			.demo
 				button(aria-controls="panel-slow-demo" aria-expanded="false") Toggle panel
-				div#panel-slow-demo(data-panel data-panel-axis="vertical" class="is-closed")
+				div#panel-slow-demo(data-panel data-panel-axis="vertical")
 					.panel-wrapper
 						p Open and close speeds both set to 1 second. The slower speed makes it easy to see the two parts of the transition separately: the container height animates while the content fades in, and the content fades out before the container fully collapses.
 
@@ -62,7 +62,7 @@ block content
 		.card
 			.demo
 				button(aria-controls="panel-nofade-demo" aria-expanded="false") Toggle panel
-				div#panel-nofade-demo(data-panel data-panel-axis="vertical" class="is-closed")
+				div#panel-nofade-demo(data-panel data-panel-axis="vertical")
 					.panel-wrapper
 						p The content is already at full opacity. Only the container height animates. Compare this to the default example above: the text appears immediately as the container opens, with no fade-in. On close, the text stays visible until the container has fully collapsed.
 

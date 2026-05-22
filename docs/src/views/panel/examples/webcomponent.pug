@@ -21,7 +21,7 @@ block content
 			<script src="panelset.js"></script>
 
 			<!-- <ps-panel> is ready immediately after the script loads -->
-			<ps-panel id="my-panel" panel-axis="vertical" class="is-closed">
+			<ps-panel id="my-panel" panel-axis="vertical">
 				<div class="panel-wrapper">...</div>
 			</ps-panel>
 
@@ -49,14 +49,14 @@ block content
 				article.show-more-article
 					p This is always visible introductory text.
 					button(aria-controls="wc-panel-demo" aria-expanded="false") Show more
-					ps-panel#wc-panel-demo(panel-axis="vertical" class="is-closed")
+					ps-panel#wc-panel-demo(panel-axis="vertical")
 						.panel-wrapper
 							p Additional content that was hidden. The panel animates to its natural height, exactly as with #[code data-panel].
 
 		+codeblock('HTML').
 			<button aria-controls="my-panel" aria-expanded="false">Show more</button>
 
-			<ps-panel id="my-panel" panel-axis="vertical" class="is-closed">
+			<ps-panel id="my-panel" panel-axis="vertical">
 				<div class="panel-wrapper">
 					<p>Hidden content.</p>
 				</div>
