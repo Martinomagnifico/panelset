@@ -1,0 +1,38 @@
+@keyframes ps-spin {
+	to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+[data-panel], ps-panel,
+[data-panelset], ps-panelset {
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: var(--ps-spinner-top, 50%);
+		bottom: var(--ps-spinner-bottom, auto);
+		left: var(--ps-spinner-left, 50%);
+		right: var(--ps-spinner-right, auto);
+		width: var(--ps-spinner-size, 40px);
+		height: var(--ps-spinner-size, 40px);
+		transform: var(--ps-spinner-transform, translate(-50%, -50%));
+		border: var(--ps-spinner-thickness, 4px) solid var(--ps-spinner-track-color, rgba(0, 0, 0, 0.1));
+		border-top-color: var(--ps-spinner-color, rgba(0, 100, 255, 0.8));
+		border-radius: 50%;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity var(--ps-loading-dim-duration) var(--ps-transition-timing);
+		animation: ps-spin var(--ps-spinner-speed, 0.8s) linear infinite;
+		z-index: 11;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-panel], ps-panel,
+	[data-panelset], ps-panelset {
+		&::after {
+			transition: none !important;
+			animation-play-state: paused !important;
+		}
+	}
+}

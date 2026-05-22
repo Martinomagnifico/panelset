@@ -10,7 +10,7 @@
 }
 
 
-.demo .tabs {
+.tabs {
 
 	display: flex;
 	padding-left: 0.5rem;
@@ -26,10 +26,12 @@
 		outline-width: 3px;
 
 		position: relative;
-		color: var(--text-muted);
+		color: var(--tab-text-normal);
 		font-size: 1.1rem;
 		font-weight: 600;
 		transition: color 0.2s;
+
+		cursor: pointer;
 
 		&:before {
 			content: "";
@@ -51,20 +53,19 @@
 
 		&:hover {
 			background: none;
-			box-shadow: 0 0 0 var(--special-shadow);
-			color: var(--special-hover);
+			//box-shadow: 0 0 0 var(--tab-shadow);
+			color: var(--tab-text-hover);
 
 			&:before {
-				background: var(--special-normal);
+				background: var(--tab-underline-hover);
 			}
-
 		}
 
 		&[aria-selected="true"]{
-			color: var(--special-hover);
+			color: var(--tab-text-active);
 
 			&:before {
-				background: var(--special-hover);
+				background: var(--tab-underline-active);
 			}
 
 		}

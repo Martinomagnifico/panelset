@@ -1,5 +1,6 @@
 function renderRecipe(data) {
 	return `
+		<hr>
 		<h2>${data.name}</h2>
 		<div class="recipe-meta">
 			<span>⏱️ ${data.prepTimeMinutes + data.cookTimeMinutes} mins</span>
@@ -26,6 +27,7 @@ function renderRecipe(data) {
 }
 
 function slowFetch(url, options = {}, delayMs = 1500) {
+	console.log("100");
 	return new Promise((resolve, reject) => {
 		const timeout = setTimeout(() => {
 			fetch(url, options).then(resolve).catch(reject);
@@ -47,3 +49,12 @@ panelEl?.panel?.onBeforeOpen((el, signal) => {
 			el.querySelector('.panel-wrapper').innerHTML = renderRecipe(data);
 		});
 }, { once: true });
+
+// Other example that can be used, using a simple timeout to simulate loading time without fetching data:
+
+// panelEl?.panel?.onBeforeOpen((el, signal) => {
+//     return new Promise(res => setTimeout(() => {
+//         el.querySelector('.panel-wrapper').innerHTML = '<h2>Fast content</h2>';
+//         res();
+//     }, 250));
+// }, { once: true });

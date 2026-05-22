@@ -235,10 +235,11 @@ mixin close(label)
 
 
 
-mixin codeblock(type)
+mixin codeblock(type, label)
+	- label = label || type
 	.code-block
 		.code-header
-			| #{type}
+			| #{label}
 			button.copy Copy
 		pre
 			code(class=`language-${type}`)

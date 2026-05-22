@@ -12,14 +12,14 @@ export const readPanelParam = (): string[] => {
 
 export const writePanelParam = (ids: string[]): void => {
 	const url = new URL(location.href);
+	url.searchParams.delete('panel');
 
 	if (ids.length) {
-		url.searchParams.set('panel', ids.join(','));
+		const sep = url.search ? '&' : '?';
+		history.replaceState(null, '', `${url}${sep}panel=${ids.join(',')}`);
 	} else {
-		url.searchParams.delete('panel');
+		history.replaceState(null, '', url);
 	}
-
-	history.replaceState(null, '', url);
 };
 
 

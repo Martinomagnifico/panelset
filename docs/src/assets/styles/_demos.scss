@@ -10,7 +10,7 @@
 }
 
 .api {
-  gap: 0;
+  // gap: 0;
 
   h3.code {
     font-size: 1.2rem;
@@ -35,17 +35,19 @@
     }
   }
 
-  p:where(:not(:first-child)) {
-    margin-top: 1rem;
-  }
+  // p:where(:not(:first-child)) {
+  //   margin-top: 1rem;
+  // }
 
-  hr + p, h4 + p {
-    margin-top: 0;
-  }
+  // hr + p, h4 + p {
+  //   margin-top: 0;
+  // }
 
-  dl + .code-block {
-    margin-top: 1.5rem;
-  }
+
+
+  // dl + .code-block {
+  //   margin-top: 1.5rem;
+  // }
 
 }
 
@@ -72,6 +74,14 @@
 }
 .example.demo {
   background: var(--demo-surface-tint);
+}
+
+.demo {
+  [data-panel-group] {
+    li + li {
+      margin-top: var(--padding-small);
+    }
+  }
 }
 
 .grid-2,
@@ -102,7 +112,7 @@
   }
 }
 
-.btn.bottom {
+.btn.bottom, .bottom {
   margin-top: auto;
 }
 
@@ -224,4 +234,10 @@
 button[aria-expanded="false"] .when-open,
 button[aria-expanded="true"] .when-closed {
   display: none;
+}
+
+.demo {
+  h3 + p {
+    margin-top: 0.5rem;
+  }
 }

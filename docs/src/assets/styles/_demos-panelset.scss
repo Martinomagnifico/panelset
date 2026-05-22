@@ -8,6 +8,10 @@
     will-change: transform;
     transform: rotate(-180deg);
     transition: transform var(--ps-close-speed, 0.4s) var(--ps-close-timing, ease-in-out);
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none !important;
+    }
   }
 
   &[aria-selected="true"] svg {
@@ -21,23 +25,18 @@
 }
 
 .demo {
+  --demo-border-width: 2px;
+
   hr {
     border: none;
-    height: 3px;
+    height: var(--demo-border-width);
     background: var(--special-normal);
-    border-radius: 2px;
+    border-radius: var(--demo-border-width);
     position: relative;
     z-index: 5;
   }
 
   .demo-closable-frame {
-    --ps-open-speed: 3s;
-    --ps-close-speed: 3s;
-    --ps-fadeout-speed: 1.5s;
-    --ps-fadein-speed: 1.5s;
-    --ps-fadein-delay: 1.5s;
-
-    --demo-border-width: 3px;
     border: var(--demo-border-width) solid var(--special-normal);
     border-top: none;
     background: var(--demo-surface);
@@ -53,6 +52,10 @@
     transition:
       border-color var(--ps-close-speed) var(--ps-transition-timing),
       box-shadow var(--ps-close-speed) var(--ps-transition-timing);
+
+    @media (prefers-reduced-motion: reduce) {
+      transition: none !important;
+    }
 
     &:has(> [data-panelset].is-closing),
     &:has(> [data-panelset].is-closed) {

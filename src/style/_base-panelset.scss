@@ -19,26 +19,26 @@ ps-panelset { display: block; }
         height: 0 !important;
         min-height: 0;
         overflow: hidden;
-        
+
         .panel-wrapper {
             opacity: 0;
             pointer-events: none;
         }
     }
-    
+
     &.is-opening {
         transition: height var(--ps-open-speed) var(--ps-open-timing), box-shadow var(--ps-open-speed) var(--ps-open-timing), border-color var(--ps-open-speed) var(--ps-open-timing);
-        
+
         .panel-wrapper {
             transition: opacity var(--ps-open-speed) var(--ps-open-timing);
             transition-delay: calc(0.5 * var(--ps-open-speed));
             opacity: 1;
         }
     }
-    
+
     &.is-closing {
         transition: height var(--ps-close-speed) var(--ps-close-timing), box-shadow var(--ps-close-speed) var(--ps-close-timing), border-color var(--ps-open-speed) var(--ps-open-timing);
-        
+
         .panel-wrapper {
             transition: opacity var(--ps-close-speed) var(--ps-close-timing);
             opacity: 0;
@@ -65,6 +65,10 @@ ps-panelset { display: block; }
                 transition-delay: var(--ps-fadein-delay);
                 transition-timing-function: var(--ps-fadein-timing);
             }
+        }
+
+        &[hidden] {
+            display: none;
         }
 
         &.active {
@@ -128,7 +132,7 @@ ps-panelset { display: block; }
 
 
 @media (prefers-reduced-motion: reduce) {
-    :is([data-panelset], ps-panelset) {
+    [data-panelset], ps-panelset {
         --ps-fadeout-speed: 0s !important;
         --ps-fadein-speed: 0s !important;
         --ps-fadein-delay: 0s !important;
@@ -136,18 +140,13 @@ ps-panelset { display: block; }
         --ps-loading-fadeout-duration: 0s !important;
         --ps-close-speed: 0s !important;
         --ps-open-speed: 0s !important;
-        
+
         transition: none !important;
-        
+
         [role="tabpanel"] {
             transition: none !important;
         }
-        
-        &::after {
-            transition: none !important;
-            animation-play-state: paused !important;
-        }
-        
+
         .panel-wrapper {
             transition: none !important;
         }

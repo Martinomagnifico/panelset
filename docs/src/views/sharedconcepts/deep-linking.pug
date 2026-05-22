@@ -10,11 +10,21 @@ block content
 				h1 Deep linking
 				p.lead Link directly to any panel state.
 
-	+section("How to use it")
-		p Panel and PanelSet read the #[code ?panel=] query param on page load. A link like #[a(href="/index.html?panel=demo-panel-4") index.html?panel=demo-panel-4] opens the panel with ID #[code demo-panel-4] on page load. Note that we do not use just a hash, because that is much more limited. The #[code ?panel=] param is designed to be purely for panel state.
+	+section("How it works")
+		p Both components determine the initial state on every page load from three sources, checked in order:
+		.card
+			ol
+				li #[strong URL param] (#[code ?panel=]): always wins if present. See below.
+				li #[strong localStorage]: used when no URL param is present. See #[a(href="/sharedconcepts/persisting.html") Persisting state].
+				li #[strong HTML default] (PanelSet only): first panel, or whichever has #[code class="active"]
+
+		p On this page we delve a bit deeper into #[strong deep linking]. 
 
 
-	+section("Setting the URL parameter")
+	+section("Reading the URL parameter")
+		p #[strong Reading is always on.] Panel and PanelSet always check the #[code ?panel=] param on load. Any link with #[code ?panel=id] opens that panel. For example, a link like #[a(href="/index.html?panel=demo-panel-4") index.html?panel=demo-panel-4] opens the panel with ID #[code demo-panel-4] on page load. Note that we do not use just a hash, because that is much more limited. The #[code ?panel=] param is designed to be purely for panel state.
+
+
 		p The #[code ?panel=] query param is a comma-separated list of panel IDs.
 
 		+codeblock('HTML').
@@ -26,65 +36,61 @@ block content
 
 		p Because HTML IDs are (or at least should be) unique per HTML page, a panel ID always points to exactly one element, whether it is a standalone #[code [data-panel]] collapse or a #[code [role="tabpanel"]] inside a PanelSet.
 
-		p This is the order in which Panel and PanelSet determine the initial state on load:
-		ol
-			li #[strong URL param] (#[code ?panel=]): explicit incoming link, always wins
-			li #[strong localStorage]: restores the last visited state when no URL param is present. See #[a(href="/sharedconcepts/persisting.html") Persisting state].
-			li #[strong HTML default] (PanelSet only): first panel, or whichever has #[code class="active"]
-
-	+section("Keeping the URL updated")
-		p By default, the URL param is only read. It is never written. Enable #[code deepLink] to keep the URL in sync as the user opens and closes panels, so the current state can be copied and shared at any time. 
-
-		h3 Panel
-
-		+codeblock('JavaScript').
-			new Panel('#sidebar', { deepLink: true });
-			// or via init
-			Panel.init({ deepLink: true });
-
-		+codeblock('HTML').
-			<div id="sidebar" data-panel data-panel-deeplink class="is-closed">
-				<div class="panel-wrapper">...</div>
-			</div>
 
 
-		p When the panel opens, its ID is added to #[code ?panel=]. When it closes, the ID is removed. Multiple open panels accumulate naturally: #[code ?panel=faq-1,faq-2].
+	+section("Writing the URL parameter")
+
+		p #[strong Writing is optional.] By default the URL is never modified. 
+		
+		p However, you can enable #[code deepLink] to keep the URL in sync as the user opens and closes panels, so the current state can be shared from the address bar. When any panel (Panel or PanelSet) opens, its ID is added to #[code ?panel=]. When it closes, the ID is removed. Multiple open panels accumulate naturally: #[code ?panel=faq-1,faq-2].
+
+		.card
+			.grid-2
+
+				div
+					h3 Deep linking in Panel
+					.demo
+						button(aria-controls="paneldl" aria-expanded="false") Toggle panel
+
+						div#paneldl.is-closed(data-panel data-panel-deeplink)
+							.panel-wrapper
+								h3= example1Title
+								+example-1-content
+
+					div.bottom.column.gap-1
+						+codeblock('JavaScript').
+							new Panel('#sidebar', { deepLink: true });
+							// or via init
+							Panel.init({ deepLink: true });
+
+						+codeblock('HTML').
+							<div id="sidebar" data-panel data-panel-deeplink class="is-closed">...</div>
+
+
+
+
+
+				div
+					h3 Deep linking in PanelSet
+					.demo
+						+exampletabset('panelsetdl')
+						+examplepanelset('panelsetdl')(data-panel-deeplink)
+
+					div.bottom.column.gap-1
+						+codeblock('JavaScript').
+							new PanelSet('#example', { deepLink: true });
+							// or via init
+							PanelSet.init({ deepLink: true });
+
+						+codeblock('HTML').
+							<div id="example" data-panelset data-panel-deeplink>...</div>
+
+
+			p Play around with the two examples above, and reload the page. Both come back in the same state you left them. You can also send the link to a friend and the same panels will be opened.
 
 		p For accordion groups, set #[code data-panel-deeplink] on the #[code [data-panel-group]] element to cover all panels in the group at once.
 
-		+codeblock('HTML').
-			<div data-panel-group data-panel-deeplink>
-				<div>
-					<button aria-controls="faq-1" aria-expanded="false">Question 1</button>
-					<div id="faq-1" data-panel class="is-closed">
-						<div class="panel-wrapper">Answer 1</div>
-					</div>
-				</div>
-				<div>
-					<button aria-controls="faq-2" aria-expanded="false">Question 2</button>
-					<div id="faq-2" data-panel class="is-closed">
-						<div class="panel-wrapper">Answer 2</div>
-					</div>
-				</div>
-			</div>
 
-		p See #[a(href="/panel/configuration.html") Panel, Configuration] for all options.
-
-		hr
-
-		h3 PanelSet
-
-		+codeblock('HTML').
-			<div id="main-tabs" data-panelset data-panel-deeplink>...</div>
-
-		+codeblock('JavaScript').
-			new PanelSet('#main-tabs', { deepLink: true });
-			// or via init
-			PanelSet.init({ deepLink: true });
-
-		p When the user switches tabs, the URL is updated: the previous panel ID is removed from the list and the new active panel ID is added.
-
-		p See #[a(href="/panelset/configuration.html") PanelSet, Configuration] for all options.
 
 	+section("Suppressing transitions on load")
 		p When a panel opens from a URL parameter, it snaps open instantly without an animation. Any CSS transitions on the surrounding elements (such as a chevron rotation or a border color change) would still play, which can look wrong on a cold page load.
@@ -109,9 +115,14 @@ block content
 
 append scripts
 	if isProd
+		script(src=`${basePath}assets/scripts/example.js` vite-ignore)
 		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			Panel.init();
+			PanelSet.init();
 	else
+		script(type="module" src="/src/assets/scripts/example.js")
 		script(type="module").
-			import { Panel, PanelSet } from 'panelset';
-			PanelSet.init({ debug: true });
+			import { PanelSet, Panel } from 'panelset';
 			Panel.init({ debug: true });
+			PanelSet.init({ debug: true });

@@ -38,19 +38,18 @@ block content
 							.panel-wrapper
 								+example-3-content
 
-		+codeblock('HTML').
-			<ul data-panel-group>
-				<li>
-					<button data-panel-trigger>Toggle</button>
-					<div data-panel class="is-closed">
-						<div class="panel-wrapper">Content</div>
-					</div>
-				</li>
-			</ul>
+			p Because Panel auto-detects any panel that directly follows the trigger, you can keep the markup very simple.
 
-		+codeblock('JS').
-			import { Panel } from 'panelset';
-			Panel.init();
+			+codeblock('HTML').
+				<ul data-panel-group>
+					<li>
+						<button data-panel-trigger>Toggle</button>
+						<div data-panel class="is-closed">
+							<div class="panel-wrapper">Content</div>
+						</div>
+					</li>
+				</ul>
+
 
 	+section("One open at a time")
 		p Add #[code data-panel-close-siblings] to the group element to automatically close the other panels when one opens. No extra JavaScript needed.

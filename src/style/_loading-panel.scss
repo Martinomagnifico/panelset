@@ -1,0 +1,20 @@
+// is-loading overrides is-opening's opacity: 1, keeping the wrapper hidden
+// while content loads. When is-loading is removed, is-opening's rule resumes
+// and the wrapper fades in — matching PanelSet's is-closed/is-opening pattern.
+
+[data-panel].is-loading, ps-panel.is-loading {
+	cursor: wait;
+
+	&::after {
+		opacity: 1;
+		transition: opacity var(--ps-loading-dim-duration) var(--ps-transition-timing) var(--ps-loading-delay, 0s);
+		
+		@media (prefers-reduced-motion: reduce) {
+		  transition: none !important;
+		}
+	}
+
+	.panel-wrapper {
+		opacity: 0;
+	}
+}

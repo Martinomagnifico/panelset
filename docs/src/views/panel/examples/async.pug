@@ -40,6 +40,36 @@ block content
 			p The panel below fetches a random recipe from a public API when opened. A simulated delay makes the spinner visible. With #[code { once: true }] the content is cached, so reopening the panel skips the fetch.
 
 
+	+section("The onBeforeOpen() callback")
+
+		.title-text
+			p Use #[code onBeforeOpen()] to add async loading:
+
+		+codeblock('JS').
+			const panel = new Panel('#my-panel');
+
+			panel.onBeforeOpen((el, signal) => {
+				// Return a promise to delay opening
+				return fetch(`/api/content`, { signal })
+					.then(response => response.text())
+					.then(html => {
+						el.querySelector('.panel-wrapper').innerHTML = html;
+					});
+			}, { once: true }); // Load once, cache forever
+
+		.card.api
+			h3 Parameters
+			dl
+				dt el
+				dd The panel #[code HTMLElement] being opened
+
+				dt signal
+				dd #[code AbortSignal] for cancelling the operation if the user closes the panel
+
+				dt options.once
+				dd #[code true] loads once and caches; #[code false] always reloads. Default: #[code false]
+
+
 	+section("Using the event directly")
 		p For more control, listen to #[code panel:beforeopen] on the element:
 
@@ -47,24 +77,103 @@ block content
 			document.querySelector('#my-panel').addEventListener('panel:beforeopen', e => {
 				const { signal } = e.detail;
 
+				// Skip if already loaded
+				if (e.currentTarget.dataset.loaded === 'true') return;
+
 				e.detail.promise = fetch('/api/content', { signal })
 					.then(r => r.text())
 					.then(html => {
 						e.currentTarget.querySelector('.panel-wrapper').innerHTML = html;
+						e.currentTarget.dataset.loaded = 'true';
 					});
 			});
 
-	+section("Event detail properties")
 		.card.api
+			h3 Event detail properties
 			dl
 				dt signal
-				dd #[code AbortSignal]: pass to #[code fetch()] so in-flight requests cancel if the user closes the panel before it opens.
+				dd #[code AbortSignal]: pass to #[code fetch()] so in-flight requests cancel when the user closes the panel before it opens.
 
 				dt promise
 				dd #[code Promise | null]: set this to delay opening until the promise resolves. Leave as #[code null] to open immediately.
 
 				dt trigger
 				dd #[code HTMLElement | null]: the element that initiated the open (e.g. the button).
+
+
+	+section("Heavy computation")
+		p Works for CPU-heavy operations too, not just network requests:
+
+		+codeblock('JS').
+			panel.onBeforeOpen((el, signal) => {
+				return new Promise((resolve) => {
+					setTimeout(() => {
+						const result = fibonacci(40); // Actually slow!
+						el.querySelector('.panel-wrapper').innerHTML = `
+							<h3>Calculation Complete</h3>
+							<p>Fibonacci(40) = ${result}</p>
+						`;
+						resolve();
+					}, 2000);
+				});
+			});
+
+			function fibonacci(n) {
+				if (n <= 1) return n;
+				return fibonacci(n - 1) + fibonacci(n - 2);
+			}
+
+
+	+section("Loading states")
+		.title-text
+			h3 Loading spinner
+			p During async operations, Panel shows a spinner. It only appears if loading takes longer than #[code loadingDelay] ms — fast loads open directly without a spinner:
+
+		+codeblock('JS').
+			const panel = new Panel('#my-panel', {
+				loadingDelay: 320  // Wait 320ms before showing spinner
+			});
+
+		.title-text
+			p Or via data attribute:
+
+		+codeblock('HTML').
+			<div data-panel data-panel-loading-delay="320">
+
+		.title-text
+			h3 Loading height
+			p Reserve vertical space for the spinner while content loads:
+
+		+codeblock('JS').
+			const panel = new Panel('#my-panel', {
+				loadingHeight: 150  // 150px reserved during load
+			});
+
+		+codeblock('HTML').
+			<div data-panel data-panel-loading-height="150">
+
+
+	+section("Abort handling")
+		p When the user closes the panel during loading, the operation is automatically cancelled via the AbortSignal:
+
+		+codeblock('JS').
+			panel.onBeforeOpen((el, signal) => {
+				// Pass signal to fetch — automatically cancels on close
+				return fetch('/api/data', { signal })
+					.then(/* ... */);
+			});
+
+		p If you need to detect the abort (e.g. to clean up state), check the signal directly:
+
+		+codeblock('JS').
+			panel.onBeforeOpen((el, signal) => {
+				signal.addEventListener('abort', () => {
+					console.log('Load cancelled');
+				});
+
+				return fetch('/api/data', { signal });
+			});
+
 
 append scripts
 	if isProd

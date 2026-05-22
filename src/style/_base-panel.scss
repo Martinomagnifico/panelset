@@ -5,26 +5,6 @@ ps-panel { display: block; }
 	box-sizing: border-box;
 	display: flow-root;
 
-	&::after {
-		content: '';
-		position: absolute;
-		top: var(--ps-spinner-top, 50%);
-		bottom: var(--ps-spinner-bottom, auto);
-		left: var(--ps-spinner-left, 50%);
-		right: var(--ps-spinner-right, auto);
-		width: 32px;
-		height: 32px;
-		transform: var(--ps-spinner-transform, translate(-50%, -50%));
-		border: 3px solid rgba(0, 0, 0, 0.1);
-		border-top-color: rgba(0, 100, 255, 0.8);
-		border-radius: 50%;
-		opacity: 0;
-		pointer-events: none;
-		transition: opacity 0.2s ease;
-		animation: panel-spin 0.8s linear infinite;
-		z-index: 1;
-	}
-
 	.panel-wrapper {
 		position: relative;
 		z-index: 0;
@@ -47,7 +27,11 @@ ps-panel { display: block; }
 		transition: opacity var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing));
 	}
 
-	&.is-closed, &.is-opening, &.is-closing { overflow: hidden; }
+	&.is-closed, 
+	&.is-opening, 
+	&.is-closing { 
+		overflow: hidden;
+	}
 
 	// Vertical is the default
 	&.is-closed  { height: 0 !important; }
@@ -107,70 +91,60 @@ ps-panel { display: block; }
 }
 
 // Push: body and pin helpers
-// Add data-panel-body to the contracting sibling. Panel JS uses it to find
-// pinned children and lock them at animation start.
-//
-// Add data-panel-pin="start" or data-panel-pin="end" to children that should
-// be clipped rather than reflowing during the animation. In the resting state
-// these are normal in-flow elements. At animation start Panel JS fixes their
-// width and adjusts margin-left so pin="start" clips on the right and
-// pin="end" tracks the right edge and clips on the left.
-
 [data-panel-body] {
 	position: relative;
 	overflow: hidden;
 	box-sizing: border-box;
 }
 
-// Loading state
-// is-loading overrides is-opening's opacity: 1, keeping the wrapper hidden
-// while content loads. When is-loading is removed, is-opening's rule resumes
-// and the wrapper fades in — matching PanelSet's is-closed/is-opening pattern.
-
-[data-panel].is-loading, ps-panel.is-loading {
-	cursor: wait;
-
-	&::after {
-		opacity: 1;
-		transition: opacity 0.2s ease var(--ps-loading-delay, 0s);
-	}
-
-	.panel-wrapper {
-		opacity: 0;
-	}
-}
-
-@keyframes panel-spin {
-	to { transform: translate(-50%, -50%) rotate(360deg); }
-}
-
 // Native interpolate-size (progressive enhancement)
-// When supported, CSS can animate height/width between 0 and auto without JS
-// locking a measured pixel value. JS detects this support (see panel.ts) and
-// skips its measure-animate cycle entirely, only managing state classes and ARIA.
-// Fallback: the JS pixel-locking cycle in panel.ts handles all other browsers.
-
+// Scoped to is-opening/is-closing, and excluded when is-loading is also present.
+// During async loading (is-loading + is-opening), height:auto would resolve to ~0
+// on the empty wrapper, making the 0→loadingHeight transition a no-op that fires
+// transitionend immediately. Excluding is-loading keeps Phase 1 as pixel-to-pixel;
+// Phase 2 (is-loading removed, is-opening alone) gets the native auto animation.
 @supports (interpolate-size: allow-keywords) {
-	[data-panel], ps-panel {
-		interpolate-size: allow-keywords;
-
-		// JS drives the animation: inline 0px → rAF → inline target_px.
-		// No CSS height on is-opening: a competing CSS auto value causes Firefox
-		// to skip the transition even when an explicit px target is set inline.
-		// is-closing uses height:0 (a concrete value) so the px→0 transition fires.
-		&.is-closing { height: 0; }
+	[data-panel]:not(.is-loading), ps-panel:not(.is-loading) {
+		&.is-opening {
+			interpolate-size: allow-keywords;
+			height: auto;
+		}
+		&.is-closing {
+			interpolate-size: allow-keywords;
+			height: 0;
+		}
 	}
 
-	// Horizontal overrides — closes on the width axis
-	[data-panel][data-panel-axis="horizontal"], ps-panel[data-panel-axis="horizontal"] {
-		&.is-closing { width: 0; height: auto; }
+	[data-panel][data-panel-axis="horizontal"]:not(.is-loading),
+	ps-panel[data-panel-axis="horizontal"]:not(.is-loading) {
+		&.is-opening {
+			interpolate-size: allow-keywords;
+			width: auto;
+			height: auto;
+		}
+		&.is-closing {
+			interpolate-size: allow-keywords;
+			width: 0;
+			height: auto;
+		}
 	}
 }
 
 // Reduced motion
-
 @media (prefers-reduced-motion: reduce) {
 	[data-panel], ps-panel {
+		--ps-fadeout-speed: 0s !important;
+		--ps-fadein-speed: 0s !important;
+		--ps-fadein-delay: 0s !important;
+		--ps-loading-dim-duration: 0s !important;
+		--ps-loading-fadeout-duration: 0s !important;
+		--ps-close-speed: 0s !important;
+		--ps-open-speed: 0s !important;
+
 		transition: none !important;
+		
+		.panel-wrapper {
+			transition: none !important;
+		}
 	}
 }

@@ -1,3 +1,11 @@
+#async-panel-recipe {
+  hr {
+    margin-top: 0;
+    height: 1px;
+    opacity: 0.5;
+  }
+}
+
 .recipe {
   display: grid;
   grid-template-columns: repeat(2, 1fr);

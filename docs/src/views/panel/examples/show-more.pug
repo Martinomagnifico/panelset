@@ -10,68 +10,52 @@ block content
 				h1 Show more
 				p.lead A vertical panel that expands to reveal hidden content.
 
-	.lane
-		.container
+
+	+section("Live demo")
+
 			p The simplest use of #[code Panel]: a block of text with a "Show more" button that reveals additional content below. The panel starts closed (#[code class="is-closed"]) and expands vertically when triggered.
+
+			p Note that when a trigger and panel are adjacent, and the trigger has a #[code data-panel-trigger] attribute, you no longer need to create ID's, because #[code Panel] automatically does that for you.
 
 			.card
 				.demo
-					article.show-more-article
-						p This is some introductory text.
-						button(aria-controls="docs-show-more" aria-expanded="false") Show more
-						div#docs-show-more(data-panel data-panel-axis="vertical" class="is-closed")
-							.panel-wrapper
-								p Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
+					button(data-panel-trigger) Show more
+					.is-closed(data-panel)
+						.panel-wrapper
+							p Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
-			+codeblock('HTML').
-				<article>
-					<p>This is some introductory text.</p>
-					<button aria-controls="my-panel" aria-expanded="false">Show more</button>
+				+codeblock('HTML')
+					button(data-panel-trigger) Show more
+					.is-closed(data-panel)
+						.panel-wrapper
+							p Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
-					<div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
-						<div class="panel-wrapper">
-							<p>Hidden content.</p>
-						</div>
-					</div>
-				</article>
-
-			+codeblock('JS').
-				import { Panel } from 'panelset';
-				Panel.init();
 
 	+section("Changing the trigger")
 		p In the below example, the button label changes between "Show more" and "Show less" using an #[code aria-expanded]-driven CSS rule. No JavaScript required.
 
 		.card
 			.demo
-				article.show-more-article
-					button(aria-controls="docs-show-more-trigger" aria-expanded="false")
-						span.when-closed Show more
-						span.when-open Show less
-					div#docs-show-more-trigger(data-panel data-panel-axis="vertical" class="is-closed")
-						.panel-wrapper
-							p Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
+				button(data-panel-trigger)
+					span.when-closed Show more
+					span.when-open Show less
+				.is-closed(data-panel)
+					.panel-wrapper
+						p Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
-		+codeblock('HTML').
-			<article>
-				<button aria-controls="my-panel" aria-expanded="false">
-					<span class="when-closed">Show more</span>
-					<span class="when-open">Show less</span>
-				</button>
-				<div id="my-panel" data-panel data-panel-axis="vertical" class="is-closed">
-					<div class="panel-wrapper">
-						<p>Hidden content here.</p>
-					</div>
-				</div>
-			</article>
+			+codeblock('HTML')
+				button(data-panel-trigger)
+					span.when-closed Show more
+					span.when-open Show less
+				.is-closed(data-panel)
+					.panel-wrapper
+						p Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
-		+codeblock('CSS').
-			button[aria-expanded="false"] .when-open,
-			button[aria-expanded="true"] .when-closed { display: none; }
+			+codeblock('CSS').
+				button[aria-expanded="false"] .when-open,
+				button[aria-expanded="true"] .when-closed { display: none; }
 
-		+codeblock('JS').
-			import { Panel } from 'panelset';
-			Panel.init();
+
 
 append scripts
 	if isProd

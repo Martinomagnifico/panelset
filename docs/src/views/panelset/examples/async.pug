@@ -19,7 +19,7 @@ block content
 					button(aria-controls="async-panel-2") Panel 2 (Fetch Recipe)
 					button(aria-controls="async-panel-3") Panel 3 (Static)
 
-				#async-demo(data-panelset data-empty-panel-height="300" data-loading-delay="200")
+				#async-demo(data-panelset data-empty-panel-height="320" data-loading-delay="200")
 					.panel-wrapper
 						#async-panel-1(role="tabpanel" class="active" data-loaded="true")
 							h3 Static Content
@@ -144,14 +144,14 @@ block content
 
 		+codeblock('JS').
 			const panelSet = new PanelSet('#my-panelset', {
-				loadingDelay: 300  // Wait 300ms before showing spinner
+				loadingDelay: 320  // Wait 320ms before showing spinner
 			});
 
 		.title-text
 			p Or via data attribute:
 
 		+codeblock('HTML').
-			<div data-panelset data-loading-delay="300">
+			<div data-panelset data-loading-delay="320">
 
 		.title-text
 			h3 Empty panel height

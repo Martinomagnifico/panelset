@@ -1,17 +1,9 @@
-.card {
+.card,
+.indented {
 	flex: 1;
-	border-radius: 1rem;
-	padding: 1rem;
-	background: var(--bg-surface-tint-contrast);
 	display: flex;
 	flex-direction: column;
-	gap: 0.5rem;
-	border: 3px solid transparent;
-
-	* + h3,
-	* + h4 {
-		margin-top: var(--padding-medium);
-	}
+	gap: 1rem;
 
 	ul + * {
 		margin-top: var(--padding-small);
@@ -20,7 +12,68 @@
 	.card {
 		background: var(--bg-surface);
 	}
+
+	* + h3,
+	* + h4 {
+		margin-top: var(--padding-small);
+	}
+
+	h3 + p,
+	h4 + p,
+	h4 + dl {
+		margin-top: -0.5rem;
+	}
 }
+.card {
+	border-radius: 1rem;
+	background: var(--bg-surface-tint-contrast);
+	border: 3px solid transparent;
+	padding: 1rem;
+
+	.card {
+		background: var(--bg-surface);
+	}
+
+
+}
+
+.indented {
+	background: var(--bg-surface-tint);
+	padding: 1.5rem;
+	border-left: 3px solid var(--border-default);
+
+	& + .indented {
+		margin-top: 1.5rem;
+	}
+
+	hr {
+		margin: 0.5rem 0;
+	}
+
+	dl {
+		// border: 1px solid var(--border-default);
+		background: var(--bg-surface-tint-contrast);
+		border-radius: 4px;
+		padding: 1rem;
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+
+		dd + dt {
+			margin-top: 0.5rem;
+		}
+	}
+}
+
+
+
+
+
+
+
+
+
+
 
 .card h3,
 .card h4 {
@@ -70,6 +123,10 @@
 		flex-shrink: 0;
 		color: var(--text-muted);
 		transform: rotate(-90deg);
+
+		@media (prefers-reduced-motion: reduce) {
+          transition: none !important;
+        }
 	}
 
 	&[aria-expanded="true"] .chevron {
@@ -83,8 +140,8 @@
 	padding: 0;
 	gap: 0;
 
-	&:has(> button[aria-expanded="true"]) {
-		background: var(--bg-surface-tint);
+	&:has(> button[aria-expanded="true"]), 
+	&.border {
 		background: var(--demo-btn-bg);
 		border-color: var(--border-default)
 	}
@@ -117,5 +174,11 @@
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
+
+		h3 + p {
+			margin-top: 0;
+		}
+
+
 	}
 }

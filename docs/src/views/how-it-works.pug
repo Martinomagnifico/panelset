@@ -20,14 +20,14 @@ block content
 
 	+section("Common approaches", "Approaches")
 
-		.card.api
+		.indented
 			h3 Per-frame JavaScript
 
 			h4 Drawbacks:
 			ul
 				li Sixty layout recalculations per second, not a nice experience there. It will stutter on most devices. A nightmare on mobile.
 
-		.card.api
+		.indented
 			h3 The max-height hack
 			p Pick a number (for example 2000px) that's at least bigger than your content. The browser will transition the max-height. This is a pure CSS solution with no JavaScript.
 
@@ -44,7 +44,7 @@ block content
 			ul
 				li Broken easing: the timing is counting towards the maximum size, not the actual content size. In the above example, the user will not see the '-out' part of the easing curve at all because the content has already stopped the growing.
 
-		.card.api
+		.indented
 			h3 The CSS Grid workaround
 			p Transition #[code grid-template-rows] between #[code 0fr] and #[code 1fr]. The inner element uses #[code overflow: hidden] to clip the collapsed state. This is quite a smart trick.
 			+codeblock('CSS').
@@ -157,7 +157,7 @@ block content
 					li Works with Tailwind, CSS Modules, CSS-in-JS, anything
 					li Your design system, not the library's
 
-	+section("FAQ (<em>or: Remarks some people might have</em>)", "FAQ")
+	+section("FAQ (or: &nbsp;<em>Some remarks that people might have</em>)", "FAQ")
 		.column.gap-1(data-panel-group data-panel-close-siblings)
 			+faq("But you should use <code>interpolate-size: allow-keywords</code>")
 				h3 It is used, but not all browsers support it
@@ -184,9 +184,9 @@ block content
 				p Maybe later when Level 2 element-scoped transitions mature and allow more control.
 
 
-			+faq("Sure, but it still look styled to me")
-				h3 Indeed it does
-				p That's just the documentation styles. Here is what Panel and PanelSet look like with nothing added:
+			+faq("But you say it is unstyled, and I still see styles")
+				h3 Indeed there are styles
+				p Those are just the documentation styles. Here is what Panel and PanelSet look like with nothing added:
 
 				.grid-2.demo
 					div

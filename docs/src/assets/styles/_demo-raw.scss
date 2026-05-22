@@ -16,6 +16,10 @@
     }
   }
 
+  [role="tabpanel"]{
+    gap: 0;
+  }
+
   button {
     all: revert;
     font-size: 1rem;
@@ -31,6 +35,8 @@
 
   h1, h2, h3, h4 {
     color: var(--text-default);
+    margin: unset !important;
+    padding: unset !important;
   }
 
   .raw-demo-triggers {
@@ -38,8 +44,7 @@
   }
 
   ul, ul li {
-    all: revert;
-    color: var(--text-default);
+    all: revert !important;
   }
   ul li:before {
     display: none;

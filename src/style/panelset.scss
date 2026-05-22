@@ -1,3 +1,6 @@
 @use 'variables';
-@use 'base';
-@use 'loading';
+@use 'spinner';
+@use 'base-panelset';
+@use 'loading-panelset';
+@use 'base-panel';
+@use 'loading-panel';

@@ -51,8 +51,8 @@ export class PanelSet {
 		transitions: true,
 		closable: false,
 		closeOnTab: false,
-		loadingHeight: 200,
-		loadingDelay: 300,
+		loadingHeight: 150,
+		loadingDelay: 320,
 		returnFocus: false,
 		autoFocus: false,
 		persist: false,
@@ -754,35 +754,34 @@ export class PanelSet {
 			this.element.style.setProperty('--ps-loading-delay', `${this.config.loadingDelay}ms`);
 			this.element.classList.add('is-loading');
 
-			const hasPreviousPanel = this.activePanel && this.activePanel !== newPanel;
 			let openTransition: Promise<void> | null = null;
 
-			if (!hasPreviousPanel || isClosed) {
-				const shouldTransition = transition !== false && this.config.transitions !== false;
-				let heightTransition = shouldTransition;
-				if (typeof this.config.transitions === 'object') {
-					heightTransition = shouldTransition && this.config.transitions.height !== false;
-				}
+			const shouldTransition = transition !== false && this.config.transitions !== false;
+			let heightTransition = shouldTransition;
+			if (typeof this.config.transitions === 'object') {
+				heightTransition = shouldTransition && this.config.transitions.height !== false;
+			}
 
-				if (heightTransition) {
-					if (isClosed) {
-						this.element.classList.remove('is-closed');
-						this.element.classList.add('is-opening');
-						this.element.style.height = '0px';
-					} else {
-						const currentHeight = this.element.offsetHeight;
-						this.element.style.height = `${currentHeight}px`;
-					}
-
+			if (heightTransition) {
+				if (isClosed) {
+					this.element.classList.remove('is-closed');
+					this.element.classList.add('is-opening');
+					this.element.style.height = '0px';
 					requestAnimationFrame(() => {
 						this.element.style.height = `${this.config.loadingHeight}px`;
 					});
-
-					// Capture the opening transition so content arriving mid-animation
-					// doesn't trigger a resize before the panel reaches loadingHeight.
-					// Filter by 'height' so the ::after spinner's opacity transitionend
-					// doesn't resolve this promise prematurely.
 					openTransition = Core.waitForTransition(this.element, 'height');
+				} else {
+					// loadingHeight is a minimum: only expand if the current height is shorter.
+					const currentHeight = this.element.offsetHeight;
+					const targetHeight = Math.max(currentHeight, this.config.loadingHeight);
+					if (targetHeight > currentHeight) {
+						this.element.style.height = `${currentHeight}px`;
+						requestAnimationFrame(() => {
+							this.element.style.height = `${targetHeight}px`;
+						});
+						openTransition = Core.waitForTransition(this.element, 'height');
+					}
 				}
 			}
 

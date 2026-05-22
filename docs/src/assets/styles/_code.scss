@@ -18,9 +18,6 @@ code, .code {
 
 .card .card {
 	border-radius: 4px;
-	code, .code {
-		//background: var(--bg-surface-tint-contrast);
-	}
 }
 
 p code, li code, dl code, dt.code, td code, h3 code {
@@ -75,9 +72,12 @@ dl.horizontal {
 	.card & {
 		background: var(--bg-surface);
 	}
+	.card .tab-content &,
+	.card.indented & {
+		background: var(--bg-surface-tint-contrast);
+	}
 
 	.code-header {
-		// background: var(--bg-surface-tint);
 		padding: 0.5rem 0.5rem 0.5rem 1rem;
 		border-bottom: 1px solid var(--border-default);
 		// border-bottom: none;
@@ -94,29 +94,12 @@ dl.horizontal {
 		margin: 0;
 		border-radius: 0 0 6px 6px;
 	}
-	p + & {
-		margin-top: 1rem;
-	}
-}
-.container {
-	> p {
-		margin-top: 1rem;
-	}
-	> p + .code-block {
-		margin-top: 0;
-	}
-}
-
-.example .code-block pre, 
-.api .code-block pre {
-	background: var(--bg-surface);
 }
 
 .hljs {
 	tab-size: 2;
 
-	pre &:is(code),
-	pre &:-webkit-any(code) {
+	pre &:is(code) {
 		padding: 0;
 		background: none;
 	}

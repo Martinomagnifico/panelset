@@ -37,6 +37,14 @@ ul[data-panel-group] {
         flex-shrink: 0;
         will-change: transform;
         transition: transform var(--ps-open-speed) var(--ps-open-timing);
+        stroke-width: 1.44px;
+
+        @media (prefers-reduced-motion: reduce) {
+          transition: none !important;
+        }
+
+
+
         transform: rotate(-90deg);
       }
 

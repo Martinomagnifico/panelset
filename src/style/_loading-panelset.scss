@@ -1,0 +1,28 @@
+[data-panelset] {
+    .panel-wrapper {
+        transition: opacity var(--ps-fadeout-speed) var(--ps-transition-timing) var(--ps-fadein-speed);
+
+        @media (prefers-reduced-motion: reduce) {
+          transition: none !important;
+        }
+
+    }
+}
+
+[data-panelset].is-loading {
+    pointer-events: none;
+
+    &::after {
+        opacity: 1;
+        transition: opacity var(--ps-loading-dim-duration) var(--ps-transition-timing) var(--ps-loading-delay, 0s);
+
+        @media (prefers-reduced-motion: reduce) {
+          transition: none !important;
+        }
+    }
+
+    .panel-wrapper {
+        transition: opacity var(--ps-fadeout-speed) var(--ps-transition-timing);
+        opacity: var(--ps-loading-panel-opacity);
+    }
+}

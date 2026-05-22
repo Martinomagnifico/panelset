@@ -113,7 +113,11 @@
 
 		svg {
 			flex-shrink: 0;
-			transition: transform var(--panel-speed, 0.4s) var(--panel-timing, ease-in-out);
+			transition: transform var(--ps-open-speed, 0.4s) var(--ps-open-timing, ease-in-out);
+
+			@media (prefers-reduced-motion: reduce) {
+				transition: none !important;
+			}
 		}
 
 		&[aria-expanded="false"] svg {
