@@ -120,6 +120,7 @@ export class Panel {
 			if (!next.id) next.id = `panel-${++Panel._autoIdCounter}`;
 			trigger.setAttribute('aria-controls', next.id);
 			trigger.setAttribute('aria-expanded', 'false');
+			trigger.removeAttribute('data-panel-trigger');
 		});
 
 		return Array.from(document.querySelectorAll<HTMLElement>(selector))
@@ -147,7 +148,7 @@ export class Panel {
 		this.config = { ...Panel.defaults, ...dataConfig, ...options };
 
 		if (this.config.axis === 'horizontal') element.dataset.panelAxis = 'horizontal';
-		element.dataset.panelAlign = this.config.align;
+		if (this.config.align !== 'start') element.dataset.panelAlign = this.config.align;
 
 		this._bindTriggers();
 

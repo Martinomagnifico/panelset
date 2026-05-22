@@ -15,7 +15,7 @@ block content
 
 			p The simplest use of #[code Panel]: a block of text with a "Show more" button that reveals additional content below. The panel starts closed by default and expands vertically when triggered.
 
-			p Note that when a trigger and panel are adjacent, and the trigger has a #[code data-panel-trigger] attribute, you no longer need to create ID's, because #[code Panel] automatically does that for you.
+			p Note that when a trigger and panel are adjacent (siblings of a same parent, but the panel can be anywhere before or after the trigger button), and the trigger has a #[code data-panel-trigger] attribute, you no longer need to create ID's, because #[code Panel] automatically does that for you.
 
 			.card
 				.demo
@@ -31,6 +31,19 @@ block content
 							p Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
 
+				p This is the generated HTML: 
+
+				+codeblock('HTML')
+					button(aria-controls="panel-1", aria-expanded="false") Show more
+					#panel-1(data-panel, inert)
+						.panel-wrapper
+							p Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
+
+				p The button gets an #[code aria-expanded] attribute that reflects the open/closed state of the panel, and the panel gets an #[code inert] attribute that hides it from assistive technologies when it's closed.
+
+
+
+
 	+section("Changing the trigger")
 		p In the below example, the button label changes between "Show more" and "Show less" using an #[code aria-expanded]-driven CSS rule. No JavaScript required.
 
@@ -43,13 +56,16 @@ block content
 					.panel-wrapper
 						p Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
-			+codeblock('HTML')
-				button(data-panel-trigger)
-					span.when-closed Show more
-					span.when-open Show less
-				div(data-panel)
-					.panel-wrapper
-						p Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
+			+codeblock('HTML').
+				<button data-panel-trigger>
+					<span class="when-closed">Show more</span>
+					<span class="when-open">Show less</span>
+				</button>
+				<div data-panel>
+					<div class="panel-wrapper">
+						<p>Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.</p>
+					</div>
+				</div>
 
 			+codeblock('CSS').
 				button[aria-expanded="false"] .when-open,
