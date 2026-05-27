@@ -15,24 +15,30 @@ block content
 
 		+codeblock('CSS').
 			[data-panel] {
-				--ps-open-speed:      0.4s;
-				--ps-open-timing:     ease-in-out;
-				--ps-close-speed:     0.4s;
-				--ps-close-timing:    ease-in-out;
-				--ps-closed-opacity:  0;
+				--ps-open-speed:             0.25s;
+				--ps-open-timing:            ease-in-out;
+				--ps-close-speed:            0.25s;
+				--ps-close-timing:           ease-in-out;
+				--ps-closed-opacity:         0;
+				--ps-open-transition-extra:  /* none */;
+				--ps-close-transition-extra: /* none */;
 			}
 
 		dl.horizontal
 			dt #[code --ps-open-speed]
-			dd Open transition duration. Default: #[code 0.4s].
+			dd Open transition duration. Default: #[code 0.25s].
 			dt #[code --ps-open-timing]
 			dd Open easing function. Default: #[code ease-in-out].
 			dt #[code --ps-close-speed]
-			dd Close transition duration. Default: #[code 0.4s].
+			dd Close transition duration. Default: #[code 0.25s].
 			dt #[code --ps-close-timing]
 			dd Close easing function. Default: #[code ease-in-out].
 			dt #[code --ps-closed-opacity]
 			dd Opacity of #[code .panel-wrapper] when closed or closing. Default: #[code 0] (fades out). Set to #[code 1] to disable the inner fade.
+			dt #[code --ps-open-transition-extra]
+			dd Additional CSS transition shorthand values appended to the height transition during opening. Use this to co-animate other properties (e.g. #[code box-shadow], #[code opacity]) in sync with the height. Unset by default.
+			dt #[code --ps-close-transition-extra]
+			dd Same as above, applied during closing.
 
 	+section("Default speed")
 		.card
@@ -40,7 +46,7 @@ block content
 				button(aria-controls="panel-demo" aria-expanded="false") Toggle panel
 				div#panel-demo(data-panel data-panel-axis="vertical")
 					.panel-wrapper
-						p This panel uses the default transition speed of #[code 0.4s]. As it opens, the container grows to its natural height while the inner content fades in. As it closes, the content fades out and the container shrinks back to zero.
+						p This panel uses the default transition speed of #[code 0.25s]. As it opens, the container grows to its natural height while the inner content fades in. As it closes, the content fades out and the container shrinks back to zero.
 
 	+section("Slower transitions")
 		.card
@@ -71,6 +77,31 @@ block content
 					--ps-closed-opacity: 1;
 				}
 
+	+section("Extra transitions")
+		p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the height. The value is appended directly to the #[code transition] shorthand, so use the same format: #[code property duration timing-function].
+
+		p A common use is animating #[code box-shadow] — because it has no effect on layout, it never interferes with the height measurement.
+
+		.card
+			.demo
+				button(aria-controls="panel-extra-demo" aria-expanded="false") Toggle panel
+				div#panel-extra-demo(data-panel)
+					.panel-wrapper
+						p The shadow fades in as the panel opens and fades out as it closes.
+
+		+codeblock('CSS').
+			#my-panel {
+				box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+
+				--ps-open-transition-extra:  box-shadow var(--ps-open-speed) var(--ps-open-timing);
+				--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing);
+			}
+
+			#my-panel.is-open,
+			#my-panel.is-opening {
+				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+			}
+
 	+section("Disabling transitions")
 		p Pass #[code transitions: false] (or #[code data-panel-transitions="false"]) to skip the animation entirely. This is useful for initial page load.
 
@@ -95,6 +126,15 @@ append styles
 
 			--ps-open-timing: cubic-bezier(0.68, -0.55, 0.265, 1.55);
 			--ps-close-timing: linear;
+		}
+		#panel-extra-demo {
+			box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+			--ps-open-transition-extra:  box-shadow var(--ps-open-speed) var(--ps-open-timing);
+			--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing);
+		}
+		#panel-extra-demo.is-open,
+		#panel-extra-demo.is-opening {
+			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 		}
 
 

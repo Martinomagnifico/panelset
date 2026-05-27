@@ -7,7 +7,9 @@ append variables
 
 block content
 	.container
-		h1 PanelSet
+		h1 
+			+logoicon
+			| PanelSet
 		p.lead Flexible panel management with smooth transitions. ~6.5&nbsp;KB gzipped.
 
 		a.btn.chevron(href="intro.html") 
@@ -16,10 +18,10 @@ block content
 
 		.card.demo
 			.demo-controls.center
-				button(aria-controls="demo-panel-1") Short panel
-				button(aria-controls="demo-panel-2") Medium panel
-				button(aria-controls="demo-panel-3") Tall panel
-			+examplepanelset('demo')
+				button(aria-controls="indexdemo-panel-1") Short panel
+				button(aria-controls="indexdemo-panel-2") Medium panel
+				button(aria-controls="indexdemo-panel-3") Tall panel
+			+examplepanelset('indexdemo')
 
 
 	footer

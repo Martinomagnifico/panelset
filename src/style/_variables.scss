@@ -1,18 +1,29 @@
 :root {
     /* Panel & PanelSet */
-    --ps-open-speed:     0.4s;
+    --ps-open-speed:     0.25s;
     --ps-open-timing:    ease-in-out;
-    --ps-close-speed:    0.4s;
+    --ps-close-speed:    0.25s;
     --ps-close-timing:   ease-in-out;
+
+    /* Extra transitions for Panel & PanelSet containers (e.g. box-shadow, border-color).
+       Defaults to a zero-duration noop so the primary height/width transition is unaffected.
+       Override to add decorative transitions that animate alongside the open/close.
+       Example — bouncy popout dropdown with shadow and border change:
+           --ps-open-transition-extra: box-shadow var(--ps-open-speed) var(--ps-open-timing), width var(--ps-open-speed) var(--ps-open-timing), opacity var(--ps-open-speed) var(--ps-open-timing);
+           --ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing), width var(--ps-close-speed) var(--ps-close-timing), opacity var(--ps-close-speed) var(--ps-close-timing);
+    */
+    
+    --ps-open-transition-extra:  color 0s;
+    --ps-close-transition-extra: color 0s;
 
     /* Panel only */
     --ps-panel-width:    320px;  /* inner .panel-wrapper width (horizontal panels) */
     --ps-closed-opacity: 0;      /* set to 1 to keep content visible while closed/closing */
 
     /* PanelSet */
-    --ps-fadeout-speed:          0.2s;
-    --ps-fadein-speed:           0.2s;
-    --ps-fadein-delay:           0.2s;
+    --ps-fadeout-speed:          0.125s;
+    --ps-fadein-speed:           0.125s;
+    --ps-fadein-delay:           0.125s;
     --ps-height-duration-ratio:  1;
     --ps-transition-timing:      ease-in-out;
     --ps-fadeout-timing:         ease-in;

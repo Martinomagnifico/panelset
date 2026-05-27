@@ -3,6 +3,102 @@ extends /views/templates/layouts/_base
 append variables
 	- pagetitle = "PanelSet — Getting started"
 
+mixin installWizardPS
+	- const cdn = 'https://cdn.jsdelivr.net/npm/panelset@latest/dist'
+	- const dl = 'https://github.com/martinomagnifico/panelset/releases/latest/download/panelset.zip'
+
+	.card.no-padding.install-wizard.border
+		nav(role="tablist").tabs
+			button(role="tab" aria-controls="iw-npm") npm
+			button(role="tab" aria-controls="iw-download") Download
+			button(role="tab" aria-controls="iw-cdn") CDN
+
+		.card-content(data-panelset)
+			.panel-wrapper
+
+				div(role="tabpanel" id="iw-npm" class="active" data-iw-source="npm")
+					.column.gap-1
+						div
+							h3 Get it
+							.code-block
+								.code-header
+									| Terminal
+									button.copy Copy
+								pre: code npm install panelset
+						div
+							h3 Use it
+							.install-controls
+								.control-row
+									.control-item
+										label Format
+										select(disabled)
+											option(value="esm") ESM module
+										span.fixed-badge fixed
+									.control-item
+										label Usage
+										select.iw-usage
+											option(value="api") JS API
+											option(value="wc") Web Component
+							.code-block
+								.code-header
+									span.iw-lang
+									button.copy Copy
+								pre: code.iw-code
+
+				div(role="tabpanel" id="iw-download" hidden data-iw-source="download")
+					.column.gap-1
+						div
+							h3 Get it
+							p Download the ZIP from the #[a(href=dl) releases page], unzip, and place the files somewhere your HTML can reach.
+						div
+							h3 Use it
+							.install-controls
+								.control-row
+									.control-item
+										label Format
+										select.iw-format
+											option(value="esm") ESM module
+											option(value="iife") Script tag
+									.control-item
+										label Usage
+										select.iw-usage
+											option(value="api") JS API
+											option(value="wc") Web Component
+							.code-block
+								.code-header
+									span.iw-lang
+									button.copy Copy
+								pre: code.iw-code
+
+				div(role="tabpanel" id="iw-cdn" hidden data-iw-source="cdn")
+					.column.gap-1
+						div
+							h3 Get it
+							p No download needed — files are served directly from #[a(href="https://www.jsdelivr.com/") jsDelivr].
+							.code-block
+								.code-header Base URL
+								pre: code= cdn + '/'
+						div
+							h3 Use it
+							.install-controls
+								.control-row
+									.control-item
+										label Format
+										select(disabled)
+											option(value="iife") Script tag
+										span.fixed-badge fixed
+									.control-item
+										label Usage
+										select.iw-usage
+											option(value="api") JS API
+											option(value="wc") Web Component
+							.code-block
+								.code-header
+									span.iw-lang
+									button.copy Copy
+								pre: code.iw-code
+
+
 block content
 	.lane
 		.container
@@ -19,15 +115,8 @@ block content
 			+warning()
 			p #[strong Not the same as Panel.] #[code Panel] opens and closes a single element. #[code PanelSet] switches between several. See the #[a(href="/intro.html") Intro] for the distinction.
 
-	+section("Installation")
-		.code-block
-			.code-header Terminal
-			pre
-				code npm install panelset
-
-		+codeblock('JS').
-			import { PanelSet } from 'panelset';
-			import 'panelset/style.css';
+	+section("Setup")
+		+installWizardPS
 
 	+section("Markup")
 		p Add #[code data-panelset] to the container. Each panel needs a unique #[code id] and #[code role="tabpanel"]. Mark the initially active panel with #[code class="active"] and all others with #[code hidden]. Wrap panel content in #[code .panel-wrapper] (auto-generated if missing).
@@ -35,10 +124,6 @@ block content
 		.card
 			.demo
 				+exampletabset('gs')
-				//-.demo-controls
-					button(aria-controls="gs-panel-1") Features
-					button(aria-controls="gs-panel-2") Pricing
-					button(aria-controls="gs-panel-3") Support
 				+examplepanelset('gs')
 
 		+codeblock('HTML').
@@ -108,9 +193,9 @@ block content
 			ps.toggle({ event });            // toggle open/closed (if closable: true)
 			ps.getActive();                  // 'panel-2' (current panel ID)
 
-			ps.element   // the container HTMLElement
-			ps.config    // the merged config object
-			ps.panels    // array of panel HTMLElements
+			ps.element      // the container HTMLElement
+			ps.config       // the merged config object
+			ps.panels       // array of panel HTMLElements
 			ps.activePanel  // the currently visible panel element
 
 
@@ -125,3 +210,79 @@ append scripts
 		script(type="module").
 			import { PanelSet } from 'panelset';
 			PanelSet.init({ debug: true });
+
+	script.
+		(function () {
+			var cdn = 'https://cdn.jsdelivr.net/npm/panelset@latest/dist';
+
+			var snippets = {
+				npm: {
+					lang: 'js',
+					api: "import { PanelSet } from 'panelset';\nimport 'panelset/style.css';",
+					wc:  "import { PanelSet } from 'panelset';\nimport 'panelset/style.css';\n\nPanelSet.register();"
+				},
+				download: {
+					esm: {
+						lang: 'js',
+						api: "import { PanelSet } from './panelset.esm.js';\nimport './panelset.css';",
+						wc:  "import { PanelSet } from './panelset.esm.js';\nimport './panelset.css';\n\nPanelSet.register();"
+					},
+					iife: {
+						lang: 'html',
+						api: '<link rel="stylesheet" href="panelset.css">\n<script src="panelset.js"><\/script>',
+						wc:  '<link rel="stylesheet" href="panelset.css">\n<script src="panelset.js"><\/script>\n<script>PanelSet.register();<\/script>'
+					}
+				},
+				cdn: {
+					lang: 'html',
+					api: '<link rel="stylesheet" href="' + cdn + '/panelset.css">\n<script src="' + cdn + '/panelset.js"><\/script>',
+					wc:  '<link rel="stylesheet" href="' + cdn + '/panelset.css">\n<script src="' + cdn + '/panelset.js"><\/script>\n<script>PanelSet.register();<\/script>'
+				}
+			};
+
+			function updatePanel(panel) {
+				var source   = panel.dataset.iwSource;
+				var formatEl = panel.querySelector('.iw-format');
+				var usageEl  = panel.querySelector('.iw-usage');
+				var codeEl   = panel.querySelector('.iw-code');
+				var langEl   = panel.querySelector('.iw-lang');
+
+				var format = formatEl ? formatEl.value : 'esm';
+				var usage  = usageEl  ? usageEl.value  : 'api';
+
+				var data;
+				if (source === 'npm' || source === 'cdn') {
+					data = { lang: snippets[source].lang, code: snippets[source][usage] };
+				} else {
+					var group = snippets[source][format];
+					data = { lang: group.lang, code: group[usage] };
+				}
+
+				if (codeEl) codeEl.textContent = data.code;
+				if (langEl) langEl.textContent = data.lang.toUpperCase();
+				if (window.hljs && codeEl) {
+					codeEl.removeAttribute('data-highlighted');
+					codeEl.className = 'language-' + data.lang;
+					hljs.highlightElement(codeEl);
+				}
+			}
+
+			document.querySelectorAll('.install-wizard [role="tabpanel"]').forEach(function (panel) {
+				updatePanel(panel);
+				panel.querySelectorAll('select').forEach(function (sel) {
+					sel.addEventListener('change', function () { updatePanel(panel); });
+				});
+			});
+
+			document.querySelectorAll('.install-wizard .copy').forEach(function (btn) {
+				btn.addEventListener('click', function () {
+					var code = btn.closest('.code-block').querySelector('code');
+					if (!code) return;
+					navigator.clipboard.writeText(code.textContent).then(function () {
+						var orig = btn.textContent;
+						btn.textContent = 'Copied!';
+						setTimeout(function () { btn.textContent = orig; }, 1500);
+					});
+				});
+			});
+		}());

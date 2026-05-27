@@ -77,6 +77,7 @@
 }
 
 .demo {
+  z-index: 1;
   [data-panel-group] {
     li + li {
       margin-top: var(--padding-small);
@@ -126,12 +127,12 @@
   cursor: pointer;
   font-weight: 500;
 
-  transition: all 0.2s ease-in-out;
+  transition: all 0.125s ease-in-out;
 
   &.solid {
     background: var(--btn-primary-bg);
     color: var(--btn-primary-text);
-    transition: background-color 0.2s;
+    transition: background-color 0.125s;
     outline-offset: 2px;
 
     &:hover {
@@ -155,7 +156,7 @@
     svg.chevron {
       stroke-width: 1.44px;
       transform: translateX(-4px);
-      transition: transform 0.2s ease-in-out;
+      transition: transform 0.125s ease-in-out;
       will-change: transform;
     }
 
@@ -213,7 +214,7 @@
   font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: color 0.2s, background-color 0.2s, box-shadow 0.2s, border-color 0.2s;
+  transition: color 0.125s, background-color 0.125s, box-shadow 0.125s, border-color 0.125s;
   outline-offset: 1px;
 
   &:hover {

@@ -16,21 +16,24 @@ block content
 		+codeblock('CSS').
 			[data-panelset] {
 				/* Panel opacity fades */
-				--ps-fadeout-speed:         0.25s;
-				--ps-fadeout-timing:        ease-in;
-				--ps-fadein-speed:          0.25s;
-				--ps-fadein-timing:         ease-in-out;
-				--ps-fadein-delay:          0.25s;
+				--ps-fadeout-speed:          0.25s;
+				--ps-fadeout-timing:         ease-in;
+				--ps-fadein-speed:           0.25s;
+				--ps-fadein-timing:          ease-in-out;
+				--ps-fadein-delay:           0.25s;
 
 				/* Container height animation */
-				--ps-height-duration-ratio: 1;        /* height duration = fadeout × ratio */
-				--ps-transition-timing:     ease-in-out;
+				--ps-height-duration-ratio:  1;        /* height duration = fadeout × ratio */
+				--ps-transition-timing:      ease-in-out;
 
 				/* Open/close (closable PanelSet only) */
-				--ps-open-speed:            0.4s;
-				--ps-open-timing:           ease-in-out;
-				--ps-close-speed:           0.4s;
-				--ps-close-timing:          ease-in-out;
+				--ps-open-speed:             0.25s;
+				--ps-open-timing:            ease-in-out;
+				--ps-close-speed:            0.25s;
+				--ps-close-timing:           ease-in-out;
+				--ps-open-transition-extra:  /* none */;
+				--ps-close-transition-extra: /* none */;
+				--ps-open-wrapper-delay:     /* calc(0.5 * var(--ps-open-speed)) */;
 			}
 
 		dl.horizontal
@@ -54,18 +57,27 @@ block content
 
 			dt #[code --ps-transition-timing]
 			dd Easing for the height change during tab switching. Default: #[code ease-in-out].
-			
+
 			dt #[code --ps-open-speed]
-			dd Height transition duration when opening a closable PanelSet. Default: #[code 0.4s].
+			dd Height transition duration when opening a closable PanelSet. Default: #[code 0.25s].
 
 			dt #[code --ps-open-timing]
 			dd Easing when opening. Default: #[code ease-in-out].
 
 			dt #[code --ps-close-speed]
-			dd Height transition duration when closing. Default: #[code 0.4s].
+			dd Height transition duration when closing. Default: #[code 0.25s].
 
 			dt #[code --ps-close-timing]
 			dd Easing when closing. Default: #[code ease-in-out].
+
+			dt #[code --ps-open-transition-extra]
+			dd Additional CSS transition shorthand values appended to the height transition when opening a closable PanelSet. Unset by default.
+
+			dt #[code --ps-close-transition-extra]
+			dd Same as above, applied during closing.
+
+			dt #[code --ps-open-wrapper-delay]
+			dd Delay before the inner #[code .panel-wrapper] fades in when opening. Default: #[code calc(0.5 * var(--ps-open-speed))] — half the open duration, so content appears after the height has made progress. Set to #[code 0s] for an immediate fade-in.
 
 	+section("Default speed")
 		.card
@@ -102,6 +114,25 @@ block content
 					--ps-fadein-speed:  2s;
 					--ps-fadein-delay:  0s;
 				}
+
+	+section("Extra transitions (closable)")
+		p When a PanelSet has #[code closable: true], use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the height — for example a drop shadow or opacity. The value is appended to the #[code transition] shorthand directly.
+
+		p Use #[code --ps-open-wrapper-delay] to control when the inner content fades in. The default waits half the open duration so content appears after the container has already made progress. Set it to #[code 0s] if you want an immediate fade-in.
+
+		+codeblock('CSS').
+			#my-panelset {
+				box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+
+				--ps-open-transition-extra:  box-shadow var(--ps-open-speed) var(--ps-open-timing);
+				--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing);
+				--ps-open-wrapper-delay: 0s; /* fade content in immediately */
+			}
+
+			#my-panelset.is-open,
+			#my-panelset.is-opening {
+				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+			}
 
 	+section("Disabling transitions")
 		p Pass #[code transitions: false] to skip all animation, or use an object to disable height and panel fades independently.

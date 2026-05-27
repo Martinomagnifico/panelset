@@ -29,7 +29,7 @@
 		color: var(--tab-text-normal);
 		font-size: 1.1rem;
 		font-weight: 600;
-		transition: color 0.2s;
+		transition: color 0.125s;
 
 		cursor: pointer;
 
@@ -41,7 +41,7 @@
 			height: 3px;
 			opacity: 1;
 			background: transparent;
-			transition: background-color 0.2s;
+			transition: background-color 0.125s;
 			bottom: 0;
 			top: auto;
 			z-index: 1;
@@ -53,7 +53,7 @@
 
 		&:hover {
 			background: none;
-			//box-shadow: 0 0 0 var(--tab-shadow);
+			box-shadow: none;
 			color: var(--tab-text-hover);
 
 			&:before {
@@ -63,6 +63,7 @@
 
 		&[aria-selected="true"]{
 			color: var(--tab-text-active);
+			pointer-events: none;
 
 			&:before {
 				background: var(--tab-underline-active);

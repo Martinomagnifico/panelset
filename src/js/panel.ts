@@ -535,13 +535,8 @@ export class Panel {
 				// The base CSS gives height:0, so without this the measured target would be 0.
 				this.element.style[cssProp] = 'auto';
 
-				const rect        = this.element.getBoundingClientRect();
-				const naturalSize = cssProp === 'height' ? rect.height : rect.width;
-				const cs0         = getComputedStyle(this.element);
-				const borderSize  = cssProp === 'height'
-					? (parseFloat(cs0.borderTopWidth)  || 0) + (parseFloat(cs0.borderBottomWidth) || 0)
-					: (parseFloat(cs0.borderLeftWidth) || 0) + (parseFloat(cs0.borderRightWidth)  || 0);
-				const target = naturalSize + borderSize;
+				const rect   = this.element.getBoundingClientRect();
+				const target = cssProp === 'height' ? rect.height : rect.width;
 
 				this.element.style[cssProp] = reverseStartSize !== null ? `${reverseStartSize}px` : '0px';
 				this.element.classList.add('is-opening');

@@ -1,3 +1,25 @@
+.logoicon {
+	stroke-width: 1.6px;
+
+	h1 & {
+		width: .9em;
+		height: .9em;
+		margin-right: 0.25em;
+		stroke-width: 1.1px;
+		vertical-align: -0.1em;
+
+		@media (min-width: 769px) {
+			stroke-width: 0.75px;
+		}
+
+
+	}
+	.logo & {
+		margin-right: 0.25em;
+		stroke-width: 2px;
+	}
+}
+
 .docs-sidebar {
 	background: var(--bg-sidebar);
 	border-bottom: 1px solid var(--border-default);
@@ -113,7 +135,7 @@
 
 		svg {
 			flex-shrink: 0;
-			transition: transform var(--ps-open-speed, 0.4s) var(--ps-open-timing, ease-in-out);
+			transition: transform var(--ps-open-speed, 0.25s) var(--ps-open-timing, ease-in-out);
 
 			@media (prefers-reduced-motion: reduce) {
 				transition: none !important;

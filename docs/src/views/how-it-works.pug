@@ -12,7 +12,7 @@ block content
 
 	+section("The problem", "Problem")
 
-		p It would be nice if CSS could transition elements between 0 and their natural size. Or have parent elements transition their size based on which child is visible. While there are already some advances in getting browsers ready to handle this (see the #[a(href="#interpolatesize") interpolate-size] section), it is not fully supported, and it also does not work in a generic way for all transitions. 
+		p It would be nice if CSS could transition the size of elements between closed (zero) and their natural size. Or have parent elements transition their size based on which child is visible. While there are already some advances in getting browsers ready to handle this (see the #[a(href="#faq") interpolate-size] question), it is not fully supported, and it also does not work in a generic way for all transitions. 
 		
 		p There are a few approaches that are commonly used now, each with tradeoffs:
 
@@ -51,7 +51,7 @@ block content
 				.panel-outer {
 					display: grid;
 					grid-template-rows: 0fr; /* collapsed */
-					transition: grid-template-rows 0.4s ease;
+					transition: grid-template-rows 0.25s ease;
 				}
 				.panel-outer.open {
 					grid-template-rows: 1fr; /* expanded */
@@ -67,7 +67,7 @@ block content
 
 	+section("The lock-measure–animate–unlock (LMAU) cycle", "LMAU")
 
-		p Panel and PanelSet use explicit values throughout. ‘Explicit’ sounds fancy, but it just means using real or relative values instead of #[code auto]. It is the same basic approach as used in for example react-collapse, but extended here to horizontal axes and panel switching. The sequence is the same for both:
+		p Panel and PanelSet seem to be able to transition to or from a natural size, but they just use measurement to get explicit values. ‘Explicit’ sounds fancy, but it just means using real or relative values instead of #[code auto]. It is the same basic approach as used in for example react-collapse, but extended here to horizontal axes and panel switching. The sequence is the same for both:
 
 		ol
 			li
@@ -161,13 +161,9 @@ block content
 		.column.gap-1(data-panel-group data-panel-close-siblings)
 			+faq("But you should use <code>interpolate-size: allow-keywords</code>")
 				h3 It is used, but not all browsers support it
-				p Both Panel and PanelSet use #[code interpolate-size: allow-keywords] as a “progressive enhancement” for opening and closing. It can not be used for panel switching in PanelSet. 
+				p Both Panel and PanelSet use #[code interpolate-size: allow-keywords] as a “progressive enhancement” for opening and closing.
 
-				p With #[code interpolate-size: allow-keywords], CSS can animate directly between #[code 0] and #[code height: auto]. If your browser supports that, the #[u LOCK], #[u MEASURE] and #[u UNLOCK] steps from the LMAU cycle are skipped. That leaves the #[u ANIMATE] step, and the JavaScript just toggles classes and listens to events.
-				
-				p JS (yeah, it is still needed) detects support with #[code CSS.supports()] and then takes the shorter path: it just toggles state classes and waits for the transition to end. 
-
-				p In other/older browsers, it uses the normal JavaScript LMAU cycle.
+				p With #[code interpolate-size: allow-keywords], CSS can animate directly between #[code 0] and #[code height: auto]. If your browser supports that, then the #[u LOCK], #[u MEASURE] and #[u UNLOCK] steps from the LMAU cycle are simply skipped. That leaves the #[u ANIMATE] step. The JavaScript (yeah, it is still needed) detects support with #[code CSS.supports()] and then takes the shorter path: it just toggles state classes and listens to events. If your browser does not support it, it uses the normal JavaScript LMAU cycle.
 
 				+codeblock('CSS').
 					@supports (interpolate-size: allow-keywords) {

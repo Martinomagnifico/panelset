@@ -18,6 +18,7 @@
 	--color-tint-700: oklch(0.39 0.060 var(--main-hue));
 	--color-tint-800: oklch(0.25 0.035 var(--main-hue));
 	--color-tint-900: oklch(0.20 0.030 var(--main-hue));
+	--color-tint-925: oklch(0.17 0.026 var(--main-hue));
 	--color-tint-950: oklch(0.15 0.022 var(--main-hue));
 
 	--color-special-tint-0:   oklch(0.99 0.015 var(--special-hue));
@@ -34,6 +35,7 @@
 	--color-special-tint-800: oklch(0.25 0.090 var(--special-hue));
 	--color-special-tint-900: oklch(0.20 0.068 var(--special-hue));
 	--color-special-tint-950: oklch(0.10 0.038 var(--special-hue));
+	
 }
 
 :root {
@@ -70,6 +72,7 @@
 	--special-normal: var(--color-special-tint-400);
 	--special-hover: var(--color-special-tint-600);
 	--special-shadow: oklch(from var(--special-normal) l c h / 0.33);
+	--special-shadow-dark: oklch(from var(--special-normal) calc(l * 0.33) calc(c * 2) h / 0.25);
 
 	--tab-text-normal: var(--color-tint-500);
 	--tab-text-hover: var(--color-tint-600);
@@ -97,6 +100,14 @@
 
 		--ps-spinner-color: var(--color-special-tint-600);
 
+		--tab-text-normal: var(--color-special-tint-500);
+		--tab-text-hover: var(--color-special-tint-600);
+		--tab-text-active: var(--color-special-tint-600);
+
+		--tab-underline-hover: var(--color-special-tint-300);
+		--tab-underline-active: var(--color-special-tint-600);
+
+
 	}
 
 	--sidebar-item-text: var(--color-tint-700);
@@ -117,7 +128,7 @@
 		--text-heading-2: var(--color-tint-200);
 		--text-heading-3: var(--color-tint-300);
 
-		--bg-surface: var(--color-tint-900);
+		--bg-surface: var(--color-tint-925);
 		--bg-surface-tint: var(--color-tint-900);
 		--bg-surface-tint-contrast: var(--color-tint-800);
 		--bg-sidebar: var(--color-tint-800);
@@ -156,7 +167,11 @@
 		--special-hover: var(--color-special-tint-25);
 		--special-shadow: oklch(from var(--special-normal) l c h / 0.25);
 
-
+		--tab-text-normal: var(--color-tint-300);
+		--tab-text-hover: var(--color-tint-200);
+		--tab-text-active: var(--color-tint-50);
+		--tab-underline-hover: var(--color-tint-300);
+		--tab-underline-active: var(--color-tint-50);
 
 
 		.demo {
@@ -177,6 +192,13 @@
 
 			--ps-spinner-track-color: rgba(256, 256, 256, 0.1);
 			--ps-spinner-color: var(--color-special-tint-300);
+
+			--tab-text-normal: var(--color-special-tint-300);
+			--tab-text-hover: var(--color-special-tint-200);
+			--tab-text-active: var(--color-special-tint-100);
+			--tab-underline-hover: var(--color-special-tint-400);
+			--tab-underline-active: var(--color-special-tint-100);
+
 
 		}
 

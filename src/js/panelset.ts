@@ -413,6 +413,7 @@ export class PanelSet {
 		const reverseStartHeight = isReversing ? this.element.offsetHeight : null;
 
 		this.element.classList.remove(oppositeClass);
+		if (!isOpening) this.element.classList.remove('is-open');
 
 		if (isOpening) this.element.removeAttribute('inert');
 
@@ -438,6 +439,7 @@ export class PanelSet {
 							wrapperDone.then(() => {
 								if (signal.aborted) return;
 								this.element.classList.remove(actionClass);
+								this.element.classList.add('is-open');
 								void this.element.offsetHeight;
 							});
 						});
@@ -483,6 +485,7 @@ export class PanelSet {
 						if (signal.aborted) return;
 						this.element.style.height = '';
 						this.element.classList.remove(actionClass);
+						if (isOpening) this.element.classList.add('is-open');
 						void this.element.offsetHeight;
 						if (!isOpening) {
 							this.element.classList.add('is-closed');
@@ -498,6 +501,7 @@ export class PanelSet {
 		} else {
 			if (isOpening) {
 				this.element.classList.remove('is-closed');
+				this.element.classList.add('is-open');
 			} else {
 				this.element.classList.add('is-closed');
 				this.element.setAttribute('inert', '');

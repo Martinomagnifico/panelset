@@ -177,9 +177,9 @@ ps.onBeforeOpen((targetPanel, signal) => {
 
 ```css
 [data-panel] {
-  --ps-open-speed:          0.4s;
+  --ps-open-speed:          0.25s;
   --ps-open-timing:         ease-in-out;
-  --ps-close-speed:         0.4s;
+  --ps-close-speed:         0.25s;
   --ps-close-timing:        ease-in-out;
   --ps-panel-width:         320px;  /* horizontal panels */
   --ps-closed-opacity:      0;      /* set to 1 to keep content visible while closed */
@@ -190,16 +190,16 @@ ps.onBeforeOpen((targetPanel, signal) => {
 
 ```css
 [data-panelset] {
-  --ps-fadeout-speed:         0.2s;
+  --ps-fadeout-speed:         0.125s;
   --ps-fadeout-timing:        ease-in;
-  --ps-fadein-speed:          0.2s;
+  --ps-fadein-speed:          0.125s;
   --ps-fadein-timing:         ease-in-out;
-  --ps-fadein-delay:          0.2s;
+  --ps-fadein-delay:          0.125s;
   --ps-height-duration-ratio: 1;
   --ps-transition-timing:     ease-in-out;
-  --ps-open-speed:            0.4s;
+  --ps-open-speed:            0.25s;
   --ps-open-timing:           ease-in-out;
-  --ps-close-speed:           0.4s;
+  --ps-close-speed:           0.25s;
   --ps-close-timing:          ease-in-out;
 }
 ```

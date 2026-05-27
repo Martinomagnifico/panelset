@@ -27,17 +27,19 @@ ps-panelset { display: block; }
     }
 
     &.is-opening {
-        transition: height var(--ps-open-speed) var(--ps-open-timing), box-shadow var(--ps-open-speed) var(--ps-open-timing), border-color var(--ps-open-speed) var(--ps-open-timing);
+        transition: height var(--ps-open-speed) var(--ps-open-timing),
+                    var(--ps-open-transition-extra);
 
         .panel-wrapper {
             transition: opacity var(--ps-open-speed) var(--ps-open-timing);
-            transition-delay: calc(0.5 * var(--ps-open-speed));
+            transition-delay: var(--ps-open-wrapper-delay, calc(0.5 * var(--ps-open-speed)));
             opacity: 1;
         }
     }
 
     &.is-closing {
-        transition: height var(--ps-close-speed) var(--ps-close-timing), box-shadow var(--ps-close-speed) var(--ps-close-timing), border-color var(--ps-open-speed) var(--ps-open-timing);
+        transition: height var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)),
+                    var(--ps-close-transition-extra);
 
         .panel-wrapper {
             transition: opacity var(--ps-close-speed) var(--ps-close-timing);
@@ -84,6 +86,7 @@ ps-panelset { display: block; }
             outline: none;
         }
     }
+
     &.is-transitioning, &.is-opening, &.is-closing {
         overflow: hidden;
         will-change: height;

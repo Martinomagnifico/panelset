@@ -11,7 +11,7 @@ block content
 				p.lead One panel or many. CSS does the animating.
 
 	+section("What is it?")
-		p This package exports two classes: #[strong Panel] and #[strong PanelSet]. Both animate a dimension (height or width) between sizes using an #[a(href="/how-it-works.html#the-lockmeasureanimateunlock-lmau-cycle") LMAU]* cycle.
+		p This package exports two classes: #[strong Panel] and #[strong PanelSet]. Both animate a dimension (height or width) between sizes using an #[a(href="/how-it-works.html#lmau") LMAU]* cycle.
 
 		p Both classes use the same animation core and share most config options. Animation is CSS-only: JS measures and sets pixel values, then hands off to the browser. For async content, pass a promise to #[code onBeforeOpen()] to hold the open until it resolves. A spinner kicks in if loading takes longer than #[code loadingDelay]ms. Both also handle focus management.
 
@@ -108,7 +108,13 @@ block content
 		+codeblock('HTML')
 			link(rel="stylesheet" href="path/to/panelset.css")
 			script(src="path/to/panelset.js")
-
+	.container
+		.demo
+			.popout-wrapper
+				button(aria-controls="test-popout-panel") Toggle dropdown
+				div(data-panel, id="test-popout-panel")
+					.panel-wrapper
+						p There is some dropdown content here. We give it a maximum width.
 
 	hr
 	section.no-hr
@@ -121,6 +127,52 @@ block content
 				| Support my work on Ko-fi
 				+chevron()
 
+
+append styles
+	style.
+
+		.popout-wrapper {
+			position: relative;
+			width: max-content;
+		}
+
+		#test-popout-panel .panel-wrapper {
+			padding: 1rem;
+			flex-shrink: 0;
+			width: 220px;
+		}
+
+		#test-popout-panel {
+
+			--ps-open-timing:    cubic-bezier(0.34, 1.56, 0.64, 1);
+			--ps-close-timing:   cubic-bezier(0.36, 0, 0.66, -0.56);
+
+			--ps-open-transition-extra: box-shadow var(--ps-open-speed) var(--ps-open-timing), width var(--ps-open-speed) var(--ps-open-timing), opacity var(--ps-open-speed) var(--ps-open-timing);
+			--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing), width var(--ps-close-speed) var(--ps-close-timing), opacity var(--ps-close-speed) var(--ps-close-timing);
+
+			width: 100%;
+			right: 0;
+			position: absolute;
+			border-radius: 8px;
+			background: white;
+			z-index: 10;
+			box-shadow: inset 0 0 0 0px var(--special-normal), 0 0 0 var(--special-shadow-dark);
+			opacity: 0.5;
+			display: flex;
+			justify-content: flex-end;
+			align-items: flex-start;
+
+
+
+		}
+
+		#test-popout-panel.is-opening,
+		#test-popout-panel.is-open {
+			box-shadow: inset 0 0 0 2px var(--special-normal), 0 8px 20px var(--special-shadow-dark);
+			width: 220px;
+			opacity: 1;
+		}
+		
 
 
 
@@ -136,4 +188,5 @@ append scripts
 		script(type="module").
 			import { PanelSet, Panel } from 'panelset';
 			PanelSet.init({ debug: true });
-			new Panel('#intro-panel', { debug: true });
+			Panel.init({ debug: true });
+			//-new Panel('#intro-panel', { debug: true });

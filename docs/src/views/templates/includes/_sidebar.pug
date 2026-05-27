@@ -1,5 +1,7 @@
 aside.docs-sidebar
-	a.logo(href="/") PanelSet
+	a.logo(href="/")
+		+logoicon
+		| PanelSet
 
 	nav(data-panel-group data-panel-close-siblings)
 		each link, i in sidebar.mainLinks
