@@ -10,9 +10,11 @@ ps-panel { display: block; }
 	.panel-wrapper {
 		position: relative;
 		z-index: 0;
-		// Fades in when opening, out when closing.
+		// Fades (and optionally transforms) in when opening, out when closing.
 		// Set --ps-closed-opacity: 1 to disable the fade (content stays opaque throughout).
+		// Set --ps-open-wrapper-from to a transform to slide/scale/flip the content in.
 		opacity: var(--ps-closed-opacity, 0);
+		transform: var(--ps-open-wrapper-from, none);
 		pointer-events: none;
 	}
 
@@ -22,18 +24,24 @@ ps-panel { display: block; }
 
 		.panel-wrapper {
 			opacity: 1;
+			transform: none;
 			pointer-events: auto;
 		}
 	}
 
 	&.is-opening .panel-wrapper {
 		opacity: 1;
-		transition: opacity var(--ps-open-speed) var(--ps-open-timing);
+		transform: none;
+		transition: opacity   var(--ps-open-speed) var(--ps-open-timing),
+		            transform var(--ps-open-speed) var(--ps-open-timing);
+		transition-delay: var(--ps-open-wrapper-delay, 0s);
 	}
 
 	&.is-closing .panel-wrapper {
 		opacity: var(--ps-closed-opacity, 0);
-		transition: opacity var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing));
+		transform: var(--ps-open-wrapper-from, none);
+		transition: opacity   var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)),
+		            transform var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing));
 	}
 
 	&.is-opening,

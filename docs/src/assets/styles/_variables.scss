@@ -59,13 +59,13 @@
 	
 	--border-default: var(--color-tint-200);
 
-	--btn-plain-text: var(--color-tint-500);
+	--btn-plain-text: var(--color-tint-600);
 	--btn-plain-text-hover: var(--color-tint-700);
 	--btn-plain-hover-bg: oklch(from var(--color-tint-500) l c h / 0.1);
 
-	--btn-primary-bg: var(--color-tint-500);
+	--btn-primary-bg: var(--color-tint-600);
 	--btn-primary-text: var(--color-tint-0);
-	--btn-primary-hover: var(--color-tint-600);
+	--btn-primary-hover: var(--color-tint-700);
 
 	--doc-code-transparent: oklch(from var(--color-tint-700) l c h / 0.08);
 

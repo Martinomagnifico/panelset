@@ -10,17 +10,53 @@ block content
 				h1 PanelSet transitions
 				p.lead PanelSet uses only CSS transitions only.
 
+	+section("Transitionable elements")
+
+		ol
+			li: h3 The container 
+			li: h3 The wrapper 
+			li: h3 The panels
+
+
+	
+
+
+
+
+		svg(xmlns="http://www.w3.org/2000/svg", width="340", height="340", fill="none", viewBox="0 0 340 340")
+			path(stroke="var(--special-normal)", stroke-linejoin="round", stroke-width="3", d="M110 171h140v98H110z", opacity=".2")
+			path(fill="var(--special-normal)", fill-opacity=".2", stroke="var(--special-normal)", stroke-width="3", d="M90 151h140v140H90z")
+			path(stroke="var(--special-normal)", stroke-linejoin="round", stroke-width="3", d="M100 161h140v170H100z", opacity=".2")
+			path(stroke="var(--btn-plain-text)", stroke-dasharray="4 4", stroke-linejoin="round", d="M80 141h180v160H80z")
+			rect(width="210", height="190", x="65", y="126", stroke="var(--btn-plain-text)", stroke-linejoin="round", stroke-width="4", rx="16")
+			path(fill="var(--text-default)", d="M64.5 209.3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM32 25.4a1.5 1.5 0 1 0-3 0h3zm-1.5 191.8H29c0 .8.7 1.4 1.5 1.4v-1.4zm34 0v-1.6h-34v3h34v-1.4zm-34 0H32V25.4h-3v191.8h1.5zM160 209.3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM317.5 102a1.5 1.5 0 0 0-3 0h3zM316 217.3v1.4a1.5 1.5 0 0 0 1.5-1.4H316zm-156 0v1.4h156v-3H160v1.6zm156 0h1.5V102h-3v115.3h1.5zM113.5 133a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm1.5-71a1.5 1.5 0 1 0-3 0h3zm-1.5 79h1.5V62h-3v79h1.5z")
+
+			text(fill="var(--text-default)", style="white-space:pre", font-family="Source Sans 3", font-size="1rem", letter-spacing="0em")
+				tspan(x="24", y="15.9") 1. Container (data-panels)
+			text(fill="var(--text-default)", style="white-space:pre", font-family="Source Sans 3", font-size="1rem", letter-spacing="0em")
+				tspan(x="86", y="53.9") 2. Wrapper (.panel-wrapper)
+			text(fill="var(--text-default)", style="white-space:pre", font-family="Source Sans 3", font-size="1rem", letter-spacing="0em")
+				tspan(x="167", y="91.9") 3. Panel (role="tabpanel")
+
+
+
+
+
 	+section("CSS variables")
 		p Set these on the #[code [data-panelset]] element or any ancestor. All values must include a unit (#[code 0s] not #[code 0]).
 
 		+codeblock('CSS').
 			[data-panelset] {
-				/* Panel opacity fades */
+				/* Panel switching — fade timing */
 				--ps-fadeout-speed:          0.25s;
 				--ps-fadeout-timing:         ease-in;
 				--ps-fadein-speed:           0.25s;
 				--ps-fadein-timing:          ease-in-out;
 				--ps-fadein-delay:           0.25s;
+
+				/* Panel switching — transform (default none = pure fade) */
+				--ps-panel-in-from:          none;  /* incoming starts here → none */
+				--ps-panel-out-to:           none;  /* outgoing ends here   ← none */
 
 				/* Container height animation */
 				--ps-height-duration-ratio:  1;        /* height duration = fadeout × ratio */
@@ -34,6 +70,7 @@ block content
 				--ps-open-transition-extra:  /* none */;
 				--ps-close-transition-extra: /* none */;
 				--ps-open-wrapper-delay:     /* calc(0.5 * var(--ps-open-speed)) */;
+				--ps-open-wrapper-from:      none;  /* wrapper reveal transform */
 			}
 
 		dl.horizontal
@@ -51,6 +88,15 @@ block content
 
 			dt #[code --ps-fadein-delay]
 			dd Delay before the incoming panel starts fading in. Default: #[code 0.25s].
+
+			dt #[code --ps-panel-in-from]
+			dd Transform the incoming panel animates #[em from] (it settles at #[code none]). Any transform — #[code translateX(100%)], #[code scale(0.9)], #[code rotateY(90deg)]. Default: #[code none] (pure fade).
+
+			dt #[code --ps-panel-out-to]
+			dd Transform the outgoing panel animates #[em to] (starting from #[code none]). Default: #[code none].
+
+			dt #[code --ps-open-wrapper-from]
+			dd Transform the inner #[code .panel-wrapper] reveals from when opening (Panel or closable PanelSet), settling at #[code none]; reverses on close. Default: #[code none].
 
 			dt #[code --ps-height-duration-ratio]
 			dd Multiplier on the height transition duration relative to #[code --ps-fadeout-speed]. Default: #[code 1].
@@ -115,6 +161,67 @@ block content
 					--ps-fadein-delay:  0s;
 				}
 
+	+section("Panel transforms (slide, scale, flip)")
+		p By default panels only fade. Give them movement by setting a transform: the incoming panel animates #[strong from] #[code --ps-panel-in-from] to its resting #[code none], and the outgoing panel animates #[strong to] #[code --ps-panel-out-to] from #[code none]. The values are full CSS transforms, so 2D or 3D both work, and the existing #[code --ps-fade*] variables still control the timing.
+
+		p The cleanest way to package an effect is a class of your own — collect the variables under it and add the class to the panelset.
+
+		.card
+			.demo
+				+exampletabset('slidedemo')
+				+examplepanelset('slidedemo')(class="slide")
+
+			+codeblock('CSS').
+				.slide {
+					--ps-panel-in-from: translateX(100%);   /* enter from the right */
+					--ps-panel-out-to:  translateX(-100%);   /* exit to the left    */
+				}
+
+		p A few more, same two knobs:
+
+		+codeblock('CSS').
+			/* Scale + fade */
+			.zoom {
+				--ps-panel-in-from: scale(0.92);
+				--ps-panel-out-to:  scale(1.08);
+			}
+
+			/* 3D card flip */
+			.flip {
+				--ps-panel-in-from: perspective(800px) rotateY(90deg);
+				--ps-panel-out-to:  perspective(800px) rotateY(-90deg);
+			}
+
+	+section("Level-based direction")
+		p With #[code levels] enabled, the slide direction follows the panels' order: moving to a later panel slides one way, moving back slides the other. The order is taken straight from the DOM (a later panel is "higher"), so you don't set anything per panel — just turn the feature on.
+
+		p Enable it with #[code data-ps-levels] on the container or #[code levels: true] in the config. JS then adds #[code .levelup] or #[code .leveldown] to the panels as they switch. Backward navigation (#[code .leveldown]) automatically #[strong swaps] #[code --ps-panel-in-from] and #[code --ps-panel-out-to] so the motion reverses — no extra variables, and it works for any transform.
+
+		.card
+			.demo
+				+exampletabset('leveldemo')
+				+examplepanelset('leveldemo')(class="slide" data-ps-levels)
+
+		+codeblock('HTML').
+			<div data-panelset data-ps-levels class="slide"> … </div>
+
+		+codeblock('JavaScript').
+			new PanelSet('#my-tabs', { levels: true });
+
+		p Need a different look per direction? Target the classes yourself — they override the automatic swap.
+
+		+codeblock('CSS').
+			/* Custom: incoming always scales up, regardless of direction */
+			.leveldown .incoming { transform: scale(0.9); }
+
+	+section("Wrapper reveal transform")
+		p For a Panel (or a closable PanelSet), the inner #[code .panel-wrapper] fades in as the container opens. Set #[code --ps-open-wrapper-from] to also move it — it animates from that transform to #[code none] on open and back on close, sharing the #[code --ps-open-*] / #[code --ps-close-*] timing.
+
+		+codeblock('CSS').
+			#my-panel {
+				--ps-open-wrapper-from: translateY(-0.5rem);  /* content drops in */
+			}
+
 	+section("Extra transitions (closable)")
 		p When a PanelSet has #[code closable: true], use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the height — for example a drop shadow or opacity. The value is appended to the #[code transition] shorthand directly.
 
@@ -156,6 +263,18 @@ append styles
 			--ps-fadeout-speed: 2s;
 			--ps-fadein-speed:  2s;
 			--ps-fadein-delay:  0s;
+		}
+		.slide {
+			--ps-fadeout-speed: .3s;
+			--ps-fadein-speed:  .3s;
+
+			--ps-fadein-timing: ease-in-out; /* same easing */
+			--ps-fadeout-timing: ease-in-out;/* same easing */
+
+			--ps-fadein-delay:  0s;  /* move both panels together */
+			--ps-panel-in-from: translateX(50%);
+			--ps-panel-out-to:  translateX(-50%);
+			--ps-height-duration-ratio: 0.75;
 		}
 
 append scripts

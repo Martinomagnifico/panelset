@@ -22,6 +22,7 @@ ps-panelset { display: block; }
 
         .panel-wrapper {
             opacity: 0;
+            transform: var(--ps-open-wrapper-from, none);
             pointer-events: none;
         }
     }
@@ -31,9 +32,11 @@ ps-panelset { display: block; }
                     var(--ps-open-transition-extra);
 
         .panel-wrapper {
-            transition: opacity var(--ps-open-speed) var(--ps-open-timing);
+            transition: opacity   var(--ps-open-speed) var(--ps-open-timing),
+                        transform var(--ps-open-speed) var(--ps-open-timing);
             transition-delay: var(--ps-open-wrapper-delay, calc(0.5 * var(--ps-open-speed)));
             opacity: 1;
+            transform: none;
         }
     }
 
@@ -42,8 +45,10 @@ ps-panelset { display: block; }
                     var(--ps-close-transition-extra);
 
         .panel-wrapper {
-            transition: opacity var(--ps-close-speed) var(--ps-close-timing);
+            transition: opacity   var(--ps-close-speed) var(--ps-close-timing),
+                        transform var(--ps-close-speed) var(--ps-close-timing);
             opacity: 0;
+            transform: var(--ps-open-wrapper-from, none);
         }
     }
 
@@ -58,15 +63,31 @@ ps-panelset { display: block; }
         margin: 0;
         display: flow-root;
 
+        // .fade is applied to all panels by JS while a switch is in flight.
+        // It carries the opacity + transform transition; the offset transforms
+        // (--ps-panel-in-from / --ps-panel-out-to) are scoped under it so that
+        // with transitions off the panels swap cleanly with no offset flash.
         &.fade {
-            transition: opacity var(--ps-fadeout-speed) var(--ps-fadeout-timing);
             pointer-events: none;
+            transition: opacity   var(--ps-fadeout-speed) var(--ps-fadeout-timing),
+                        transform var(--ps-fadeout-speed) var(--ps-fadeout-timing);
 
             &.incoming {
-                transition-duration: var(--ps-fadein-speed);
+                transition: opacity   var(--ps-fadein-speed) var(--ps-fadein-timing),
+                            transform var(--ps-fadein-speed) var(--ps-fadein-timing);
                 transition-delay: var(--ps-fadein-delay);
-                transition-timing-function: var(--ps-fadein-timing);
             }
+
+            // Start / end offsets. :not(.active) lets the settled .active state
+            // (transform: none) win even against the higher-specificity .leveldown
+            // compound selectors below.
+            &.incoming:not(.active)           { transform: var(--ps-panel-in-from, none); }
+            &.outgoing:not(.active)           { transform: var(--ps-panel-out-to,  none); }
+
+            // Levels: backward navigation reverses the motion by swapping the two
+            // transforms. Works for any transform — no sign negation needed.
+            &.leveldown.incoming:not(.active) { transform: var(--ps-panel-out-to,  none); }
+            &.leveldown.outgoing:not(.active) { transform: var(--ps-panel-in-from, none); }
         }
 
         &[hidden] {
@@ -76,6 +97,7 @@ ps-panelset { display: block; }
         &.active {
             opacity: 1;
             position: relative;
+            transform: none;
         }
 
         &.no-transition, &.incoming.no-transition {

@@ -7,6 +7,10 @@ export interface PanelSetConfig {
 		panels?: boolean;
 		height?: boolean;
 	};
+	/** Enable level-based slide direction. DOM order defines the level
+	 *  (later panel = higher). Adds .levelup / .leveldown to the panels so
+	 *  CSS can reverse the transform on backward navigation. Default false. */
+	levels?: boolean;
 	closable?: boolean;
 	closeOnTab?: boolean;
 	loadingHeight?: number;

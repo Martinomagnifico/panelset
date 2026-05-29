@@ -20,6 +20,12 @@
     --ps-panel-width:    320px;  /* inner .panel-wrapper width (horizontal panels) */
     --ps-closed-opacity: 0;      /* set to 1 to keep content visible while closed/closing */
 
+    /* Wrapper reveal transform (Panel + closable PanelSet).
+       The .panel-wrapper animates from this transform to none when opening
+       (and back to it when closing). Default none = opacity-only reveal.
+       Accepts any transform, e.g. translateY(-1rem), scale(0.95), rotateX(20deg). */
+    --ps-open-wrapper-from: none;
+
     /* PanelSet */
     --ps-fadeout-speed:          0.125s;
     --ps-fadein-speed:           0.125s;
@@ -29,6 +35,15 @@
     --ps-fadeout-timing:         ease-in;
     --ps-fadein-timing:          ease-in-out;
     --ps-loading-panel-opacity:  0.1;
+
+    /* Panel-switch transforms (PanelSet).
+       The incoming panel animates from --ps-panel-in-from to none; the outgoing
+       panel animates from none to --ps-panel-out-to. Default none = pure fade.
+       Set them to slide, scale, flip, etc. — any transform, 2D or 3D.
+       With levels enabled, backward (leveldown) navigation swaps the two so the
+       motion reverses. */
+    --ps-panel-in-from:          none;
+    --ps-panel-out-to:           none;
 
     /* Loading spinner */
     --ps-spinner-size:           40px;

@@ -1,0 +1,13 @@
+<svg width="500" height="237" viewBox="0 0 500 237" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect opacity="0.2" x="61" y="61" width="140" height="98" stroke="orange" stroke-width="3" stroke-linejoin="round"/>
+<rect x="41" y="41" width="140" height="140" fill="orange" fill-opacity="0.2" stroke="orange" stroke-width="3"/>
+<rect opacity="0.2" x="51" y="51" width="140" height="170" stroke="orange" stroke-width="3" stroke-linejoin="round"/>
+<rect x="31" y="31" width="180" height="160" stroke="black" stroke-linejoin="round" stroke-dasharray="4 4"/>
+<rect x="16" y="16" width="210" height="190" rx="16" stroke="black" stroke-width="4" stroke-linejoin="round"/>
+<text fill="black" style="white-space: pre" xml:space="preserve" font-family="Source Sans 3" font-size="16" font-weight="600" letter-spacing="0em"><tspan x="321" y="60.892">Container (data-panels)</tspan></text>
+<path d="M218 55C218 59.4183 221.582 63 226 63C230.418 63 234 59.4183 234 55C234 50.5817 230.418 47 226 47C221.582 47 218 50.5817 218 55ZM293 56.5C293.828 56.5 294.5 55.8284 294.5 55C294.5 54.1716 293.828 53.5 293 53.5V55V56.5ZM226 55V56.5L293 56.5V55V53.5L226 53.5V55Z" fill="black"/>
+<text fill="black" style="white-space: pre" xml:space="preserve" font-family="Source Sans 3" font-size="16" font-weight="600" letter-spacing="0em"><tspan x="305" y="176.892">Wrapper (.panel-wrapper)</tspan></text>
+<path d="M203 171C203 175.418 206.582 179 211 179C215.418 179 219 175.418 219 171C219 166.582 215.418 163 211 163C206.582 163 203 166.582 203 171ZM293 172.5C293.828 172.5 294.5 171.828 294.5 171C294.5 170.172 293.828 169.5 293 169.5L293 171L293 172.5ZM211 171L211 172.5L293 172.5L293 171L293 169.5L211 169.5L211 171Z" fill="black"/>
+<text fill="black" style="white-space: pre" xml:space="preserve" font-family="Source Sans 3" font-size="16" font-weight="600" letter-spacing="0em"><tspan x="313" y="118.892">Panel (role = &#34;tabpanel&#34;)</tspan></text>
+<path d="M103 113C103 117.418 106.582 121 111 121C115.418 121 119 117.418 119 113C119 108.582 115.418 105 111 105C106.582 105 103 108.582 103 113ZM293 114.5C293.828 114.5 294.5 113.828 294.5 113C294.5 112.172 293.828 111.5 293 111.5L293 113L293 114.5ZM111 113L111 114.5L293 114.5L293 113L293 111.5L111 111.5L111 113Z" fill="black"/>
+</svg>

@@ -49,6 +49,7 @@ export class PanelSet {
 	static defaults: Required<Omit<PanelSetConfig, 'selector'>> = {
 		align: 'start',
 		transitions: true,
+		levels: false,
 		closable: false,
 		closeOnTab: false,
 		loadingHeight: 150,
@@ -74,6 +75,7 @@ export class PanelSet {
 	private _animOpenClose = new Core(); // container open/close
 	private _isLoadingAsync: boolean = false;
 	private _activating: boolean = false;
+	private _switchDirection: 'levelup' | 'leveldown' | null = null;
 	private _returnFocusTarget: HTMLElement | null = null;
 
 	private static readonly _nativeInterpolateSize =
@@ -82,6 +84,7 @@ export class PanelSet {
 	static readonly attrs: AttrMap<PanelSetConfig> = {
 		align:         ['panelsetAlign',  'string'],
 		transitions:   ['transitions',   'json'],
+		levels:        ['psLevels',      'boolean'],
 		closable:      ['closable',      'boolean'],
 		closeOnTab:    ['closeOnTab',    'boolean'],
 		loadingHeight: ['loadingHeight', 'number'],
@@ -269,7 +272,7 @@ export class PanelSet {
 
 	private _internalInit(): void {
 		this.panels.forEach(panel => {
-			panel.classList.remove('fade', 'incoming');
+			panel.classList.remove('fade', 'incoming', 'outgoing', 'levelup', 'leveldown');
 			if (panel !== this.activePanel) {
 				panel.hidden = true;
 				panel.classList.remove('active');
@@ -364,7 +367,7 @@ export class PanelSet {
 
 	private _cleanupPanels(newPanel: HTMLElement): void {
 		this.panels.forEach(panel => {
-			panel.classList.remove('fade', 'incoming');
+			panel.classList.remove('fade', 'incoming', 'outgoing', 'levelup', 'leveldown');
 			if (panel !== newPanel) {
 				panel.classList.remove('active');
 				panel.hidden = true;
@@ -691,20 +694,27 @@ export class PanelSet {
 			return;
 		}
 
+		const switchInFlight = this._activating;
 		this._activating = true;
 		if (this.config.manageTriggers && this.config.interruptible === false) this._setTriggersActivating(true);
 
 		const prevPanel = this.pendingPanel;
 		const prevPanelId = prevPanel?.id;
 		this.pendingPanel = newPanel;
+
+		// Reversal: a switch is mid-flight and the user re-requested the panel that
+		// is still animating out (the current activePanel). Treat the in-flight
+		// incoming panel (prevPanel) as the new outgoing one and apply the opposite
+		// direction, so the CSS transition rolls back from the live positions.
+		const isReversal = switchInFlight && newPanel === this.activePanel && prevPanel !== newPanel;
 		if (this.config.manageTriggers) this._updateTabTriggers(newPanel);
 
 		this._persistState(panelId);
 
 		this.element.classList.remove('is-loading');
 
-		if (prevPanel && prevPanel !== this.activePanel && prevPanel !== newPanel) {
-			prevPanel.classList.remove('incoming');
+		if (!isReversal && prevPanel && prevPanel !== this.activePanel && prevPanel !== newPanel) {
+			prevPanel.classList.remove('incoming', 'outgoing', 'levelup', 'leveldown');
 			if (prevPanel.hidden) {
 				// Was never visible, keep hidden
 			} else {
@@ -830,7 +840,7 @@ export class PanelSet {
 			return;
 		}
 
-		const outgoingPanel = this.activePanel;
+		const outgoingPanel = isReversal ? prevPanel : this.activePanel;
 
 		this._dispatch<ActivationEventDetail>('ps:activationstart', {
 			panelId,
@@ -850,6 +860,28 @@ export class PanelSet {
 
 		this.panels.forEach(panel => panel.classList.toggle('fade', panelTransition));
 
+		// Direction (levels feature). DOM order is the implicit level: a later
+		// panel is "higher". Going to a higher panel is levelup, lower is leveldown.
+		// When levels is off, no direction class is set and the default
+		// (--ps-panel-in-from / --ps-panel-out-to) direction is always used.
+		let direction: 'levelup' | 'leveldown' | null = null;
+		if (isReversal) {
+			// Opposite of the in-flight direction. A plain (no-levels) slide always
+			// runs in the default (levelup) direction, so its reverse is leveldown.
+			direction = this._switchDirection === 'leveldown' ? 'levelup' : 'leveldown';
+		} else if (this.config.levels && outgoingPanel && outgoingPanel !== newPanel) {
+			const fromIdx = this.panels.indexOf(outgoingPanel);
+			const toIdx   = this.panels.indexOf(newPanel);
+			if (fromIdx !== -1 && toIdx !== -1 && fromIdx !== toIdx) {
+				direction = toIdx > fromIdx ? 'levelup' : 'leveldown';
+			}
+		}
+		this._switchDirection = direction;
+
+		// Clear any stale state from an interrupted switch synchronously, so CSS
+		// transitions interpolate from the current position rather than snapping.
+		this.panels.forEach(p => p.classList.remove('outgoing', 'levelup', 'leveldown'));
+
 		const startHeight = this.element.offsetHeight;
 		if (heightTransition) {
 			this.element.style.height = `${startHeight}px`;
@@ -858,11 +890,14 @@ export class PanelSet {
 		newPanel.hidden = false;
 		newPanel.setAttribute('inert', '');
 		newPanel.classList.add('incoming');
+		if (direction) newPanel.classList.add(direction);
 		if (panelTransition) {
 			this.element.classList.add('is-transitioning');
 		}
 		if (outgoingPanel && outgoingPanel !== newPanel) {
 			outgoingPanel.classList.remove('active', 'incoming');
+			outgoingPanel.classList.add('outgoing');
+			if (direction) outgoingPanel.classList.add(direction);
 			outgoingPanel.hidden = false;
 			outgoingPanel.setAttribute('inert', '');
 		}
