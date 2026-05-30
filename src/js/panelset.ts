@@ -863,7 +863,7 @@ export class PanelSet {
 		// Direction (levels feature). DOM order is the implicit level: a later
 		// panel is "higher". Going to a higher panel is levelup, lower is leveldown.
 		// When levels is off, no direction class is set and the default
-		// (--ps-panel-in-from / --ps-panel-out-to) direction is always used.
+		// (--ps-panel-in-transform-from / --ps-panel-out-transform-to) direction is always used.
 		let direction: 'levelup' | 'leveldown' | null = null;
 		if (isReversal) {
 			// Opposite of the in-flight direction. A plain (no-levels) slide always

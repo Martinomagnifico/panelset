@@ -24,26 +24,26 @@
        The .panel-wrapper animates from this transform to none when opening
        (and back to it when closing). Default none = opacity-only reveal.
        Accepts any transform, e.g. translateY(-1rem), scale(0.95), rotateX(20deg). */
-    --ps-open-wrapper-from: none;
+    --ps-wrapper-transform-from: none;
 
     /* PanelSet */
-    --ps-fadeout-speed:          0.125s;
-    --ps-fadein-speed:           0.125s;
-    --ps-fadein-delay:           0.125s;
+    --ps-panel-out-speed:          2.25s;
+    --ps-panel-in-speed:           2.25s;
+    --ps-panel-in-delay:           2.25s;
     --ps-height-duration-ratio:  1;
     --ps-transition-timing:      ease-in-out;
-    --ps-fadeout-timing:         ease-in;
-    --ps-fadein-timing:          ease-in-out;
+    --ps-panel-out-timing:         ease-in;
+    --ps-panel-in-timing:          ease-in-out;
     --ps-loading-panel-opacity:  0.1;
 
     /* Panel-switch transforms (PanelSet).
-       The incoming panel animates from --ps-panel-in-from to none; the outgoing
-       panel animates from none to --ps-panel-out-to. Default none = pure fade.
+       The incoming panel animates from --ps-panel-in-transform-from to none; the outgoing
+       panel animates from none to --ps-panel-out-transform-to. Default none = pure fade.
        Set them to slide, scale, flip, etc. — any transform, 2D or 3D.
        With levels enabled, backward (leveldown) navigation swaps the two so the
        motion reverses. */
-    --ps-panel-in-from:          none;
-    --ps-panel-out-to:           none;
+    --ps-panel-in-transform-from:          none;
+    --ps-panel-out-transform-to:           none;
 
     /* Loading spinner */
     --ps-spinner-size:           40px;
@@ -53,6 +53,6 @@
     --ps-spinner-speed:          0.8s;
 
     /* Calculated — override these directly if you change the loading vars above */
-    --ps-loading-dim-duration:     calc(var(--ps-fadeout-speed) * (1 - var(--ps-loading-panel-opacity)));
-    --ps-loading-fadeout-duration: calc(var(--ps-fadeout-speed) * var(--ps-loading-panel-opacity));
+    --ps-loading-dim-duration:     calc(var(--ps-panel-out-speed) * (1 - var(--ps-loading-panel-opacity)));
+    --ps-loading-fadeout-duration: calc(var(--ps-panel-out-speed) * var(--ps-loading-panel-opacity));
 }

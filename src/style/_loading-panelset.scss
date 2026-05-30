@@ -1,6 +1,12 @@
 [data-panelset] {
+    // Resting transition for the wrapper. transform is listed alongside opacity so
+    // the transition-property set stays consistent with the is-opening/is-closing
+    // rules — when those raise their own (faster) timing, transform is already a
+    // tracked property and animates instead of being newly added mid-frame (which
+    // browsers skip, leaving the transform to jump at the end).
     .panel-wrapper {
-        transition: opacity var(--ps-fadeout-speed) var(--ps-transition-timing) var(--ps-fadein-speed);
+        transition: opacity   var(--ps-panel-out-speed) var(--ps-transition-timing) var(--ps-panel-in-speed),
+                    transform var(--ps-panel-out-speed) var(--ps-transition-timing) var(--ps-panel-in-speed);
 
         @media (prefers-reduced-motion: reduce) {
           transition: none !important;
@@ -22,7 +28,8 @@
     }
 
     .panel-wrapper {
-        transition: opacity var(--ps-fadeout-speed) var(--ps-transition-timing);
+        transition: opacity   var(--ps-panel-out-speed) var(--ps-transition-timing),
+                    transform var(--ps-panel-out-speed) var(--ps-transition-timing);
         opacity: var(--ps-loading-panel-opacity);
     }
 }

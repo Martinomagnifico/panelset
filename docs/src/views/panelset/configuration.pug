@@ -306,16 +306,16 @@ block content
 
 		+codeblock('CSS').
 			[data-panelset] {
-				/* Panel fades */
-				--ps-fadeout-speed:          0.25s;
-				--ps-fadeout-timing:         ease-in;
-				--ps-fadein-speed:           0.25s;
-				--ps-fadein-timing:          ease-in-out;
-				--ps-fadein-delay:           0.25s;
+				/* Panel transitions */
+				--ps-panel-out-speed:          0.25s;
+				--ps-panel-out-timing:         ease-in;
+				--ps-panel-in-speed:           0.25s;
+				--ps-panel-in-timing:          ease-in-out;
+				--ps-panel-in-delay:           0.25s;
 
 				/* Container height animation */
 				--ps-transition-timing:      ease-in-out;   /* tab-switch height */
-				--ps-height-duration-ratio:  1;             /* height duration = fadeout × ratio */
+				--ps-height-duration-ratio:  1;             /* height duration = panel-out-speed × ratio */
 				--ps-open-speed:             0.25s;
 				--ps-open-timing:            ease-in-out;
 				--ps-close-speed:            0.25s;

@@ -12,9 +12,9 @@ ps-panel { display: block; }
 		z-index: 0;
 		// Fades (and optionally transforms) in when opening, out when closing.
 		// Set --ps-closed-opacity: 1 to disable the fade (content stays opaque throughout).
-		// Set --ps-open-wrapper-from to a transform to slide/scale/flip the content in.
+		// Set --ps-wrapper-transform-from to a transform to slide/scale/flip the content in.
 		opacity: var(--ps-closed-opacity, 0);
-		transform: var(--ps-open-wrapper-from, none);
+		transform: var(--ps-wrapper-transform-from, none);
 		pointer-events: none;
 	}
 
@@ -34,12 +34,12 @@ ps-panel { display: block; }
 		transform: none;
 		transition: opacity   var(--ps-open-speed) var(--ps-open-timing),
 		            transform var(--ps-open-speed) var(--ps-open-timing);
-		transition-delay: var(--ps-open-wrapper-delay, 0s);
+		transition-delay: var(--ps-wrapper-delay, 0s);
 	}
 
 	&.is-closing .panel-wrapper {
 		opacity: var(--ps-closed-opacity, 0);
-		transform: var(--ps-open-wrapper-from, none);
+		transform: var(--ps-wrapper-transform-from, none);
 		transition: opacity   var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)),
 		            transform var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing));
 	}
@@ -159,9 +159,9 @@ ps-panel { display: block; }
 // Reduced motion
 @media (prefers-reduced-motion: reduce) {
 	[data-panel], ps-panel {
-		--ps-fadeout-speed: 0s !important;
-		--ps-fadein-speed: 0s !important;
-		--ps-fadein-delay: 0s !important;
+		--ps-panel-out-speed: 0s !important;
+		--ps-panel-in-speed: 0s !important;
+		--ps-panel-in-delay: 0s !important;
 		--ps-loading-dim-duration: 0s !important;
 		--ps-loading-fadeout-duration: 0s !important;
 		--ps-close-speed: 0s !important;

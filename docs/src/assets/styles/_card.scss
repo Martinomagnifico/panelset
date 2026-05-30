@@ -51,7 +51,6 @@
 	}
 
 	dl {
-		// border: 1px solid var(--border-default);
 		background: var(--bg-surface-tint-contrast);
 		border-radius: 4px;
 		padding: 1rem;
@@ -62,7 +61,15 @@
 		dd + dt {
 			margin-top: 0.5rem;
 		}
+
+		&.no-bg {
+			background: none;
+			padding: 0;
+			border: none;
+		}
 	}
+
+	
 }
 
 
