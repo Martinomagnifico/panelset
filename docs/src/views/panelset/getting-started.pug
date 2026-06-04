@@ -121,25 +121,71 @@ block content
 	+section("Markup")
 		p Add #[code data-panelset] to the container. Each panel needs a unique #[code id] and #[code role="tabpanel"]. Mark the initially active panel with #[code class="active"] and all others with #[code hidden]. Wrap panel content in #[code .panel-wrapper] (auto-generated if missing).
 
+
 		.card
 			.demo
 				+exampletabset('gs')
 				+examplepanelset('gs')
 
+			+codeblock('HTML').
+				<div data-panelset>
+					<div class="panel-wrapper">
+
+						<div role="tabpanel" id="panel-1" aria-label="Features" class="active">
+							<h3>Features</h3>
+							<p>Content...</p>
+						</div>
+
+						<div role="tabpanel" id="panel-2" aria-label="Pricing" hidden>
+							<h3>Pricing</h3>
+							<p>Content...</p>
+						</div>
+
+					</div>
+				</div>
+
+	+section("Starting state")
+		p Choose which panel is visible on load by giving it #[code class="active"] and marking every other panel #[code hidden]. Swap those class and attributes to start on a different panel. PanelSet reads this on init and syncs the triggers’ #[code aria-selected] automatically, so the markup is the only thing you set.
+
+		.card
+			.demo
+				+exampletabset('starting-state')
+				#starting-state(data-panelset)
+					.panel-wrapper
+						div(role="tabpanel", id="starting-state-panel-1", hidden, aria-label="Key features")
+							+example-1
+
+						.active(role="tabpanel", id="starting-state-panel-2", aria-label="Pricing plans")
+							+example-2
+
+						div(role="tabpanel", id="starting-state-panel-3", hidden, aria-label="Support options")
+							+example-3
+
+
+			+codeblock('HTML').
+				<!-- Start on the second panel (Pricing) -->
+				<div data-panelset>
+					<div class="panel-wrapper">
+
+						<div role="tabpanel" id="panel-1" aria-label="Features" hidden>
+							<h3>Features</h3>
+						</div>
+
+						<div role="tabpanel" id="panel-2" aria-label="Pricing" class="active">
+							<h3>Pricing</h3>
+						</div>
+
+					</div>
+				</div>
+
+		p For a #[strong closable] PanelSet (#[code closable: true]), the whole container is closed by default. To start it open, add #[code is-open] to the container. PanelSet will read it on init, removes #[code inert], and the chosen #[code .active] panel shows.
+
 		+codeblock('HTML').
-			<div data-panelset>
+			<!-- Closable, and open on load -->
+			<div data-panelset data-closable class="is-open">
 				<div class="panel-wrapper">
-
-					<div role="tabpanel" id="panel-1" aria-label="Features" class="active">
-						<h3>Features</h3>
-						<p>Content...</p>
-					</div>
-
-					<div role="tabpanel" id="panel-2" aria-label="Pricing" hidden>
-						<h3>Pricing</h3>
-						<p>Content...</p>
-					</div>
-
+					<div role="tabpanel" id="panel-1" aria-label="Features" class="active"> … </div>
+					<div role="tabpanel" id="panel-2" aria-label="Pricing" hidden> … </div>
 				</div>
 			</div>
 

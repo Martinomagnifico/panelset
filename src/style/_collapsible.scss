@@ -1,0 +1,86 @@
+// Panel and closable PanelSet. Both are closed by default.
+//
+// Both components are CLOSED BY DEFAULT and opt into the open state with the
+// `.is-open` class. Add `.is-open` in markup to start opened. The collapsed
+// resting state lives here (committed, painted) so both the opening and closing
+// transitions animate from a real start value — no JS pinning required.
+//
+// Plain (non-closable) PanelSets never match this block: it is scoped to
+// [data-closable], so a tabset keeps height:auto and a visible wrapper with no
+// classes at all.
+//
+// Selector group (rather than a mixin) so the shared rules are emitted once.
+//
+// The wrapper rules use the DIRECT-CHILD combinator (> .panel-wrapper). The
+// wrapper is always a direct child of its component, and a descendant combinator
+// would leak into nested collapsibles — e.g. a closable PanelSet inside an open
+// accordion Panel would inherit the parent's `.is-open .panel-wrapper`
+// (opacity:1; transform:none), leaving its own open transition nothing to animate.
+
+[data-panel], ps-panel,
+[data-panelset][data-closable], ps-panelset[data-closable] {
+    box-sizing: border-box;
+
+    // Collapsed resting state.
+    height: 0;
+    overflow: hidden;
+
+    > .panel-wrapper {
+        position: relative;
+        // Reveal start-state. Fades (and optionally transforms) in on open,
+        // out on close. --ps-closed-opacity: 1 disables the fade;
+        // --ps-wrapper-transform-from adds a slide/scale/flip.
+        opacity: var(--ps-closed-opacity, 0);
+        transform: var(--ps-wrapper-transform-from, none);
+        pointer-events: none;
+    }
+
+    // Open resting state.
+    &.is-open {
+        height: auto;
+        overflow: visible;
+
+        > .panel-wrapper {
+            opacity: 1;
+            transform: none;
+            pointer-events: auto;
+        }
+    }
+
+    // Transients keep the box clipped while height animates.
+    &.is-opening,
+    &.is-closing {
+        overflow: hidden;
+    }
+
+    // Opening: wrapper animates from its closed start to the open state.
+    &.is-opening > .panel-wrapper {
+        opacity: 1;
+        transform: none;
+        transition: opacity   var(--ps-open-speed) var(--ps-open-timing),
+                    transform var(--ps-open-speed) var(--ps-open-timing);
+        // Open delay: --ps-wrapper-open-delay, falling back to the legacy
+        // --ps-wrapper-delay, then 0s.
+        transition-delay: var(--ps-wrapper-open-delay, var(--ps-wrapper-delay, 0s));
+    }
+
+    // Closing: wrapper animates from the open state back to its closed start.
+    &.is-closing > .panel-wrapper {
+        opacity: var(--ps-closed-opacity, 0);
+        transform: var(--ps-wrapper-transform-from, none);
+        transition: opacity   var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)),
+                    transform var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing));
+        // Close delay is independent and defaults to 0s (content leaves immediately).
+        transition-delay: var(--ps-wrapper-close-delay, 0s);
+    }
+
+    // Container height transition for open/close.
+    &.is-opening {
+        transition: height var(--ps-open-speed) var(--ps-open-timing),
+                    var(--ps-open-transition-extra);
+    }
+    &.is-closing {
+        transition: height var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)),
+                    var(--ps-close-transition-extra);
+    }
+}

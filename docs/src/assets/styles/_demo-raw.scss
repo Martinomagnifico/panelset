@@ -10,6 +10,7 @@
 
   [data-panel], [data-panelset] {
     background: white;
+    z-index: -1;
     
     .panel-wrapper {
       padding-top: 0;
@@ -22,14 +23,31 @@
 
   button {
     all: revert;
+    margin-right: 0.1rem;
+
+    &::-moz-focus-inner {
+      border: 0;
+      padding: 0;
+    }
     font-size: 1rem;
-    border-radius: 0;
+    border-radius: 0.1px;
+
     
     font-family: Georgia, "Times New Roman", serif;
     &:hover {
       text-decoration: underline;
       box-shadow: none;
-      border-color: black
+      border-color: white;
+    }
+    &:focus,
+    &:focus-visible {
+      border-color: black;
+      outline: 1px solid black;
+      outline-width: 2px;
+      outline-offset: 2px;
+      @media (prefers-color-scheme: dark) {
+        outline-color: white;
+      }
     }
   }
 

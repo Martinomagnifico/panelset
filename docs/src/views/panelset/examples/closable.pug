@@ -30,11 +30,9 @@ block content
 					button.secondary(data-panelset-close="#demo-closable") Close
 					button.secondary(data-panelset-open="#demo-closable") Open
 					button.secondary(data-panelset-toggle="#demo-closable") Toggle
-				hr.no-margin
-				//-.demo-closable-frame
-					//-+examplepanelset('demo-closable')(data-closable, data-close-on-tab, data-panelset-align="end").closet
+				hr
 
-				#demo-closable.is-closed(data-panelset data-closable data-close-on-tab data-panelset-align="end")
+				#demo-closable(data-panelset data-closable data-close-on-tab data-panelset-align="end")
 					.panel-wrapper
 						.active#demo-closable-panel-1(role="tabpanel", aria-label="Key features")
 							+example-1

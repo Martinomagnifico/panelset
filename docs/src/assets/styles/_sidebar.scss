@@ -21,6 +21,9 @@
 }
 
 .docs-sidebar {
+
+	--ps-wrapper-transform-from: translateY(-0.25rem);
+
 	background: var(--bg-sidebar);
 	border-bottom: 1px solid var(--border-default);
 	padding: var(--standard-padding);
@@ -53,7 +56,7 @@
 	.logo,
 	a.logo {
 		font-size: 1.5rem;
-		font-weight: 500;
+		font-weight: 400;
 		flex-shrink: 0;
 		line-height: 32px;
 		&:hover {

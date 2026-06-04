@@ -10,48 +10,14 @@ ps-panelset { display: block; }
     transition: height calc((var(--ps-panel-in-speed) + var(--ps-panel-in-delay)) * var(--ps-height-duration-ratio)) var(--ps-transition-timing);
     box-sizing: border-box;
 
-    .panel-wrapper {
+    // Direct child only, so a nested component's wrapper isn't styled by this one.
+    > .panel-wrapper {
         position: relative;
         margin: 0;
     }
 
-    &.is-closed {
-        height: 0 !important;
-        min-height: 0;
-        overflow: hidden;
-
-        .panel-wrapper {
-            opacity: var(--ps-closed-opacity, 0);
-            transform: var(--ps-wrapper-transform-from, none);
-            pointer-events: none;
-        }
-    }
-
-    &.is-opening {
-        transition: height var(--ps-open-speed) var(--ps-open-timing),
-                    var(--ps-open-transition-extra);
-
-        .panel-wrapper {
-            transition: opacity   var(--ps-open-speed) var(--ps-open-timing),
-                        transform var(--ps-open-speed) var(--ps-open-timing);
-            transition-delay: var(--ps-wrapper-delay, calc(0.5 * var(--ps-open-speed)));
-            opacity: 1;
-            transform: none;
-        }
-    }
-
-    &.is-closing {
-        transition: height var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)),
-                    var(--ps-close-transition-extra);
-
-        .panel-wrapper {
-            transition: opacity   var(--ps-close-speed) var(--ps-close-timing),
-                        transform var(--ps-close-speed) var(--ps-close-timing);
-            opacity: var(--ps-closed-opacity, 0);
-            transform: var(--ps-wrapper-transform-from, none);
-        }
-    }
-
+    // Closed-by-default + wrapper reveal + open/close height transition are shared
+    // with Panel and scoped to [data-closable] — see _collapsible.scss.
 
     [role="tabpanel"] {
         opacity: 0;
@@ -115,9 +81,10 @@ ps-panelset { display: block; }
     }
 
     // Alignment
-    // Controls where .panel-wrapper sits during open/close.
-
-    &.is-opening, &.is-closing, &.is-closed {
+    // Controls where .panel-wrapper sits during open/close — applies while
+    // transitioning and while closed (closable, not yet open).
+    &.is-opening, &.is-closing,
+    &[data-closable]:not(.is-open) {
         &[data-panelset-align="center"] {
             display: flex;
             flex-direction: column;
@@ -139,10 +106,11 @@ ps-panelset { display: block; }
 // Fallback: the JS pixel-locking cycle in _animateOpenClose handles other browsers.
 
 @supports (interpolate-size: allow-keywords) {
-    [data-panelset], ps-panelset {
-        // Scoped to is-opening/is-closing only so interpolate-size is NOT active
-        // during normal panel switching — otherwise clearing the inline height in
-        // _cleanupPanels() would trigger an unwanted auto-size animation.
+    // Only closable sets open/close their own height; scoped to is-opening/is-closing
+    // so interpolate-size is NOT active during normal panel switching — otherwise
+    // clearing the inline height in _cleanupPanels() would trigger an unwanted
+    // auto-size animation.
+    [data-panelset][data-closable], ps-panelset[data-closable] {
         &.is-opening {
             interpolate-size: allow-keywords;
             height: auto;

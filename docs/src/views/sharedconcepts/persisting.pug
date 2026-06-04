@@ -11,36 +11,40 @@ block content
 				p.lead Remember states across page loads.
 
 	+section("How it works")
-		p Both components determine the initial state on every page load from three sources, checked in order:
+		p Both components determine the initial state on every page load from these sources, checked in order:
 		.card
 			ol
-				li #[strong URL param] (#[code ?panel=]): always wins if present. See #[a(href="/sharedconcepts/deep-linking.html") Deep linking].
-				li #[strong localStorage]: used when no URL param is present. See below.
-				li #[strong HTML default] (PanelSet only): first panel, or whichever has #[code class="active"]
+				li #[strong URL param] (#[code ?panel=]): Reading of the URL parameter will always be done, no config needed. See #[a(href="/sharedconcepts/deep-linking.html") Deep linking].
+				li #[strong localStorage]: used when #[code persist] is enabled and no URL param applied. See below.
+				li #[strong HTML default]: the markup state like #[code class="active"] panel (PanelSet) or #[code class="is-open"] (Panel / closable PanelSet).
+
+		p #[strong localStorage is only read when you opt in] via #[code persist]. A component without it always uses the URL param or its HTML default, so a stored entry from another page can never reopen it unexpectedly.
 
 		p On this page we delve a bit deeper into #[strong persisting state].
 
 
 	+section("Reading localStorage")
-		p #[strong Reading is always on.] localStorage is checked on every page load. If nothing is stored, nothing happens.
+		p #[strong Reading is opt-in.] localStorage is only checked on load when the component has #[code persist] enabled. Without it, the stored value is ignored and the HTML default is used.
 
-		p State is stored under namespaced keys:
+		p State is stored under keys scoped to the current page path, so auto-assigned ids (#[code panel-1], #[code panel-2], …) on different pages never collide:
 		.card
 			table.table
 				thead
 					tr
 						th Component
 						th Key format
-						th Example
+						th Example (on #[code /docs/tabs])
 				tbody
 					tr
 						td PanelSet
-						td #[code ps:&lt;container-id&gt;]
-						td #[code ps:main-tabs]
+						td #[code &lt;pathname&gt;::ps:&lt;container-id&gt;]
+						td #[code /docs/tabs::ps:main-tabs]
 					tr
 						td Panel
-						td #[code panel:&lt;element-id&gt;]
-						td #[code panel:sidebar]
+						td #[code &lt;pathname&gt;::panel:&lt;element-id&gt;]
+						td #[code /docs/tabs::panel:sidebar]
+
+			p The #[code &lt;pathname&gt;] prefix is #[code location.pathname], added automatically. You don't set it — it just keeps each page's state separate.
 
 
 	+section("Writing localStorage")

@@ -2,59 +2,13 @@
 ps-panel { display: block; }
 
 [data-panel], ps-panel {
-	box-sizing: border-box;
 	display: flow-root;
-	height: 0;
-	overflow: hidden;
+	// Collapsed-by-default, wrapper reveal, and the height open/close transition
+	// are shared with closable PanelSet — see _collapsible.scss.
 
-	.panel-wrapper {
-		position: relative;
+	// Direct child only, so a nested Panel's wrapper isn't styled by this one.
+	> .panel-wrapper {
 		z-index: 0;
-		// Fades (and optionally transforms) in when opening, out when closing.
-		// Set --ps-closed-opacity: 1 to disable the fade (content stays opaque throughout).
-		// Set --ps-wrapper-transform-from to a transform to slide/scale/flip the content in.
-		opacity: var(--ps-closed-opacity, 0);
-		transform: var(--ps-wrapper-transform-from, none);
-		pointer-events: none;
-	}
-
-	&.is-open {
-		height: auto;
-		overflow: visible;
-
-		.panel-wrapper {
-			opacity: 1;
-			transform: none;
-			pointer-events: auto;
-		}
-	}
-
-	&.is-opening .panel-wrapper {
-		opacity: 1;
-		transform: none;
-		transition: opacity   var(--ps-open-speed) var(--ps-open-timing),
-		            transform var(--ps-open-speed) var(--ps-open-timing);
-		transition-delay: var(--ps-wrapper-delay, 0s);
-	}
-
-	&.is-closing .panel-wrapper {
-		opacity: var(--ps-closed-opacity, 0);
-		transform: var(--ps-wrapper-transform-from, none);
-		transition: opacity   var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)),
-		            transform var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing));
-	}
-
-	&.is-opening,
-	&.is-closing {
-		overflow: hidden;
-	}
-
-	// Vertical is the default
-	&.is-opening {
-		transition: height var(--ps-open-speed) var(--ps-open-timing), var(--ps-open-transition-extra);
-	}
-	&.is-closing {
-		transition: height var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)),var(--ps-close-transition-extra);
 	}
 
 	// Horizontal overrides — resets height and switches to width
@@ -73,8 +27,8 @@ ps-panel { display: block; }
 		}
 
 		// Keep inner content at its natural width so it doesn't reflow
-		// while the container animates.
-		.panel-wrapper {
+		// while the container animates. Direct child only.
+		> .panel-wrapper {
 			width: var(--ps-panel-width, 320px);
 			min-width: var(--ps-panel-width, 320px);
 			height: 100%;

@@ -35,6 +35,20 @@ mixin faq(title)
 					block
 
 
+mixin collapse(headinglevel, title)
+	.card.no-padding
+		button.card-trigger(data-panel-trigger)
+			#{headinglevel}!= title
+			+chevron()
+		div(data-panel data-panel-persist)
+			.panel-wrapper
+				.card-content
+					block
+
+
+
+
+
 mixin anchor(tag, id)
 	- tag = tag || 'h2'
 	- var title = ''
@@ -150,6 +164,8 @@ mixin examplepanelset(id, wc=false)
 			if ee
 				div(role="tabpanel", id=`${id}-panel-4`, hidden, aria-label="Extra panel")
 					+example-4
+
+
 
 mixin exampletabset(id, tabs=false)
 

@@ -24,8 +24,9 @@ declare global {
  *
  * Specifically, JS remains responsible for:
  *
- *  - State classes: toggling active, is-transitioning, is-loading, is-closed,
- *    is-opening, is-closing on panels and the container.
+ *  - State classes: toggling active, is-transitioning, is-loading, is-open,
+ *    is-opening, is-closing on panels and the container. Closable sets are
+ *    closed by default; the .is-open class (absent by default) marks open.
  *  - Trigger wiring: binding click handlers on [aria-controls] buttons/tabs
  *    and delegating to show().
  *  - ARIA: managing aria-expanded, aria-controls, aria-selected, and
@@ -173,7 +174,14 @@ export class PanelSet {
 		const dataConfig = parseDataAttrs<PanelSetConfig>(element.dataset, PanelSet.attrs);
 		this.config = { ...PanelSet.defaults, ...dataConfig, ...options } as Required<Omit<PanelSetConfig, 'selector'>>;
 
-		this.panels = Array.from(element.querySelectorAll<HTMLElement>('[role="tabpanel"]'));
+		// Only this set's own panels. querySelectorAll is unscoped, so a nested
+		// PanelSet (or a PanelSet nested in a Panel) would otherwise have its panels
+		// claimed by the outer instance. Keep only tabpanels whose nearest
+		// panelset/panel container is this element.
+		const ownContainer = (el: HTMLElement): boolean =>
+			el.closest('[data-panelset], ps-panelset, [data-panel], ps-panel') === element;
+		this.panels = Array.from(element.querySelectorAll<HTMLElement>('[role="tabpanel"]'))
+			.filter(ownContainer);
 
 		if (this.panels.length === 0) {
 			console.error('PanelSet: no [role=tabpanel] panels found', element);
@@ -191,8 +199,10 @@ export class PanelSet {
 			(resolvedId ? this.panels.find(p => p.id === resolvedId) : null)
 			?? this.panels.find(p => p.classList.contains('active'))
 			?? this.panels[0];
+		// Direct-child wrapper only — a descendant query could return a nested
+		// component's wrapper.
 		this.panelWrapper =
-			this.element.querySelector<HTMLElement>('.panel-wrapper') || this._autoWrapPanels();
+			this.element.querySelector<HTMLElement>(':scope > .panel-wrapper') || this._autoWrapPanels();
 
 		this.pendingPanel = this.activePanel;
 
@@ -201,7 +211,11 @@ export class PanelSet {
 
 		this.element.dataset.panelsetAlign = this.config.align;
 		this.element.setAttribute('data-panelset-ready', ''); // For styling
-		if (this.element.classList.contains('is-closed')) this.element.setAttribute('inert', '');
+		// Closable sets are closed by default; only an explicit .is-open opens them.
+		// A closed set is inert until opened.
+		if (this.config.closable && !this.element.classList.contains('is-open')) {
+			this.element.setAttribute('inert', '');
+		}
 
 		if (PanelSet._nativeInterpolateSize) logInterpolateSizeOnce(this.config.debug);
 		this._log(`Initialized (${this.panels.length} panels)`);
@@ -221,6 +235,14 @@ export class PanelSet {
 
 	// Debug logging helper
 	private _log(message: string): void { log('PanelSet', this.element, this.config.debug, message); }
+
+	// Closed = a closable set without the .is-open class (and not mid-open).
+	// Non-closable tabsets are conceptually always open, so never "closed".
+	private get _isClosed(): boolean {
+		return this.config.closable
+			&& !this.element.classList.contains('is-open')
+			&& !this.element.classList.contains('is-opening');
+	}
 
 	// URL param + localStorage helpers
 
@@ -248,12 +270,19 @@ export class PanelSet {
 	};
 
 	private _resolveInitialPanel = (): string | null => {
+		// URL param is always honoured: a ?panel=id link is explicit and
+		// page-specific, so shareable deep links work with no config.
 		const fromUrl = this._parsePanelParam();
 		if (fromUrl) return fromUrl;
-		const { id } = this.element;
-		if (!id) return null;
-		const saved = readStored(`ps:${id}`);
-		return saved && this.panels.some(p => p.id === saved) ? saved : null;
+		// localStorage is opt-in only, so a stale entry can't override the markup
+		// .active panel unless this set actually persists.
+		if (this.config.persist) {
+			const { id } = this.element;
+			if (!id) return null;
+			const saved = readStored(`ps:${id}`);
+			return saved && this.panels.some(p => p.id === saved) ? saved : null;
+		}
+		return null;
 	};
 
 	private static _validateElement(element: HTMLElement): void {
@@ -415,27 +444,45 @@ export class PanelSet {
 		const isReversing = this.element.classList.contains(oppositeClass);
 		const reverseStartHeight = isReversing ? this.element.offsetHeight : null;
 
+		// Capture the open height BEFORE removing is-open. Since closable sets are
+		// closed-by-default (height:0 when not .is-open), removing is-open collapses
+		// the resting height immediately — so a later offsetHeight read would return 0
+		// and the close would animate 0 → 0 (no transition). This is the real "from".
+		const closeStartHeight = !isOpening ? this.element.offsetHeight : null;
+
 		this.element.classList.remove(oppositeClass);
 		if (!isOpening) this.element.classList.remove('is-open');
 
 		if (isOpening) this.element.removeAttribute('inert');
 
+		// Settle into the closed resting state (no is-open class) and restore focus.
+		const settleClosed = () => {
+			this.element.setAttribute('inert', '');
+			const byPointer = event instanceof PointerEvent && event.pointerType !== '';
+			if (this.config.returnFocus && this._returnFocusTarget && !byPointer) {
+				this._returnFocusTarget.focus();
+			}
+		};
+
 		if (withTransition && this.config.transitions) {
+			// Mirror Panel exactly: animate under the .is-opening / .is-closing class
+			// only, never pinning the wrapper. The wrapper reveal lives entirely in CSS
+			// (.is-opening / .is-closing .panel-wrapper) and animates from whatever value
+			// is currently committed — so a reclick mid-transition just swaps the class
+			// and the browser interpolates from the live position. .is-open is added only
+			// once the animation settles. height:auto during opening comes from the
+			// @supports .is-opening rule, so is-open is not needed mid-animation.
 			this.element.classList.add(actionClass);
 
 			if (PanelSet._nativeInterpolateSize) {
 				if (isOpening) {
-					this.element.classList.remove('is-closed');
-					// Lock at px first so the rAF clear gives the browser a concrete
-					// before state. Without it, is-closed removal and is-opening's
-					// height: auto land in the same task — no delta, no transition.
 					this.element.style.height = reverseStartHeight !== null ? `${reverseStartHeight}px` : '0px';
 					requestAnimationFrame(() => {
-						this.element.style.height = ''; // is-opening's height: auto takes over
+						this.element.style.height = ''; // .is-opening's height: auto takes over
 						Core.waitForTransition(this.element, 'height').then(() => {
 							if (signal.aborted) return;
-							// Wait for the wrapper opacity transition too — its GPU layer
-							// keeps the clip alive in WebKit until it finishes.
+							// Wait for the wrapper transition too — its GPU layer keeps the
+							// clip alive in WebKit until it finishes.
 							const wrapperDone = this.panelWrapper
 								? Core.waitForTransition(this.panelWrapper)
 								: Promise.resolve();
@@ -449,37 +496,35 @@ export class PanelSet {
 					});
 				} else {
 					// Lock at px — interpolate-size alone can't animate auto → 0 in Firefox.
+					// Use the height captured before is-open was removed (resting height
+					// is already 0 now that the class is gone).
 					this.element.style.height = reverseStartHeight !== null
 						? `${reverseStartHeight}px`
-						: `${this.element.offsetHeight}px`;
+						: `${closeStartHeight}px`;
 					requestAnimationFrame(() => {
-						this.element.style.height = ''; // is-closing's height: 0 takes over
+						this.element.style.height = ''; // closed resting height: 0 takes over
 						Core.waitForTransition(this.element, 'height').then(() => {
 							if (signal.aborted) return;
 							this.element.classList.remove(actionClass);
 							void this.element.offsetHeight;
-							this.element.classList.add('is-closed');
-							this.element.setAttribute('inert', '');
-							const byPointer = event instanceof PointerEvent && event.pointerType !== '';
-							if (this.config.returnFocus && this._returnFocusTarget && !byPointer) {
-								this._returnFocusTarget.focus();
-							}
+							settleClosed();
 						});
 					});
 				}
 			} else {
 				// JS fallback: measure > lock > animate > unlock
 				const targetHeight = isOpening ? this._measureHeight(this.pendingPanel) : 0;
-				const currentHeight = this.element.offsetHeight;
+				// On open the current height is the (closed) start, unless reversing a
+				// close mid-flight; on close use the height captured before is-open was
+				// removed (resting height is already 0).
+				const currentHeight = reverseStartHeight !== null
+					? reverseStartHeight
+					: (isOpening ? this.element.offsetHeight : (closeStartHeight ?? 0));
 				this.element.style.height = `${currentHeight}px`;
-
-				if (isOpening) {
-					this.element.classList.remove('is-closed');
-				} else {
-					// Force a flush so the Npx lock is committed before the rAF
-					// changes to 0px. Without it Firefox sees auto → 0px — non-animatable.
-					void getComputedStyle(this.element).height;
-				}
+				// Force a flush so the Npx lock is committed before the rAF changes it.
+				// Without it the lock is overwritten and Firefox sees auto → 0px in one
+				// step — non-animatable, so it jumps.
+				void getComputedStyle(this.element).height;
 
 				requestAnimationFrame(() => {
 					this.element.style.height = `${targetHeight}px`;
@@ -490,28 +535,16 @@ export class PanelSet {
 						this.element.classList.remove(actionClass);
 						if (isOpening) this.element.classList.add('is-open');
 						void this.element.offsetHeight;
-						if (!isOpening) {
-							this.element.classList.add('is-closed');
-							this.element.setAttribute('inert', '');
-							const byPointer = event instanceof PointerEvent && event.pointerType !== '';
-							if (this.config.returnFocus && this._returnFocusTarget && !byPointer) {
-								this._returnFocusTarget.focus();
-							}
-						}
+						if (!isOpening) settleClosed();
 					});
 				});
 			}
 		} else {
 			if (isOpening) {
-				this.element.classList.remove('is-closed');
 				this.element.classList.add('is-open');
 			} else {
-				this.element.classList.add('is-closed');
-				this.element.setAttribute('inert', '');
-				const byPointer = event instanceof PointerEvent && event.pointerType !== '';
-				if (this.config.returnFocus && this._returnFocusTarget && !byPointer) {
-					this._returnFocusTarget.focus();
-				}
+				this.element.classList.remove('is-open');
+				settleClosed();
 			}
 			this.element.style.height = '';
 		}
@@ -542,7 +575,7 @@ export class PanelSet {
 			return;
 		}
 
-		const isClosed = this.element.classList.contains('is-closed');
+		const isClosed = this._isClosed;
 		const isClosing = this.element.classList.contains('is-closing');
 		const isLoading = this.element.classList.contains('is-loading');
 
@@ -587,7 +620,7 @@ export class PanelSet {
 			return;
 		}
 
-		const isClosed = this.element.classList.contains('is-closed');
+		const isClosed = this._isClosed;
 		const isClosing = this.element.classList.contains('is-closing');
 		const isOpening = this.element.classList.contains('is-opening');
 		const isLoading = this.element.classList.contains('is-loading');
@@ -610,7 +643,7 @@ export class PanelSet {
 			autoFocus
 		} = options || {};
 
-		const isClosed = this.element.classList.contains('is-closed');
+		const isClosed = this._isClosed;
 		const isClosing = this.element.classList.contains('is-closing');
 
 		// If closed or closing, open it
@@ -668,7 +701,7 @@ export class PanelSet {
 			return;
 		}
 
-		const isClosed = this.element.classList.contains('is-closed');
+		const isClosed = this._isClosed;
 		const isClosing = this.element.classList.contains('is-closing');
 		const isLoading = this.element.classList.contains('is-loading');
 
@@ -778,8 +811,7 @@ export class PanelSet {
 
 			if (heightTransition) {
 				if (isClosed) {
-					this.element.classList.remove('is-closed');
-					this.element.classList.add('is-opening');
+					this.element.classList.add('is-open', 'is-opening');
 					this.element.style.height = '0px';
 					requestAnimationFrame(() => {
 						this.element.style.height = `${this.config.loadingHeight}px`;

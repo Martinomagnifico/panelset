@@ -17,13 +17,13 @@ block content
 	+section("Panel - accessibility", "Panel")
 		p #[code Panel] manages #[code aria-expanded] on all trigger elements (#[code [aria-controls]]) automatically. It also uses the #[code inert] attribute on closed panels to remove them from the tab order and accessibility tree without affecting layout.
 
-		.card.api
+		.indented
 			h3 Trigger markup
 			+codeblock('HTML').
 				<!-- aria-expanded is set automatically by Panel -->
 				<button aria-controls="my-panel" aria-expanded="false">Toggle</button>
 
-		.card.api
+		.indented
 			h3 Panel markup
 			p Use #[code role="dialog"] for modal-like sidebars, #[code role="region"] for inline panels.
 			+codeblock('HTML').
@@ -34,7 +34,7 @@ block content
 					</div>
 				</div>
 
-		.card.api
+		.indented
 			h3 Focus management
 			p Use #[code autoFocus] to move focus into the panel on open, and #[code returnFocus] to return it to the trigger on close.
 			+codeblock('JS').
@@ -46,26 +46,27 @@ block content
 	+section("PanelSet - accessibility", "PanelSet")
 		p PanelSet manages #[code aria-selected] automatically on all #[code [aria-controls]] trigger elements. It is set immediately when a tab switch is committed, before the animation ends. The #[code inert] attribute is applied to the closed container and to panels that are not yet visible during a transition.
 
-		.card.api
+		.indented
 			h3 What PanelSet does automatically
 
-			table.table
-				thead
-					tr
-						th When
-						th PanelSet automatically
-				tbody
-					tr
-						td On initialisation
-						td Sets #[code aria-selected] on all #[code [aria-controls]] triggers to match the active panel
-					tr
-						td Tab is switched
-						td Updates #[code aria-selected] immediately when the new tab is committed (before the animation ends)
-					tr
-						td Closable panelset is closed
-						td Adds #[code inert] to the container, removing it and its contents from the tab order entirely
+			.card
+				table.table
+					thead
+						tr
+							th When
+							th PanelSet automatically
+					tbody
+						tr
+							td On initialisation
+							td Sets #[code aria-selected] on all #[code [aria-controls]] triggers to match the active panel
+						tr
+							td Tab is switched
+							td Updates #[code aria-selected] immediately when the new tab is committed (before the animation ends)
+						tr
+							td Closable panelset is closed
+							td Adds #[code inert] to the container, removing it and its contents from the tab order entirely
 
-		.card.api
+
 			h3 What you still need to provide
 
 			ul
@@ -95,10 +96,11 @@ block content
 	+section("PanelSet - focus management", "Focus management")
 		p Switch panels with your #[strong keyboard] to see #[code autoFocus] in action. Tab to a button, press Enter, and watch where focus lands.
 
-		+anchor('h3', 'a11y-heading')(title="autoFocus: 'heading'")
-		p Focus moves to the first heading in the incoming panel. Headings must have #[code tabindex="-1"] to be programmatically focusable.
 
 		.card
+			+anchor('h3', 'a11y-heading')(title="autoFocus: 'heading'")
+			p Focus moves to the first heading in the incoming panel. Headings must have #[code tabindex="-1"] to be programmatically focusable.
+
 			.demo
 				.demo-controls
 					button(aria-controls="a11y-h-panel-1") Panel 1
@@ -119,10 +121,11 @@ block content
 							p Switch to this panel with keyboard to see focus land on this heading.
 							input(type="text" placeholder="An input in this panel")
 
-		+anchor('h3', 'a11y-first')(title="autoFocus: 'first'")
-		p Focus moves to the first focusable element. Kind of ideal for wizard steps where you want the user in the form immediately.
 
 		.card
+			+anchor('h3', 'a11y-first')(title="autoFocus: 'first'")
+			p Focus moves to the first focusable element. Kind of ideal for wizard steps where you want the user in the form immediately.
+
 			.demo
 				.demo-controls
 					button(aria-controls="a11y-f-panel-1") Step 1

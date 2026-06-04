@@ -21,7 +21,6 @@ block content
 				dd CSS selector string or HTMLElement reference to the #[code [data-panelset]] container.
 				dt.code options (optional)
 				dd Configuration object. See #[a(href="/panelset/configuration.html") PanelSet, Configuration] for all options.
-			br
 			+codeblock('JavaScript').
 				const ps = new PanelSet('#my-tabs');
 				const ps = new PanelSet('#my-tabs', { transitions: true, autoFocus: 'heading' });
@@ -44,7 +43,7 @@ block content
 						li #[code autoFocus?: AutoFocusMode]: Override the global #[code autoFocus] for this activation.
 			h4 Returns:
 			p Promise that resolves when the activation transition completes.
-			br
+
 			+codeblock('JavaScript').
 				panelSet.show('panel-2');
 				panelSet.show('panel-2', { transition: false });
@@ -79,7 +78,7 @@ block content
 			h3.code panelSet.getActive(): string | null
 			hr
 			p Returns the ID of the currently active (or pending) panel, or #[code null].
-			br
+
 			+codeblock('JavaScript').
 				const current = panelSet.getActive();
 				if (current === 'step-2') {
@@ -96,7 +95,7 @@ block content
 				dd #[code (targetPanel: HTMLElement, signal: AbortSignal) => Promise&lt;void&gt; | void]: Return a promise to delay activation.
 				dt.code options (optional)
 				dd #[code { once?: boolean }]: If #[code true], the handler is skipped after the first successful load.
-			br
+
 			+codeblock('JavaScript').
 				panelSet.onBeforeOpen((targetPanel, signal) => {
 					return fetch(`/api/${targetPanel.id}`, { signal })
@@ -148,7 +147,7 @@ block content
 				dd Config object: only used when the first argument is a selector string.
 			h4 Returns:
 			p Array of created PanelSet instances.
-			br
+
 			+codeblock('JavaScript').
 				PanelSet.init();
 				PanelSet.init({ debug: true });
@@ -161,7 +160,7 @@ block content
 			h3.code PanelSet.defaults: PanelSetConfig
 			hr
 			p #[strong Static property.] Default configuration applied to all new instances. Modify to change defaults globally.
-			br
+
 			+codeblock('JavaScript').
 				PanelSet.defaults.autoFocus = 'heading';
 				PanelSet.defaults.debug = true;

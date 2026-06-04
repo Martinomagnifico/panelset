@@ -1,5 +1,6 @@
 .card,
 .indented {
+	position: relative;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
@@ -32,6 +33,10 @@
 
 	.card {
 		background: var(--bg-surface);
+	}
+
+	hr {
+		margin: 0;
 	}
 
 
@@ -72,6 +77,25 @@
 	
 }
 
+dl.bg-surface-tint {
+	background: var(--bg-surface-tint);
+	border-radius: 4px;
+	padding: 1rem;
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+
+	dd + dt {
+		margin-top: 0.5rem;
+	}
+
+	&.no-bg {
+		background: none;
+		padding: 0;
+		border: none;
+	}
+}
+
 
 
 
@@ -101,10 +125,10 @@
 }
 
 .card-trigger {
+	position: relative;
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	width: 100%;
 	background: none;
 	border: none;
 	padding: 0.25rem 0;
@@ -113,9 +137,45 @@
 	gap: 1rem;
 	outline-offset: 6px;
 	outline-color: transparent;
+	z-index: 0;
+	overflow: hidden;
+	margin-left: -3px;
+	margin-right: -3px;
+	margin-top: -3px;
+	margin-bottom: -3px;
+
+	// border: 1px solid black;
+
+
+
+	// border-radius: 1rem;
+
+	&:before {
+		content: '';
+		z-index: -1;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: calc(100% - 1px);
+		border-radius: 1rem;
+		background: transparent;
+		transition: background-color 0.15s ease-in-out;
+		border-bottom: 1px solid transparent;
+		// opacity: 0;
+	}
+
 
 	&:focus-visible {
 		outline: 3px solid var(--btn-primary-hover);
+	}
+	&:hover {
+		&:before {
+			background: var(--btn-plain-hover-bg);
+
+		}
+		// text-decoration: underline;
+		// background: var(--btn-plain-hover-bg);
 	}
 
 	h3, h4 {
@@ -136,8 +196,14 @@
         }
 	}
 
-	&[aria-expanded="true"] .chevron {
-		transform: rotate(90deg);
+	&[aria-expanded="true"] {
+		.chevron {
+			transform: rotate(90deg);
+		}
+		&:before {
+			border-radius: 1rem 1rem 0 0;
+			border-color: var(--border-default);
+		}
 	}
 }
 
@@ -156,6 +222,7 @@
 	button.card-trigger {
 		padding: var(--padding-medium);
 
+
 		h3, h4 {
 			background: none;
 			padding: 0;
@@ -163,7 +230,10 @@
 			line-height: 1.5;
 		}
 	}
-	.panel-wrapper {
+	& > [data-panel] > .panel-wrapper {
+		padding-top: 0;
+	}
+	[data-panelset] > .panel-wrapper {
 		padding-top: 0;
 	}
 
@@ -177,7 +247,6 @@
 
 	.card-content {
 		padding: var(--padding-medium);
-		border-top: 1px solid var(--border-default);
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;

@@ -4,7 +4,8 @@
     // rules — when those raise their own (faster) timing, transform is already a
     // tracked property and animates instead of being newly added mid-frame (which
     // browsers skip, leaving the transform to jump at the end).
-    .panel-wrapper {
+    // Direct child only, so a nested PanelSet's wrapper isn't styled by this one.
+    > .panel-wrapper {
         transition: opacity   var(--ps-panel-out-speed) var(--ps-transition-timing) var(--ps-panel-in-speed),
                     transform var(--ps-panel-out-speed) var(--ps-transition-timing) var(--ps-panel-in-speed);
 
@@ -27,7 +28,8 @@
         }
     }
 
-    .panel-wrapper {
+    // Direct child only — an outer loading set must not dim a nested set's content.
+    > .panel-wrapper {
         transition: opacity   var(--ps-panel-out-speed) var(--ps-transition-timing),
                     transform var(--ps-panel-out-speed) var(--ps-transition-timing);
         opacity: var(--ps-loading-panel-opacity);

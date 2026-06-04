@@ -192,7 +192,7 @@
 .demo-controls {
   display: flex;
   gap: 1rem;
-  margin-bottom: var(--standard-padding);
+  // margin-bottom: var(--standard-padding);
   flex-wrap: wrap;
 
   &.center {
@@ -202,6 +202,10 @@
   [data-panelset] + & {
     padding-top: var(--standard-padding);
     margin-bottom: 0;
+  }
+
+  & + hr {
+    margin-top: var(--standard-padding);
   }
 }
 

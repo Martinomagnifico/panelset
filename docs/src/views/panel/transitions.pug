@@ -8,102 +8,155 @@ block content
 		.container
 			.page-header
 				h1 Panel transitions
-				p.lead Panel uses only CSS transitions only.
+				p.lead Panel uses only CSS transitions.
 
-	+section("CSS variables")
-		p Set these on the #[code [data-panel]] element or any ancestor to control the transition.
 
-		+codeblock('CSS').
-			[data-panel] {
-				--ps-open-speed:             0.25s;
-				--ps-open-timing:            ease-in-out;
-				--ps-close-speed:            0.25s;
-				--ps-close-timing:           ease-in-out;
-				--ps-closed-opacity:         0;
-				--ps-open-transition-extra:  /* none */;
-				--ps-close-transition-extra: /* none */;
-			}
 
-		dl.horizontal
-			dt #[code --ps-open-speed]
-			dd Open transition duration. Default: #[code 0.25s].
-			dt #[code --ps-open-timing]
-			dd Open easing function. Default: #[code ease-in-out].
-			dt #[code --ps-close-speed]
-			dd Close transition duration. Default: #[code 0.25s].
-			dt #[code --ps-close-timing]
-			dd Close easing function. Default: #[code ease-in-out].
-			dt #[code --ps-closed-opacity]
-			dd Opacity of #[code .panel-wrapper] when closed or closing. Default: #[code 0] (fades out). Set to #[code 1] to disable the inner fade.
-			dt #[code --ps-open-transition-extra]
-			dd Additional CSS transition shorthand values appended to the height transition during opening. Use this to co-animate other properties (e.g. #[code box-shadow], #[code opacity]) in sync with the height. Unset by default.
-			dt #[code --ps-close-transition-extra]
-			dd Same as above, applied during closing.
 
-	+section("Default speed")
-		.card
-			.demo
-				button(aria-controls="panel-demo" aria-expanded="false") Toggle panel
-				div#panel-demo(data-panel data-panel-axis="vertical")
-					.panel-wrapper
-						p This panel uses the default transition speed of #[code 0.25s]. As it opens, the container grows to its natural height while the inner content fades in. As it closes, the content fades out and the container shrinks back to zero.
+	+section("Transitionable elements")
 
-	+section("Slower transitions")
-		.card
-			.demo
-				button(aria-controls="panel-slow-demo" aria-expanded="false") Toggle panel
-				div#panel-slow-demo(data-panel data-panel-axis="vertical")
-					.panel-wrapper
-						p Open and close speeds both set to 1 second. The slower speed makes it easy to see the two parts of the transition separately: the container height animates while the content fades in, and the content fades out before the container fully collapses.
+		p A Panel has two transitionable parts: the #[strong container] that animates its size open and closed, and the inner #[strong wrapper] that holds your content and fades (or transforms) in.
 
-			+codeblock('CSS').
-				#panel-slow-demo {
-					--ps-open-speed:  1s;
-					--ps-close-speed: 1s;
-				}
+		//- TODO: structure diagram (Container + Wrapper) goes here.
 
-	+section("No fade")
-		p Set #[code --ps-closed-opacity: 1] to keep the content fully visible while the container grows and shrinks.
 
-		.card
-			.demo
-				button(aria-controls="panel-nofade-demo" aria-expanded="false") Toggle panel
-				div#panel-nofade-demo(data-panel data-panel-axis="vertical")
-					.panel-wrapper
-						p The content is already at full opacity. Only the container height animates. Compare this to the default example above: the text appears immediately as the container opens, with no fade-in. On close, the text stays visible until the container has fully collapsed.
+	+section("1. Container")
 
-			+codeblock('CSS').
-				#panel-nofade-demo {
-					--ps-closed-opacity: 1;
-				}
+		p The container is the #[code [data-panel]] box. It animates its #[strong height] (or #[strong width] on the horizontal axis) between #[code 0] and the natural size when opening and closing.
 
-	+section("Extra transitions")
-		p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the height. The value is appended directly to the #[code transition] shorthand, so use the same format: #[code property duration timing-function].
+		.column.gap-1(data-panel-group data-panel-close-siblings data-panel-persist)
 
-		p A common use is animating #[code box-shadow] — because it has no effect on layout, it never interferes with the height measurement.
+			+collapse('h3', "Transitioning opening &amp; closing")
 
-		.card
-			.demo
-				button(aria-controls="panel-extra-demo" aria-expanded="false") Toggle panel
-				div#panel-extra-demo(data-panel)
-					.panel-wrapper
-						p The shadow fades in as the panel opens and fades out as it closes.
+				p These control the container's size animation when the panel opens and closes.
 
-		+codeblock('CSS').
-			#my-panel {
-				box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+				dl.bg-surface-tint
+					dt #[code --ps-open-speed]
+					dd Size transition duration when opening. Default: #[code 0.25s].
 
-				--ps-open-transition-extra:  box-shadow var(--ps-open-speed) var(--ps-open-timing);
-				--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing);
-			}
+					dt #[code --ps-open-timing]
+					dd Easing when opening. Default: #[code ease-in-out].
 
-			#my-panel.is-open,
-			#my-panel.is-opening {
-				box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-			}
+					dt #[code --ps-close-speed]
+					dd Size transition duration when closing. Default: #[code 0.25s].
 
-	+section("Disabling transitions")
-		p Pass #[code transitions: false] (or #[code data-panel-transitions="false"]) to skip the animation entirely. This is useful for initial page load.
+					dt #[code --ps-close-timing]
+					dd Easing when closing. Default: #[code ease-in-out].
+
+				h4 Demo
+				p Both speeds set to 1 second, so the two parts of the transition are easy to see separately: the container animates while the content fades in, and the content fades out while the container collapses.
+
+				.demo
+					button(aria-controls="panel-slow-demo" aria-expanded="false") Toggle panel
+					div#panel-slow-demo(data-panel)
+						.panel-wrapper
+							h3= example1Title
+							+example-1-content
+
+				+codeblock('CSS').
+					#my-panel {
+						--ps-open-speed:   0.25s;
+						--ps-open-timing:  ease-in-out;
+						--ps-close-speed:  0.25s;
+						--ps-close-timing: ease-in-out;
+					}
+
+			+collapse('h3', "Transitioning extra transitions")
+
+				p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the size, for example a border or shadow. The value is appended to the #[code transition] shorthand directly, so use the same format: #[code property duration timing-function].
+
+				p A common use is #[code box-shadow], including an #[code inset] box-shadow as a border, because it has no effect on layout, it never interferes with the size measurement.
+
+				dl.bg-surface-tint
+					dt #[code --ps-open-transition-extra]
+					dd Extra #[code transition] shorthand values appended when opening. Unset by default.
+
+					dt #[code --ps-close-transition-extra]
+					dd Same, applied when closing.
+
+				h4 Demo
+				.demo
+					button(aria-controls="panel-extra-demo" aria-expanded="false") Toggle panel
+					div#panel-extra-demo(data-panel)
+						.panel-wrapper
+							h3= example1Title
+							+example-1-content
+
+				+codeblock('CSS').
+					#my-panel {
+						--ps-open-transition-extra:  box-shadow var(--ps-open-speed) ease-in;
+						--ps-close-transition-extra: box-shadow var(--ps-close-speed) ease-out;
+						box-shadow: inset 0 0 0 6px yellow, 0 0 0 rgba(0,0,0,0.2);
+					}
+
+					#my-panel.is-open,
+					#my-panel.is-opening {
+						box-shadow: inset 0 0 0 6px green, 0 0 1rem rgba(0,0,0,0.2);
+					}
+
+
+	+section("2. Wrapper")
+
+		p The wrapper is the #[code .panel-wrapper] that holds your content. It fades in as the container opens (and out as it closes), and can additionally transform in.
+
+		.column.gap-1(data-panel-group data-panel-close-siblings data-panel-persist)
+
+			+collapse('h3', "The fade")
+
+				p By default the wrapper fades from #[code 0] to full opacity as the panel opens. Set #[code --ps-closed-opacity] to #[code 1] to keep the content fully visible while the container grows and shrinks — only the size animates, no fade.
+
+				dl.bg-surface-tint
+					dt #[code --ps-closed-opacity]
+					dd Opacity of #[code .panel-wrapper] when closed or closing. Default: #[code 0] (fades out). Set to #[code 1] to disable the inner fade.
+
+				h4 Demo
+				p This panel keeps its content at full opacity — only the container height animates, with no fade-in.
+
+				.demo
+					button(aria-controls="panel-nofade-demo" aria-expanded="false") Toggle panel
+					div#panel-nofade-demo(data-panel)
+						.panel-wrapper
+							h3= example1Title
+							+example-1-content
+
+				+codeblock('CSS').
+					#my-panel {
+						--ps-closed-opacity: 1;
+					}
+
+			+collapse('h3', "The transform")
+
+				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears — it animates from that transform to #[code none] on open and back on close, sharing the #[code --ps-open-*] / #[code --ps-close-*] timing. Default #[code none] is a pure fade.
+
+				p Open and close transforms can also have independent delays, both #[code 0s] by default. Set #[code --ps-wrapper-open-delay] to hold the content back until the box has grown a little, and #[code --ps-wrapper-close-delay] if you want it to linger before collapsing.
+
+				dl.bg-surface-tint
+					dt #[code --ps-wrapper-transform-from]
+					dd Transform the wrapper reveals from, settling at #[code none]; reverses on close. Any transform. Default: #[code none].
+
+					dt #[code --ps-wrapper-open-delay]
+					dd Delay before the wrapper reveals when opening. Default: #[code 0s]. (Legacy alias: #[code --ps-wrapper-delay].)
+
+					dt #[code --ps-wrapper-close-delay]
+					dd Delay before the wrapper starts leaving when closing. Default: #[code 0s].
+
+				h4 Demo
+				.demo
+					button(aria-controls="panel-wrapper-demo" aria-expanded="false") Toggle panel
+					div#panel-wrapper-demo(data-panel)
+						.panel-wrapper
+							h3= example1Title
+							+example-1-content
+
+				+codeblock('CSS').
+					#my-panel {
+						--ps-wrapper-transform-from: translateY(-1rem);
+						--ps-wrapper-open-delay: 0.1s;
+					}
+
+
+	+section("Disabling transitions", "Disabling")
+		p Pass #[code transitions: false] (or #[code data-panel-transitions="false"]) to skip the animation entirely. Useful for the initial page load.
 
 		+codeblock('JavaScript').
 			new Panel('#my-panel', { transitions: false });
@@ -120,21 +173,26 @@ append styles
 		#panel-nofade-demo {
 			--ps-closed-opacity: 1;
 		}
-		#accordion-test {
-			--ps-open-speed:  3s;
-			--ps-close-speed: 1s;
-
-			--ps-open-timing: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-			--ps-close-timing: linear;
-		}
 		#panel-extra-demo {
-			box-shadow: 0 0 0 rgba(0, 0, 0, 0);
-			--ps-open-transition-extra:  box-shadow var(--ps-open-speed) var(--ps-open-timing);
-			--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing);
+			--ps-open-transition-extra:  box-shadow var(--ps-open-speed) ease-in;
+			--ps-close-transition-extra: box-shadow var(--ps-close-speed) ease-out;
+
+			background: var(--demo-btn-bg);
+			border-radius: 0.5rem;
+			box-shadow: inset 0 0 0 6px yellow, 0 0 0 rgba(0, 0, 0, 0.2);
 		}
 		#panel-extra-demo.is-open,
 		#panel-extra-demo.is-opening {
-			box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+			box-shadow: inset 0 0 0 6px green, 0 0 1rem rgba(0, 0, 0, 0.2);
+		}
+		#panel-wrapper-demo {
+			--ps-open-speed:  0.5s;
+			--ps-close-speed: 0.5s;
+			--ps-wrapper-transform-from: translateY(-1rem);
+			--ps-wrapper-open-delay: 0.1s;
+		}
+		#panel-extra-demo > .panel-wrapper {
+			padding: var(--standard-padding);
 		}
 
 

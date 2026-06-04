@@ -14,7 +14,8 @@
 		}
 	}
 
-	.panel-wrapper {
+	// Direct child only — a loading outer Panel must not hide a nested one's content.
+	> .panel-wrapper {
 		opacity: 0;
 	}
 }

@@ -129,18 +129,50 @@ block content
 	+section("Markup")
 		p Add #[code data-panel] to your element and give it an #[code id]. Panels start closed by default — no class required. Wrap the content in #[code .panel-wrapper].
 
-		+codeblock('HTML').
-			<!-- Trigger: any element with aria-controls pointing to the panel id -->
-			<button aria-controls="my-panel" aria-expanded="false">Toggle</button>
+		.card
+			.demo
+				button(aria-controls="markup-example") Toggle panel
+				#markup-example(data-panel)
+					.panel-wrapper
+						h3= example1Title
+						+example-1-content
 
-			<!-- Panel element -->
-			<div id="my-panel" data-panel data-panel-axis="vertical">
-				<div class="panel-wrapper">
-				<p>Panel content goes here.</p>
+
+			+codeblock('HTML').
+				<!-- Trigger: any element with aria-controls pointing to the panel id -->
+				<button aria-controls="markup-example">Toggle</button>
+
+				<!-- Panel element -->
+				<div id="markup-example" data-panel>
+					<div class="panel-wrapper">
+						<p>Panel content goes here.</p>
+					</div>
 				</div>
-			</div>
 
-		p #[code aria-expanded] is managed automatically. Panel sets it to #[code true] or #[code false] on every open and close. One less thing to worry about.
+		p #[code aria-expanded] is managed automatically. Panel sets it to #[code true] or #[code false] on every open and close.
+
+	+section("Starting state")
+		p A Panel is closed by default. To start it #[strong open], add the #[code is-open] class to the panel element in your markup. That’s all. Panel reads it on init, removes #[code inert], and syncs the trigger’s #[code aria-expanded] to match. No animation runs for the initial state.
+		.card
+			.demo
+				button(aria-controls="starting-example") Toggle panel
+				#starting-example.is-open(data-panel)
+					.panel-wrapper
+						h3= example1Title
+						+example-1-content
+
+
+			+codeblock('HTML').
+				<button aria-controls="starting-example">Toggle</button>
+
+				<!-- Starts open: aria-expanded is corrected to true automatically -->
+				<div id="starting-example" data-panel class="is-open">
+					<div class="panel-wrapper">
+						<p>Visible on load.</p>
+					</div>
+				</div>
+
+		p If you use #[code persist] or #[code deepLink], a stored open/closed state takes precedence over the markup on return visits.
 
 	+section("Initializing")
 		p Use the static #[code init()] method to initialize all matching elements at once, or create instances directly.

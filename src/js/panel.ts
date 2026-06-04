@@ -152,8 +152,10 @@ export class Panel {
 
 		this._bindTriggers();
 
-		if (this._resolveInitialState()) {
-			// URL param or localStorage says open — snap open without animation
+		// Start open if persisted/deep-linked state says so, OR if the markup was
+		// authored with .is-open. Either way snap open without animation and sync
+		// the trigger's aria-expanded, so hand-authored markup needs no extra ARIA.
+		if (this._resolveInitialState() || this.element.classList.contains('is-open')) {
 			this.element.classList.add('is-open');
 			this.element.removeAttribute('inert');
 			this._setTriggerState(true);
@@ -163,7 +165,7 @@ export class Panel {
 			this.element.classList.add('is-restored');
 			requestAnimationFrame(() => requestAnimationFrame(() => this.element.classList.remove('is-restored')));
 			this._dispatch('panel:opened');
-		} else if (!this.isOpen) {
+		} else {
 			this.element.setAttribute('inert', '');
 		}
 
@@ -191,9 +193,9 @@ export class Panel {
 		writePanelParam(next);
 	};
 
-	private _persistState = (open: boolean): void => {
-		if (!this.element.id) return;
-
+	// Resolve persist/deepLink config, taking an enclosing [data-panel-group] into
+	// account. Walks up to the nearest group (stopping at any parent [data-panel]).
+	private _resolveStateConfig = (): { persist: boolean; deepLink: boolean } => {
 		let groupPersist = false;
 		let groupDeepLink = false;
 		let el = this.element.parentElement;
@@ -208,8 +210,16 @@ export class Panel {
 			el = el.parentElement;
 		}
 
-		const hasPersist = this.config.persist || groupPersist;
-		const hasDeepLink = this.config.deepLink || groupDeepLink;
+		return {
+			persist: this.config.persist || groupPersist,
+			deepLink: this.config.deepLink || groupDeepLink,
+		};
+	};
+
+	private _persistState = (open: boolean): void => {
+		if (!this.element.id) return;
+
+		const { persist: hasPersist, deepLink: hasDeepLink } = this._resolveStateConfig();
 
 		if (hasPersist) {
 			writeStored(`panel:${this.element.id}`, open ? 'open' : 'closed');
@@ -225,9 +235,16 @@ export class Panel {
 	};
 
 	private _resolveInitialState = (): boolean => {
-		if (this._parsePanelParam()) return true;
 		const { id } = this.element;
-		return !!id && readStored(`panel:${id}`) === 'open';
+		if (!id) return false;
+		// URL param is always honoured: a ?panel=id link is explicit and
+		// page-specific, so shareable deep links work with no config.
+		if (this._parsePanelParam()) return true;
+		// localStorage is opt-in only. Without persist, a stale entry — e.g. an
+		// auto-assigned id (panel-1, …) left by another page — must not reopen this.
+		const { persist } = this._resolveStateConfig();
+		if (persist && readStored(`panel:${id}`) === 'open') return true;
+		return false;
 	};
 
 	private _cssProp = (): 'height' | 'width' =>

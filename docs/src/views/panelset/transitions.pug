@@ -10,6 +10,9 @@ block content
 				h1 PanelSet transitions
 				p.lead PanelSet uses only CSS transitions only.
 
+
+
+
 	+section("Transitionable elements")
 
 		svg(xmlns="http://www.w3.org/2000/svg", width="340", height="340", fill="none", viewBox="0 0 340 340")
@@ -27,251 +30,255 @@ block content
 			text(fill="var(--text-default)", style="white-space:pre", font-family="Source Sans 3", font-size="1rem", letter-spacing="0em")
 				tspan(x="167", y="91.9") 3. Panel (role="tabpanel")
 
-		//-p Set any of these variables on the #[code [data-panelset]] element or an ancestor. All values must include a unit (#[code 0s] not #[code 0]). They are grouped below by which of the three elements they affect.
 
+	
+	+section("1. Container")
 
-	+section("1. Container", "Container")
 		p The container is the #[code [data-panelset]] (or #[code [data-panel]]) box. It animates its #[strong height] to fit the active panel while switching, and — when #[code closable] — opens and closes as a whole.
 
-		.indented
-			h3 Transitioning height
-			p During a tab switch the container animates its height so panels of different sizes don't jump. The duration is derived from the panel speed.
+		.column.gap-1(data-panel-group data-panel-close-siblings data-panel-persist)
 
-			+codeblock('CSS').
-				[data-panelset] {
-					--ps-height-duration-ratio:  1;            /* height duration = panel-out-speed × ratio */
-					--ps-transition-timing:      ease-in-out;
-				}
+			+collapse('h3', "Transitioning height")
+				
+				p During a tab switch the container animates its height so panels of different sizes don't jump. The duration is derived from the panel speed. This is the default behaviour and can't really be changed. But you can speed it up or slow it down relative to the panel transition with #[code --ps-height-duration-ratio], and change the easing with #[code --ps-transition-timing].
 
-			dl.no-bg
-				dt #[code --ps-height-duration-ratio]
-				dd Multiplier on the height transition duration relative to #[code --ps-panel-out-speed]. Default: #[code 1].
+				dl.bg-surface-tint
+					dt #[code --ps-height-duration-ratio]
+					dd Multiplier on the height transition duration. This is relative to the total transition time of the inner panels. When you want these inner panels to transition after each other, the in-transition of the second panel can be delayed instead of happening at the same time as the out-transition of the first panel. If so, the delay time is added to the in-transition time of that second panel, and that is the total time for the inner transition, and normally, the height transition uses that exact time, but you can speed it up or down. Default: #[code 1].
 
-				dt #[code --ps-transition-timing]
-				dd Easing for the height change during a switch. Default: #[code ease-in-out].
+					dt #[code --ps-transition-timing]
+					dd Easing for the height change during a switch. Default: #[code ease-in-out].
 
-		.indented
-			h3 Transitioning opening &amp; closing (closable)
-			p With #[code closable: true] the container collapses and expands as a whole. These control that height animation.
+				+codeblock('CSS').
+					[data-panelset] {
+						--ps-height-duration-ratio: 1;
+						--ps-transition-timing: ease-in-out;
+					}
 
-			+codeblock('CSS').
-				[data-panelset] {
-					--ps-open-speed:   0.25s;
-					--ps-open-timing:  ease-in-out;
-					--ps-close-speed:  0.25s;
-					--ps-close-timing: ease-in-out;
-				}
+			+collapse('h3', "Transitioning opening &amp; closing (closable)")
+			
+				p With #[code closable: true] the container collapses and expands as a whole. These control that height animation.
 
-			dl.no-bg
-				dt #[code --ps-open-speed]
-				dd Height transition duration when opening. Default: #[code 0.25s].
+				dl.bg-surface-tint
+					dt #[code --ps-open-speed]
+					dd Height transition duration when opening. Default: #[code 0.25s].
 
-				dt #[code --ps-open-timing]
-				dd Easing when opening. Default: #[code ease-in-out].
+					dt #[code --ps-open-timing]
+					dd Easing when opening. Default: #[code ease-in-out].
 
-				dt #[code --ps-close-speed]
-				dd Height transition duration when closing. Default: #[code 0.25s].
+					dt #[code --ps-close-speed]
+					dd Height transition duration when closing. Default: #[code 0.25s].
 
-				dt #[code --ps-close-timing]
-				dd Easing when closing. Default: #[code ease-in-out].
+					dt #[code --ps-close-timing]
+					dd Easing when closing. Default: #[code ease-in-out].
 
-			p Click a tab to open the set; click the active tab to close it. This demo is #[code closable] with #[code closeOnTab].
+				h4 Demo
+				p Click a tab to open the set; click the active tab to close it. This demo is #[code closable] with #[code closeOnTab].
 
-			.demo
-				+exampletabset('opendemo')
-				+examplepanelset('opendemo')(data-closable data-close-on-tab class="is-closed")
+				.demo
+					+exampletabset('opendemo')
+					+examplepanelset('opendemo')(data-closable data-close-on-tab)
 
-		.indented
-			h3 Transitioning extra transitions (closable)
-			p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the height — for example a drop shadow or opacity. The value is appended to the #[code transition] shorthand directly.
+				+codeblock('CSS').
+					[data-panelset] {
+						--ps-open-speed:   0.25s;
+						--ps-open-timing:  ease-in-out;
+						--ps-close-speed:  0.25s;
+						--ps-close-timing: ease-in-out;
+					}
 
-			dl.no-bg
-				dt #[code --ps-open-transition-extra]
-				dd Extra #[code transition] shorthand values appended when opening. Unset by default.
+			+collapse('h3', "Transitioning extra transitions (closable)")
 
-				dt #[code --ps-close-transition-extra]
-				dd Same, applied when closing.
+				p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the height — for example a drop shadow or opacity. The value is appended to the #[code transition] shorthand directly. 
 
-			+codeblock('CSS').
-				#my-panelset {
-					box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+				dl.bg-surface-tint
+					dt #[code --ps-open-transition-extra]
+					dd Extra #[code transition] shorthand values appended when opening. Unset by default.
 
-					--ps-open-transition-extra:  box-shadow var(--ps-open-speed) var(--ps-open-timing);
-					--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing);
-				}
+					dt #[code --ps-close-transition-extra]
+					dd Same, applied when closing.
 
-				#my-panelset.is-open,
-				#my-panelset.is-opening {
-					box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-				}
+				h4 Demo
 
-			p A drop shadow fades in alongside the height as this set opens.
+				.demo
+					+exampletabset('borderdemo')
+					+examplepanelset('borderdemo')(data-closable data-close-on-tab)
 
-			.demo
-				+exampletabset('shadowdemo')
-				+examplepanelset('shadowdemo')(data-closable data-close-on-tab class="is-closed")
+				+codeblock('CSS').
+					#borderdemo {
+						--ps-open-transition-extra:  box-shadow var(--ps-open-speed) ease-in;
+						--ps-close-transition-extra: box-shadow var(--ps-close-speed) ease-out;
+						box-shadow: inset 0 0 0 6px yellow, 0 0 0 rgba(0,0,0,0.2);
+					}
+					#borderdemo.is-open,
+					#borderdemo.is-opening {
+						box-shadow: inset 0 0 0 6px green, 0 0 1rem rgba(0,0,0,0.2);
+					}
 
-	+section("2. Wrapper", "Wrapper")
+	+section("2. Wrapper (for closable PanelSets)", "Wrapper")
+
 		p The wrapper is the #[code .panel-wrapper] that holds your content. It fades in as the container opens (and out as it closes). This applies to a Panel and to a closable PanelSet.
 
+		.column.gap-1(data-panel-persist)
 
-		.indented
-			h3 Reveal transform
-			p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears — it animates from that transform to #[code none] on open and back on close, sharing the #[code --ps-open-*] / #[code --ps-close-*] timing. Default #[code none] is a pure fade.
+			+collapse('h3', "Transition the transform")
+		
+				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears — it animates from that transform to #[code none] on open and back on close, sharing the #[code --ps-open-*] / #[code --ps-close-*] timing. Default #[code none] is a pure fade.
 
-			+codeblock('CSS').
-				#my-panel {
-					--ps-wrapper-transform-from: translateY(-0.5rem);  /* content drops in */
-				}
+				p Open and close transforms on the wrapper can also have independent delays, both #[code 0s] by default. Set #[code --ps-wrapper-open-delay] to hold the content back until the box has grown a little (a common refinement), and #[code --ps-wrapper-close-delay] if you want the content to linger before collapsing.
 
-			dl.no-bg
-				dt #[code --ps-wrapper-transform-from]
-				dd Transform the wrapper reveals from, settling at #[code none]; reverses on close. Any transform. Default: #[code none].
+				dl.bg-surface-tint
+					dt #[code --ps-wrapper-transform-from]
+					dd Transform the wrapper reveals from, settling at #[code none]; reverses on close. Any transform. Default: #[code none].
 
-			p Open this closable set to watch the content drop in (#[code translateY]) as the box expands.
+					dt #[code --ps-wrapper-open-delay]
+					dd Delay before the wrapper reveals when opening. Default: #[code 0s]. (Legacy alias: #[code --ps-wrapper-delay].)
 
-			.demo
-				+exampletabset('wrapperdemo')
-				+examplepanelset('wrapperdemo')(data-closable data-close-on-tab class="is-closed")
-		.indented
-			h3 Reveal delay
-			p Use #[code --ps-wrapper-delay] to control when the content fades in relative to the container opening. The default waits half the open duration, so content appears after the height has made progress. Set it to #[code 0s] for an immediate reveal.
+					dt #[code --ps-wrapper-close-delay]
+					dd Delay before the wrapper starts leaving when closing. Default: #[code 0s].
 
-			dl.no-bg
-				dt #[code --ps-wrapper-delay]
-				dd Delay before the wrapper fades in when opening. Default: #[code calc(0.5 * var(--ps-open-speed))]. Set to #[code 0s] for an immediate fade-in.
+				h4 Demo
+				.demo
+					+exampletabset('wrapperdemo')
+					+examplepanelset('wrapperdemo')(data-closable data-close-on-tab)
 
-	+section("3. Panels", "Panels")
+
+				+codeblock('CSS').
+					#wrapperdemo {
+						--ps-wrapper-transform-from: translateY(-1rem);
+						--ps-wrapper-open-delay: 0.1s;
+					}
+
+
+	+section("3. Inner panels")
+
 		p The panels are the #[code [role="tabpanel"]] elements. Switching fades the outgoing panel out and the incoming one in. Add a transform for slide / scale / flip, and enable #[code levels] for direction-aware motion.
 
+		.column.gap-1(data-panel-group data-panel-close-siblings data-panel-persist)
+			+collapse('h3', "Speed &amp; timing")
+				p The incoming and outgoing panels each have their own speed and easing, plus a delay on the incoming side.
 
-		.indented
-			h3 Speed &amp; timing
-			p The incoming and outgoing panels each have their own speed and easing, plus a delay on the incoming side.
+				dl.bg-surface-tint
+					dt #[code --ps-panel-out-speed]
+					dd Duration of the outgoing panel transition (opacity and transform). Default: #[code 0.25s].
 
-			+codeblock('CSS').
-				[data-panelset] {
-					--ps-panel-out-speed:  0.25s;
-					--ps-panel-out-timing: ease-in;
-					--ps-panel-in-speed:   0.25s;
-					--ps-panel-in-timing:  ease-in-out;
-					--ps-panel-in-delay:   0.25s;
-				}
+					dt #[code --ps-panel-out-timing]
+					dd Easing for the outgoing transition. Default: #[code ease-in].
 
-			dl.no-bg
-				dt #[code --ps-panel-out-speed]
-				dd Duration of the outgoing panel transition (opacity and transform). Default: #[code 0.25s].
+					dt #[code --ps-panel-in-speed]
+					dd Duration of the incoming panel transition (opacity and transform). Default: #[code 0.25s].
 
-				dt #[code --ps-panel-out-timing]
-				dd Easing for the outgoing transition. Default: #[code ease-in].
+					dt #[code --ps-panel-in-timing]
+					dd Easing for the incoming transition. Default: #[code ease-in-out].
 
-				dt #[code --ps-panel-in-speed]
-				dd Duration of the incoming panel transition (opacity and transform). Default: #[code 0.25s].
+					dt #[code --ps-panel-in-delay]
+					dd Delay before the incoming panel starts. Default: #[code 0.25s].
 
-				dt #[code --ps-panel-in-timing]
-				dd Easing for the incoming transition. Default: #[code ease-in-out].
+				.demo
+					+exampletabset('demo')
+					+examplepanelset('demo')
 
-				dt #[code --ps-panel-in-delay]
-				dd Delay before the incoming panel starts. Default: #[code 0.25s].
+				+codeblock('CSS').
+					[data-panelset] {
+						--ps-panel-out-speed:  0.25s;
+						--ps-panel-out-timing: ease-in;
+						--ps-panel-in-speed:   0.25s;
+						--ps-panel-in-timing:  ease-in-out;
+						--ps-panel-in-delay:   0.25s;
+					}
 
-
-			.demo
-				+exampletabset('demo')
-				+examplepanelset('demo')
-
-			h4 Slower, sequential
-			p Both speeds set to 1 second. Because #[code --ps-panel-in-delay] is also 1 second, the panels transition sequentially — the outgoing one fully fades out before the incoming one fades in. Total time: 2 seconds.
+				h4 Slower, sequential
+				p Both speeds set to 1 second. Because #[code --ps-panel-in-delay] is also 1 second, the panels transition sequentially — the outgoing one fully fades out before the incoming one fades in. Total time: 2 seconds.
 
 
-			.demo
-				+exampletabset('slowdemo')
-				+examplepanelset('slowdemo')
+				.demo
+					+exampletabset('slowdemo')
+					+examplepanelset('slowdemo')
 
-			+codeblock('CSS').
-				#slowdemo {
-					--ps-panel-out-speed: 1s;
-					--ps-panel-in-speed:  1s;
-					--ps-panel-in-delay:  1s;
-				}
+				+codeblock('CSS').
+					#slowdemo {
+						--ps-panel-out-speed: 1s;
+						--ps-panel-in-speed:  1s;
+						--ps-panel-in-delay:  1s;
+					}
 
-			h4 Crossfading
-			p Setting #[code --ps-panel-in-delay: 0s] makes both panels transition simultaneously. Total time matches whichever side is longer.
-
-
-			.demo
-				+exampletabset('crossfade')
-				+examplepanelset('crossfade')
-
-			+codeblock('CSS').
-				#crossfade {
-					--ps-panel-out-speed: 2s;
-					--ps-panel-in-speed:  2s;
-					--ps-panel-in-delay:  0s;
-				}
-
-		.indented
-
-			h3 Transforms (slide, scale, flip)
-			p By default panels only fade. Give them movement by setting a transform: the incoming panel animates #[strong from] #[code --ps-panel-in-transform-from] to its resting #[code none], and the outgoing panel animates #[strong to] #[code --ps-panel-out-transform-to] from #[code none]. The values are full CSS transforms, so 2D or 3D both work, and the speed/timing variables above still control the timing.
-
-			dl.no-bg
-				dt #[code --ps-panel-in-transform-from]
-				dd Transform the incoming panel animates #[em from] (it settles at #[code none]). Any transform — #[code translateX(100%)], #[code scale(0.9)], #[code rotateY(90deg)]. Default: #[code none].
-
-				dt #[code --ps-panel-out-transform-to]
-				dd Transform the outgoing panel animates #[em to] (starting from #[code none]). Default: #[code none].
-
-			p The cleanest way to package an effect is a class of your own — collect the variables under it and add the class to the panelset.
+				h4 Crossfading
+				p Setting #[code --ps-panel-in-delay: 0s] makes both panels transition simultaneously. Total time matches whichever side is longer.
 
 
-			.demo
-				+exampletabset('slidedemo')
-				+examplepanelset('slidedemo')(class="slide")
+				.demo
+					+exampletabset('crossfade')
+					+examplepanelset('crossfade')
 
-			+codeblock('CSS').
-				.slide {
-					--ps-panel-in-transform-from: translateX(100%);   /* enter from the right */
-					--ps-panel-out-transform-to:  translateX(-100%);   /* exit to the left    */
-				}
+				+codeblock('CSS').
+					#crossfade {
+						--ps-panel-out-speed: 2s;
+						--ps-panel-in-speed:  2s;
+						--ps-panel-in-delay:  0s;
+					}
 
-			p A few more, same two knobs:
+			+collapse('h3', "Transforms (slide, scale, flip)")
 
-			+codeblock('CSS').
-				/* Scale + fade */
-				.zoom {
-					--ps-panel-in-transform-from: scale(0.92);
-					--ps-panel-out-transform-to:  scale(1.08);
-				}
+				p By default panels only fade. Give them movement by setting a transform: the incoming panel animates #[strong from] #[code --ps-panel-in-transform-from] to its resting #[code none], and the outgoing panel animates #[strong to] #[code --ps-panel-out-transform-to] from #[code none]. The values are full CSS transforms, so 2D or 3D both work, and the speed/timing variables above still control the timing.
 
-				/* 3D card flip */
-				.flip {
-					--ps-panel-in-transform-from: perspective(800px) rotateY(90deg);
-					--ps-panel-out-transform-to:  perspective(800px) rotateY(-90deg);
-				}
+				dl.bg-surface-tint
+					dt #[code --ps-panel-in-transform-from]
+					dd Transform the incoming panel animates #[em from] (it settles at #[code none]). Any transform — #[code translateX(100%)], #[code scale(0.9)], #[code rotateY(90deg)]. Default: #[code none].
 
+					dt #[code --ps-panel-out-transform-to]
+					dd Transform the outgoing panel animates #[em to] (starting from #[code none]). Default: #[code none].
 
-		.indented
-			h3 Level-based direction
-			p With #[code levels] enabled, the slide direction follows the panels' order: moving to a later panel slides one way, moving back slides the other. The order is taken straight from the DOM (a later panel is "higher"), so you don't set anything per panel — just turn the feature on.
-
-			p Enable it with #[code data-ps-levels] on the container or #[code levels: true] in the config. JS then adds #[code .levelup] or #[code .leveldown] to the panels as they switch. Backward navigation (#[code .leveldown]) automatically #[strong swaps] #[code --ps-panel-in-transform-from] and #[code --ps-panel-out-transform-to] so the motion reverses — no extra variables, and it works for any transform.
+				p The cleanest way to package an effect is a class of your own — collect the variables under it and add the class to the panelset.
 
 
-			.demo
-				+exampletabset('leveldemo')
-				+examplepanelset('leveldemo')(class="slide" data-ps-levels)
+				.demo
+					+exampletabset('slidedemo')
+					+examplepanelset('slidedemo')(class="slide")
 
-			+codeblock('HTML').
-				<div data-panelset data-ps-levels class="slide"> … </div>
+				+codeblock('CSS').
+					.slide {
+						--ps-panel-in-transform-from: translateX(100%);   /* enter from the right */
+						--ps-panel-out-transform-to:  translateX(-100%);   /* exit to the left    */
+					}
 
-			+codeblock('JavaScript').
-				new PanelSet('#my-tabs', { levels: true });
+				p A few more, same two knobs:
 
-			p Need a different look per direction? Target the classes yourself — they override the automatic swap.
+				+codeblock('CSS').
+					/* Scale + fade */
+					.zoom {
+						--ps-panel-in-transform-from: scale(0.92);
+						--ps-panel-out-transform-to:  scale(1.08);
+					}
 
-			+codeblock('CSS').
-				/* Custom: incoming always scales up, regardless of direction */
-				.leveldown .incoming { transform: scale(0.9); }
+					/* 3D card flip */
+					.flip {
+						--ps-panel-in-transform-from: perspective(800px) rotateY(90deg);
+						--ps-panel-out-transform-to:  perspective(800px) rotateY(-90deg);
+					}
+
+			+collapse('h3', "Level-based direction")
+				p With #[code levels] enabled, the slide direction follows the panels' order: moving to a later panel slides one way, moving back slides the other. The order is taken straight from the DOM (a later panel is "higher"), so you don't set anything per panel — just turn the feature on.
+
+				p Enable it with #[code data-ps-levels] on the container or #[code levels: true] in the config. JS then adds #[code .levelup] or #[code .leveldown] to the panels as they switch. Backward navigation (#[code .leveldown]) automatically #[strong swaps] #[code --ps-panel-in-transform-from] and #[code --ps-panel-out-transform-to] so the motion reverses — no extra variables, and it works for any transform.
+
+
+				.demo
+					+exampletabset('leveldemo')
+					+examplepanelset('leveldemo')(class="slide" data-ps-levels)
+
+				+codeblock('HTML').
+					<div data-panelset data-ps-levels class="slide"> … </div>
+
+				+codeblock('JavaScript').
+					new PanelSet('#my-tabs', { levels: true });
+
+				p Need a different look per direction? Target the classes yourself — they override the automatic swap.
+
+				+codeblock('CSS').
+					/* Custom: incoming always scales up, regardless of direction */
+					.leveldown .incoming { transform: scale(0.9); }
+
+
 
 	+section("Disabling transitions", "Disabling")
 		p Pass #[code transitions: false] to skip all animation, or use an object to disable height and panel transitions independently.
@@ -310,21 +317,25 @@ append styles
 		}
 
 		/* Container + wrapper closable demos */
-		#shadowdemo {
+		#borderdemo {
+			--ps-open-transition-extra:  box-shadow var(--ps-open-speed) ease-in;
+			--ps-close-transition-extra: box-shadow var(--ps-close-speed) ease-out;
+
+			background: var(--demo-btn-bg);
 			border-radius: 0.5rem;
-			box-shadow: inset 0 0 0 3px red;
-			--ps-open-transition-extra:  box-shadow var(--ps-open-speed) var(--ps-open-timing);
-			--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing);
+			box-shadow: inset 0 0 0 6px yellow, 0 0 0 rgba(0,0,0,0.2);
+
 		}
-		#shadowdemo [role="tabpanel"] {
+		#borderdemo [role="tabpanel"] {
 			padding: 1rem;
 		}
-		#shadowdemo.is-open,
-		#shadowdemo.is-opening {
-			box-shadow: inset 0 0 0 3px var(--text-default);
+		#borderdemo.is-open,
+		#borderdemo.is-opening {
+			box-shadow: inset 0 0 0 6px green, 0 0 1rem rgba(0,0,0,0.2);
 		}
-		#wrapperdemo, .docs-sidebar {
+		#wrapperdemo {
 			--ps-wrapper-transform-from: translateY(-1rem);
+			--ps-wrapper-open-delay: 0.1s;
 		}
 
 append scripts
@@ -333,8 +344,10 @@ append scripts
 		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			PanelSet.init();
+			Panel.init();
 	else
 		script(type="module" src="/src/assets/scripts/example.js")
 		script(type="module").
-			import { PanelSet } from 'panelset';
+			import { PanelSet, Panel } from 'panelset';
 			PanelSet.init({ debug: true });
+			Panel.init({ debug: true });

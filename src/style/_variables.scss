@@ -1,8 +1,8 @@
 :root {
     /* Panel & PanelSet */
-    --ps-open-speed:     0.25s;
+    --ps-open-speed:     0.32s;
     --ps-open-timing:    ease-in-out;
-    --ps-close-speed:    0.25s;
+    --ps-close-speed:    0.32s;
     --ps-close-timing:   ease-in-out;
 
     /* Extra transitions for Panel & PanelSet containers (e.g. box-shadow, border-color).
@@ -27,9 +27,9 @@
     --ps-wrapper-transform-from: none;
 
     /* PanelSet */
-    --ps-panel-out-speed:          2.25s;
-    --ps-panel-in-speed:           2.25s;
-    --ps-panel-in-delay:           2.25s;
+    --ps-panel-out-speed:          0.16s;
+    --ps-panel-in-speed:           0.16s;
+    --ps-panel-in-delay:           0.16s;
     --ps-height-duration-ratio:  1;
     --ps-transition-timing:      ease-in-out;
     --ps-panel-out-timing:         ease-in;

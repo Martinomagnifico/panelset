@@ -37,11 +37,11 @@ block content
 
 
 			div
-				h3 Example
+				h3 Panel example
 				.demo
-					button(aria-controls="intro-panel" aria-expanded="false") Toggle panel
+					button(aria-controls="intro-panel") Toggle panel
 
-					div#intro-panel(data-panel data-panel-axis="vertical")
+					#intro-panel.is-open(data-panel data-panel-axis="vertical")
 						.panel-wrapper
 							h3= example1Title
 							+example-1-content
@@ -53,7 +53,7 @@ block content
 
 
 			div
-				h3 Example
+				h3 PanelSet example
 				.demo
 					+exampletabset('intro-ps')
 					+examplepanelset('intro-ps')

@@ -14,9 +14,9 @@ block content
 		p Both components determine the initial state on every page load from three sources, checked in order:
 		.card
 			ol
-				li #[strong URL param] (#[code ?panel=]): always wins if present. See below.
-				li #[strong localStorage]: used when no URL param is present. See #[a(href="/sharedconcepts/persisting.html") Persisting state].
-				li #[strong HTML default] (PanelSet only): first panel, or whichever has #[code class="active"]
+				li #[strong URL param] (#[code ?panel=]): Reading of the URL parameter will always be done, no config needed. See below.
+				li #[strong localStorage]: used when #[code persist] is enabled and no URL param applied. See #[a(href="/sharedconcepts/persisting.html") Persisting state].
+				li #[strong HTML default]: the markup state like #[code class="active"] panel (PanelSet) or #[code class="is-open"] (Panel / closable PanelSet).
 
 		p On this page we delve a bit deeper into #[strong deep linking]. 
 

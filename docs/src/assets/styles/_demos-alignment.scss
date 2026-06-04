@@ -28,28 +28,27 @@
 		--ps-panel-width: 200px;
 
 		background: var(--demo-surface);
-		border-bottom: 1px solid var(--border-default);
 
-		&.is-closed {
-			border-bottom: none;
+		&.is-open, &.is-opening, &.is-closing{
+			border-bottom: 1px solid var(--border-default);
 		}
 
 		&[data-panel-axis="horizontal"] {
 			border-bottom: none;
-			border-right: 1px solid var(--border-default);
 			flex-shrink: 0;
 
-			&.is-closed {
-				border-right: none;
+			&.is-open, &.is-opening, &.is-closing{
+				border-right: 1px solid var(--border-default);
 			}
 		}
 	}
 
 	[data-panel-body] + [data-panel-axis="horizontal"] {
-		border-right: none;
-		border-left: 1px solid var(--border-default);
-		&.is-closed {
-			border-left: none;
+		
+
+		&.is-open, &.is-opening, &.is-closing {
+			border-right: none;
+			border-left: 1px solid var(--border-default);
 		}
 	}
 }

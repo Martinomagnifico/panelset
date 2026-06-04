@@ -1,5 +1,5 @@
 :root {
-	--main-hue: 250.0;
+	--main-hue: 100.0;
 	--special-hue: calc(var(--main-hue) + 75);
 	--special-hue: mod(calc(var(--main-hue) + 75), 360);
 }
@@ -7,7 +7,7 @@
 :root {
 	--color-tint-0:   oklch(0.99 0.008 var(--main-hue));
 	--color-tint-25:  oklch(0.98 0.010 var(--main-hue));
-	--color-tint-50:  oklch(0.97 0.015 var(--main-hue));
+	--color-tint-50:  oklch(0.97 0.012 var(--main-hue));
 	--color-tint-100: oklch(0.94 0.018 var(--main-hue));
 	--color-tint-150: oklch(0.90 0.030 var(--main-hue));
 	--color-tint-200: oklch(0.82 0.060 var(--main-hue));
@@ -21,16 +21,16 @@
 	--color-tint-925: oklch(0.17 0.026 var(--main-hue));
 	--color-tint-950: oklch(0.15 0.022 var(--main-hue));
 
-	--color-special-tint-0:   oklch(0.99 0.015 var(--special-hue));
+	--color-special-tint-0:   oklch(0.995 0.012 var(--special-hue));
 	--color-special-tint-25:  oklch(0.98 0.018 var(--special-hue));
 	--color-special-tint-50:  oklch(0.97 0.020 var(--special-hue));
 	--color-special-tint-100: oklch(0.95 0.050 var(--special-hue));
 	--color-special-tint-150: oklch(0.90 0.072 var(--special-hue));
 	--color-special-tint-200: oklch(0.82 0.090 var(--special-hue));
-	--color-special-tint-300: oklch(0.72 0.120 var(--special-hue));
-	--color-special-tint-400: oklch(0.64 0.140 var(--special-hue));
-	--color-special-tint-500: oklch(0.58 0.140 var(--special-hue));
-	--color-special-tint-600: oklch(0.48 0.120 var(--special-hue));
+	--color-special-tint-300: oklch(0.72 0.090 var(--special-hue));
+	--color-special-tint-400: oklch(0.64 0.090 var(--special-hue));
+	--color-special-tint-500: oklch(0.58 0.100 var(--special-hue));
+	--color-special-tint-600: oklch(0.48 0.100 var(--special-hue));
 	--color-special-tint-700: oklch(0.39 0.100 var(--special-hue));
 	--color-special-tint-800: oklch(0.25 0.090 var(--special-hue));
 	--color-special-tint-900: oklch(0.20 0.068 var(--special-hue));
