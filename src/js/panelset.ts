@@ -171,8 +171,12 @@ export class PanelSet {
 		// Store instance on element
 		element.panelSet = this;
 
+		// Precedence: defaults < init() options < per-element data-attributes.
+		// The attribute is the most specific signal, so it wins — this lets an
+		// element opt out of a global flag, e.g. data-panel-persist="false"
+		// overriding PanelSet.init({ persist: true }).
 		const dataConfig = parseDataAttrs<PanelSetConfig>(element.dataset, PanelSet.attrs);
-		this.config = { ...PanelSet.defaults, ...dataConfig, ...options } as Required<Omit<PanelSetConfig, 'selector'>>;
+		this.config = { ...PanelSet.defaults, ...options, ...dataConfig } as Required<Omit<PanelSetConfig, 'selector'>>;
 
 		// Only this set's own panels. querySelectorAll is unscoped, so a nested
 		// PanelSet (or a PanelSet nested in a Panel) would otherwise have its panels

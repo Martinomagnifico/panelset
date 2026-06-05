@@ -17,13 +17,13 @@ block content
 			h3 IIFE (no build step)
 			p Include the bundled script. #[code register()] is called automatically with the default #[code ps] prefix. No extra setup needed.
 
-		+codeblock('HTML').
-			<script src="panelset.js"></script>
+		+codeblock('HTML')
+			script(src="panelset.js")
+			+n
+			// <ps-panel> is ready immediately after the script loads
+			ps-panel(id="my-panel" panel-axis="vertical")
+				.panel-wrapper ...
 
-			<!-- <ps-panel> is ready immediately after the script loads -->
-			<ps-panel id="my-panel" panel-axis="vertical">
-				<div class="panel-wrapper">...</div>
-			</ps-panel>
 
 		.title-text
 			h3 Module: import and done
@@ -53,14 +53,12 @@ block content
 						.panel-wrapper
 							p Additional content that was hidden. The panel animates to its natural height, exactly as with #[code data-panel].
 
-		+codeblock('HTML').
-			<button aria-controls="my-panel" aria-expanded="false">Show more</button>
-
-			<ps-panel id="my-panel" panel-axis="vertical">
-				<div class="panel-wrapper">
-					<p>Hidden content.</p>
-				</div>
-			</ps-panel>
+		+codeblock('HTML')
+			button(aria-controls="my-panel" aria-expanded="false") Show more
+			+n
+			ps-panel(id="my-panel" panel-axis="vertical")
+				.panel-wrapper
+					p Hidden content.
 
 		p Panel auto-wires the trigger via #[code aria-controls], so no click handler is needed.
 

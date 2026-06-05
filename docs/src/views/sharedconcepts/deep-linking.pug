@@ -34,6 +34,7 @@ block content
 			<!-- Open or activate multiple panels at once -->
 			<a href="?panel=pricing,sidebar">Pricing tab open, sidebar open</a>
 
+
 		p Because HTML IDs are (or at least should be) unique per HTML page, a panel ID always points to exactly one element, whether it is a standalone #[code [data-panel]] collapse or a #[code [role="tabpanel"]] inside a PanelSet.
 
 
@@ -63,8 +64,8 @@ block content
 							// or via init
 							Panel.init({ deepLink: true });
 
-						+codeblock('HTML').
-							<div id="sidebar" data-panel data-panel-deeplink>...</div>
+						+codeblock('HTML')
+							#sidebar(data-panel data-panel-deeplink) ...
 
 
 
@@ -82,8 +83,8 @@ block content
 							// or via init
 							PanelSet.init({ deepLink: true });
 
-						+codeblock('HTML').
-							<div id="example" data-panelset data-panel-deeplink>...</div>
+						+codeblock('HTML')
+							#example(data-panelset data-panel-deeplink) ...
 
 
 			p Play around with the two examples above, and reload the page. Both come back in the same state you left them. You can also send the link to a friend and the same panels will be opened.

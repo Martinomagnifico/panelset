@@ -16,19 +16,10 @@ aside.docs-sidebar
 			
 			
 			.nav-section
-				button.nav-section-toggle(
-					class=isActive ? 'active' : ''
-					aria-controls=sectionId
-					aria-expanded=String(isActive)
-				)
+				button.nav-section-toggle(class=isActive ? 'active' : '', aria-controls=sectionId, aria-expanded=String(isActive) )
 					span= section.title
 					+chevron(18, 'down')
-				div(
-					id=sectionId
-					data-panel
-					data-panel-axis="vertical"
-					class=isActive ? 'is-open' : ''
-				)
+				div(id=sectionId, data-panel, class=isActive ? 'is-open' : '')
 					.panel-wrapper
 						.section-links
 							ul

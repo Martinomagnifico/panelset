@@ -26,15 +26,17 @@ block content
 
 				+codeblock('HTML')
 					button(data-panel-trigger) Show more
+					+n
 					div(data-panel)
 						.panel-wrapper
 							p Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
 
-				p This is the generated HTML: 
+				p This is the generated HTML:
 
 				+codeblock('HTML')
 					button(aria-controls="panel-1", aria-expanded="false") Show more
+					+n
 					#panel-1(data-panel, inert)
 						.panel-wrapper
 							p Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.

@@ -40,15 +40,12 @@ block content
 
 			p Because Panel auto-detects any panel that directly follows the trigger, you can keep the markup very simple.
 
-			+codeblock('HTML').
-				<ul data-panel-group>
-					<li>
-						<button data-panel-trigger>Toggle</button>
-						<div data-panel>
-							<div class="panel-wrapper">Content</div>
-						</div>
-					</li>
-				</ul>
+			+codeblock('HTML')
+				ul(data-panel-group)
+					li
+						button(data-panel-trigger) Toggle
+						div(data-panel)
+							.panel-wrapper Content
 
 
 	+section("One open at a time")
@@ -89,10 +86,9 @@ block content
 		.card-row
 			.card
 				h4 HTML (group-level)
-				+codeblock('HTML').
-					<ul data-panel-group data-panel-close-siblings>
-						...
-					</ul>
+				+codeblock('HTML')
+					ul(data-panel-group data-panel-close-siblings)
+						| ...
 			.card
 				h4 JavaScript (init-level)
 				+codeblock('JS').

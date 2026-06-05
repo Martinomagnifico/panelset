@@ -137,17 +137,18 @@ block content
 						h3= example1Title
 						+example-1-content
 
+			+codeblock('HTML')
+				// Trigger: any element with aria-controls pointing to the panel id
+				button(aria-controls="markup-example") Toggle
+				+n
+				// Panel element
+				#markup-example(data-panel)
+					.panel-wrapper
+						p Panel content goes here.
 
-			+codeblock('HTML').
-				<!-- Trigger: any element with aria-controls pointing to the panel id -->
-				<button aria-controls="markup-example">Toggle</button>
 
-				<!-- Panel element -->
-				<div id="markup-example" data-panel>
-					<div class="panel-wrapper">
-						<p>Panel content goes here.</p>
-					</div>
-				</div>
+
+
 
 		p #[code aria-expanded] is managed automatically. Panel sets it to #[code true] or #[code false] on every open and close.
 
@@ -161,16 +162,13 @@ block content
 						h3= example1Title
 						+example-1-content
 
+			+codeblock('HTML')
+				button(aria-controls="starting-example") Toggle
+				+n
+				#starting-example.is-open(data-panel)
+					.panel-wrapper
+						p Visible on load.
 
-			+codeblock('HTML').
-				<button aria-controls="starting-example">Toggle</button>
-
-				<!-- Starts open: aria-expanded is corrected to true automatically -->
-				<div id="starting-example" data-panel class="is-open">
-					<div class="panel-wrapper">
-						<p>Visible on load.</p>
-					</div>
-				</div>
 
 		p If you use #[code persist] or #[code deepLink], a stored open/closed state takes precedence over the markup on return visits.
 
@@ -197,23 +195,22 @@ block content
 	+section("Triggers and close buttons", "Triggers")
 		p Any element with #[code aria-controls="&lt;panel id here&gt;"] auto-binds a click handler on init. No extra JS needed. Add #[code data-panel-close] inside the panel for a close button.
 
-		+codeblock('HTML').
-			<button aria-controls="my-panel" aria-expanded="false">Open</button>
-
-			<div id="my-panel" data-panel data-panel-axis="horizontal">
-				<div class="panel-wrapper" role="dialog" aria-label="Options">
-					<button data-panel-close>Close</button>
-					<p>Sidebar content.</p>
-				</div>
-			</div>
+		+codeblock('HTML')
+			button(aria-controls="my-panel" aria-expanded="false") Open
+			+n
+			#my-panel(data-panel)
+				.panel-wrapper(role="dialog" aria-label="Options")
+					button(data-panel-close) Close
+					p Sidebar content.
 
 		p When a trigger and panel are adjacent siblings, you can skip the #[code id] / #[code aria-controls] pair entirely. Use #[code data-panel-trigger] on the button and Panel will generate and wire the ID automatically.
 
-		+codeblock('HTML').
-			<button data-panel-trigger>Toggle</button>
-			<div data-panel>
-				<div class="panel-wrapper">Content</div>
-			</div>
+		+codeblock('HTML')
+			button(data-panel-trigger) Toggle
+			+n
+			div(data-panel)
+				.panel-wrapper Content
+
 
 	+section("Public API", "API")
 		+codeblock('JS').

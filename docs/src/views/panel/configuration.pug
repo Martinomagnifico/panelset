@@ -29,12 +29,25 @@ block content
 			h3 Data attributes
 			p Configure individual panels directly in HTML.
 
-		+codeblock('HTML').
-			<div id="my-panel" data-panel data-panel-axis="horizontal" data-panel-close-on-resize data-panel-transitions="false">
-				<div class="panel-wrapper">...</div>
-			</div>
+		+codeblock('HTML')
+			#my-panel(data-panel data-panel-axis="horizontal" data-panel-close-on-resize data-panel-transitions="false")
+				.panel-wrapper ...
 
-		p JavaScript options and data attributes are both covered above. When both are set on the same element, data attributes take priority over JS options.
+
+		p JavaScript options and data attributes are both covered above. When both are set, precedence runs from least to most specific: #[strong defaults &gt; JS options &gt; group attribute &gt; element attribute]. The most specific wins, so a per-element data attribute always overrides a global #[code init()] option.
+
+		p This is what lets an element opt out of a global flag. For example, with #[code Panel.init({ persist: true })] applied to every panel, a single panel can still disable it:
+
+		+codeblock('HTML')
+			// Persists (inherits the global init option)
+			#saved(data-panel)
+				.panel-wrapper ...
+			+n
+			// Opts out, even though init() set persist: true
+			#not-saved(data-panel data-panel-persist="false")
+				.panel-wrapper ...
+
+		p For #[code persist] and #[code deepLink], a #[code data-panel-group] can also set the option for all panels inside it — and an individual panel's own attribute still overrides the group.
 
 		p Web component configuration uses plain attributes directly on #[code &lt;ps-panel&gt;]. No #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panel/examples/webcomponent.html") Web Component integration page] for full usage examples.
 
@@ -304,46 +317,45 @@ block content
 	+section("Grouping panels", "Grouping panels")
 		p Panel uses #[code data-panel-group] as a neutral scope marker. It does not enable any behaviour on its own, but it is the element where group-level options live: #[code data-panel-close-siblings], #[code data-panel-persist], and #[code data-panel-deeplink]. It also makes the group easy to target in CSS.
 
+		+codeblock('HTML')
+			div(data-panel-group)
+				h4
+					button(aria-controls="acc-1" aria-expanded="false") Question 1
+				#acc-1(data-panel)
+					.panel-wrapper Answer 1
+				h4
+					button(aria-controls="acc-2" aria-expanded="false") Question 2
+				+n
+				#acc-2(data-panel)
+					.panel-wrapper Answer 2
 
-
-		+codeblock('HTML').
-			<div data-panel-group>
-				<h4><button aria-controls="acc-1" aria-expanded="false">Question 1</button></h4>
-				<div id="acc-1" data-panel>
-					<div class="panel-wrapper">Answer 1</div>
-				</div>
-
-				<h4><button aria-controls="acc-2" aria-expanded="false">Question 2</button></h4>
-				<div id="acc-2" data-panel>
-					<div class="panel-wrapper">Answer 2</div>
-				</div>
-			</div>
 
 		p Add #[code data-panel-close-siblings] to make opening one panel close the others — that is what turns a group into an accordion.
 
-		+codeblock('HTML').
-			<div data-panel-group data-panel-close-siblings>
-				<h4><button aria-controls="acc-1" aria-expanded="false">Question 1</button></h4>
-				<div id="acc-1" data-panel>
-					<div class="panel-wrapper">Answer 1</div>
-				</div>
+		+codeblock('HTML')
+			div(data-panel-group data-panel-close-siblings)
+				h4
+					button(aria-controls="acc-1" aria-expanded="false") Question 1
+				#acc-1(data-panel)
+					.panel-wrapper Answer 1
+				h4
+					button(aria-controls="acc-2" aria-expanded="false") Question 2
+				+n
+				#acc-2(data-panel)
+					.panel-wrapper Answer 2
 
-				<h4><button aria-controls="acc-2" aria-expanded="false">Question 2</button></h4>
-				<div id="acc-2" data-panel>
-					<div class="panel-wrapper">Answer 2</div>
-				</div>
-			</div>
+
 
 		p Without #[code data-panel-close-siblings], panels in a group are independent. Any number can be open at the same time. The wrapper can be any element. Multiple independent groups on the same page are supported.
 
 	+section("Implicit trigger wiring", "Implicit wiring")
 		p When a trigger and its panel sit next to each other in the markup, you can omit the #[code id] / #[code aria-controls] pair entirely. To achieve this, add #[code data-panel-trigger] to the button. Panel will find the next #[code [data-panel]] sibling, assign it a stable generated ID, and wire up #[code aria-controls] and #[code aria-expanded] automatically.
 
-		+codeblock('HTML').
-			<button data-panel-trigger>Toggle</button>
-			<div data-panel>
-				<div class="panel-wrapper">Content</div>
-			</div>
+		+codeblock('HTML')
+			button(data-panel-trigger) Toggle
+			+n
+			div(data-panel)
+				.panel-wrapper Content
 
 		p This is especially useful for repeated collapse patterns (accordions, catalogues) where inventing a unique ID for every item is pure boilerplate. The generated IDs (#[code panel-1], #[code panel-2], …) are stable within a page load and increment in DOM order.
 

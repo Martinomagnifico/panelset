@@ -18,16 +18,19 @@ block content
 			h3 IIFE (no build step)
 			p Include the bundled script. #[code register()] is called automatically with the default #[code ps] prefix. No extra setup needed.
 
-		+codeblock('HTML').
-			<script src="panelset.js"></script>
+		+codeblock('HTML')
+			script(src="panelset.js")
+			+n
+			// <ps-panelset> is ready immediately after the script loads
+			ps-panelset(id="my-tabs")
+				.panel-wrapper
+					#tab-1(role="tabpanel" class="active") ...
+					#tab-2(role="tabpanel" hidden) ...
 
-			<!-- <ps-panelset> is ready immediately after the script loads -->
-			<ps-panelset id="my-tabs">
-				<div class="panel-wrapper">
-					<div role="tabpanel" id="tab-1" class="active">...</div>
-					<div role="tabpanel" id="tab-2" hidden>...</div>
-				</div>
-			</ps-panelset>
+
+
+
+
 
 		.title-text
 			h3 Module: import and done
@@ -57,7 +60,7 @@ block content
 
 			+codeblock('HTML')
 				+exampletabset('wc-ps', true)
-
+				+n
 				ps-panelset
 					.panel-wrapper
 						.active(role="tabpanel" id="wc-ps-panel-1" aria-label="Features") ...

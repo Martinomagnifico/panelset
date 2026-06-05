@@ -144,8 +144,12 @@ export class Panel {
 			element.appendChild(wrapper);
 		}
 
+		// Precedence: defaults < init() options < per-element data-attributes.
+		// The attribute is the most specific signal, so it wins — this lets an
+		// element opt out of a global flag, e.g. data-panel-persist="false"
+		// overriding Panel.init({ persist: true }).
 		const dataConfig = parseDataAttrs<PanelConfig>(element.dataset, Panel.attrs);
-		this.config = { ...Panel.defaults, ...dataConfig, ...options };
+		this.config = { ...Panel.defaults, ...options, ...dataConfig };
 
 		if (this.config.axis === 'horizontal') element.dataset.panelAxis = 'horizontal';
 		if (this.config.align !== 'start') element.dataset.panelAlign = this.config.align;
@@ -193,26 +197,38 @@ export class Panel {
 		writePanelParam(next);
 	};
 
-	// Resolve persist/deepLink config, taking an enclosing [data-panel-group] into
-	// account. Walks up to the nearest group (stopping at any parent [data-panel]).
+	// Resolve persist/deepLink with precedence: element attribute > group attribute
+	// > init option / default. The element's own attribute is the most specific
+	// signal, so an explicit data-panel-persist="false" opts the element out even
+	// inside a persisting [data-panel-group]. An attribute is "set" only when
+	// present; presence with any value except "false" means true.
 	private _resolveStateConfig = (): { persist: boolean; deepLink: boolean } => {
-		let groupPersist = false;
-		let groupDeepLink = false;
-		let el = this.element.parentElement;
+		// undefined = attribute not present on this element.
+		const ownAttr = (name: string): boolean | undefined =>
+			this.element.hasAttribute(name)
+				? this.element.getAttribute(name) !== 'false'
+				: undefined;
 
+		const ownPersist = ownAttr('data-panel-persist');
+		const ownDeepLink = ownAttr('data-panel-deeplink');
+
+		// Nearest enclosing group (stop at any parent [data-panel]).
+		let groupPersist: boolean | undefined;
+		let groupDeepLink: boolean | undefined;
+		let el = this.element.parentElement;
 		while (el) {
 			if (el.hasAttribute('data-panel')) break;
 			if (el.hasAttribute('data-panel-group')) {
-				groupPersist = el.hasAttribute('data-panel-persist');
-				groupDeepLink = el.hasAttribute('data-panel-deeplink');
+				if (el.hasAttribute('data-panel-persist'))  groupPersist  = el.getAttribute('data-panel-persist')  !== 'false';
+				if (el.hasAttribute('data-panel-deeplink')) groupDeepLink = el.getAttribute('data-panel-deeplink') !== 'false';
 				break;
 			}
 			el = el.parentElement;
 		}
 
 		return {
-			persist: this.config.persist || groupPersist,
-			deepLink: this.config.deepLink || groupDeepLink,
+			persist:  ownPersist  ?? groupPersist  ?? this.config.persist,
+			deepLink: ownDeepLink ?? groupDeepLink ?? this.config.deepLink,
 		};
 	};
 

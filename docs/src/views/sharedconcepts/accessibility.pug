@@ -19,20 +19,20 @@ block content
 
 		.indented
 			h3 Trigger markup
-			+codeblock('HTML').
-				<!-- aria-expanded is set automatically by Panel -->
-				<button aria-controls="my-panel" aria-expanded="false">Toggle</button>
+
+			+codeblock('HTML')
+				// aria-expanded is set automatically by Panel
+				button(aria-controls="my-panel", aria-expanded="false") Toggle
 
 		.indented
 			h3 Panel markup
 			p Use #[code role="dialog"] for modal-like sidebars, #[code role="region"] for inline panels.
-			+codeblock('HTML').
-				<div id="my-panel" data-panel data-panel-axis="horizontal">
-					<div class="panel-wrapper" role="dialog" aria-label="Settings">
-						<button data-panel-close aria-label="Close Settings">✕</button>
-						<!-- content -->
-					</div>
-				</div>
+
+			+codeblock('HTML')
+				#my-panel(data-panel data-panel-axis="horizontal")
+					.panel-wrapper(role="dialog" aria-label="Settings")
+						button(data-panel-close aria-label="Close Settings") ✕
+						// content
 
 		.indented
 			h3 Focus management
@@ -78,20 +78,22 @@ block content
 		.card.api
 			h3 Panel elements
 			p Every panel must have #[code role="tabpanel"] and a unique #[code id].
-			+codeblock('HTML').
-				<div data-panelset>
-					<div role="tabpanel" id="panel-1" aria-labelledby="tab-1"><!-- Content --></div>
-					<div role="tabpanel" id="panel-2" aria-labelledby="tab-2"><!-- Content --></div>
-				</div>
+
+			+codeblock('HTML')
+				div(data-panelset)
+					div(role="tabpanel" id="panel-1" aria-labelledby="tab-1") <!-- Content -->
+					div(role="tabpanel" id="panel-2" aria-labelledby="tab-2") <!-- Content -->
+
 
 		.card.api
 			h3 Tab buttons
 			p For proper tab interfaces, wrap buttons in a #[code role="tablist"] with #[code role="tab"] and #[code aria-controls].
-			+codeblock('HTML').
-				<nav role="tablist" aria-label="Settings sections">
-					<button role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true">Overview</button>
-					<button role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false">Security</button>
-				</nav>
+
+			+codeblock('HTML')
+				nav(role="tablist" aria-label="Settings sections")
+					button(role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true") Overview
+					button(role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false") Security
+
 
 	+section("PanelSet - focus management", "Focus management")
 		p Switch panels with your #[strong keyboard] to see #[code autoFocus] in action. Tab to a button, press Enter, and watch where focus lands.
@@ -239,20 +241,23 @@ block content
 		.card.api
 			h3 aria-labelledby (recommended for tabs)
 			p Links the panel to its tab button. The button's text becomes the panel's accessible name, which is announced when the panel is shown.
-			+codeblock('HTML').
-				<button role="tab" id="tab-overview" aria-controls="panel-overview">Overview</button>
 
-				<div role="tabpanel" id="panel-overview" aria-labelledby="tab-overview">
-					<!-- Content -->
-				</div>
+			+codeblock('HTML')
+				button(role="tab" id="tab-overview" aria-controls="panel-overview") Overview
+				+n
+				div(role="tabpanel" id="panel-overview" aria-labelledby="tab-overview")
+					// Content
+
+
 
 		.card.api
 			h3 aria-label (for panels without tabs)
 			p Use for wizard steps, sub-panels, or any panel without a corresponding tab.
-			+codeblock('HTML').
-				<div role="tabpanel" id="step-2" aria-label="Step 2: Contact Information">
-					<!-- Content -->
-				</div>
+
+			+codeblock('HTML')
+				div(role="tabpanel" id="step-2" aria-label="Step 2: Contact Information")
+					// Content
+
 
 
 append scripts

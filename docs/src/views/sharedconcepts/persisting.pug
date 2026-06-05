@@ -70,8 +70,8 @@ block content
 							// or via init
 							Panel.init({ persist: true });
 
-						+codeblock('HTML').
-							<div id="sidebar" data-panel data-panel-persist>...</div>
+						+codeblock('HTML')
+							#sidebar(data-panel data-panel-persist) ...
 
 				div
 					h3 Persist in PanelSet
@@ -85,12 +85,33 @@ block content
 							// or via init
 							PanelSet.init({ persist: true });
 
-						+codeblock('HTML').
-							<div id="tabs" data-panelset data-panel-persist>...</div>
+						+codeblock('HTML')
+							#tabs(data-panelset data-panel-persist) ...
 
 			p Play around with the two examples above, and reload the page. Both come back in the same state you left them.
 
 		p For accordion groups, set #[code data-panel-persist] on the #[code [data-panel-group]] element to cover all panels in the group at once.
+
+	+section("Global persist and opting out")
+		p #[code init({ persist: true })] turns persistence on for every matching component. Two things keep that from being heavy-handed:
+
+		.card
+			ul
+				li #[strong An #[code id] is required to store anything.] A PanelSet writes under its container #[code id]; a Panel under its element #[code id]. A component without an #[code id] silently persists nothing, so a global flag only saves the components you've deliberately identified.
+				li #[strong Any component can opt out.] A per-element #[code data-panel-persist="false"] overrides the global option (attributes are the most specific setting). Inside a persisting #[code [data-panel-group]], a panel's own #[code data-panel-persist="false"] also wins over the group.
+
+		+codeblock('HTML')
+			// Persists: inherits init({ persist: true }) and has an id
+			#saved(data-panelset)
+				.panel-wrapper ...
+			+n
+			// Never persists: no id to key on
+			div(data-panelset)
+				.panel-wrapper ...
+			+n
+			// Opts out explicitly, even under a global persist
+			#opted-out(data-panelset data-panel-persist="false")
+				.panel-wrapper ...
 
 
 append scripts

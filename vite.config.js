@@ -17,7 +17,12 @@ const iifeBuild = () => ({
         },
         emptyOutDir: false,
         sourcemap: false,
-        minify: 'oxc',
+        minify: 'terser',
+        terserOptions: {
+          // Smaller bundle.
+          mangle: { properties: { regex: /^_/ } },
+          compress: { passes: 3 }
+        },
         target: 'es2020'
       }
     });

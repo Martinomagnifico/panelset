@@ -17,11 +17,7 @@ block content
 		.card
 			.demo
 				button(aria-controls="async-panel-recipe" aria-expanded="false") Load recipe
-				div#async-panel-recipe(
-					data-panel
-					data-panel-axis="vertical"
-					data-panel-loading-delay="200"
-				)
+				div#async-panel-recipe( data-panel data-panel-loading-delay="200")
 					.panel-wrapper
 						// content injected by JS
 
@@ -136,8 +132,8 @@ block content
 		.title-text
 			p Or via data attribute:
 
-		+codeblock('HTML').
-			<div data-panel data-panel-loading-delay="320">
+		+codeblock('HTML')
+			div(data-panel data-panel-loading-delay="320") ...
 
 		.title-text
 			h3 Loading height
@@ -148,8 +144,8 @@ block content
 				loadingHeight: 150  // 150px reserved during load
 			});
 
-		+codeblock('HTML').
-			<div data-panel data-panel-loading-height="150">
+		+codeblock('HTML')
+			div(data-panel data-panel-loading-height="150") ...
 
 
 	+section("Abort handling")

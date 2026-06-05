@@ -26,16 +26,11 @@ block content
 
 		h3 Data attributes
 
-		+codeblock('HTML').
-			<div data-panelset
-				data-transitions="false"
-				data-closable
-				data-loading-height="320"
-				data-debug>
-					<!-- panels -->
-			</div>
+		+codeblock('HTML')
+			div(data-panelset data-transitions="false" data-closable data-loading-height="320" data-debug)
+				// panels
 
-		p JavaScript options and data attributes are both covered above. When both are set on the same element, data attributes take priority over JS options.
+		p JavaScript options and data attributes are both covered above. When both are set, precedence runs from least to most specific: #[strong defaults &gt; JS options &gt; element attribute]. The most specific wins, so a per-element data attribute always overrides a global #[code init()] option — letting one set opt out of a global flag (e.g. #[code data-panel-persist="false"] on a set initialised with #[code PanelSet.init({ persist: true })]).
 
 		p Web component configuration uses plain attributes directly on #[code &lt;ps-panelset&gt;]. No #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panelset/examples/webcomponent.html") Web Component integration page] for full usage examples.
 

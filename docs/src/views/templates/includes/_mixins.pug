@@ -251,6 +251,11 @@ mixin close(label)
 
 
 
+//- Blank line inside a parsed-Pug +codeblock. Pug drops empty source lines, so
+//- emit a literal newline into the rendered HTML where a gap is wanted: +n
+mixin n()
+	= "\n"
+
 mixin codeblock(type, label)
 	- label = label || type
 	.code-block
