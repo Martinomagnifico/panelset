@@ -98,6 +98,14 @@
     flex-direction: column;
     gap: 1rem;
   }
+  &.gap-h-1 {
+    grid-column-gap: 1rem;
+  }
+  &.gap-v-1 {
+    grid-row-gap: 1rem;
+  }
+
+
 }
 .grid-2 {
   grid-template-columns: repeat(2, 1fr);
@@ -211,7 +219,8 @@
 
 .demo button {
   border: 3px solid var(--special-normal);
-  background: var(--demo-btn-bg);
+  background: none;
+  background: var(--demo-btn-bg-off);
   color: var(--special-hover);
   padding: 0.25rem 1rem;
   border-radius: 24px;
@@ -221,19 +230,59 @@
   transition: color 0.125s, background-color 0.125s, box-shadow 0.125s, border-color 0.125s;
   outline-offset: 1px;
 
-  &:hover {
-    box-shadow: 0 4px 8px var(--special-shadow);
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+
+  &[aria-expanded="true"],
+  &[aria-selected="true"] {
+    background: var(--demo-btn-bg);
+
+    &[role="tab"] {
+      background: var(--demo-surface);
+    }
+
   }
-  &:hover, &:focus-visible {
+
+  &[aria-selected="true"] {
+      cursor: default;
+  }
+
+  &:not([aria-disabled="true"]):hover {
+    box-shadow: 0 4px 8px var(--special-shadow);
+    background: var(--demo-btn-bg);
+  }
+  &:not([aria-disabled="true"]):hover, 
+  &:not([aria-disabled="true"]):focus-visible {
     border-color: var(--special-hover);
   }
 
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.4;
     cursor: not-allowed;
     pointer-events: none;
   }
 }
+
+[data-closeable] > button[aria-selected="true"] {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.demo {
+  .tabs {
+    button,
+    button:hover,
+    button[aria-selected="true"] {
+      background: none;
+      box-shadow: none;
+    }
+  }
+}
+
 
 
 button[aria-expanded="false"] .when-open,

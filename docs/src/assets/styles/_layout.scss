@@ -12,6 +12,10 @@
 	padding: 0;
 }
 
+.no-gap {
+	gap: 0;
+}
+
 section {
 	.container:first-child {
 		position: relative;
@@ -144,15 +148,9 @@ section {
 	padding: 1rem;
 }
 
-[data-panelset] {
-	padding-top: var(--standard-padding);
-	&[data-closable]{
-		padding-top: 0;
-	}
-}
-
 button + [data-panel] .panel-wrapper,
 button + ps-panel .panel-wrapper,
+.demo-controls + [data-panelset] > .panel-wrapper > [role="tabpanel"],
 [data-closable] [role="tabpanel"] {
 	padding: 0;
 	padding-top: var(--standard-padding);

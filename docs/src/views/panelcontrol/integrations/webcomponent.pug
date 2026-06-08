@@ -1,0 +1,100 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelControl — Web Component"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Web Component
+				p.lead Use PanelControl as a native HTML element: #[code &lt;ps-panelcontrol&gt;].
+
+	+section("Getting started")
+		p #[code &lt;ps-panelcontrol&gt;] is a custom element that wraps PanelControl. It behaves exactly like a #[code [data-panelcontrol]] container — wiring its #[code [aria-controls]] triggers to a PanelSet, with keyboard navigation when it is a #[code [role="tablist"]].
+
+		.title-text
+			h3 IIFE (no build step)
+			p Include the one bundled script. It exposes #[code window.PanelControl] and auto-registers all three custom elements — #[code &lt;ps-panel&gt;], #[code &lt;ps-panelset&gt;], #[code &lt;ps-panelcontrol&gt;]. Nothing else to call.
+
+		+codeblock('HTML')
+			script(src="panelset.js")
+
+		.title-text
+			h3 Module
+			p One #[code register()] call defines #[code &lt;ps-panel&gt;], #[code &lt;ps-panelset&gt;], and #[code &lt;ps-panelcontrol&gt;].
+
+		+codeblock('JS').
+			import { register } from 'panelset';
+			register();   // <ps-panel>, <ps-panelset>, <ps-panelcontrol>
+
+	+section("Tab example")
+		p A tab strip as #[code &lt;ps-panelcontrol&gt;] over a #[code &lt;ps-panelset&gt;]. No #[code init()] call — each custom element constructs itself on connect.
+
+		.card
+			.demo
+				ps-panelcontrol.tabs(role="tablist" aria-label="Sections")
+					button(role="tab" aria-controls="wc-pc-1" aria-selected="true") Features
+					button(role="tab" aria-controls="wc-pc-2") Pricing
+					button(role="tab" aria-controls="wc-pc-3") Support
+				ps-panelset#wc-pc
+					.panel-wrapper
+						#wc-pc-1.active(role="tabpanel" aria-label="Features")
+							h3 Features
+							p Click a tab, or focus the strip and use the arrow keys.
+						#wc-pc-2(role="tabpanel" hidden aria-label="Pricing")
+							h3 Pricing
+							p One plan, no surprises.
+						#wc-pc-3(role="tabpanel" hidden aria-label="Support")
+							h3 Support
+							p Friendly help when you need it.
+
+			+codeblock('HTML')
+				ps-panelcontrol(role="tablist")
+					button(role="tab" aria-controls="t-1" aria-selected="true") Features
+					button(role="tab" aria-controls="t-2") Pricing
+				+n
+				ps-panelset
+					.panel-wrapper
+						#t-1.active(role="tabpanel") …
+						#t-2(role="tabpanel" hidden) …
+
+	+section("Reaching the instance")
+		p The PanelControl instance is stored on the element as #[code el.panelControl] — use it to lock or unlock tabs, or to activate one programmatically.
+
+		+codeblock('JS').
+			const control = document.querySelector('ps-panelcontrol').panelControl;
+			control.setTabState('t-2', 'disabled');
+			control.show('t-1');
+
+	+section("Custom prefix")
+		p Pass a string to #[code register()] to change the element-name prefix for all three. The default is #[code ps].
+
+		+codeblock('JS').
+			register();          // <ps-panel>, <ps-panelset>, <ps-panelcontrol>
+			register('solar');   // <solar-panel>, <solar-panelset>, <solar-panelcontrol>
+
+		p It is safe to call multiple times; it skips any name that is already defined.
+
+
+append styles
+	style.
+		ps-panelcontrol.tabs {
+			display: flex;
+		}
+		#wc-pc {
+			border: 1px solid var(--border-default);
+			border-radius: 8px;
+		}
+		#wc-pc .panel-wrapper [role="tabpanel"] {
+			padding: 1.25rem;
+		}
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+	else
+		script(type="module").
+			import { register } from 'panelset';
+			register();

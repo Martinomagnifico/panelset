@@ -48,24 +48,32 @@ block content
 			import { register } from 'panelset';
 			register(); // registers <ps-panel> and <ps-panelset>
 
-	+section("Basic tab example")
-		p A tab interface using #[code &lt;ps-panelset&gt;] with plain attributes. The attribute names match the data attributes but without the #[code data-] prefix: #[code data-panelset-align] becomes #[code panelset-align].
+	+section("Tab example")
+		p A tab interface using #[code &lt;ps-panelset&gt;] with plain attributes. The attribute names match the data attributes but without the #[code data-] prefix: #[code data-ps-levels] becomes #[code ps-levels].
 
 		.card
 
 			.demo
 				+exampletabset('wc-ps', true)
-				+examplepanelset('wc-ps', wc=true).tab-content
+				+examplepanelset('wc-ps', wc=true)(ps-levels debug).tab-content.slide
 
 
 			+codeblock('HTML')
 				+exampletabset('wc-ps', true)
 				+n
-				ps-panelset
+				ps-panelset(ps-levels debug)
 					.panel-wrapper
 						.active(role="tabpanel" id="wc-ps-panel-1" aria-label="Features") ...
 						div(role="tabpanel" id="wc-ps-panel-2" hidden aria-label="Pricing") ...
 						div(role="tabpanel" id="wc-ps-panel-3" hidden aria-label="Support") ...
+
+			+codeblock('CSS').
+				.slide {
+					--ps-panel-in-transform-from: translateX(2px);   /* enter from the right */
+					--ps-panel-out-transform-to:  translateX(-2px);   /* exit to the left    */
+				}
+
+
 
 	+section("Trigger wiring")
 		p PanelSet requires a click handler to call #[code show()]. The only change from the standard pattern is using #[code closest('ps-panelset')] instead of #[code closest('[data-panelset]')] to find the container.
@@ -98,6 +106,22 @@ block content
 			register('solar'); // <solar-panel>, <solar-panelset>
 
 		p It is safe to call #[code register()] multiple times. It skips any name that is already defined.
+
+append styles
+	style.
+		ps-panelset {
+			--ps-panel-out-speed:  0.15s;
+			--ps-panel-out-timing: ease-in;
+			--ps-panel-in-speed:   0.15s;
+			--ps-panel-in-timing:  ease-in-out;
+			--ps-panel-in-delay:   0.2s;
+			--ps-transition-timing: cubic-bezier(0.34, 1.6, 0.64, 1);
+		}
+		.slide {
+			--ps-panel-in-transform-from: translateX(5px);   /* enter from the right */
+			--ps-panel-out-transform-to:  translateX(-5px);   /* exit to the left    */
+		}
+
 
 append scripts
 	if isProd

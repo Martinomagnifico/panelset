@@ -25,11 +25,11 @@ block content
 
 			h4 Drawbacks:
 			ul
-				li Sixty layout recalculations per second, not a nice experience there. It will stutter on most devices. A nightmare on mobile.
+				li Sixty layout recalculations per second, or capped to less calculations, even worse. Stutter time. A nightmare on mobile. This is still used out there, probably because of standard tooling, Angular shizzle, whatever.
 
 		.indented
 			h3 The max-height hack
-			p Pick a number (for example 2000px) that's at least bigger than your content. The browser will transition the max-height. This is a pure CSS solution with no JavaScript.
+			p Pick a number (for example 2000px) that’s at least bigger than your content. The browser will transition the max-height. This is a pure CSS solution with no JavaScript.
 
 			+codeblock('CSS').
 				.panel {
@@ -62,7 +62,7 @@ block content
 			p Used by: Material Design, many modern CSS-only implementations.
 			h4 Drawbacks:
 			ul
-				li It only works from 0 to something for a single panel. #[code 1fr] on one panel and #[code 2fr] on another do not transition between each other.
+				li It only works from 0 to something for a single panel. No cross transitioning between panels.
 				li The element needs to be assigned as a grid, even though it may not be a real grid. Grid is just used here because it accidentally results in the behaviour we are pursuing, not because the content calls for a grid layout. It’s a CSS hack.
 
 	+section("The lock-measure–animate–unlock (LMAU) cycle", "LMAU")
@@ -155,7 +155,7 @@ block content
 					li No styling CSS included
 					li No specificity conflicts
 					li Works with Tailwind, CSS Modules, CSS-in-JS, anything
-					li Your design system, not the library's
+					li Your design system, not the library’s
 
 	+section("FAQ (or: &nbsp;<em>Some remarks that people might have</em>)", "FAQ")
 		.column.gap-1(data-panel-group data-panel-close-siblings)

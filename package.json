@@ -3,6 +3,10 @@
   "version": "1.2.0",
   "description": "Flexible panel management with smooth transitions",
   "type": "module",
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
   "main": "./dist/panelset.js",
   "types": "./dist/index.d.ts",
   "exports": {

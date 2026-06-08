@@ -369,6 +369,15 @@ input {
 	}
 }
 
+input[type="checkbox"] {
+	background: red;
+	padding: 20px;
+	width: 16px;
+	height: 16px;
+	border-radius: 2px;
+	outline-offset: 2px;
+}
+
 .docs-sidebar a,
 button,
 .btn {

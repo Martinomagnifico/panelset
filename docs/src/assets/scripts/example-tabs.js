@@ -12,5 +12,5 @@ document.addEventListener('click', event => {
 	const panel = document.getElementById(panelId);
 	const container = panel?.closest('[data-panelset]');
 
-	container?.panelSet?.show(panelId, { event, autoFocus: true });
+	container?.panelSet?.show(panelId, { event });
 });

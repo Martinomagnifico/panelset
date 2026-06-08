@@ -11,10 +11,9 @@ block content
 				p.lead One panel or many. CSS does the animating.
 
 	+section("What is it?")
-		p This package exports two classes: #[strong Panel] and #[strong PanelSet]. Both animate a dimension (height or width) between sizes using an #[a(href="/how-it-works.html#lmau") LMAU]* cycle.
+		p This package exports three classes. Two main classes: #[strong Panel] and #[strong PanelSet] and a class #[strong PanelControl]. The two main animate a dimension (height or width) between sizes using an #[a(href="/how-it-works.html#lmau") LMAU]* cycle. PanelControl is jan addition to PanelSet for wiring up tab strips and sidebar trees.
 
-		p Both classes use the same animation core and share most config options. Animation is CSS-only: JS measures and sets pixel values, then hands off to the browser. For async content, pass a promise to #[code onBeforeOpen()] to hold the open until it resolves. A spinner kicks in if loading takes longer than #[code loadingDelay]ms. Both also handle focus management.
-
+		p Both main classes use the same animation core and share most config options. Animation is CSS-only: JS measures and sets pixel values, then hands off to the browser. For async content, pass a promise to #[code onBeforeOpen()] to hold the open until it resolves. A spinner kicks in if loading takes longer than #[code loadingDelay]ms. Both also handle focus management.
 
 		p * LMAU: Lock-Measure-Animate-Unlock #[span.small (I should trademark the term)].
 
@@ -24,7 +23,7 @@ block content
 			.card
 				+anchor(title="Panel")
 				p A single element that can be #[strong opened and closed]. Use it for sidebars, show-more blocks, accordions, or any element that expands and collapses.
-				p Triggers are any element with #[code aria-controls] pointing to the panel's ID. 
+				p Triggers are any element with #[code aria-controls] pointing to the panel’s ID. Or a #[code button] with #[code data-panel-trigger] if it is a sibling of a panel, which wires up the #[code id] and ARIA for you.
 				p You can add a close button that uses #[code data-panel-close].
 
 
@@ -32,10 +31,14 @@ block content
 			.card
 				+anchor(title="PanelSet")
 				p A container that #[strong switches between] some panels. Use it for tabs, wizards, or multi-step interfaces. Only one panel is (fully) visible at a time. Height transitions as well.
-				p Triggers are any element with #[code aria-controls] pointing to an internal panel's ID. 
+				p Triggers are any element with #[code aria-controls] pointing to an internal panel’s ID. 
 				p It can also be opened and closed as a whole, just like a regular Panel.
 
+				.card
+					p Add #[strong PanelControl] for activation, keyboard navigation, roving tabindex, and state reflection.
 
+		br
+		.grid-2.gap-v-1
 			div
 				h3 Panel example
 				.demo
@@ -62,6 +65,12 @@ block content
 					| PanelSet docs
 					+chevron()
 
+			div.start-2
+				a.btn.bottom.chevron.solid.block(href="/panelcontrol/getting-started.html")
+					| PanelControl docs
+					+chevron()
+
+
 
 	+section("Features")
 		.grid-3
@@ -79,11 +88,11 @@ block content
 
 			.card
 				h4 Accessible
-				p #[code aria-expanded], #[code aria-controls], #[code aria-selected], #[code inert]. These are all handled. Add keyboard navigation, #[code autoFocus] and #[code returnFocus] as needed.
+				p #[code aria-expanded], #[code aria-controls], #[code aria-selected] and #[code inert] are managed for you. Opt into #[code autoFocus] and #[code returnFocus] for focus handling.
 
 			.card
 				h4 Persist &amp; deep-link
-				p Add #[code persist: true] and the active panel survives reloads. State goes into #[code localStorage] and the #[code ?panel=] URL parameter.
+				p #[code persist: true] saves the active panel to #[code localStorage] so it survives reloads. #[code deepLink: true] reflects it in the #[code ?panel=] URL for shareable links — and a #[code ?panel=] link is always honoured on load.
 
 			.card
 				h4 Reduced motion
@@ -99,7 +108,7 @@ block content
 				code npm install panelset
 
 		+codeblock('JS').
-			import { Panel, PanelSet } from 'panelset';
+			import { Panel, PanelSet, PanelControl } from 'panelset';
 			import 'panelset/style.css';
 
 		h3 Using the normal JS and CSS files
@@ -108,13 +117,7 @@ block content
 		+codeblock('HTML')
 			link(rel="stylesheet" href="path/to/panelset.css")
 			script(src="path/to/panelset.js")
-	.container
-		.demo
-			.popout-wrapper
-				button(aria-controls="test-popout-panel") Toggle dropdown
-				div(data-panel, id="test-popout-panel")
-					.panel-wrapper
-						p There is some dropdown content here. We give it a maximum width.
+
 
 	hr
 	section.no-hr
@@ -128,52 +131,16 @@ block content
 				+chevron()
 
 
+
+
 append styles
 	style.
-
-		.popout-wrapper {
-			position: relative;
-			width: max-content;
+		/* PanelControl sits under PanelSet (col 2); no placeholder element, so
+		   the single-column layout has no empty cell and no double gap. */
+		.grid-2 > .start-2 { grid-column: 2; }
+		@container (max-width: 600px) {
+			.grid-2 > .start-2 { grid-column: auto; }
 		}
-
-		#test-popout-panel .panel-wrapper {
-			padding: 1rem;
-			flex-shrink: 0;
-			width: 220px;
-		}
-
-		#test-popout-panel {
-
-			--ps-open-timing:    cubic-bezier(0.34, 1.56, 0.64, 1);
-			--ps-close-timing:   cubic-bezier(0.36, 0, 0.66, -0.56);
-
-			--ps-open-transition-extra: box-shadow var(--ps-open-speed) var(--ps-open-timing), width var(--ps-open-speed) var(--ps-open-timing), opacity var(--ps-open-speed) var(--ps-open-timing);
-			--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing), width var(--ps-close-speed) var(--ps-close-timing), opacity var(--ps-close-speed) var(--ps-close-timing);
-
-			width: 100%;
-			right: 0;
-			position: absolute;
-			border-radius: 8px;
-			background: white;
-			z-index: 10;
-			box-shadow: inset 0 0 0 0px var(--special-normal), 0 0 0 var(--special-shadow-dark);
-			opacity: 0.5;
-			display: flex;
-			justify-content: flex-end;
-			align-items: flex-start;
-
-
-
-		}
-
-		#test-popout-panel.is-opening,
-		#test-popout-panel.is-open {
-			box-shadow: inset 0 0 0 2px var(--special-normal), 0 8px 20px var(--special-shadow-dark);
-			width: 220px;
-			opacity: 1;
-		}
-		
-
 
 
 append scripts

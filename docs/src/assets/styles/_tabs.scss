@@ -63,13 +63,33 @@
 
 		&[aria-selected="true"]{
 			color: var(--tab-text-active);
-			pointer-events: none;
-
 			&:before {
 				background: var(--tab-underline-active);
 			}
 
 		}
+
+
+	}
+
+	&[aria-orientation="vertical"] button {
+		&:before {
+			top: 0;
+			bottom: auto;
+			left: 0;
+			height: 100%;
+			width: 3px;
+		}
+
+
+		
+	}
+
+	// Closable sets (PanelControl stamps [data-closeable]) keep the active
+	// trigger clickable, so re-clicking it can close the panel.
+	&[data-closeable] button[aria-selected="true"] {
+		pointer-events: auto;
+		cursor: pointer;
 	}
 
 }

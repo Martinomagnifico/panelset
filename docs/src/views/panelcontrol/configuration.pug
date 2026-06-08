@@ -1,0 +1,90 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelControl — Configuration"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 PanelControl configuration
+				p.lead Options via constructor, data attributes, or both.
+
+	+section("Setting options")
+		h3 JavaScript options
+
+		+codeblock('JS').
+			PanelControl.init({ activation: 'auto' });
+
+			const control = new PanelControl('#my-tabs', { activation: 'manual' });
+
+		h3 Data attributes
+
+		+codeblock('HTML')
+			nav(role="tablist" data-panelcontrol data-activation="auto")
+				// tab buttons with aria-controls
+
+		p Precedence runs from least to most specific: #[strong defaults &gt; JS options &gt; element attribute]. A per-element data attribute overrides a global #[code init()] option — so one control can opt into #[code auto] while others initialised by the same call stay #[code manual].
+
+		p Web component configuration uses plain attributes on #[code &lt;ps-panelcontrol&gt;], no #[code data-] prefix. See the #[a(href="/panelcontrol/integrations/webcomponent.html") Web Component integration page].
+
+	+section("Markup that drives behaviour")
+		p Two things in the markup decide what PanelControl does. They are contracts, not JS options:
+		ul
+			li #[code data-panelcontrol] marks the container whose #[code [aria-controls]] triggers get wired. It is also the default #[code init()] selector.
+			li #[code role="tablist"] on that container turns on keyboard navigation (arrow keys, #[code Home] / #[code End], roving #[code tabindex]). Add #[code aria-orientation="vertical"] for up/down arrows. Without #[code role="tablist"], PanelControl wires clicks only.
+		p PanelControl finds its PanelSet automatically, through the panels its triggers point at — there is no target option to set.
+
+	+section("Available options")
+		.column.gap-1(data-panel-group data-panel-close-siblings)
+			+apiOption("activation: 'manual' | 'auto'")
+				p How a #[code [role="tablist"]] control activates on keyboard.
+				ul
+					li #[code 'manual']: arrow keys move focus; #[strong Enter] / #[strong Space] (or a click) activates.
+					li #[code 'auto']: arrow keys move focus #[strong and] activate.
+				p #[code 'auto'] self-downgrades to #[code 'manual'] when the linked PanelSet uses #[code autoFocus] or async content — activating on every arrow would steal focus into the panel or fire a load per keystroke. The #[code autoFocus] check covers the JS option, #[code data-auto-focus] on the set, and #[code data-auto-focus] on any individual tab.
+				h4 Default: #[code 'manual']
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { activation: 'manual' }]
+							li #[code { activation: 'auto' }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-activation="manual"]
+							li #[code data-activation="auto"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code activation="manual"]
+							li #[code activation="auto"]
+
+			+apiOption("debug: boolean")
+				p Log wiring and activation to the console.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { debug: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-debug]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code debug]
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			Panel.init();
+	else
+		script(type="module").
+			import { Panel } from 'panelset';
+			Panel.init();

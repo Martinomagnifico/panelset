@@ -121,9 +121,31 @@ block content
 				Panel.init({ debug: true });
 				Panel.init('[data-panel]', { axis: 'vertical' });
 
+		.indented
+			h3.code Panel.defaults: PanelConfig
+			hr
+			p #[strong Static property.] Default configuration applied to all new instances. Modify to change defaults globally.
+
+			+codeblock('JavaScript').
+				Panel.defaults.axis = 'vertical';
+				Panel.defaults.debug = true;
+
 	+section("TypeScript types")
 		+codeblock('JavaScript').
-			import { Panel, type PanelConfig } from 'panelset';
+			import {
+				Panel,
+				type PanelConfig,
+				type PanelBeforeOpenEventDetail,
+				type PanelEventDetail,
+				type AsyncOpenHandler,
+			} from 'panelset';
+
+			const panel = new Panel('#my-panel');
+
+			panel.element.addEventListener('panel:opened', e => {
+				const event = e as CustomEvent<PanelEventDetail>;
+				console.log(event.detail.trigger);
+			});
 
 			const config: PanelConfig = {
 				axis: 'horizontal',

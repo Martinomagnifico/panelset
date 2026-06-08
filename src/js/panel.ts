@@ -80,7 +80,7 @@ export class Panel {
 		interruptible:  ['panelInterruptible',  'boolean'],
 		persist:        ['panelPersist',        'boolean'],
 		deepLink:       ['panelDeeplink',       'boolean'],
-		debug:          ['panelDebug',          'boolean'],
+		debug:          ['debug',               'boolean'],
 	};
 
 	// True when the browser supports interpolate-size: allow-keywords.
@@ -102,26 +102,10 @@ export class Panel {
 			selector = '[data-panel]';
 		}
 
-		// Wire up implicit trigger/panel pairs: a [data-panel-trigger] button
-		// next to a sibling [data-panel] with no ID gets an auto-assigned stable
-		// ID, and aria-controls / aria-expanded are set on the trigger.
-		// Scans forward first, then backward, to handle both panel-after-trigger
-		// and panel-before-trigger layouts.
-
-		document.querySelectorAll<HTMLElement>('[data-panel-trigger]').forEach(trigger => {
-			let el = trigger.nextElementSibling as HTMLElement | null;
-			while (el && !el.hasAttribute('data-panel')) el = el.nextElementSibling as HTMLElement | null;
-			if (!el) {
-				el = trigger.previousElementSibling as HTMLElement | null;
-				while (el && !el.hasAttribute('data-panel')) el = el.previousElementSibling as HTMLElement | null;
-			}
-			const next = el;
-			if (!next) return;
-			if (!next.id) next.id = `panel-${++Panel._autoIdCounter}`;
-			trigger.setAttribute('aria-controls', next.id);
-			trigger.setAttribute('aria-expanded', 'false');
-			trigger.removeAttribute('data-panel-trigger');
-		});
+		// Implicit trigger wiring (a [data-panel-trigger] button next to its panel)
+		// is handled per-instance in the constructor — see _wireImplicitTriggers —
+		// so it works for Panel.init(), the <ps-panel> web component, and any
+		// panel constructed directly, not just [data-panel] in this one pass.
 
 		return Array.from(document.querySelectorAll<HTMLElement>(selector))
 			.filter(el => !el.panel)
@@ -154,6 +138,7 @@ export class Panel {
 		if (this.config.axis === 'horizontal') element.dataset.panelAxis = 'horizontal';
 		if (this.config.align !== 'start') element.dataset.panelAlign = this.config.align;
 
+		this._wireImplicitTriggers();
 		this._bindTriggers();
 
 		// Start open if persisted/deep-linked state says so, OR if the markup was
@@ -266,6 +251,30 @@ export class Panel {
 	private _cssProp = (): 'height' | 'width' =>
 		this.config.axis === 'horizontal' ? 'width' : 'height';
 
+
+	// Turn an adjacent [data-panel-trigger] button into a wired aria-controls
+	// trigger for THIS panel. Searching outward from the panel (rather than from
+	// the trigger to a [data-panel] sibling) means it matches however the panel
+	// is authored — a [data-panel] div or a <ps-panel> custom element — and runs
+	// for every construction path, so it no longer depends on calling init().
+	// The panel gets a stable auto-ID only when a trigger actually needs one.
+	private _wireImplicitTriggers() {
+		const isPanel = (el: HTMLElement): boolean => el.hasAttribute('data-panel') || !!el.panel;
+		const wire = (trigger: HTMLElement): void => {
+			if (!this.element.id) this.element.id = `panel-${++Panel._autoIdCounter}`;
+			trigger.setAttribute('aria-controls', this.element.id);
+			if (!trigger.hasAttribute('aria-expanded')) trigger.setAttribute('aria-expanded', 'false');
+			trigger.removeAttribute('data-panel-trigger');
+		};
+		// Nearest trigger on each side, without crossing into another panel.
+		for (const dir of ['previousElementSibling', 'nextElementSibling'] as const) {
+			let el = this.element[dir] as HTMLElement | null;
+			while (el && !isPanel(el)) {
+				if (el.hasAttribute('data-panel-trigger')) { wire(el); break; }
+				el = el[dir] as HTMLElement | null;
+			}
+		}
+	}
 
 	private _bindTriggers() {
 		const id = this.element.id;

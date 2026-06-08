@@ -1,0 +1,141 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelControl — API"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 PanelControl API
+				p.lead Constructor, instance methods, properties, and static methods.
+
+	+section("Constructor")
+		.card.api
+			h3.code new PanelControl(elementOrSelector: HTMLElement | string, options?: PanelControlConfig)
+			hr
+			p Creates a PanelControl bound to one PanelSet. The element is the #[code [data-panelcontrol]] container holding the triggers. The PanelSet is discovered from the panels those triggers point at.
+			h4 Parameters:
+			dl
+				dt.code elementOrSelector
+				dd CSS selector string or HTMLElement of the control container.
+				dt.code options (optional)
+				dd Configuration object. See #[a(href="/panelcontrol/configuration.html") Configuration].
+			+codeblock('JavaScript').
+				const control = new PanelControl('#my-tabs');
+				const control = new PanelControl(document.querySelector('[role="tablist"]'), { activation: 'auto' });
+
+	+section("Instance methods")
+		.card.api
+			h3.code panelControl.show(panelId: string, options?): void
+			hr
+			p Activates a tab's panel through the linked PanelSet — the same thing a trigger click does. No-op if there is no linked PanelSet.
+			h4 Parameters:
+			dl
+				dt.code panelId
+				dd ID of the panel to activate (a trigger's #[code aria-controls] target).
+				dt.code options (optional)
+				dd Same #[code ShowOptions] as #[code PanelSet.show()] — #[code event], #[code transition], #[code autoFocus].
+
+			+codeblock('JavaScript').
+				control.show('panel-2');
+
+		.card.api
+			h3.code panelControl.setTabState(panelId: string, state: 'enabled' | 'disabled'): void
+			hr
+			p Locks or unlocks the tab(s) controlling a panel. PanelControl only #[strong applies] the state — it does not decide when a tab should be locked (that is the caller's concern, e.g. a flow controller).
+			h4 Parameters:
+			dl
+				dt.code panelId
+				dd #[code aria-controls] target id of the tab(s) to update.
+				dt.code state
+				dd #[code 'disabled'] sets #[code aria-disabled] (keyboard nav skips the tab, clicks / Enter no longer activate it, and it cannot hold the roving tab stop). #[code 'enabled'] clears it.
+
+			+codeblock('JavaScript').
+				control.setTabState('step-3', 'disabled');   // lock
+				control.setTabState('step-3', 'enabled');    // unlock
+
+		.card.api
+			h3.code panelControl.destroy(): void
+			hr
+			p Removes all listeners and drops the #[code element.panelControl] reference. The DOM is left as-is.
+
+	+section("Instance properties")
+		.card.api
+			h3.code panelControl.element: HTMLElement
+			hr
+			p #[strong Read-only.] The #[code [data-panelcontrol]] container element.
+
+		.card.api
+			h3.code panelControl.panelSetElement: HTMLElement | null
+			hr
+			p #[strong Read-only.] The PanelSet container this control drives, or #[code null] if none was found.
+
+		.card.api
+			h3.code panelControl.panelSet: PanelSet | undefined
+			hr
+			p #[strong Read-only getter.] The live PanelSet instance, resolved lazily from #[code panelSetElement]. #[code undefined] until that PanelSet has initialised.
+
+		.card.api
+			h3.code panelControl.config: PanelControlConfig
+			hr
+			p #[strong Read-only.] The merged configuration (1. defaults 2. constructor options 3. data attributes).
+
+	+section("Static methods")
+		.card.api
+			h3.code PanelControl.init(selectorOrOptions?, options?): PanelControl[]
+			hr
+			p Initialises all controls matching the selector. Stores the instance on each container as #[code container.panelControl].
+			h4 Parameters:
+			dl
+				dt.code selectorOrOptions (optional)
+				dd CSS selector string, or a config object (uses the #[code '[data-panelcontrol]'] selector).
+				dt.code options (optional)
+				dd Config object, only used when the first argument is a selector string.
+			h4 Returns:
+			p Array of created PanelControl instances.
+
+			+codeblock('JavaScript').
+				PanelControl.init();
+				PanelControl.init({ activation: 'auto' });
+
+		.card.api
+			h3.code PanelControl.defaults: PanelControlConfig
+			hr
+			p #[strong Static property.] Default configuration applied to all new instances. Modify to change defaults globally.
+
+	+section("Web component")
+		.card.api
+			h3.code registerPanelControl(prefix?: string): void
+			hr
+			p Defines the #[code &lt;ps-panelcontrol&gt;] custom element. Pass a prefix to change the name (default #[code ps]). Safe to call multiple times.
+
+			+codeblock('JavaScript').
+				import { registerPanelControl } from 'panelset';
+				registerPanelControl();          // <ps-panelcontrol>
+				registerPanelControl('solar');   // <solar-panelcontrol>
+
+		.card.api
+			h3.code PanelControlElement
+			hr
+			p The #[code HTMLElement] subclass backing #[code &lt;ps-panelcontrol&gt;]. Each instance creates a PanelControl in its #[code connectedCallback].
+
+	+section("TypeScript types")
+		+codeblock('JavaScript').
+			import {
+				PanelControl,
+				type PanelControlConfig,
+				registerPanelControl,
+				PanelControlElement,
+			} from 'panelset';
+
+			const control = new PanelControl('#my-tabs', { activation: 'auto' });
+			control.setTabState('step-2', 'disabled');
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+	else
+		script(type="module").
+			import 'panelset';

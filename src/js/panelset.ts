@@ -5,7 +5,7 @@ import type { AutoFocusMode } from './functions/focus';
 import { readPanelParam, writePanelParam, readStored, writeStored } from './functions/persist';
 
 
-import type { PanelSetConfig, ReadyEventDetail, BeforeOpenEventDetail, ActivationEventDetail, ActivationAbortedEventDetail, HandlerOptions, ShowOptions, AsyncContentHandler } from './panelset.types';
+import type { PanelSetConfig, ReadyEventDetail, BeforeActivateEventDetail, BeforeOpenEventDetail, ActivationEventDetail, ActivationAbortedEventDetail, HandlerOptions, ShowOptions, AsyncContentHandler } from './panelset.types';
 import { parseDataAttrs, type AttrMap } from './functions/config';
 import { log, logInterpolateSizeOnce, registerBeforeOpenHandler } from './functions/utils';
 
@@ -35,8 +35,9 @@ declare global {
  *    to move between tab and panel.
  *  - Focus management: moving focus into the new panel on activation (autoFocus)
  *    and returning it to the trigger on close (returnFocus).
- *  - Lifecycle events: dispatching ps:ready, ps:beforeopen, ps:activationstart,
- *    ps:activationcomplete, and ps:activationaborted for userland hooks.
+ *  - Lifecycle events: dispatching ps:ready, ps:beforeactivate (cancelable),
+ *    ps:beforeopen, ps:activationstart, ps:activationcomplete, and
+ *    ps:activationaborted for userland hooks.
  *  - prefers-reduced-motion: CSS variables gate the CSS transitions, but JS
  *    must also check the media query before calling startViewTransition() —
  *    the View Transitions API does not consult prefers-reduced-motion itself.
@@ -51,6 +52,7 @@ export class PanelSet {
 		align: 'start',
 		transitions: true,
 		levels: false,
+		loop: false,
 		closable: false,
 		closeOnTab: false,
 		loadingHeight: 150,
@@ -71,6 +73,8 @@ export class PanelSet {
 	activePanel!: HTMLElement;
 	panelWrapper!: HTMLElement;
 	pendingPanel!: HTMLElement;
+	/** True once an async content handler has been registered via onBeforeOpen(). */
+	hasAsyncContent: boolean = false;
 
 	private _animShow    = new Core(); // panel switching + async content
 	private _animOpenClose = new Core(); // container open/close
@@ -78,6 +82,7 @@ export class PanelSet {
 	private _activating: boolean = false;
 	private _switchDirection: 'levelup' | 'leveldown' | null = null;
 	private _returnFocusTarget: HTMLElement | null = null;
+	private _heightObserver: ResizeObserver | null = null;
 
 	private static readonly _nativeInterpolateSize =
 		typeof CSS !== 'undefined' && CSS.supports('interpolate-size: allow-keywords');
@@ -86,6 +91,7 @@ export class PanelSet {
 		align:         ['panelsetAlign',  'string'],
 		transitions:   ['transitions',   'json'],
 		levels:        ['psLevels',      'boolean'],
+		loop:          ['psLoop',        'boolean'],
 		closable:      ['closable',      'boolean'],
 		closeOnTab:    ['closeOnTab',    'boolean'],
 		loadingHeight: ['loadingHeight', 'number'],
@@ -178,14 +184,9 @@ export class PanelSet {
 		const dataConfig = parseDataAttrs<PanelSetConfig>(element.dataset, PanelSet.attrs);
 		this.config = { ...PanelSet.defaults, ...options, ...dataConfig } as Required<Omit<PanelSetConfig, 'selector'>>;
 
-		// Only this set's own panels. querySelectorAll is unscoped, so a nested
-		// PanelSet (or a PanelSet nested in a Panel) would otherwise have its panels
-		// claimed by the outer instance. Keep only tabpanels whose nearest
-		// panelset/panel container is this element.
-		const ownContainer = (el: HTMLElement): boolean =>
-			el.closest('[data-panelset], ps-panelset, [data-panel], ps-panel') === element;
-		this.panels = Array.from(element.querySelectorAll<HTMLElement>('[role="tabpanel"]'))
-			.filter(ownContainer);
+		// Only this set's own panels (a nested PanelSet/Panel would otherwise have
+		// its panels claimed by the outer instance). See _collectPanels.
+		this.panels = this._collectPanels();
 
 		if (this.panels.length === 0) {
 			console.error('PanelSet: no [role=tabpanel] panels found', element);
@@ -213,8 +214,12 @@ export class PanelSet {
 
 
 
-		this.element.dataset.panelsetAlign = this.config.align;
-		this.element.setAttribute('data-panelset-ready', ''); // For styling
+		// 'start' is the default (no CSS targets it), so only stamp the attribute
+		// for non-default alignments — mirrors Panel and keeps the DOM clean.
+		if (this.config.align !== 'start') this.element.dataset.panelsetAlign = this.config.align;
+
+		// this.element.setAttribute('data-panelset-ready', ''); // For styling (turning this off for now)
+
 		// Closable sets are closed by default; only an explicit .is-open opens them.
 		// A closed set is inert until opened.
 		if (this.config.closable && !this.element.classList.contains('is-open')) {
@@ -227,14 +232,29 @@ export class PanelSet {
 
 		this._internalInit();
 
-		let resizeTimeout: ReturnType<typeof setTimeout>;
-		window.addEventListener('resize', () => {
-			clearTimeout(resizeTimeout);
-			resizeTimeout = setTimeout(() => {
-				this._updateHighestPanel();
-			}, 250);
-		});
+		this._observeTrackHeight();
 
+	}
+
+	// Re-measure the tallest panel whenever the tracking parent's WIDTH changes.
+	// A ResizeObserver reacts to any layout change (window, flex, container
+	// queries), not just window resize, and updates promptly instead of after a
+	// debounce — so --ps-max-height stays in step with the current width. We
+	// guard on width because our own height writes would otherwise re-trigger it.
+	private _observeTrackHeight(): void {
+		const trackingParent = this.element.closest<HTMLElement>('[data-panelset-trackheight]');
+		if (!trackingParent || typeof ResizeObserver === 'undefined') return;
+
+		let lastWidth = trackingParent.clientWidth;
+		let rafId = 0;
+		this._heightObserver = new ResizeObserver(() => {
+			const width = trackingParent.clientWidth;
+			if (width === lastWidth) return;
+			lastWidth = width;
+			cancelAnimationFrame(rafId);
+			rafId = requestAnimationFrame(() => this._updateHighestPanel());
+		});
+		this._heightObserver.observe(trackingParent);
 	}
 
 	// Debug logging helper
@@ -301,6 +321,16 @@ export class PanelSet {
 		this.panels.forEach(panel => wrapper.appendChild(panel));
 		this.element.appendChild(wrapper);
 		return wrapper;
+	}
+
+	// Collect this set's own [role="tabpanel"] panels. querySelectorAll is
+	// unscoped, so a nested PanelSet/Panel could otherwise have its panels claimed
+	// by an outer instance; closest() keeps only panels whose nearest panelset/
+	// panel container is this element.
+	private _collectPanels(): HTMLElement[] {
+		const ownContainer = (el: HTMLElement): boolean =>
+			el.closest('[data-panelset], ps-panelset, [data-panel], ps-panel') === this.element;
+		return Array.from(this.element.querySelectorAll<HTMLElement>('[role="tabpanel"]')).filter(ownContainer);
 	}
 
 	private _internalInit(): void {
@@ -562,6 +592,122 @@ export class PanelSet {
 		return this.pendingPanel?.id || null;
 	}
 
+	/**
+	 * Re-scan the DOM for this set's panels and reconcile internal state. Call
+	 * after adding, removing, or reordering [role="tabpanel"] elements at runtime
+	 * (e.g. lazy or windowed wizards). The active panel is preserved when it is
+	 * still present; otherwise it falls back to the marked .active panel, then the
+	 * first panel. Newly added panels are initialised to the hidden state.
+	 * Call when idle (not mid-transition).
+	 */
+	refresh(): void {
+		const previousActive = this.activePanel;
+		this.panels = this._collectPanels();
+		if (this.panels.length === 0) return;
+
+		this.activePanel = (previousActive && this.panels.includes(previousActive))
+			? previousActive
+			: (this.panels.find(p => p.classList.contains('active')) ?? this.panels[0]);
+		this.pendingPanel = this.activePanel;
+		// A runtime-added wrapper (or first wrap) may differ from the cached one.
+		this.panelWrapper = this.element.querySelector<HTMLElement>(':scope > .panel-wrapper') || this.panelWrapper;
+
+		this._internalInit();
+		this._log(`Refreshed (${this.panels.length} panels)`);
+	}
+
+	/**
+	 * Insert a panel at runtime and refresh. The node is appended to the wrapper
+	 * unless a position is given. Ensures the element carries role="tabpanel".
+	 * @param panel - The [role="tabpanel"] element to add.
+	 * @param position - { before } / { after } an existing panel id, or { index }.
+	 * @returns The inserted panel.
+	 */
+	addPanel(panel: HTMLElement, position?: { before?: string; after?: string; index?: number }): HTMLElement {
+		if (!panel.hasAttribute('role')) panel.setAttribute('role', 'tabpanel');
+
+		let ref: HTMLElement | null = null;
+		if (position?.before) {
+			ref = this.panels.find(p => p.id === position.before) ?? null;
+		} else if (position?.after) {
+			const after = this.panels.find(p => p.id === position.after);
+			ref = (after?.nextElementSibling as HTMLElement | null) ?? null;
+		} else if (typeof position?.index === 'number') {
+			ref = this.panels[position.index] ?? null;
+		}
+
+		(this.panelWrapper || this._autoWrapPanels()).insertBefore(panel, ref);
+		this.refresh();
+		return panel;
+	}
+
+	/**
+	 * Remove a panel by id and refresh. If the removed panel was active, refresh()
+	 * promotes a fallback panel. No-op if the id is not found.
+	 * @param panelId - ID of the panel to remove.
+	 */
+	removePanel(panelId: string): void {
+		const panel = this.panels.find(p => p.id === panelId);
+		if (!panel) return;
+		panel.remove();
+		this.refresh();
+	}
+
+	/**
+	 * Tear down this instance: abort any pending animations, disconnect the
+	 * height-tracking ResizeObserver, and drop the reference from the element.
+	 * The DOM (panels, classes) is left as-is. Re-init with new PanelSet() or
+	 * PanelSet.init() afterwards if needed.
+	 */
+	destroy(): void {
+		this._animShow.start();       // abort pending .then() callbacks (they check signal.aborted)
+		this._animOpenClose.start();
+		this._heightObserver?.disconnect();
+		this._heightObserver = null;
+		delete this.element.panelSet;
+		this._log('Destroyed');
+	}
+
+	// Edge info for the currently targeted panel (pendingPanel), for event detail.
+	private _edgeInfo(panel: HTMLElement | undefined): { index: number; total: number; atStart: boolean; atEnd: boolean } {
+		const total = this.panels.length;
+		const index = panel ? this.panels.indexOf(panel) : -1;
+		return { index, total, atStart: index <= 0, atEnd: index === total - 1 };
+	}
+
+	/**
+	 * Activate the next panel in DOM order. Stops at the last panel unless the
+	 * `loop` option is set, in which case it wraps to the first.
+	 * @param options - Configuration options for the activation
+	 */
+	next(options?: ShowOptions): void {
+		this._step(1, options);
+	}
+
+	/**
+	 * Activate the previous panel in DOM order. Stops at the first panel unless
+	 * the `loop` option is set, in which case it wraps to the last.
+	 * @param options - Configuration options for the activation
+	 */
+	prev(options?: ShowOptions): void {
+		this._step(-1, options);
+	}
+
+	private _step(dir: 1 | -1, options?: ShowOptions): void {
+		const total = this.panels.length;
+		if (total === 0) return;
+		// Step from the panel being targeted, so rapid clicks queue correctly.
+		const from = this.panels.indexOf(this.pendingPanel);
+		const current = from === -1 ? 0 : from;
+		let target = current + dir;
+		if (target < 0 || target >= total) {
+			if (!this.config.loop) return;     // clamp at the ends
+			target = (target + total) % total; // wrap
+		}
+		const next = this.panels[target];
+		if (next && next !== this.pendingPanel) this.show(next.id, options);
+	}
+
 
 	/**
 	 * Open a closable panelset
@@ -665,6 +811,7 @@ export class PanelSet {
 	 * @param options - Handler options (once: whether to load only once)
 	 */
 	onBeforeOpen(handler: AsyncContentHandler, options: HandlerOptions = {}): void {
+		this.hasAsyncContent = true;
 		registerBeforeOpenHandler<BeforeOpenEventDetail>(
 			this.element,
 			'ps:beforeopen',
@@ -702,6 +849,25 @@ export class PanelSet {
 
 		if (!newPanel) {
 			this._log(`Panel not found: ${panelId}`);
+			return;
+		}
+
+		// Cancelable gate, fired before any state changes. A listener can call
+		// preventDefault() to veto the activation — e.g. a wizard that only allows
+		// a step once required fields are filled. Covers every path (tab click,
+		// next()/prev(), deep link) since they all funnel through show().
+		const beforeActivate = new CustomEvent<BeforeActivateEventDetail>('ps:beforeactivate', {
+			detail: {
+				panelId,
+				targetPanel: newPanel,
+				outgoingPanel: this.activePanel ?? null,
+				trigger: resolvedTrigger
+			},
+			bubbles: true,
+			cancelable: true
+		});
+		if (!this.element.dispatchEvent(beforeActivate)) {
+			this._log(`Vetoed by ps:beforeactivate: ${panelId}`);
 			return;
 		}
 
@@ -881,7 +1047,8 @@ export class PanelSet {
 		this._dispatch<ActivationEventDetail>('ps:activationstart', {
 			panelId,
 			trigger: resolvedTrigger,
-			outgoingPanel
+			outgoingPanel,
+			...this._edgeInfo(newPanel)
 		});
 
 		const shouldTransition = transition !== false && this.config.transitions !== false;
@@ -982,7 +1149,8 @@ export class PanelSet {
 				this._dispatch<ActivationEventDetail>('ps:activationcomplete', {
 					panelId,
 					trigger: resolvedTrigger,
-					outgoingPanel
+					outgoingPanel,
+					...this._edgeInfo(newPanel)
 				});
 			});
 		}));

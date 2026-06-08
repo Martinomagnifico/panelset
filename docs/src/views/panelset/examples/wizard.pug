@@ -1,0 +1,322 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Wizard"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Wizard
+				p.lead A multi-step flow driven by Next / Previous instead of tabs.
+
+	+section("Live demo")
+		p A PanelSet does not have to be driven by buttons that link directly to certain panels. Here #[code show()] is called from #[strong Next] and #[strong Previous] buttons that step through the panels in DOM order. With #[code data-ps-levels] enabled, moving forward slides one way and back the other, so the direction matches the action.
+
+		.card
+
+			p This example uses #[strong height tracking] so the frame stays as tall as the tallest step and the Previous / Next buttons keep their place. If you would rather let the box grow and shrink per step, leave it out — see #[a(href="/panelset/examples/height-tracking.html") Height tracking].
+
+			.demo
+				.wizard-frame(data-panelset-trackheight)
+					#wizard(data-panelset data-ps-levels)
+						.panel-wrapper
+							.active#wizard-step-1(role="tabpanel" aria-label="Step 1")
+								h3 Step 1. Account
+								p Create your account to get started. This first step is deliberately short, so the height change to the next step is obvious.
+
+							#wizard-step-2(role="tabpanel" hidden aria-label="Step 2")
+								h3 Step 2. Profile
+								p Tell us about yourself. We will keep your info in a database and sell it to the highest bidder. Moving forward slides the next step in from the right while the container animates its height to fit this longer content. There could have been some bullet points in here…
+
+							#wizard-step-3(role="tabpanel" hidden aria-label="Step 3")
+								h3 Step 3. Confirm
+								p Review and confirm. Moving back slides the other way, and the height animates down again.
+
+				.wizard-nav
+					button.secondary(data-wizard-prev) Previous
+					button(data-wizard-next) Next
+
+			h4 Markup
+			+codeblock('HTML')
+				#wizard(data-panelset data-ps-levels)
+					.panel-wrapper
+						#wizard-step-1.active(role="tabpanel") ...
+						#wizard-step-2(role="tabpanel" hidden) ...
+						#wizard-step-3(role="tabpanel" hidden) ...
+				+n
+				.wizard-nav
+					button(data-wizard-prev) Previous
+					button(data-wizard-next) Next
+
+
+
+
+			h3 Previous and next buttons
+			p Wire the buttons straight to #[code next()] / #[code prev()] — no stepping logic needed:
+
+			+codeblock('JS').
+				const ps = document.querySelector('#wizard').panelSet;
+
+				document.querySelector('[data-wizard-next]')
+					.addEventListener('click', event => ps.next({ event }));
+				document.querySelector('[data-wizard-prev]')
+					.addEventListener('click', event => ps.prev({ event }));
+
+			h3 Disabling the buttons at the ends
+			p The #[code ps:activationstart] event carries #[code atStart] and #[code atEnd] flags. Use them to disable the buttons (or, for example, swap the last one into a "Finish" call-to-action):
+
+			.callout 
+				+warning()
+				p #[strong Note]: disabling any button that currently has focus makes the browser drop the focus to the document body, so the next #[code Tab] jumps to the top of the page instead of staying in the wizard. To avoid that, move focus to the sibling that remains enabled #[em before] disabling (at the last step that is the Back button) so #[code Shift+Tab] keeps working as expected.
+
+			+codeblock('JS').
+				const wizard = document.querySelector('#wizard');
+				const prevBtn = document.querySelector('[data-wizard-prev]');
+				const nextBtn = document.querySelector('[data-wizard-next]');
+
+				wizard.addEventListener('ps:activationstart', event => {
+					const { atStart, atEnd } = event.detail;
+					// Move focus off a button BEFORE disabling it — disabling the focused
+					// element drops focus to <body>, so the next Tab leaves the wizard.
+					if (atEnd   && document.activeElement === nextBtn) prevBtn.focus();
+					if (atStart && document.activeElement === prevBtn) nextBtn.focus();
+					prevBtn.disabled = atStart;
+					nextBtn.disabled = atEnd;   // or: swap to a "Finish" button
+				});
+
+
+
+	+section("Requiring valid input before advancing")
+		p This wizard puts a tab strip #[em and] Previous / Next buttons over one PanelSet. A required checkbox on each step gates progress: you cannot move forward — by button #[em or] by clicking a later tab — until the current step is ticked. Because tab clicks, #[code next()] and #[code prev()] all funnel through #[code show()], one #[code ps:beforeactivate] listener guards every path. Stepping #[em back] is always allowed.
+
+		.card
+			.demo
+				.demo-controls
+					button(role="tab" aria-controls="vstep-1" aria-selected="true") Account
+					button(role="tab" aria-controls="vstep-2") Profile
+					button(role="tab" aria-controls="vstep-3") Confirm
+
+				br
+
+				#vwizard(data-panelset data-ps-levels)
+					.panel-wrapper
+						.active#vstep-1(role="tabpanel" aria-label="Account")
+							h3 Step 1. Account
+							label.wizard-check
+								input(type="checkbox" required)
+								span I agree to create an account
+						#vstep-2(role="tabpanel" hidden aria-label="Profile")
+							h3 Step 2. Profile
+							label.wizard-check
+								input(type="checkbox" required)
+								span I confirm my profile details are correct
+						#vstep-3(role="tabpanel" hidden aria-label="Confirm")
+							h3 Step 3. Confirm
+							label.wizard-check
+								input(type="checkbox" required)
+								span I accept the terms and conditions
+				.wizard-nav
+					button.secondary(data-vwizard-prev) Previous
+					button(data-vwizard-next) Next
+
+			p #[strong Try it]: with a box unticked, #[strong Next] or a later tab does nothing and focus jumps to the checkbox. Tick it to move on.
+
+			h4 Markup
+			+codeblock('HTML')
+				.demo-controls
+					button(role="tab" aria-controls="vstep-1" aria-selected="true") Account
+					button(role="tab" aria-controls="vstep-2") Profile
+					button(role="tab" aria-controls="vstep-3") Confirm
+				+n
+				#vwizard(data-panelset data-ps-levels)
+					.panel-wrapper
+						#vstep-1.active(role="tabpanel")
+							label
+								input(type="checkbox" required)
+								span  I agree to create an account
+						#vstep-2(role="tabpanel" hidden) …
+						#vstep-3(role="tabpanel" hidden) …
+				+n
+				.wizard-nav
+					button(data-vwizard-prev) Previous
+					button(data-vwizard-next) Next
+
+			h4 JavaScript
+			+codeblock('JS').
+				const vwizard = document.querySelector('#vwizard');
+				const ps      = vwizard.panelSet;
+				const tabs    = [...document.querySelectorAll('[role="tab"]')];
+				const prevBtn = document.querySelector('[data-vwizard-prev]');
+				const nextBtn = document.querySelector('[data-vwizard-next]');
+
+				const panelOf = tab => document.getElementById(tab.getAttribute('aria-controls'));
+				const valid   = panel => !panel.querySelector('[required]:invalid');
+
+				// Navigation: tabs jump to a panel, buttons step.
+				tabs.forEach(tab => tab.addEventListener('click', event => {
+					if (tab.getAttribute('aria-disabled') !== 'true')
+						ps.show(tab.getAttribute('aria-controls'), { event });
+				}));
+				nextBtn.addEventListener('click', event => ps.next({ event }));
+				prevBtn.addEventListener('click', event => ps.prev({ event }));
+
+				// Hard gate — covers tab clicks, buttons, keyboard, every path.
+				vwizard.addEventListener('ps:beforeactivate', event => {
+					const { outgoingPanel, targetPanel } = event.detail;
+					const forward = outgoingPanel &&
+						(outgoingPanel.compareDocumentPosition(targetPanel) & Node.DOCUMENT_POSITION_FOLLOWING);
+					if (forward && !valid(outgoingPanel)) {
+						event.preventDefault();
+						outgoingPanel.querySelector('[required]:invalid')?.focus();
+					}
+				});
+
+				// Soft state — reflect validity onto the controls on every change.
+				function refresh() {
+					const idx = tabs.findIndex(t => t.getAttribute('aria-controls') === ps.getActive());
+					const firstInvalid = tabs.findIndex(t => !valid(panelOf(t)));
+					// Lock steps that sit beyond the first incomplete one.
+					tabs.forEach((t, i) =>
+						t.setAttribute('aria-disabled', String(firstInvalid !== -1 && i > firstInvalid)));
+					const disablePrev = idx <= 0;
+					const disableNext = idx >= tabs.length - 1 || !valid(panelOf(tabs[idx]));
+					// Move focus off a button before disabling it (see the note above).
+					if (disableNext && document.activeElement === nextBtn) prevBtn.focus();
+					if (disablePrev && document.activeElement === prevBtn) nextBtn.focus();
+					prevBtn.disabled = disablePrev;
+					nextBtn.disabled = disableNext;
+				}
+				vwizard.addEventListener('change', refresh);
+				vwizard.addEventListener('ps:activationcomplete', refresh);
+				refresh();
+
+			p #[strong Heads up]: the disabling and locking above is hand-written bookkeeping — recompute on every #[code change], mirror it into #[code disabled] / #[code aria-disabled], and move focus before disabling. It is the same for every wizard, which is a strong hint it belongs in a small reusable tab-strip layer over PanelSet rather than per-page glue.
+
+
+
+
+append styles
+	style.
+		#wizard,
+		#vwizard {
+			--ps-panel-in-transform-from: translateX(40px);
+			--ps-panel-out-transform-to:  translateX(-40px);
+			--ps-panel-in-delay: 0s;
+			border: 1px solid var(--border-default);
+			border-radius: 8px;
+			padding-top: 0;
+		}
+		#wizard .panel-wrapper [role="tabpanel"],
+		#vwizard .panel-wrapper [role="tabpanel"] {
+			padding: 1.25rem;
+		}
+		/* Height tracking: hold the frame to the tallest step so the nav
+		   buttons below it stay put instead of moving as steps change height.
+		   min-height (not height) takes the LARGER of the tracked max and the
+		   current content, so even a momentarily stale value (mid-resize) can
+		   never let content overflow onto the buttons below. */
+		.wizard-frame {
+			min-height: var(--ps-max-height);
+		}
+		.wizard-nav {
+			display: flex;
+			justify-content: space-between;
+			gap: 0.5rem;
+			margin-top: 0.75rem;
+		}
+		.wizard-check {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-top: 0.75rem;
+		}
+		.tabs [role="tab"][aria-disabled="true"],
+		.demo-controls [aria-disabled="true"] {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			PanelSet.init();
+	else
+		script(type="module").
+			import PanelSet from 'panelset';
+			PanelSet.init({ debug: true });
+
+	script.
+		(() => {
+			const wizard = document.querySelector('#wizard');
+			if (!wizard) return;
+			const prevBtn = document.querySelector('[data-wizard-prev]');
+			const nextBtn = document.querySelector('[data-wizard-next]');
+			prevBtn?.addEventListener('click', event => wizard.panelSet?.prev({ event }));
+			nextBtn?.addEventListener('click', event => wizard.panelSet?.next({ event }));
+			// Disable the buttons at the ends, using the edge flags on the event.
+			const sync = (atStart, atEnd) => {
+				// Disabling the focused button drops focus to <body>, so the next Tab
+				// jumps to the top of the page. Move focus to the sibling that stays
+				// enabled BEFORE disabling, keeping the user inside the wizard.
+				if (atEnd   && document.activeElement === nextBtn) prevBtn?.focus();
+				if (atStart && document.activeElement === prevBtn) nextBtn?.focus();
+				if (prevBtn) prevBtn.disabled = atStart;
+				if (nextBtn) nextBtn.disabled = atEnd;
+			};
+			wizard.addEventListener('ps:activationstart', e => sync(e.detail.atStart, e.detail.atEnd));
+			// Initial state on load. Read from the DOM, not panelSet — this inline
+			// script runs before the deferred module that calls PanelSet.init().
+			const panels = [...wizard.querySelectorAll('[role="tabpanel"]')];
+			const i = panels.findIndex(p => p.classList.contains('active'));
+			if (i !== -1) sync(i === 0, i === panels.length - 1);
+		})();
+
+	script.
+		(() => {
+			const vwizard = document.querySelector('#vwizard');
+			if (!vwizard) return;
+			const tabs    = [...document.querySelectorAll('[role="tab"][aria-controls^="vstep-"]')];
+			const prevBtn = document.querySelector('[data-vwizard-prev]');
+			const nextBtn = document.querySelector('[data-vwizard-next]');
+			const panelOf = tab => document.getElementById(tab.getAttribute('aria-controls'));
+			const valid   = panel => !panel.querySelector('[required]:invalid');
+
+			tabs.forEach(tab => tab.addEventListener('click', e => {
+				if (tab.getAttribute('aria-disabled') !== 'true')
+					vwizard.panelSet?.show(tab.getAttribute('aria-controls'), { event: e });
+			}));
+			prevBtn?.addEventListener('click', e => vwizard.panelSet?.prev({ event: e }));
+			nextBtn?.addEventListener('click', e => vwizard.panelSet?.next({ event: e }));
+
+			vwizard.addEventListener('ps:beforeactivate', e => {
+				const { outgoingPanel, targetPanel } = e.detail;
+				const forward = outgoingPanel &&
+					(outgoingPanel.compareDocumentPosition(targetPanel) & Node.DOCUMENT_POSITION_FOLLOWING);
+				if (forward && !valid(outgoingPanel)) {
+					e.preventDefault();
+					outgoingPanel.querySelector('[required]:invalid')?.focus();
+				}
+			});
+
+			const refresh = () => {
+				const ps = vwizard.panelSet;
+				if (!ps) return;
+				const idx = tabs.findIndex(t => t.getAttribute('aria-controls') === ps.getActive());
+				const firstInvalid = tabs.findIndex(t => !valid(panelOf(t)));
+				tabs.forEach((t, i) =>
+					t.setAttribute('aria-disabled', String(firstInvalid !== -1 && i > firstInvalid)));
+				const disablePrev = idx <= 0;
+				const disableNext = idx >= tabs.length - 1 || !valid(panelOf(tabs[idx]));
+				if (disableNext && document.activeElement === nextBtn) prevBtn.focus();
+				if (disablePrev && document.activeElement === prevBtn) nextBtn.focus();
+				prevBtn.disabled = disablePrev;
+				nextBtn.disabled = disableNext;
+			};
+			vwizard.addEventListener('change', refresh);
+			vwizard.addEventListener('ps:activationcomplete', refresh);
+			if (vwizard.panelSet) refresh();
+			else vwizard.addEventListener('ps:ready', refresh, { once: true });
+		})();

@@ -75,6 +75,30 @@ block content
 			p Opens if closed, closes if open. Same options as #[code open()].
 
 		.card.api
+			h3.code panelSet.next(options?): void
+			hr
+			p Activates the next panel in DOM order, stepping from the currently active (or pending) panel. By default it stops at the last panel; enable the #[code loop] config option (or #[code data-ps-loop]) to wrap to the first.
+			h4 Parameters:
+			dl
+				dt.code options (optional)
+				dd Same #[code ShowOptions] as #[code show()] — #[code event], #[code transition], #[code autoFocus]. Pass #[code event] so #[code autoFocus] only moves focus on keyboard activation.
+
+			+codeblock('JavaScript').
+				nextButton.addEventListener('click', event => panelSet.next({ event }));
+
+		.card.api
+			h3.code panelSet.prev(options?): void
+			hr
+			p Activates the previous panel in DOM order. By default it stops at the first panel; enable the #[code loop] config option (or #[code data-ps-loop]) to wrap to the last.
+			h4 Parameters:
+			dl
+				dt.code options (optional)
+				dd Same #[code ShowOptions] as #[code show()].
+
+			+codeblock('JavaScript').
+				prevButton.addEventListener('click', event => panelSet.prev({ event }));
+
+		.card.api
 			h3.code panelSet.getActive(): string | null
 			hr
 			p Returns the ID of the currently active (or pending) panel, or #[code null].
@@ -84,6 +108,35 @@ block content
 				if (current === 'step-2') {
 					panelSet.show('step-3', { event });
 				}
+
+		.card.api
+			h3.code panelSet.refresh(): void
+			hr
+			p Re-scans the DOM for this set's panels and reconciles internal state. Call after adding, removing, or reordering #[code [role="tabpanel"]] elements at runtime — for example a lazy or windowed wizard. The active panel is preserved when still present; otherwise it falls back to the #[code .active] panel, then the first. Newly added panels are initialised to the hidden state.
+			p #[strong Note:] call when idle, not mid-transition. #[code addPanel()] and #[code removePanel()] call this for you.
+
+		.card.api
+			h3.code panelSet.addPanel(panel: HTMLElement, position?): HTMLElement
+			hr
+			p Inserts a panel at runtime and refreshes. The node is appended to the wrapper unless a position is given. Ensures the element carries #[code role="tabpanel"]. Returns the inserted panel.
+			h4 Parameters:
+			dl
+				dt.code panel
+				dd The element to insert.
+				dt.code position (optional)
+				dd One of #[code { before: panelId }], #[code { after: panelId }], or #[code { index: number }].
+
+			+codeblock('JavaScript').
+				const node = document.createElement('div');
+				node.id = 'step-3';
+				node.innerHTML = '&lt;h3&gt;Step 3&lt;/h3&gt;';
+				panelSet.addPanel(node, { after: 'step-2' });
+				panelSet.show('step-3');
+
+		.card.api
+			h3.code panelSet.removePanel(panelId: string): void
+			hr
+			p Removes a panel by ID and refreshes. If the removed panel was active, #[code refresh()] promotes a fallback. No-op if the ID is not found.
 
 		.card.api
 			h3.code panelSet.onBeforeOpen(handler, options?): void
@@ -113,6 +166,11 @@ block content
 
 				panelSet.onBeforeOpen(loadPanel, { once: true });
 
+		.card.api
+			h3.code panelSet.destroy(): void
+			hr
+			p Tears down the instance: aborts any pending animations, disconnects the height-tracking #[code ResizeObserver], and removes the #[code element.panelSet] reference. The DOM (panels, classes) is left as-is. Re-initialise with #[code new PanelSet()] or #[code PanelSet.init()] afterwards if needed.
+
 	+section("Instance properties")
 		.card.api
 			h3.code panelSet.element: HTMLElement
@@ -128,6 +186,16 @@ block content
 			h3.code panelSet.activePanel: HTMLElement
 			hr
 			p #[strong Read-only.] The currently visible panel element.
+
+		.card.api
+			h3.code panelSet.pendingPanel: HTMLElement
+			hr
+			p #[strong Read-only.] The panel being activated. Equal to #[code activePanel] when idle, but during a transition it is the incoming panel. #[code getActive()] returns its ID, and #[code next()] / #[code prev()] step relative to it so rapid clicks queue correctly.
+
+		.card.api
+			h3.code panelSet.panelWrapper: HTMLElement
+			hr
+			p #[strong Read-only.] The direct-child #[code .panel-wrapper] element that holds the panels (created automatically if absent). Runtime inserts via #[code addPanel()] go here.
 
 		.card.api
 			h3.code panelSet.config: PanelSetConfig
@@ -174,6 +242,7 @@ block content
 				type HandlerOptions,
 				type AsyncContentHandler,
 				type ReadyEventDetail,
+				type BeforeActivateEventDetail,
 				type BeforeOpenEventDetail,
 				type ActivationEventDetail,
 				type ActivationAbortedEventDetail,

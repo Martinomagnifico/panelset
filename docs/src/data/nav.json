@@ -14,13 +14,14 @@
         { "text": "Panel — API", "label": "API", "href": "/panel/api.html" }
       ],
       "examples": [
+        { "text": "Panel — Absolute positioning", "label": "Absolute positioning", "href": "/panel/examples/absolute.html" },
         { "text": "Show more", "href": "/panel/examples/show-more.html" },
         { "text": "Accordion", "href": "/panel/examples/accordion.html" },
         { "text": "Alignment", "href": "/panel/examples/alignment.html" },
         { "text": "Async panel", "href": "/panel/examples/async.html" }
       ],
       "integrations": [
-        { "text": "Panel: Web Component", "label": "Web Component", "href": "/panel/examples/webcomponent.html" }
+        { "text": "Panel: Web Component", "label": "Web Component", "href": "/panel/integrations/webcomponent.html" }
       ]
     },
     {
@@ -33,13 +34,28 @@
         { "text": "PanelSet — API", "label": "API", "href": "/panelset/api.html" }
       ],
       "examples": [
+        { "text": "PanelSet — Absolute positioning", "label": "Absolute positioning", "href": "/panelset/examples/absolute.html" },
         { "text": "Basic tabs", "href": "/panelset/examples/basictabs.html" },
         { "text": "Async panels", "href": "/panelset/examples/async.html" },
-        { "text": "Closable panelset", "href": "/panelset/examples/closable.html" },
+        { "text": "Wizard", "href": "/panelset/examples/wizard.html" },
         { "text": "Height tracking", "href": "/panelset/examples/height-tracking.html" }
       ],
       "integrations": [
-        { "text": "PanelSet: Web Component", "label": "Web Component", "href": "/panelset/examples/webcomponent.html" }
+        { "text": "PanelSet: Web Component", "label": "Web Component", "href": "/panelset/integrations/webcomponent.html" }
+      ]
+    },
+    {
+      "title": "PanelControl",
+      "links": [
+        { "text": "PanelControl — Getting started", "label": "Getting started", "href": "/panelcontrol/getting-started.html" },
+        { "text": "PanelControl — Configuration", "label": "Configuration", "href": "/panelcontrol/configuration.html" },
+        { "text": "PanelControl — API", "label": "API", "href": "/panelcontrol/api.html" }
+      ],
+      "examples": [
+        { "text": "PanelControl — Examples", "label": "Examples", "href": "/panelcontrol/examples.html" }
+      ],
+      "integrations": [
+        { "text": "PanelControl: Web Component", "label": "Web Component", "href": "/panelcontrol/integrations/webcomponent.html" }
       ]
     },
     {

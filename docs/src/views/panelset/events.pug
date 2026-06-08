@@ -26,6 +26,26 @@ block content
 						console.log('Panel count:', e.detail.instance.panels.length);
 					});
 
+			+apiEvent("ps:beforeactivate")
+				p Fires at the very start of an activation, #[strong before any state changes]. This event is #[strong cancelable]: call #[code e.preventDefault()] to veto the switch. Every activation path goes through here — tab clicks, #[code next()] / #[code prev()], deep links and programmatic #[code show()] — so it is the place to gate navigation (for example, a wizard that refuses to advance until the current step is valid).
+				h4 Detail:
+				dl
+					dt.code panelId: string
+					dd ID of the panel about to be activated.
+					dt.code targetPanel: HTMLElement
+					dd The panel element about to be activated.
+					dt.code outgoingPanel: HTMLElement | null
+					dd The currently active panel, or #[code null] if none.
+					dt.code trigger: HTMLElement | null
+					dd The element that triggered the activation, or #[code null] if programmatic.
+				+codeblock('JavaScript').
+					container.addEventListener('ps:beforeactivate', e => {
+						// Veto the switch unless the current step is valid.
+						if (!isCurrentStepValid()) {
+							e.preventDefault();   // nothing changes
+						}
+					});
+
 			+apiEvent("ps:beforeopen")
 				p Fires before a panel activation begins. Attach a promise to #[code e.detail.promise] to delay the transition until async content is ready.
 				h4 Detail:

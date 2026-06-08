@@ -1,0 +1,147 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelSet — Absolute positioning"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Absolute positioning
+				p.lead Handy for a megamenu.
+
+	+section("Live demo")
+		p A #[strong closable] PanelSet opens and closes as a whole. Position it and it becomes a megamenu: the tab buttons switch panels while the whole thing floats over the content below, instead of pushing it down. With #[code closeOnTab], clicking the active tab closes it; the Close / Open / Toggle buttons drive it from anywhere.
+
+		.card
+			.demo
+				.demo-controls(data-closeable)
+					button(aria-controls="megamenu-panel-1")
+						span Panel 1
+						+chevron(16, 'down')
+					button(aria-controls="megamenu-panel-2")
+						span Panel 2
+						+chevron(16, 'down')
+					button(aria-controls="megamenu-panel-3")
+						span Panel 3
+						+chevron(16, 'down')
+					button(data-panelset-close="#megamenu") Close
+					button(data-panelset-open="#megamenu") Open
+					button(data-panelset-toggle="#megamenu") Toggle
+				hr
+
+				#megamenu(data-panelset data-closable data-close-on-tab data-panelset-align="end")
+					.panel-wrapper
+						.active#megamenu-panel-1(role="tabpanel", aria-label="Key features")
+							+example-1
+						#megamenu-panel-2(role="tabpanel", hidden, aria-label="Pricing plans")
+							+example-2
+						#megamenu-panel-3(role="tabpanel" hidden, aria-label="Support options")
+							+example-3
+
+			h3 Markup
+			+codeblock('HTML')
+				.megamenu-wrapper
+					.demo-controls
+						button(aria-controls="megamenu-panel-1") Panel 1
+						button(aria-controls="megamenu-panel-2") Panel 2
+						button(aria-controls="megamenu-panel-3") Panel 3
+						button(data-panelset-close="#megamenu") Close
+						button(data-panelset-open="#megamenu") Open
+						button(data-panelset-toggle="#megamenu") Toggle
+					hr.no-margin
+					#megamenu(data-panelset data-closable data-close-on-tab)
+						// Panels here
+
+
+
+
+
+	+section("Positioning and styling")
+		p The closable PanelSet is absolutely positioned. Becuase the 'top' is not defined, it just follows the #[code hr] in the DOM structure. The megamenu overlays the page instead of pushing the layout down when it opens. Similar to the #[a(href="/panel/examples/absolute.html") Panel dropdown], scaled up to a tabbed megamenu.
+
+		+codeblock('CSS').
+			.megamenu-wrapper {
+				position: relative;
+				width: max-content;
+			}
+
+			#megamenu {
+				position: absolute;
+				right: 0;        /* right edges aligned with the controls */
+				z-index: 10;
+				width: 320px;
+				border-radius: 8px;
+				background: var(--demo-btn-bg);
+				box-shadow: 0 8px 20px var(--special-shadow-dark);
+			}
+
+
+
+	+section("Closable mechanics")
+		p This set is #[code data-closable] with #[code data-close-on-tab]. Together they make the tab buttons double as open/close toggles: a tab opens the set when it is closed (silently switching to that panel first if needed), and clicking the active tab while open closes it.
+
+		h3 Panel switching
+		p The switching handler is the same as any other PanelSet. Passing the event to #[code show()] is optional, but lets you know what triggered the switch (via #[code event.target] or the #[code ps:activationstart] event).
+
+		+codeblock('JS').
+			document.addEventListener('click', event => {
+				const button = event.target.closest('button[aria-controls]');
+				if (!button) return;
+				const panelId = button.getAttribute('aria-controls');
+				const container = document.getElementById(panelId)?.closest('[data-panelset]');
+				container?.panelSet?.show(panelId, { event });
+			});
+
+		h3 Open / close / toggle buttons
+		p Buttons carrying #[code data-panelset-open], #[code data-panelset-close] or #[code data-panelset-toggle] (with a selector value) drive the set programmatically:
+
+		+codeblock('JS').
+			document.addEventListener('click', event => {
+				const actions = ['close', 'open', 'toggle'];
+
+				for (const action of actions) {
+					const btn = event.target.closest(`[data-panelset-${action}]`);
+					if (btn) {
+						const selector = btn.getAttribute(`data-panelset-${action}`);
+						const container = document.querySelector(selector);
+
+						if (container?.panelSet) {
+							const withTransition = !btn.hasAttribute('data-no-transition');
+							container.panelSet[action]({ event, transition: withTransition });
+						}
+						return;
+					}
+				}
+			});
+
+
+append styles
+	style.
+		//- .megamenu-wrapper {
+		//- 	position: relative;
+		//- 	width: max-content;
+		//- }
+
+		//- #megamenu {
+		//- 	position: absolute;
+		//- 	right: 0;
+		//- 	z-index: 10;
+		//- 	width: 320px;
+		//- 	border-radius: 8px;
+		//- 	background: var(--demo-btn-bg);
+		//- 	box-shadow: 0 8px 20px var(--special-shadow-dark);
+		//- }
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}assets/scripts/example-closable.js` vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			PanelSet.init();
+	else
+		script(type="module" src="/src/assets/scripts/example-closable.js")
+		script(type="module").
+			import PanelSet from 'panelset';
+			PanelSet.init({ debug: true });

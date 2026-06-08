@@ -135,22 +135,26 @@ block content
 					button(aria-controls="a11y-f-panel-3") Step 3
 				div#a11y-first-demo(data-panelset)
 					.panel-wrapper
+						
 						div.active(role="tabpanel" id="a11y-f-panel-1" aria-label="Step 1: Your name")
 							h3 Step 1. Your name
 							p Focus will land on the input below when you arrive here via keyboard.
 							label
 								| Name:
 								input(type="text" placeholder="Enter your name")
+						
 						div(role="tabpanel" id="a11y-f-panel-2" hidden aria-label="Step 2: Your email")
 							h3 Step 2. Your email
 							p Focus will land on the input below when you arrive here via keyboard.
 							label
 								| Email:
 								input(type="email" placeholder="Enter your email")
+						
 						div(role="tabpanel" id="a11y-f-panel-3" hidden aria-label="Step 3: Confirm")
 							h3 Step 3. Confirm
 							p Focus will land on the submit button when you arrive here via keyboard.
 							p Review your details and submit when ready.
+
 				.demo-controls(style="justify-content: space-between")
 					button#a11y-wizard-back.btn.chevron.back(disabled)
 						+chevron(24, 'left')
@@ -240,7 +244,7 @@ block content
 
 		.card.api
 			h3 aria-labelledby (recommended for tabs)
-			p Links the panel to its tab button. The button's text becomes the panel's accessible name, which is announced when the panel is shown.
+			p Links the panel to its tab button. The button’s text becomes the panel’s accessible name, which is announced when the panel is shown.
 
 			+codeblock('HTML')
 				button(role="tab" id="tab-overview" aria-controls="panel-overview") Overview

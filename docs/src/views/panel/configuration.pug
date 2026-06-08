@@ -47,7 +47,7 @@ block content
 			#not-saved(data-panel data-panel-persist="false")
 				.panel-wrapper ...
 
-		p For #[code persist] and #[code deepLink], a #[code data-panel-group] can also set the option for all panels inside it — and an individual panel's own attribute still overrides the group.
+		p For #[code persist] and #[code deepLink], a #[code data-panel-group] can also set the option for all panels inside it — and an individual panel’s own attribute still overrides the group.
 
 		p Web component configuration uses plain attributes directly on #[code &lt;ps-panel&gt;]. No #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panel/examples/webcomponent.html") Web Component integration page] for full usage examples.
 
@@ -181,11 +181,11 @@ block content
 					.card
 						h4 Data attribute
 						ul
-							li #[code data-panel-debug]
+							li #[code data-debug]
 					.card
 						h4 Web Component attribute
 						ul
-							li #[code panel-debug]
+							li #[code debug]
 
 			+apiOption("interruptible: boolean")
 				p When set to #[code false], new open or close attempts are ignored while an animation or content load is in progress. The current animation completes first.

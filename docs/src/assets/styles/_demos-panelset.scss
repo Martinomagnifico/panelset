@@ -1,4 +1,5 @@
-.demo-controls button[aria-controls] {
+.demo-controls button[aria-controls],
+.tabs[data-closeable] button[aria-controls] {
 	display: flex;
 	align-items: center;
 	gap: 0.4em;
@@ -20,7 +21,9 @@
 }
 
 .demo:has([data-panelset][data-closable]:not(.is-open):not(.is-opening)) .demo-controls button[aria-controls] svg,
-.demo:has([data-panelset].is-closing) .demo-controls button[aria-controls] svg {
+.demo:has([data-panelset][data-closable]:not(.is-open):not(.is-opening)) .tabs[data-closeable] button[aria-controls] svg,
+.demo:has([data-panelset].is-closing) .demo-controls button[aria-controls] svg,
+.demo:has([data-panelset].is-closing) .tabs[data-closeable] button[aria-controls] svg {
 	transform: rotate(-180deg);
 }
 
@@ -39,7 +42,9 @@
 
 
 
-#demo-closable {
+#demo-closable,
+#megamenu,
+#mm {
 	--ps-wrapper-delay: 0s;
 	--ps-open-timing:    cubic-bezier(0.34, 1.56, 0.64, 1);
 	--ps-close-timing:   cubic-bezier(0.36, 0, 0.66, -0.56);

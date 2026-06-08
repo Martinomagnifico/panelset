@@ -44,7 +44,7 @@ block content
 						td #[code &lt;pathname&gt;::panel:&lt;element-id&gt;]
 						td #[code /docs/tabs::panel:sidebar]
 
-			p The #[code &lt;pathname&gt;] prefix is #[code location.pathname], added automatically. You don't set it — it just keeps each page's state separate.
+			p The #[code &lt;pathname&gt;] prefix is #[code location.pathname], added automatically. You don't set it — it just keeps each page’s state separate.
 
 
 	+section("Writing localStorage")
@@ -98,7 +98,7 @@ block content
 		.card
 			ul
 				li #[strong An #[code id] is required to store anything.] A PanelSet writes under its container #[code id]; a Panel under its element #[code id]. A component without an #[code id] silently persists nothing, so a global flag only saves the components you've deliberately identified.
-				li #[strong Any component can opt out.] A per-element #[code data-panel-persist="false"] overrides the global option (attributes are the most specific setting). Inside a persisting #[code [data-panel-group]], a panel's own #[code data-panel-persist="false"] also wins over the group.
+				li #[strong Any component can opt out.] A per-element #[code data-panel-persist="false"] overrides the global option (attributes are the most specific setting). Inside a persisting #[code [data-panel-group]], a panel’s own #[code data-panel-persist="false"] also wins over the group.
 
 		+codeblock('HTML')
 			// Persists: inherits init({ persist: true }) and has an id

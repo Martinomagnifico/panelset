@@ -46,24 +46,42 @@ block content
 
 		.card
 			.demo
-				article.show-more-article
-					p This is always visible introductory text.
-					button(aria-controls="wc-panel-demo" aria-expanded="false") Show more
-					ps-panel#wc-panel-demo(panel-axis="vertical")
-						.panel-wrapper
-							p Additional content that was hidden. The panel animates to its natural height, exactly as with #[code data-panel].
+				button(aria-controls="wc-panel-demo" aria-expanded="false") Show more
+				ps-panel#wc-panel-demo
+					.panel-wrapper
+						p Additional content that was hidden. The panel animates to its natural height, exactly as with #[code data-panel].
 
-		+codeblock('HTML')
-			button(aria-controls="my-panel" aria-expanded="false") Show more
-			+n
-			ps-panel(id="my-panel" panel-axis="vertical")
-				.panel-wrapper
+
+			+codeblock('HTML')
+				button(aria-controls="wc-panel-demo" aria-expanded="false") Show more
+				+n
+				ps-panel#wc-panel-demo
+					.panel-wrapper
+						p Hidden content.
+
+			p Panel auto-wires the trigger via #[code aria-controls], so no click handler is needed.
+
+		p It can even be simplified further: the #[code aria-expanded] attribute is optional, because Panel will add it on its own. The same goes for the panel-wrapper. Panel adds it. And if we add #[code data-panel-trigger] to the button, we can skip the id too (when a trigger and its panel sit next to each other in the markup, see #[a(href="/panel/configuration.html#implicit-wiring") implicit wiring]). This is all optional, but it’s nice that the web component can handle it for you.
+
+		.card
+			.demo
+				button(data-panel-trigger) Show more
+				ps-panel
+					p Additional content that was hidden. The panel animates to its natural height, exactly as with #[code data-panel].
+
+
+			+codeblock('HTML')
+				button(data-panel-trigger) Show more
+				+n
+				ps-panel
 					p Hidden content.
 
-		p Panel auto-wires the trigger via #[code aria-controls], so no click handler is needed.
+
+
+
 
 	+section("Trigger wiring")
-		p Panel auto-binds all #[code [aria-controls]&thinsp;] triggers on init. If you need to reach the Panel instance from your own JavaScript, use #[code closest('ps-panel')] instead of #[code closest('[data-panel]')].
+		p Panel auto-binds all #[code [aria-controls]&thinsp;] triggers on init. If you need to reach the Panel instance from your own JavaScript, use #[code closest('ps-panel')] instead of #[code closest('&#91;data-panel&#93;')].
 
 		+codeblock('JS').
 			// Accessing the Panel instance from custom JS:

@@ -1,0 +1,133 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Panel — Absolute positioning"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Absolute positioning
+				p.lead Not a collapse, but a dropdown.
+
+	+section("Live demo")
+		p Just position it absolutely.
+
+		.card
+			.demo
+				.absolute-panel-wrapper
+					button(aria-controls="absolute-panel") Toggle dropdown
+					div(data-panel, id="absolute-panel")
+						.panel-wrapper
+							p There is some dropdown content here. We give it a maximum width.
+
+			h3 Markup
+			+codeblock('HTML')
+				.absolute-panel-wrapper
+					button(aria-controls="absolute-panel") Toggle dropdown
+					div(data-panel, id="absolute-panel")
+						.panel-wrapper
+							p There is some dropdown content here. We give it a maximum width.
+
+
+	+section("Styling")
+		p The panel is styled like a dropdown, with a shadow and a white background. The animation timing is tweaked to give it a snappier feel than the default Panel open.
+
+		p #[code --ps-open-transition-extra] is used to style the #[code data-panel] itself. Note that we do not give it a real border, but a box-shadow that looks like a border, because even in a closed state, a border will be visible. 
+
+		+codeblock('CSS').
+			.absolute-panel-wrapper {
+				position: relative;
+				width: max-content;
+			}
+
+			/* Keep the content at a fixed width so it doesn't reflow while animating. */
+			#absolute-panel .panel-wrapper {
+				padding: 1rem;
+				flex-shrink: 0;
+				width: 220px;
+			}
+
+			#absolute-panel {
+				--ps-open-timing:  cubic-bezier(0.34, 1.56, 0.64, 1);
+				--ps-close-timing: cubic-bezier(0.36, 0, 0.66, -0.56);
+
+				/* Animate box-shadow, width and opacity alongside the height. */
+				--ps-open-transition-extra:  box-shadow var(--ps-open-speed) var(--ps-open-timing), width var(--ps-open-speed) var(--ps-open-timing), opacity var(--ps-open-speed) var(--ps-open-timing);
+				--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing), width var(--ps-close-speed) var(--ps-close-timing), opacity var(--ps-close-speed) var(--ps-close-timing);
+
+				position: absolute;
+				right: 0;        /* right edges aligned */
+				z-index: 10;
+				width: 100%;     /* closed: as wide as the trigger */
+
+				border-radius: 8px;
+				background: white;
+				box-shadow: inset 0 0 0 0px var(--special-normal), 0 0 0 var(--special-shadow-dark);
+				opacity: 0;
+				display: flex;
+				justify-content: flex-end;
+			}
+
+			#absolute-panel.is-opening,
+			#absolute-panel.is-open {
+				box-shadow: inset 0 0 0 2px var(--special-normal), 0 8px 20px var(--special-shadow-dark);
+				width: 220px;    /* open: out to full width */
+				opacity: 1;
+			}
+
+
+append styles
+	style.
+
+		.absolute-panel-wrapper {
+			position: relative;
+			width: max-content;
+		}
+
+		#absolute-panel .panel-wrapper {
+			padding: 1rem;
+			flex-shrink: 0;
+			width: 220px;
+		}
+
+		#absolute-panel {
+			--ps-open-timing:    cubic-bezier(0.34, 1.56, 0.64, 1);
+			--ps-close-timing:   cubic-bezier(0.36, 0, 0.66, -0.56);
+			--ps-open-transition-extra: box-shadow var(--ps-open-speed) var(--ps-open-timing), width var(--ps-open-speed) var(--ps-open-timing), opacity var(--ps-open-speed) var(--ps-open-timing);
+			--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing), width var(--ps-close-speed) var(--ps-close-timing), opacity var(--ps-close-speed) var(--ps-close-timing);
+			width: 100%;
+			right: 0;
+			position: absolute;
+			border-radius: 8px;
+			background: white;
+			z-index: 10;
+			box-shadow: inset 0 0 0 0px var(--special-normal), 0 0 0 var(--special-shadow-dark);
+			opacity: 0;
+			display: flex;
+			justify-content: flex-end;
+		}
+
+		#absolute-panel.is-opening,
+		#absolute-panel.is-open {
+			box-shadow: inset 0 0 0 2px var(--special-normal), 0 8px 20px var(--special-shadow-dark);
+			width: 220px;
+			opacity: 1;
+		}
+		
+
+
+
+
+
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			Panel.init('.docs-content [data-panel]');
+	else
+		script(type="module").
+			import { Panel } from 'panelset';
+			Panel.init('.docs-content [data-panel]', { debug: true });
