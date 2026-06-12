@@ -1,4 +1,4 @@
-html.intro {
+html.index {
 	height: 100%;
 	width: 100%;
 	padding: 0;
@@ -37,6 +37,10 @@ html.intro {
 			text-decoration: none;
 			background: var(--btn-primary-hover);
 		}
+	}
+
+	.demo {
+		margin-top: 2rem;
 	}
 
 	.docs-content {

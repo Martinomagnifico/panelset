@@ -1,7 +1,7 @@
 extends /views/templates/layouts/_base
 
 append variables
-	- pagetitle = "PanelControl — API"
+	- pagetitle = "PanelControl | API"
 
 block content
 	.lane
@@ -29,13 +29,13 @@ block content
 		.card.api
 			h3.code panelControl.show(panelId: string, options?): void
 			hr
-			p Activates a tab's panel through the linked PanelSet — the same thing a trigger click does. No-op if there is no linked PanelSet.
+			p Activates a tab's panel through the linked PanelSet (the same thing a trigger click does). No-op if there is no linked PanelSet.
 			h4 Parameters:
 			dl
 				dt.code panelId
 				dd ID of the panel to activate (a trigger's #[code aria-controls] target).
 				dt.code options (optional)
-				dd Same #[code ShowOptions] as #[code PanelSet.show()] — #[code event], #[code transition], #[code autoFocus].
+				dd Same #[code ShowOptions] as #[code PanelSet.show()]: #[code event], #[code transition], #[code autoFocus].
 
 			+codeblock('JavaScript').
 				control.show('panel-2');
@@ -43,7 +43,7 @@ block content
 		.card.api
 			h3.code panelControl.setTabState(panelId: string, state: 'enabled' | 'disabled'): void
 			hr
-			p Locks or unlocks the tab(s) controlling a panel. PanelControl only #[strong applies] the state — it does not decide when a tab should be locked (that is the caller's concern, e.g. a flow controller).
+			p Locks or unlocks the tab(s) controlling a panel. PanelControl only #[strong applies] the state. It does not decide when a tab should be locked (that is the caller's concern, e.g. a flow controller).
 			h4 Parameters:
 			dl
 				dt.code panelId
@@ -69,7 +69,7 @@ block content
 		.card.api
 			h3.code panelControl.panelSetElement: HTMLElement | null
 			hr
-			p #[strong Read-only.] The PanelSet container this control drives, or #[code null] if none was found.
+			p #[strong Read-only.] The PanelSet container this control drives, or #[code null] if none can be found. Resolved lazily on first access and cached. An explicit #[code data-panelcontrol="#selector"] wins, otherwise it is discovered from the triggers. Because it is lazy, a PanelSet added after init resolves on first use.
 
 		.card.api
 			h3.code panelControl.panelSet: PanelSet | undefined

@@ -1,0 +1,92 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelControl | Getting started"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 PanelControl
+				p.lead An external controller for a PanelSet.
+
+	+section("What it does")
+		p A #[strong PanelSet] switches panels, but it does not bind the clicks on your tabs. On the PanelSet example pages that is all done with JavaScript, an extra script on each page. If you just read the docs of PanelSet, you might think you have to write that code yourself.
+		p #[strong PanelControl] to the rescue: assign it to the element that holds your triggers and it activates the right panel on click, adds keyboard navigation, and reflects state back onto the controls.
+		p It finds its PanelSet through the panels the triggers point at, so the control can live #[strong anywhere] in the DOM. It does not need to sit next to the PanelSet. One PanelControl drives one PanelSet.
+
+	+section("Installation")
+		p PanelControl ships inside the #[code panelset] package. Nothing extra to install. Import it next to PanelSet, or load the one script.
+
+		+codeblock('JS').
+			import { PanelSet, PanelControl } from 'panelset';
+			import 'panelset/style.css';
+
+		+codeblock('HTML')
+			link(rel="stylesheet" href="panelset.css")
+			script(src="panelset.js")
+
+		p With the script tag, #[code window.PanelControl] is available and #[code register()] has already defined #[code &lt;ps-panelcontrol&gt;]. See the #[a(href="/panelcontrol/integrations/webcomponent.html") Web Component] page to learn more.
+
+	+section("Markup")
+		p Put #[code data-panelcontrol] on the element holding your triggers. Each trigger points at a panel with #[code aria-controls]. Add #[code role="tablist"] (with #[code role="tab"] on the buttons) to switch on keyboard (arrow) navigation.
+
+		.card
+			.demo
+				+exampletabset('markup', true)(data-panelcontrol)
+				+examplepanelset('markup').tab-content
+
+
+			+codeblock('HTML')
+				nav.tabs(role="tablist" data-panelcontrol)
+					button(role="tab" aria-controls="markup-panel-1" aria-selected="true") Features
+					button(role="tab" aria-controls="markup-panel-2") Pricing
+					button(role="tab" aria-controls="markup-panel-3") Support
+				+n
+				.tab-content(data-panelset)
+					.panel-wrapper
+						#markup-panel-1.active(role="tabpanel") …
+						#markup-panel-2(role="tabpanel" hidden) …
+						#markup-panel-3(role="tabpanel" hidden) …
+
+	+section("Initializing")
+		p Initialise PanelSet and PanelControl. Order does not matter (PanelControl resolves its PanelSet lazily).
+
+		+codeblock('JS').
+			import { PanelSet, PanelControl } from 'panelset';
+
+			PanelSet.init();
+			PanelControl.init();            // every [data-panelcontrol]
+			PanelControl.init('#my-tabs');  // or a specific control
+
+		p #[strong PanelSet is required.] PanelControl #[em drives] a PanelSet. It does not replace it, and it holds no panel-switching logic of its own. With no PanelSet initialised, clicks are no-ops (in #[code debug] mode PanelControl logs why). For plain tabs with no animation, keep PanelSet and turn transitions off: #[code PanelSet.init({ transitions: false })].
+
+	+section("Layout patterns")
+		p The control's #[code role] decides its keyboard model (and how much ARIA you take on).
+		dl
+			dt: strong Horizontal tablist
+			dd #[code role="tablist"] with #[code role="tab"] children. Left / Right arrows, #[code Home] / #[code End], roving tabindex. The default, best-supported pattern.
+			dt: strong Vertical tablist
+			dd The same, plus #[code aria-orientation="vertical"]: arrows become Up / Down; everything else is identical. CSS lays it out as a sidebar. Covers most "sidebar that switches panels" needs, with no extra ARIA.
+			dt: strong Tree (planned)
+			dd #[code role="tree"] is a different interaction model: collapsible nodes, #[code aria-expanded], Right / Left to expand and collapse. Genuinely more complex, and only needed for #[em hierarchical] navigation (grouped or collapsible steps). It will arrive later behind a #[code mode: 'tree'] option, most likely driven by PanelFlow. For a flat sidebar, reach for a vertical tablist.
+
+		p See #[a(href="/panelcontrol/activation.html") Activation], #[a(href="/panelcontrol/examples/closable.html") Closable], and #[a(href="/panelcontrol/examples/vertical.html") Vertical display] for worked examples.
+
+	+section("Scope")
+		p PanelControl wires controls and reflects state: activation, keyboard nav, roving #[code tabindex], #[code aria-selected] / disabled. It also exposes #[code setTabState(id, 'disabled' | 'enabled')] so external code can lock or unlock a tab; PanelControl just applies it.
+		p Validation, Previous / Next flow, step gating, and persistence are #[strong not] part of PanelControl. Those belong to a separate flow controller (PanelFlow, planned) that calls #[code setTabState] when a step should lock. Strictly one-way: #[code PanelFlow → PanelControl → PanelSet].
+		p Next: every option in #[a(href="/panelcontrol/configuration.html") Configuration], and the method list in the #[a(href="/panelcontrol/api.html") API] reference.
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			PanelSet.init();
+			PanelControl.init();
+	else
+		script(type="module").
+			import { PanelSet, PanelControl } from 'panelset';
+			PanelSet.init({ debug: true });
+			PanelControl.init({ debug: true });

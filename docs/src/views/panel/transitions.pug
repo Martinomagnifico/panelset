@@ -1,7 +1,7 @@
 extends /views/templates/layouts/_base
 
 append variables
-	- pagetitle = "Panel — Transitions"
+	- pagetitle = "Panel | Transitions"
 
 block content
 	.lane
@@ -103,14 +103,14 @@ block content
 
 			+collapse('h3', "The fade")
 
-				p By default the wrapper fades from #[code 0] to full opacity as the panel opens. Set #[code --ps-closed-opacity] to #[code 1] to keep the content fully visible while the container grows and shrinks — only the size animates, no fade.
+				p By default the wrapper fades from #[code 0] to full opacity as the panel opens. Set #[code --ps-closed-opacity] to #[code 1] to keep the content fully visible while the container grows and shrinks. Only the size animates, no fade.
 
 				dl.bg-surface-tint
 					dt #[code --ps-closed-opacity]
 					dd Opacity of #[code .panel-wrapper] when closed or closing. Default: #[code 0] (fades out). Set to #[code 1] to disable the inner fade.
 
 				h4 Demo
-				p This panel keeps its content at full opacity — only the container height animates, with no fade-in.
+				p This panel keeps its content at full opacity. Only the container height animates, with no fade-in.
 
 				.demo
 					button(aria-controls="panel-nofade-demo" aria-expanded="false") Toggle panel
@@ -126,7 +126,7 @@ block content
 
 			+collapse('h3', "The transform")
 
-				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears — it animates from that transform to #[code none] on open and back on close, sharing the #[code --ps-open-*] / #[code --ps-close-*] timing. Default #[code none] is a pure fade.
+				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears. It animates from that transform to #[code none] on open and back on close, sharing the #[code --ps-open-*] / #[code --ps-close-*] timing. Default #[code none] is a pure fade.
 
 				p Open and close transforms can also have independent delays, both #[code 0s] by default. Set #[code --ps-wrapper-open-delay] to hold the content back until the box has grown a little, and #[code --ps-wrapper-close-delay] if you want it to linger before collapsing.
 

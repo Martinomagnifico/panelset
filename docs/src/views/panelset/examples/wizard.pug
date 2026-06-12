@@ -1,7 +1,7 @@
 extends /views/templates/layouts/_base
 
 append variables
-	- pagetitle = "Wizard"
+	- pagetitle = "PanelSet | Examples | Wizard"
 
 block content
 	.lane
@@ -15,7 +15,7 @@ block content
 
 		.card
 
-			p This example uses #[strong height tracking] so the frame stays as tall as the tallest step and the Previous / Next buttons keep their place. If you would rather let the box grow and shrink per step, leave it out — see #[a(href="/panelset/examples/height-tracking.html") Height tracking].
+			p This example uses #[strong height tracking] so the frame stays as tall as the tallest step and the Previous / Next buttons keep their place. If you would rather let the box grow and shrink per step, leave it out. See #[a(href="/panelset/examples/height-tracking.html") Height tracking].
 
 			.demo
 				.wizard-frame(data-panelset-trackheight)
@@ -53,7 +53,7 @@ block content
 
 
 			h3 Previous and next buttons
-			p Wire the buttons straight to #[code next()] / #[code prev()] — no stepping logic needed:
+			p Wire the buttons straight to #[code next()] / #[code prev()] (no stepping logic needed):
 
 			+codeblock('JS').
 				const ps = document.querySelector('#wizard').panelSet;
@@ -77,7 +77,7 @@ block content
 
 				wizard.addEventListener('ps:activationstart', event => {
 					const { atStart, atEnd } = event.detail;
-					// Move focus off a button BEFORE disabling it — disabling the focused
+					// Move focus off a button BEFORE disabling it. Disabling the focused
 					// element drops focus to <body>, so the next Tab leaves the wizard.
 					if (atEnd   && document.activeElement === nextBtn) prevBtn.focus();
 					if (atStart && document.activeElement === prevBtn) nextBtn.focus();
@@ -88,7 +88,7 @@ block content
 
 
 	+section("Requiring valid input before advancing")
-		p This wizard puts a tab strip #[em and] Previous / Next buttons over one PanelSet. A required checkbox on each step gates progress: you cannot move forward — by button #[em or] by clicking a later tab — until the current step is ticked. Because tab clicks, #[code next()] and #[code prev()] all funnel through #[code show()], one #[code ps:beforeactivate] listener guards every path. Stepping #[em back] is always allowed.
+		p This wizard puts a tab strip #[em and] Previous / Next buttons over one PanelSet. A required checkbox on each step gates progress: you cannot move forward (by button #[em or] by clicking a later tab) until the current step is ticked. Because tab clicks, #[code next()] and #[code prev()] all funnel through #[code show()], one #[code ps:beforeactivate] listener guards every path. Stepping #[em back] is always allowed.
 
 		.card
 			.demo
@@ -161,7 +161,7 @@ block content
 				nextBtn.addEventListener('click', event => ps.next({ event }));
 				prevBtn.addEventListener('click', event => ps.prev({ event }));
 
-				// Hard gate — covers tab clicks, buttons, keyboard, every path.
+				// Hard gate: covers tab clicks, buttons, keyboard, every path.
 				vwizard.addEventListener('ps:beforeactivate', event => {
 					const { outgoingPanel, targetPanel } = event.detail;
 					const forward = outgoingPanel &&
@@ -172,7 +172,7 @@ block content
 					}
 				});
 
-				// Soft state — reflect validity onto the controls on every change.
+				// Soft state: reflect validity onto the controls on every change.
 				function refresh() {
 					const idx = tabs.findIndex(t => t.getAttribute('aria-controls') === ps.getActive());
 					const firstInvalid = tabs.findIndex(t => !valid(panelOf(t)));
@@ -191,7 +191,7 @@ block content
 				vwizard.addEventListener('ps:activationcomplete', refresh);
 				refresh();
 
-			p #[strong Heads up]: the disabling and locking above is hand-written bookkeeping — recompute on every #[code change], mirror it into #[code disabled] / #[code aria-disabled], and move focus before disabling. It is the same for every wizard, which is a strong hint it belongs in a small reusable tab-strip layer over PanelSet rather than per-page glue.
+			p #[strong Heads up]: the disabling and locking above is hand-written bookkeeping: recompute on every #[code change], mirror it into #[code disabled] / #[code aria-disabled], and move focus before disabling. It is the same for every wizard, which is a strong hint it belongs in a small reusable tab-strip layer over PanelSet rather than per-page glue.
 
 
 
@@ -267,7 +267,7 @@ append scripts
 				if (nextBtn) nextBtn.disabled = atEnd;
 			};
 			wizard.addEventListener('ps:activationstart', e => sync(e.detail.atStart, e.detail.atEnd));
-			// Initial state on load. Read from the DOM, not panelSet — this inline
+			// Initial state on load. Read from the DOM, not panelSet. This inline
 			// script runs before the deferred module that calls PanelSet.init().
 			const panels = [...wizard.querySelectorAll('[role="tabpanel"]')];
 			const i = panels.findIndex(p => p.classList.contains('active'));

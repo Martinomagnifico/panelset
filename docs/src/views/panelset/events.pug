@@ -1,7 +1,7 @@
 extends /views/templates/layouts/_base
 
 append variables
-	- pagetitle = "PanelSet — Events"
+	- pagetitle = "PanelSet | Events"
 
 block content
 	.lane
@@ -27,7 +27,7 @@ block content
 					});
 
 			+apiEvent("ps:beforeactivate")
-				p Fires at the very start of an activation, #[strong before any state changes]. This event is #[strong cancelable]: call #[code e.preventDefault()] to veto the switch. Every activation path goes through here — tab clicks, #[code next()] / #[code prev()], deep links and programmatic #[code show()] — so it is the place to gate navigation (for example, a wizard that refuses to advance until the current step is valid).
+				p Fires at the very start of an activation, #[strong before any state changes]. This event is #[strong cancelable]: call #[code e.preventDefault()] to veto the switch. Every activation path goes through here (tab clicks, #[code next()] / #[code prev()], deep links and programmatic #[code show()]), so it is the place to gate navigation (for example, a wizard that refuses to advance until the current step is valid).
 				h4 Detail:
 				dl
 					dt.code panelId: string

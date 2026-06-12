@@ -1,0 +1,162 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelControl | Examples | Wizard"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Wizard
+				p.lead A gated, multi-step flow. PanelControl owns the tab UI, the page owns only the flow.
+
+	+section("Live demo")
+		p The PanelSet #[a(href="/panelset/examples/wizard.html") Wizard] wires its tab strip and locking by hand, and ends on a hint: that bookkeeping "belongs in a small reusable tab-strip layer over PanelSet." This page is that layer. PanelControl wires the tab clicks, keyboard navigation, roving #[code tabindex], and the #[code aria-disabled] locking. What is left on the page is purely #[strong flow]: validate a step, decide which tabs to lock, gate forward moves, and step with Previous / Next. That remainder is what a future #[strong PanelFlow] will absorb.
+
+		p A required checkbox on each step gates progress. Because tab clicks, #[code next()], #[code prev()], keyboard and deep links all funnel through #[code show()], a single #[code ps:beforeactivate] listener guards every path. Stepping #[strong back] is always allowed.
+
+		.card
+			.demo
+				nav.tabs#pcwiz-tabs(role="tablist" data-panelcontrol aria-label="Steps")
+					button(role="tab" aria-controls="pcwiz-step-1" aria-selected="true") Account
+					button(role="tab" aria-controls="pcwiz-step-2") Profile
+					button(role="tab" aria-controls="pcwiz-step-3") Confirm
+
+				#pcwiz(data-panelset data-ps-levels)
+					.panel-wrapper
+						.active#pcwiz-step-1(role="tabpanel" aria-label="Account")
+							h3 Step 1. Account
+							label.wizard-check
+								input(type="checkbox" required)
+								span I agree to create an account
+						#pcwiz-step-2(role="tabpanel" hidden aria-label="Profile")
+							h3 Step 2. Profile
+							label.wizard-check
+								input(type="checkbox" required)
+								span I confirm my profile details are correct
+						#pcwiz-step-3(role="tabpanel" hidden aria-label="Confirm")
+							h3 Step 3. Confirm
+							label.wizard-check
+								input(type="checkbox" required)
+								span I accept the terms and conditions
+
+				.wizard-nav
+					button.secondary(data-pcwiz-prev) Previous
+					button(data-pcwiz-next) Next
+
+			p #[strong Try it]: with the current step unticked, #[strong Next] is blocked and focus jumps to the checkbox. Tick it and the following tab unlocks. A tab further ahead stays locked until you get there.
+
+			h4 Markup
+			+codeblock('HTML')
+				nav.tabs(role="tablist" data-panelcontrol aria-label="Steps")
+					button(role="tab" aria-controls="pcwiz-step-1" aria-selected="true") Account
+					button(role="tab" aria-controls="pcwiz-step-2") Profile
+					button(role="tab" aria-controls="pcwiz-step-3") Confirm
+				+n
+				#pcwiz(data-panelset data-ps-levels)
+					.panel-wrapper
+						#pcwiz-step-1.active(role="tabpanel")
+							label
+								input(type="checkbox" required)
+								span I agree to create an account
+						#pcwiz-step-2(role="tabpanel" hidden) …
+						#pcwiz-step-3(role="tabpanel" hidden) …
+				+n
+				.wizard-nav
+					button(data-pcwiz-prev) Previous
+					button(data-pcwiz-next) Next
+
+	+section("The flow logic (the part PanelFlow will own)")
+		p PanelControl is wired by the markup alone. It handles tab activation, keyboard navigation, roving, and the #[code aria-disabled] reflection. The page adds only flow:
+
+		+codeblock('JS').
+			const strip = document.querySelector('#pcwiz-tabs');
+			const pc    = strip.panelControl;        // set by PanelControl.init()
+			const setEl = document.querySelector('#pcwiz');
+			const tabs  = [...strip.querySelectorAll('[role="tab"]')];
+			const nextBtn = document.querySelector('[data-pcwiz-next]');
+			const prevBtn = document.querySelector('[data-pcwiz-prev]');
+
+			const panelOf = tab => document.getElementById(tab.getAttribute('aria-controls'));
+			const valid   = panel => !panel.querySelector('[required]:invalid');
+
+			// Buttons step through the set. PanelControl already wires the tab clicks + keyboard.
+			nextBtn.addEventListener('click', e => setEl.panelSet.next({ event: e }));
+			prevBtn.addEventListener('click', e => setEl.panelSet.prev({ event: e }));
+
+			// Hard gate: one listener covers every path into show().
+			setEl.addEventListener('ps:beforeactivate', e => {
+				const { outgoingPanel, targetPanel } = e.detail;
+				const forward = outgoingPanel &&
+					(outgoingPanel.compareDocumentPosition(targetPanel) & Node.DOCUMENT_POSITION_FOLLOWING);
+				if (forward && !valid(outgoingPanel)) {
+					e.preventDefault();
+					outgoingPanel.querySelector('[required]:invalid')?.focus();
+				}
+			});
+
+			// Soft state: lock the steps beyond the first incomplete one, through PanelControl.
+			function refresh() {
+				const firstInvalid = tabs.findIndex(t => !valid(panelOf(t)));
+				tabs.forEach((t, i) => pc.setTabState(
+					t.getAttribute('aria-controls'),
+					firstInvalid !== -1 && i > firstInvalid ? 'disabled' : 'enabled'
+				));
+			}
+			setEl.addEventListener('change', refresh);
+			setEl.addEventListener('ps:activationcomplete', refresh);
+			refresh();
+
+		p Next to the #[a(href="/panelset/examples/wizard.html") hand-wired PanelSet version], the tab click handlers and the keyboard logic are gone, and locking goes through #[code setTabState()] (which also keeps the roving #[code tabindex] correct) instead of poking #[code aria-disabled] directly. The validation and the lock policy stay on the page. That is the seam: #[strong PanelControl owns the UI, the page owns the flow]. PanelFlow will package this remainder. The Previous / Next end-disabling is the same as the PanelSet wizard, so it is left out above.
+
+	+section("What is not solved yet")
+		p Two rough edges show on purpose. They are what the future PanelFlow work (plus one small addition to PanelControl) will tidy up:
+		ul
+			li #[strong A locked tab is silent.] Clicking a locked tab does nothing and says nothing. The #[strong Next] button, by contrast, hits the #[code ps:beforeactivate] gate and focuses the missing field. A future #[code pc:lockedactivation] event would give the locked-tab click the same chance to explain itself.
+			li #[strong Arrow keys skip locked tabs.] Today a locked tab leaves the roving order, so arrows jump over it. For a wizard you might prefer to arrow #[em onto] a locked step to read it, while still refusing to activate it. That is a behaviour choice for PanelFlow to make, not a fixed rule.
+
+
+append styles
+	style.
+		#pcwiz {
+			--ps-panel-in-transform-from: translateX(40px);
+			--ps-panel-out-transform-to:  translateX(-40px);
+			--ps-panel-in-delay: 0s;
+			border: 1px solid var(--border-default);
+			border-radius: 8px;
+			padding-top: 0;
+		}
+		#pcwiz .panel-wrapper [role="tabpanel"] {
+			padding: 1.25rem;
+		}
+		.wizard-nav {
+			display: flex;
+			justify-content: space-between;
+			gap: 0.5rem;
+			margin-top: 0.75rem;
+		}
+		.wizard-check {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			margin-top: 0.75rem;
+		}
+		.tabs [role="tab"][aria-disabled="true"] {
+			opacity: 0.4;
+			cursor: not-allowed;
+		}
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			PanelControl.init();
+			PanelSet.init();
+		script(src=`${basePath}assets/scripts/example-pcwizard.js` vite-ignore)
+	else
+		script(type="module").
+			import { PanelSet, PanelControl } from 'panelset';
+			PanelControl.init({ debug: true });
+			PanelSet.init({ debug: true });
+		script(type="module" src="/src/assets/scripts/example-pcwizard.js")

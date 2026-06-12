@@ -33,10 +33,14 @@
 	hr {
 		border: none;
 		height: var(--demo-border-width);
-		background: var(--special-normal);
+		// height: 1px;
+		background: var(--special-demoblock);
 		border-radius: var(--demo-border-width);
 		position: relative;
-		z-index: 5;
+		// z-index: 5;
+	}
+	&.horizontal {
+		display: flex;
 	}
 }
 
@@ -54,17 +58,18 @@
 	--ps-close-transition-extra: box-shadow var(--ps-close-speed) var(--ps-close-timing);
 
 	position: absolute;
-	left: 2rem;
-	right: 2rem;
+	left: 1.75rem;
+	right: 1.75rem;
 	margin-top: -2px;
+	z-index: -1;
 
-	box-shadow: inset 0 0 0 2px var(--special-normal), 0 0 0 var(--special-shadow-dark);
+	box-shadow: inset 0 0 0 2px var(--special-demoblock), 0 0 0 var(--special-shadow-dark);
 	border-radius: 0 0 8px 8px;
 	background: var(--demo-surface);
 	
 	&.is-opening,
 	&.is-open {
-		box-shadow: inset 0 0 0 2px var(--special-normal), 0 8px 20px var(--special-shadow-dark);
+		box-shadow: inset 0 0 0 2px var(--special-demoblock), 0 8px 20px var(--special-shadow-dark);
 	}
 	[role="tabpanel"]{
 		padding: 1rem;

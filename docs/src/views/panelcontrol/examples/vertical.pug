@@ -1,0 +1,95 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelControl | Examples | Vertical display"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Vertical display
+				p.lead Sidebars: vertical tablists and grouped menus.
+
+	+section("Vertical tablist (sidebar)")
+		p A sidebar is just a tablist with #[code aria-orientation="vertical"]: arrows become Up / Down, everything else is identical. CSS lays the rail beside the panels. No tree, no extra ARIA.
+
+		.card
+			p A wrapper for the background is added so that the optical background does not get shorter than the sidebar, but it can get higher.
+			.demo.horizontal.gap-1
+				nav.tabs.rail(role="tablist" aria-orientation="vertical" data-panelcontrol)
+					button(role="tab" aria-controls="vc-1" aria-selected="true") Features
+					button(role="tab" aria-controls="vc-2") Pricing
+					button(role="tab" aria-controls="vc-3") Support
+				.background-wrapper
+					#vc(data-panelset)
+						.panel-wrapper
+							#vc-1.active(role="tabpanel" aria-label="Key features")
+								+example-1
+							#vc-2(role="tabpanel" hidden aria-label="Pricing plans")
+								+example-2
+							#vc-3(role="tabpanel" hidden aria-label="Support options")
+								+example-3
+
+			+codeblock('HTML')
+				nav(role="tablist" aria-orientation="vertical" data-panelcontrol)
+					button(role="tab" aria-controls="vc-1" aria-selected="true") Features
+					button(role="tab" aria-controls="vc-2") Pricing
+					button(role="tab" aria-controls="vc-3") Support
+				+n
+				.background-wrapper
+					#vc(data-panelset)
+						.panel-wrapper
+							#vc-1.active(role="tabpanel") …
+							#vc-2(role="tabpanel" hidden) …
+							#vc-3(role="tabpanel" hidden) …
+
+	+section("Grouped sidebar: navigation, not tabs")
+		p A categorized sidebar need a bit of different handling. A tablist can not contain headings or any text as category indicator. So just do not make it a tablist. The buttons are still wired by PanelControl via #[code data-panelcontrol], but they are normal buttons in the accessibility tree, not tabs. Tabbing through the list stops at each item, and the arrow keys do not apply.
+
+		p #[strong So why not grouped tablists?] Because normally, the ‘tab pattern’ uses a roving #[code tabindex]: the user uses the #[strong tab keys] to get into the list, and then #[strong arrow keys] navigate #[em inside] it. Two tablists means two roving islands. That is really annoying. Try it, youll see.
+
+		.card
+			.demo.horizontal.gap-1
+				nav.rail(aria-label="Settings" data-panelcontrol)
+					h4 Account
+					button(aria-controls="grp-1") Features
+					button(aria-controls="grp-2") Pricing
+					h4 Workspace
+					button(aria-controls="grp-3") Support
+
+				.background-wrapper
+					div(data-panelset)
+						.panel-wrapper
+							#grp-1.active(role="tabpanel" aria-label="Key features")
+								+example-1
+							#grp-2(role="tabpanel" hidden aria-label="Pricing plans")
+								+example-2
+							#grp-3(role="tabpanel" hidden aria-label="Support options")
+								+example-3
+	
+			+codeblock('HTML')
+				nav(aria-label="Settings" data-panelcontrol)
+					h4 Account
+					button(aria-controls="grp-1") Features
+					button(aria-controls="grp-2") Pricing
+					h4 Workspace
+					button(aria-controls="grp-3") Support
+				+n
+				#grp(data-panelset)
+					.panel-wrapper
+						#grp-1.active(role="tabpanel") …
+						#grp-2(role="tabpanel" hidden) …
+						#grp-3(role="tabpanel" hidden) …
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			PanelSet.init();
+			PanelControl.init();
+	else
+		script(type="module").
+			import { PanelSet, PanelControl } from 'panelset';
+			PanelSet.init({ debug: true });
+			PanelControl.init({ debug: true });

@@ -1,7 +1,7 @@
 extends /views/templates/layouts/_base
 
 append variables
-	- pagetitle = "PanelSet — Transitions"
+	- pagetitle = "PanelSet | Transitions"
 
 block content
 	.lane
@@ -34,7 +34,7 @@ block content
 	
 	+section("1. Container")
 
-		p The container is the #[code [data-panelset]] (or #[code [data-panel]]) box. It animates its #[strong height] to fit the active panel while switching, and — when #[code closable] — opens and closes as a whole.
+		p The container is the #[code [data-panelset]] (or #[code [data-panel]]) box. It animates its #[strong height] to fit the active panel while switching, and (when #[code closable]) opens and closes as a whole.
 
 		.column.gap-1(data-panel-group data-panel-close-siblings data-panel-persist)
 
@@ -89,7 +89,7 @@ block content
 
 			+collapse('h3', "Transitioning extra transitions (closable)")
 
-				p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the height — for example a drop shadow or opacity. The value is appended to the #[code transition] shorthand directly. 
+				p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the height (for example a drop shadow or opacity). The value is appended to the #[code transition] shorthand directly. 
 
 				dl.bg-surface-tint
 					dt #[code --ps-open-transition-extra]
@@ -123,7 +123,7 @@ block content
 
 			+collapse('h3', "Transition the transform")
 		
-				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears — it animates from that transform to #[code none] on open and back on close, sharing the #[code --ps-open-*] / #[code --ps-close-*] timing. Default #[code none] is a pure fade.
+				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears. It animates from that transform to #[code none] on open and back on close, sharing the #[code --ps-open-*] / #[code --ps-close-*] timing. Default #[code none] is a pure fade.
 
 				p Open and close transforms on the wrapper can also have independent delays, both #[code 0s] by default. Set #[code --ps-wrapper-open-delay] to hold the content back until the box has grown a little (a common refinement), and #[code --ps-wrapper-close-delay] if you want the content to linger before collapsing.
 
@@ -188,7 +188,7 @@ block content
 					}
 
 				h4 Slower, sequential
-				p Both speeds set to 1 second. Because #[code --ps-panel-in-delay] is also 1 second, the panels transition sequentially — the outgoing one fully fades out before the incoming one fades in. Total time: 2 seconds.
+				p Both speeds set to 1 second. Because #[code --ps-panel-in-delay] is also 1 second, the panels transition sequentially: the outgoing one fully fades out before the incoming one fades in. Total time: 2 seconds.
 
 
 				.demo
@@ -223,12 +223,12 @@ block content
 
 				dl.bg-surface-tint
 					dt #[code --ps-panel-in-transform-from]
-					dd Transform the incoming panel animates #[em from] (it settles at #[code none]). Any transform — #[code translateX(100%)], #[code scale(0.9)], #[code rotateY(90deg)]. Default: #[code none].
+					dd Transform the incoming panel animates #[em from] (it settles at #[code none]). Any transform: #[code translateX(100%)], #[code scale(0.9)], #[code rotateY(90deg)]. Default: #[code none].
 
 					dt #[code --ps-panel-out-transform-to]
 					dd Transform the outgoing panel animates #[em to] (starting from #[code none]). Default: #[code none].
 
-				p The cleanest way to package an effect is a class of your own — collect the variables under it and add the class to the panelset.
+				p The cleanest way to package an effect is a class of your own. Collect the variables under it and add the class to the panelset.
 
 
 				.demo
@@ -257,9 +257,9 @@ block content
 					}
 
 			+collapse('h3', "Level-based direction")
-				p With #[code levels] enabled, the slide direction follows the panels' order: moving to a later panel slides one way, moving back slides the other. The order is taken straight from the DOM (a later panel is "higher"), so you don't set anything per panel — just turn the feature on.
+				p With #[code levels] enabled, the slide direction follows the panels' order: moving to a later panel slides one way, moving back slides the other. The order is taken straight from the DOM (a later panel is "higher"), so you don't set anything per panel. Just turn the feature on.
 
-				p Enable it with #[code data-ps-levels] on the container or #[code levels: true] in the config. JS then adds #[code .levelup] or #[code .leveldown] to the panels as they switch. Backward navigation (#[code .leveldown]) automatically #[strong swaps] #[code --ps-panel-in-transform-from] and #[code --ps-panel-out-transform-to] so the motion reverses — no extra variables, and it works for any transform.
+				p Enable it with #[code data-ps-levels] on the container or #[code levels: true] in the config. JS then adds #[code .levelup] or #[code .leveldown] to the panels as they switch. Backward navigation (#[code .leveldown]) automatically #[strong swaps] #[code --ps-panel-in-transform-from] and #[code --ps-panel-out-transform-to] so the motion reverses. No extra variables, and it works for any transform.
 
 
 				.demo
@@ -272,7 +272,7 @@ block content
 				+codeblock('JavaScript').
 					new PanelSet('#my-tabs', { levels: true });
 
-				p Need a different look per direction? Target the classes yourself — they override the automatic swap.
+				p Need a different look per direction? Target the classes yourself. They override the automatic swap.
 
 				+codeblock('CSS').
 					/* Custom: incoming always scales up, regardless of direction */

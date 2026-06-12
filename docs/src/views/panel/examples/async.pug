@@ -1,7 +1,7 @@
 extends /views/templates/layouts/_base
 
 append variables
-	- pagetitle = "Async panel"
+	- pagetitle = "Panel | Examples | Async panel"
 
 block content
 	.lane
@@ -122,7 +122,7 @@ block content
 	+section("Loading states")
 		.title-text
 			h3 Loading spinner
-			p During async operations, Panel shows a spinner. It only appears if loading takes longer than #[code loadingDelay] ms — fast loads open directly without a spinner:
+			p During async operations, Panel shows a spinner. It only appears if loading takes longer than #[code loadingDelay] ms. Fast loads open directly without a spinner:
 
 		+codeblock('JS').
 			const panel = new Panel('#my-panel', {
@@ -153,7 +153,7 @@ block content
 
 		+codeblock('JS').
 			panel.onBeforeOpen((el, signal) => {
-				// Pass signal to fetch — automatically cancels on close
+				// Pass signal to fetch (automatically cancels on close)
 				return fetch('/api/data', { signal })
 					.then(/* ... */);
 			});

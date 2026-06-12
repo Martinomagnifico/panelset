@@ -69,7 +69,7 @@
   border-radius: 8px;
   padding: var(--standard-padding);
 
-  border: 3px solid var(--special-normal);
+  border: 3px solid var(--special-demoblock);
 
 }
 .example.demo {
@@ -274,6 +274,8 @@
 
 .demo {
   .tabs {
+    background: var(--demo-surface-tint);
+    // z-index: 9999999;
     button,
     button:hover,
     button[aria-selected="true"] {

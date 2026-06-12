@@ -30,11 +30,14 @@
 	--color-special-tint-300: oklch(0.72 0.090 var(--special-hue));
 	--color-special-tint-400: oklch(0.64 0.090 var(--special-hue));
 	--color-special-tint-500: oklch(0.58 0.100 var(--special-hue));
+	--color-special-tint-550: oklch(0.52 0.100 var(--special-hue));
 	--color-special-tint-600: oklch(0.48 0.100 var(--special-hue));
 	--color-special-tint-700: oklch(0.39 0.100 var(--special-hue));
 	--color-special-tint-800: oklch(0.25 0.090 var(--special-hue));
 	--color-special-tint-900: oklch(0.20 0.068 var(--special-hue));
 	--color-special-tint-950: oklch(0.10 0.038 var(--special-hue));
+
+	--color-special-helptext: oklch(0.25 0.009 var(--special-hue));
 	
 }
 
@@ -69,10 +72,11 @@
 
 	--doc-code-transparent: oklch(from var(--color-tint-700) l c h / 0.08);
 
-	--special-normal: var(--color-special-tint-400);
+	--special-demoblock: var(--color-special-tint-300);
+	--special-normal: var(--color-special-tint-500);
 	--special-hover: var(--color-special-tint-600);
 	--special-shadow: oklch(from var(--special-normal) l c h / 0.33);
-	--special-shadow-dark: oklch(from var(--special-normal) calc(l * 0.33) calc(c * 2) h / 0.25);
+	--special-shadow-dark: oklch(from var(--special-normal) calc(l * 0.1) calc(c * 2) h / 0.2);
 
 	--tab-text-normal: var(--color-tint-500);
 	--tab-text-hover: var(--color-tint-600);
@@ -100,9 +104,9 @@
 
 		--ps-spinner-color: var(--color-special-tint-600);
 
-		--tab-text-normal: var(--color-special-tint-500);
+		--tab-text-normal: var(--color-special-tint-550);
 		--tab-text-hover: var(--color-special-tint-600);
-		--tab-text-active: var(--color-special-tint-600);
+		--tab-text-active: var(--color-special-tint-700);
 
 		--tab-underline-hover: var(--color-special-tint-300);
 		--tab-underline-active: var(--color-special-tint-600);
@@ -125,7 +129,11 @@
 }
 
 @media (prefers-color-scheme: dark) {
+
 	:root {
+
+		--color-special-helptext: oklch(0.90 0.009 var(--special-hue));
+
 		--text-heading-1: var(--color-tint-100);
 		--text-heading-2: var(--color-tint-200);
 		--text-heading-3: var(--color-tint-300);
@@ -265,7 +273,7 @@ bodyx {
 	--ps-spinner-thickness:      4px;
 	--ps-spinner-speed:          3s;
 
-	/* Calculated — override these directly if you change the loading vars above */
+	/* Calculated: override these directly if you change the loading vars above */
 	--ps-loading-dim-duration:   11.5s; //  calc(var(--ps-panel-out-speed) * (1 - var(--ps-loading-panel-opacity)));
 	--ps-loading-fadeout-duration: 11.5s; //calc(var(--ps-panel-out-speed) * var(--ps-loading-panel-opacity));
 

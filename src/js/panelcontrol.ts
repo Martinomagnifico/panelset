@@ -38,11 +38,10 @@ export class PanelControl {
 
 	element!: HTMLElement;
 	config!: Required<Omit<PanelControlConfig, 'selector'>>;
-	/** The PanelSet container this control drives (resolved from its triggers). */
-	panelSetElement: HTMLElement | null = null;
-
+	private _setEl: HTMLElement | null = null;
 	private _controller = new AbortController();
 	private _isTablist = false;
+	private _activationWired = false;
 
 	/**
 	 * Initialise all PanelControl containers matching the selector.
@@ -81,21 +80,31 @@ export class PanelControl {
 		const dataConfig = parseDataAttrs<PanelControlConfig>(element.dataset, PanelControl.attrs);
 		this.config = { ...PanelControl.defaults, ...options, ...dataConfig } as Required<Omit<PanelControlConfig, 'selector'>>;
 
-		this.panelSetElement = this._resolvePanelSet();
-		this._bindTriggers();
-
 		this._isTablist = element.getAttribute('role') === 'tablist';
+		this._bindTriggers();
 		if (this._isTablist) this._setupKeyboard();
 
-		// Reflect whether the set closes on re-click, so CSS can keep the active
-		// trigger interactive. If the PanelSet has not initialised yet, redo it on
-		// ps:ready (config is only authoritative once the instance exists).
-		this._reflectCloseable();
-		if (!this.panelSet && this.panelSetElement) {
-			this.panelSetElement.addEventListener('ps:ready', this._reflectCloseable, { once: true, signal: this._controller.signal });
-		}
+		// First resolution attempt now — wires the element-dependent bits (roving
+		// sync, closeable reflection) if the PanelSet is already present. The getter
+		// retries on later access, so a PanelSet added after init is picked up too.
+		const linked = this.panelSetElement;
 
-		this._log(`Initialized (${this.panelSetElement ? 'linked to a PanelSet' : 'no PanelSet found'}${this._isTablist ? ', tablist keyboard nav' : ''})`);
+		this._log(`Initialized (${linked ? 'linked to a PanelSet' : 'no PanelSet found yet'}${this._isTablist ? ', tablist keyboard nav' : ''})`);
+	}
+
+	/**
+	 * The PanelSet container this control drives. Resolved lazily on first access
+	 * and then cached — so a PanelSet added to the DOM after init is still found.
+	 */
+	get panelSetElement(): HTMLElement | null {
+		if (!this._setEl) {
+			const el = this._resolvePanelSet();
+			if (el) {
+				this._setEl = el;
+				this._onElementResolved(el);
+			}
+		}
+		return this._setEl;
 	}
 
 	/** The live PanelSet instance this control drives, if initialised. */
@@ -150,15 +159,36 @@ export class PanelControl {
 		this.element.toggleAttribute('data-closeable', closeable);
 	};
 
-	// Discover the PanelSet from the first trigger's target panel: [aria-controls]
-	// → panel → nearest panelset container. This is what lets the control sit
-	// anywhere in the DOM. One PanelControl is linked to one PanelSet.
+	// Resolve the PanelSet element. An explicit target — data-panelcontrol="#sel"
+	// — wins (handy for remote or late-added sets). Otherwise discover it from the
+	// first trigger's target panel: [aria-controls] → panel → nearest panelset
+	// container, which is what lets the control sit anywhere in the DOM. One
+	// PanelControl is linked to one PanelSet.
 	private _resolvePanelSet(): HTMLElement | null {
+		const target = this.element.getAttribute('data-panelcontrol');
+		if (target) return document.querySelector<HTMLElement>(target);
+
 		const trigger = this.element.querySelector<HTMLElement>('[aria-controls]');
 		const panelId = trigger?.getAttribute('aria-controls');
 		if (!panelId) return null;
 		const panel = document.getElementById(panelId);
 		return panel?.closest<HTMLElement>('[data-panelset], ps-panelset') ?? null;
+	}
+
+	// Wire the element-dependent bits, once — runs when the PanelSet element is
+	// first resolved (which may be after init, on the first click).
+	private _onElementResolved(el: HTMLElement): void {
+		const { signal } = this._controller;
+		// Keep roving in sync when the set activates a panel (click or programmatic).
+		if (this._isTablist && !this._activationWired) {
+			el.addEventListener('ps:activationcomplete', this._onActivation as EventListener, { signal });
+			this._activationWired = true;
+		}
+		// Reflect closeable now; re-check once the instance is ready.
+		this._reflectCloseable();
+		if (!el.panelSet) {
+			el.addEventListener('ps:ready', this._reflectCloseable, { once: true, signal });
+		}
 	}
 
 	private _bindTriggers() {
@@ -175,7 +205,14 @@ export class PanelControl {
 	private _activate(trigger: HTMLElement, event: Event) {
 		if (trigger.getAttribute('aria-disabled') === 'true') return;
 		const panelId = trigger.getAttribute('aria-controls');
-		if (panelId) this.panelSet?.show(panelId, { event });   // instance resolved lazily
+		if (!panelId) return;
+		// The PanelSet does the switching. If its instance isn't there, the most
+		// likely cause is a missing PanelSet.init() — warn rather than no-op silently.
+		if (!this.panelSet) {
+			this._log(`Can’t activate '${panelId}': its PanelSet is not initialised. Add a PanelSet.init().`);
+			return;
+		}
+		this.panelSet.show(panelId, { event });   // instance resolved lazily
 		if (this._isTablist) this._setRoving(trigger);
 	}
 
@@ -209,11 +246,9 @@ export class PanelControl {
 		// Start with the marked-selected tab (or the first) as the tab stop.
 		const active = tabs.find(t => t.getAttribute('aria-selected') === 'true') ?? tabs[0];
 		this._setRoving(active);
-
-		const { signal } = this._controller;
-		this.element.addEventListener('keydown', this._onKeydown, { signal });
-		// Keep roving in sync when the set activates a panel (click or programmatic).
-		this.panelSetElement?.addEventListener('ps:activationcomplete', this._onActivation as EventListener, { signal });
+		this.element.addEventListener('keydown', this._onKeydown, { signal: this._controller.signal });
+		// The ps:activationcomplete roving sync is wired in _onElementResolved,
+		// once the PanelSet element is known (it may resolve after init).
 	}
 
 	private _onActivation = (e: CustomEvent<{ panelId: string }>) => {

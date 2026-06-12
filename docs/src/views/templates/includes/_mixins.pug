@@ -170,7 +170,7 @@ mixin examplepanelset(id, wc=false)
 mixin exampletabset(id, tabs=false)
 
 	if tabs
-		nav.tabs(role="tablist" aria-label="Content sections")
+		nav.tabs(role="tablist" aria-label="Content sections")&attributes(attributes)
 			button(role="tab" aria-controls=`${id}-panel-1` aria-selected="true") Features
 			button(role="tab" aria-controls=`${id}-panel-2`) Pricing
 			button(role="tab" aria-controls=`${id}-panel-3`) Support

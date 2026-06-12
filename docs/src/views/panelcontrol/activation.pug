@@ -1,0 +1,72 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelControl | Activation"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Activation
+				p.lead Manual by default
+
+	+section("Manual activation")
+		p PanelControl allows users to move focus with arrow keys and commit with #[strong Enter] / #[strong Space] / click (#[code activation: 'manual']). 
+		.card
+			.demo
+				+exampletabset('manual', true)(data-panelcontrol)
+				+examplepanelset('manual').tab-content
+
+
+	+section("Auto activation")
+		p It is also possible to enable auto activation. This allows users to activate a tab as they arrow across, without needing to press #[strong Enter] / #[strong Space] / click (#[code activation: 'auto']). Set #[code data-activation="auto"] (or #[code init({ activation: 'auto' })]) to enable this behavior.
+
+		.card
+			.demo
+				+exampletabset('aa', true)(data-panelcontrol data-activation="auto")
+				+examplepanelset('aa').tab-content
+
+			+codeblock('JS').
+				PanelControl.init({ activation: 'auto' });
+				// or per control, in markup:
+				// <nav role="tablist" data-panelcontrol data-activation="auto">
+
+	+section("Arrow protection (from auto back to manual)")
+		p #[code auto] falls back to manual whenever activating-on-arrow would hurt: when the PanelSet uses #[code autoFocus] (focus would jump into the panel, out of the strip) or loads content asynchronously (every keystroke would fire a load). The #[code autoFocus] check covers the JS option, #[code data-auto-focus] on the set, and #[code data-auto-focus] on any individual tab.
+
+		p This strip asks for #[code data-activation="auto"] too, but its PanelSet has #[code data-auto-focus="input"]. So PanelControl quietly keeps it #[strong manual]: #[strong Tab] into the strip and arrow across. The panel stays put. Press #[strong Enter] to switch, and watch focus drop into the field. That focus-stealing on every arrow is exactly what auto avoids here.
+
+		.card
+			.demo
+				nav.tabs(role="tablist" data-panelcontrol data-activation="auto")
+					button(role="tab" aria-controls="df-1" aria-selected="true") Account
+					button(role="tab" aria-controls="df-2") Profile
+					button(role="tab" aria-controls="df-3") Confirm
+				.tab-content(data-panelset data-auto-focus="input")
+					.panel-wrapper
+						#df-1.active(role="tabpanel" aria-label="Account")
+							h3 Account
+							label
+								| Name
+								input(type="text" placeholder="Your name")
+						#df-2(role="tabpanel" hidden aria-label="Profile")
+							h3 Profile
+							label
+								| Email
+								input(type="email" placeholder="you@example.com")
+						#df-3(role="tabpanel" hidden aria-label="Confirm")
+							h3 Confirm
+							p Nothing to focus here, so activating this one leaves focus on the tab.
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			PanelSet.init();
+			PanelControl.init();
+	else
+		script(type="module").
+			import { PanelSet, PanelControl } from 'panelset';
+			PanelSet.init({ debug: true });
+			PanelControl.init({ debug: true });

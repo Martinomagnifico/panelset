@@ -1,7 +1,7 @@
 extends /views/templates/layouts/_base
 
 append variables
-	- pagetitle = "Panel — Getting started"
+	- pagetitle = "Panel | Getting started"
 
 mixin installWizard(cls)
 	- const named = `{ ${cls} }`
@@ -127,7 +127,7 @@ block content
 			import 'panelset/style.css';
 
 	+section("Markup")
-		p Add #[code data-panel] to your element and give it an #[code id]. Panels start closed by default — no class required. Wrap the content in #[code .panel-wrapper].
+		p Add #[code data-panel] to your element and give it an #[code id]. Panels start closed by default (no class required). Wrap the content in #[code .panel-wrapper].
 
 		.card
 			.demo

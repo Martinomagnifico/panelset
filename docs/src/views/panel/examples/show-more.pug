@@ -1,7 +1,7 @@
 extends /views/templates/layouts/_base
 
 append variables
-	- pagetitle = "Show more"
+	- pagetitle = "Panel | Examples | Show more"
 
 block content
 	.lane
@@ -56,7 +56,7 @@ block content
 					span.when-open Show less
 				div(data-panel)
 					.panel-wrapper
-						p Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
+						p Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.
 
 			+codeblock('HTML').
 				<button data-panel-trigger>
@@ -65,7 +65,7 @@ block content
 				</button>
 				<div data-panel>
 					<div class="panel-wrapper">
-						<p>Additional content that was hidden. It can be as long as needed — the panel animates to its natural height. If we make this text long, it might wrap to multiple lines.</p>
+						<p>Additional content that was hidden. It can be as long as needed. The panel animates to its natural height. If we make this text long, it might wrap to multiple lines.</p>
 					</div>
 				</div>
 
