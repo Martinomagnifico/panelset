@@ -7,7 +7,7 @@ import { readPanelParam, writePanelParam, readStored, writeStored } from './func
 
 import type { PanelSetConfig, ReadyEventDetail, BeforeActivateEventDetail, BeforeOpenEventDetail, ActivationEventDetail, ActivationAbortedEventDetail, HandlerOptions, ShowOptions, AsyncContentHandler } from './panelset.types';
 import { parseDataAttrs, type AttrMap } from './functions/config';
-import { log, logInterpolateSizeOnce, registerBeforeOpenHandler } from './functions/utils';
+import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, setDescribedBy } from './functions/utils';
 
 declare global {
 	interface HTMLElement {
@@ -27,12 +27,15 @@ declare global {
  *  - State classes: toggling active, is-transitioning, is-loading, is-open,
  *    is-opening, is-closing on panels and the container. Closable sets are
  *    closed by default; the .is-open class (absent by default) marks open.
- *  - Trigger wiring: binding click handlers on [aria-controls] buttons/tabs
- *    and delegating to show().
- *  - ARIA: managing aria-expanded, aria-controls, aria-selected, and
- *    aria-hidden so assistive technology tracks the active panel correctly.
- *  - Keyboard navigation: arrow keys, Home/End within a tablist, Tab/Shift-Tab
- *    to move between tab and panel.
+ *  - Trigger state: reflecting aria-selected (and an is-activating class) onto
+ *    every [aria-controls] trigger so assistive tech tracks the active panel.
+ *    Selection-trigger *clicks* and the tablist keyboard model (arrows, Home/End,
+ *    roving tabindex) live in PanelControl, not here.
+ *  - Verb buttons: wiring its own data-ps-next / -prev / -close buttons to
+ *    next() / prev() / close(), and reflecting end-of-range as aria-disabled
+ *    (unless loop). One delegated document listener covers all instances.
+ *  - ARIA: managing aria-hidden / inert and the panels' own active state so
+ *    assistive technology tracks the active panel correctly.
  *  - Focus management: moving focus into the new panel on activation (autoFocus)
  *    and returning it to the trigger on close (returnFocus).
  *  - Lifecycle events: dispatching ps:ready, ps:beforeactivate (cancelable),
@@ -55,6 +58,7 @@ export class PanelSet {
 		loop: false,
 		closable: false,
 		closeOnTab: false,
+		disabledMode: 'aria',
 		loadingHeight: 150,
 		loadingDelay: 320,
 		returnFocus: false,
@@ -83,9 +87,19 @@ export class PanelSet {
 	private _switchDirection: 'levelup' | 'leveldown' | null = null;
 	private _returnFocusTarget: HTMLElement | null = null;
 	private _heightObserver: ResizeObserver | null = null;
+	// Listeners for end-of-range reflection on this set's verb buttons; aborted on
+	// destroy so a torn-down instance stops reflecting.
+	private _verbController = new AbortController();
 
 	private static readonly _nativeInterpolateSize =
 		typeof CSS !== 'undefined' && CSS.supports('interpolate-size: allow-keywords');
+
+	// One document-level click listener, shared across all PanelSet instances,
+	// handles the verb buttons (data-ps-next / -prev / -close). Delegation (not
+	// per-instance binding) is required because verb buttons commonly live inside
+	// async-loaded panel content that does not exist at init. Installed lazily on
+	// first construction — same spirit as logInterpolateSizeOnce.
+	private static _verbDelegationInstalled = false;
 
 	static readonly attrs: AttrMap<PanelSetConfig> = {
 		align:         ['panelsetAlign',  'string'],
@@ -94,6 +108,7 @@ export class PanelSet {
 		loop:          ['psLoop',        'boolean'],
 		closable:      ['closable',      'boolean'],
 		closeOnTab:    ['closeOnTab',    'boolean'],
+		disabledMode:  ['psDisabledMode', 'string'],
 		loadingHeight: ['loadingHeight', 'number'],
 		loadingDelay:  ['loadingDelay',  'number'],
 		autoFocus:      ['autoFocus',      'string'],
@@ -177,6 +192,9 @@ export class PanelSet {
 		// Store instance on element
 		element.panelSet = this;
 
+		// Install the shared verb-button click delegation once (self-guards).
+		PanelSet._installVerbDelegation();
+
 		// Precedence: defaults < init() options < per-element data-attributes.
 		// The attribute is the most specific signal, so it wins — this lets an
 		// element opt out of a global flag, e.g. data-panel-persist="false"
@@ -189,12 +207,15 @@ export class PanelSet {
 		this.panels = this._collectPanels();
 
 		if (this.panels.length === 0) {
-			console.error('PanelSet: no [role=tabpanel] panels found', element);
-			// Set safe defaults and bail
-			this.panels = [];
-			this.activePanel = null as any;
-			this.panelWrapper = null as any;
-			this.pendingPanel = null as any;
+			// An empty set is valid for dynamic / windowed flows that addPanel() their
+			// panels later. Establish the wrapper so addPanel() has somewhere to insert;
+			// activePanel / pendingPanel are assigned on the first add (via refresh()).
+			this.panelWrapper =
+				this.element.querySelector<HTMLElement>(':scope > .panel-wrapper') || this._autoWrapPanels();
+			this._log('Initialized empty (0 panels) — ready for addPanel()');
+			this._dispatch<ReadyEventDetail>('ps:ready', { container: this.element, instance: this });
+			this._initVerbButtons();
+			this._observeTrackHeight();
 			return;
 		}
 
@@ -231,6 +252,8 @@ export class PanelSet {
 		this._dispatch<ReadyEventDetail>('ps:ready', { container: this.element, instance: this });
 
 		this._internalInit();
+
+		this._initVerbButtons();
 
 		this._observeTrackHeight();
 
@@ -593,7 +616,8 @@ export class PanelSet {
 	}
 
 	/**
-	 * Re-scan the DOM for this set's panels and reconcile internal state. Call
+	 * Re-scan the DOM for this set's panels and reconcile internal state — the
+	 * active panel, trigger state, and the Prev/Next end-of-range disabling. Call
 	 * after adding, removing, or reordering [role="tabpanel"] elements at runtime
 	 * (e.g. lazy or windowed wizards). The active panel is preserved when it is
 	 * still present; otherwise it falls back to the marked .active panel, then the
@@ -613,6 +637,7 @@ export class PanelSet {
 		this.panelWrapper = this.element.querySelector<HTMLElement>(':scope > .panel-wrapper') || this.panelWrapper;
 
 		this._internalInit();
+		this._reflectEnds();   // add/remove/reorder may change first/last → re-sync verb buttons
 		this._log(`Refreshed (${this.panels.length} panels)`);
 	}
 
@@ -664,6 +689,8 @@ export class PanelSet {
 		this._animOpenClose.start();
 		this._heightObserver?.disconnect();
 		this._heightObserver = null;
+		this._verbController.abort();  // stop end-state reflection; the static click
+		                               // delegation no-ops once .panelSet is gone
 		delete this.element.panelSet;
 		this._log('Destroyed');
 	}
@@ -673,6 +700,157 @@ export class PanelSet {
 		const total = this.panels.length;
 		const index = panel ? this.panels.indexOf(panel) : -1;
 		return { index, total, atStart: index <= 0, atEnd: index === total - 1 };
+	}
+
+	/* --- Verb buttons (data-ps-next / -prev / -close) --- */
+
+	// Markup sugar over next() / prev() / close(): one document-level click
+	// listener drives every set's verb buttons. Delegation is required (not a
+	// nicety) — verb buttons commonly live inside async-loaded panel content that
+	// does not exist at init. Installed once, shared by all instances.
+	private static _installVerbDelegation(): void {
+		if (PanelSet._verbDelegationInstalled) return;
+		PanelSet._verbDelegationInstalled = true;
+		document.addEventListener('click', PanelSet._onVerbClick);
+	}
+
+	// Resolve the set element a verb button drives. An explicit selector value —
+	// data-ps-next="#wizard" — always wins; otherwise the nearest enclosing set.
+	private static _resolveVerbSet(btn: HTMLElement, verb: 'next' | 'prev' | 'close'): HTMLElement | null {
+		const sel = btn.getAttribute(`data-ps-${verb}`);
+		if (sel) return document.querySelector<HTMLElement>(sel);
+		return btn.closest<HTMLElement>('[data-panelset], ps-panelset');
+	}
+
+	private static _onVerbClick = (event: Event): void => {
+		const start = event.target;
+		if (!(start instanceof Element)) return;
+		const btn = start.closest<HTMLElement>('[data-ps-next], [data-ps-prev], [data-ps-close]');
+		// aria-disabled is our end-of-range guard; a native disabled button never
+		// fires click, so there is nothing extra to check for that.
+		if (!btn || btn.getAttribute('aria-disabled') === 'true') return;
+
+		const verb: 'next' | 'prev' | 'close' =
+			btn.hasAttribute('data-ps-next') ? 'next' :
+			btn.hasAttribute('data-ps-prev') ? 'prev' : 'close';
+
+		const setEl = PanelSet._resolveVerbSet(btn, verb);
+		const instance = setEl?.panelSet;
+		if (!instance) {
+			// Same tone as PanelControl's "not initialised" notice. No instance means
+			// no merged config, so gate the log on the set element's data-debug.
+			if (setEl) log('PanelSet', setEl, setEl.dataset.debug != null && setEl.dataset.debug !== 'false',
+				`data-ps-${verb}: PanelSet is not initialised. Add a PanelSet.init().`);
+			return;
+		}
+		instance[verb]({ event });
+	};
+
+	// Wire end-of-range reflection for this set's verb buttons and stamp the
+	// initial state. Clicks are handled globally (see _installVerbDelegation); here
+	// we only keep aria-disabled in step with the ends.
+	private _initVerbButtons(): void {
+		const { signal } = this._verbController;
+		this.element.addEventListener('ps:activationstart', this._onActivationEdge, { signal });
+		this.element.addEventListener('ps:activationcomplete', this._onActivationEdge, { signal });
+		this._reflectEnds();
+	}
+
+	// Recompute first/last from the current panels and re-apply the verb buttons'
+	// end-of-range state. Run at init and on refresh() — so adding / removing /
+	// reordering panels keeps Prev/Next correct (otherwise an appended panel leaves
+	// the old last step's Next stuck disabled until the next activation). Activation
+	// uses the event's own edge flags instead (see _onActivationEdge).
+	private _reflectEnds(): void {
+		const { atStart, atEnd } = this._edgeInfo(this.pendingPanel);
+		this._reflectVerbEndState(atStart, atEnd);
+	}
+
+	// Reflect on both activationstart and activationcomplete. The edge flags ride
+	// on the event detail and describe the *targeted* panel — i.e. pendingPanel,
+	// which is what _step() steps from. Tracking pendingPanel (not activePanel)
+	// keeps the button state agreeing with the guard during rapid interruptible
+	// switches and reversals.
+	private _onActivationEdge = (e: Event): void => {
+		const { atStart, atEnd } = (e as CustomEvent<ActivationEventDetail>).detail;
+		this._reflectVerbEndState(atStart, atEnd);
+	};
+
+	// End-of-range reflection on this set's prev/next buttons: prev is disabled at
+	// the first panel, next at the last. With loop on, the ends wrap around, so the
+	// buttons are never disabled — leave them alone in either mode.
+	//
+	// 'aria' (default): toggle aria-disabled, never the native disabled (the
+	// author's). The button stays focusable, so no focus dance is needed.
+	//
+	// 'native': PanelSet owns the native disabled attribute on these buttons (it
+	// must re-enable when stepping away from an end); aria-disabled is the author's
+	// and untouched. Disabling the focused element drops focus to <body>, so the
+	// focus dance moves focus off a button before disabling it.
+	private _reflectVerbEndState(atStart: boolean, atEnd: boolean): void {
+		if (this.config.loop) return;
+		const prev = this._verbButtonsFor('prev');
+		const next = this._verbButtonsFor('next');
+
+		if (this.config.disabledMode !== 'native') {
+			prev.forEach(b => this._applyVerbDisabled(b, atStart));
+			next.forEach(b => this._applyVerbDisabled(b, atEnd));
+			return;
+		}
+
+		// Re-enable first (never moves focus), so the counterpart is ready to
+		// receive focus before we disable an end button.
+		if (!atStart) prev.forEach(b => this._applyVerbDisabled(b, false));
+		if (!atEnd)   next.forEach(b => this._applyVerbDisabled(b, false));
+		// Then disable the end button(s). The counterpart is the opposite-direction
+		// button, but only when it stays enabled (i.e. not also at its end).
+		if (atStart) this._disableVerbNative(prev, atEnd   ? [] : next);
+		if (atEnd)   this._disableVerbNative(next, atStart ? [] : prev);
+	}
+
+	// Apply the disabled state to one verb button per the configured mode, and keep
+	// its aria-describedby hint (data-ps-disabled-hint) in step — the hint id is
+	// attached only while the button is disabled, so it is not announced when the
+	// button is usable. Native disabling that needs the focus dance routes through
+	// _disableVerbNative, which calls this after moving focus.
+	private _applyVerbDisabled(btn: HTMLElement, disabled: boolean): void {
+		if (this.config.disabledMode === 'native') {
+			if (disabled) btn.setAttribute('disabled', ''); else btn.removeAttribute('disabled');
+		} else {
+			btn.setAttribute('aria-disabled', String(disabled));
+		}
+		const hint = btn.getAttribute('data-ps-disabled-hint');
+		if (hint) setDescribedBy(btn, hint, disabled);
+	}
+
+	// Disable verb `buttons` (native mode). Before disabling one that holds focus,
+	// move focus to the first enabled counterpart, else to the active panel — so
+	// focus never lands on <body>.
+	private _disableVerbNative(buttons: HTMLElement[], counterparts: HTMLElement[]): void {
+		buttons.forEach(btn => {
+			if (!btn.hasAttribute('disabled') && document.activeElement === btn) {
+				const target = counterparts.find(c => !c.hasAttribute('disabled')) ?? this._verbFocusFallback();
+				target?.focus();
+			}
+			this._applyVerbDisabled(btn, true);
+		});
+	}
+
+	// Fallback focus target when no enabled counterpart exists: the panel the user
+	// is on (pendingPanel during a switch, else activePanel). Make it focusable the
+	// same way autoFocus: true does.
+	private _verbFocusFallback(): HTMLElement | null {
+		const panel = this.pendingPanel ?? this.activePanel;
+		if (!panel) return null;
+		if (!panel.hasAttribute('tabindex')) panel.setAttribute('tabindex', '-1');
+		return panel;
+	}
+
+	// All data-ps-prev / data-ps-next buttons that resolve to this set — interior
+	// (closest) and explicit-target (data-ps-next="#sel") alike.
+	private _verbButtonsFor(verb: 'prev' | 'next'): HTMLElement[] {
+		return Array.from(document.querySelectorAll<HTMLElement>(`[data-ps-${verb}]`))
+			.filter(btn => PanelSet._resolveVerbSet(btn, verb) === this.element);
 	}
 
 	/**
@@ -700,12 +878,18 @@ export class PanelSet {
 		const from = this.panels.indexOf(this.pendingPanel);
 		const current = from === -1 ? 0 : from;
 		let target = current + dir;
+		let wrapped = false;
 		if (target < 0 || target >= total) {
 			if (!this.config.loop) return;     // clamp at the ends
 			target = (target + total) % total; // wrap
+			wrapped = true;
 		}
 		const next = this.panels[target];
-		if (next && next !== this.pendingPanel) this.show(next.id, options);
+		// Only a loop wrap needs the direction hint: its DOM-order delta points the
+		// wrong way (last->first looks backward), so honour the step's direction. A
+		// normal step's DOM order already matches the action, so leave it alone.
+		if (next && next !== this.pendingPanel)
+			this.show(next.id, wrapped ? { ...options, direction: dir > 0 ? 'forward' : 'backward' } : options);
 	}
 
 
@@ -835,7 +1019,8 @@ export class PanelSet {
 		const {
 			event,
 			transition = true,
-			autoFocus
+			autoFocus,
+			direction: stepDirection
 		} = options || {};
 
 		// Always derive trigger from event
@@ -1073,10 +1258,18 @@ export class PanelSet {
 			// runs in the default (levelup) direction, so its reverse is leveldown.
 			direction = this._switchDirection === 'leveldown' ? 'levelup' : 'leveldown';
 		} else if (this.config.levels && outgoingPanel && outgoingPanel !== newPanel) {
-			const fromIdx = this.panels.indexOf(outgoingPanel);
-			const toIdx   = this.panels.indexOf(newPanel);
-			if (fromIdx !== -1 && toIdx !== -1 && fromIdx !== toIdx) {
-				direction = toIdx > fromIdx ? 'levelup' : 'leveldown';
+			// next()/prev() pass their step direction so a loop wrap slides in the
+			// action's direction ('forward' = like Next), not the DOM-order delta —
+			// which would slide a last->first wrap backwards. A direct jump (e.g. a tab
+			// click) carries no intent, so it falls back to DOM order.
+			if (stepDirection) {
+				direction = stepDirection === 'forward' ? 'levelup' : 'leveldown';
+			} else {
+				const fromIdx = this.panels.indexOf(outgoingPanel);
+				const toIdx   = this.panels.indexOf(newPanel);
+				if (fromIdx !== -1 && toIdx !== -1 && fromIdx !== toIdx) {
+					direction = toIdx > fromIdx ? 'levelup' : 'leveldown';
+				}
 			}
 		}
 		this._switchDirection = direction;

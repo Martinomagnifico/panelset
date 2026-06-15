@@ -1,0 +1,61 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelFlow | Overview"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 PanelFlow
+				p.lead A flow layer over PanelControl + PanelSet — validation, gating, and step locking.
+
+	+section("Preview")
+		.callout
+			p #[strong Incubating.] PanelFlow is in early development and lives inside the #[code panelset] repo for now, so it can co-evolve with the layers below. It is #[strong not] published yet and its API will change. When it stabilises it moves to its own package; until then it is documented here, behind this preview section, and the PanelSet / PanelControl pages do not depend on it.
+
+	+section("What it is")
+		p PanelControl wires controls and PanelSet switches panels — but neither decides #[em whether] a move is allowed. That is #[strong flow]: validating a step, gating forward moves, locking steps you cannot reach yet, and (later) branching and persistence. PanelFlow is that layer.
+		p It is strictly one-way. PanelFlow drives PanelControl (through #[code setTabState]) and PanelSet (through the #[code ps:beforeactivate] gate), never the reverse — nothing in PanelControl or PanelSet knows PanelFlow exists.
+
+	+section("Scope (v0)")
+		p Today PanelFlow absorbs the bookkeeping the PanelSet and PanelControl wizard demos write by hand on every page:
+		ul
+			li #[strong Forward gate] — blocks advancing past an incomplete step and focuses the missing field (#[code ps:beforeactivate]).
+			li #[strong Step locking] — disables every step beyond the first incomplete one (#[code setTabState]).
+			li #[strong Next button] — disabled until the current step is valid, with a focusable reason hint.
+		p Validation is native HTML constraint validation (#[code [required]:invalid]) for now. A schema / data store, branching, and persistence are on the roadmap.
+
+	+section("Announcing why a control is disabled")
+		p PanelFlow locks #[strong Next] and the step tabs with #[code aria-disabled], not the native #[code disabled] — so they stay #[strong focusable] and a keyboard or screen-reader user can land on them and hear why. You author each message in the markup as a hidden element; the layer that owns the control attaches it.
+		dl
+			dt: strong Author the message, point the control at it
+			dd A hidden element holds the text and the control names it by id. #[strong Next] (validation) uses #[code data-pf-disabled-hint] — PanelFlow's. The step tabs (locking) use #[code data-pc-disabled-hint] — PanelControl's. #[strong Previous] (start of range) uses #[code data-ps-disabled-hint] — PanelSet's. Each layer manages only the controls it disables.
+			dt: strong Attached only while disabled
+			dd The id joins the control's #[code aria-describedby] only while it is disabled for that reason, and leaves once it is usable — so the message is never announced on an enabled control.
+			dt: strong Re-announcing on a persistent control
+			dd A screen reader announces a control's description when focus #[em arrives], not when an attribute changes under existing focus. #[strong Next] is one button that persists across steps, so advancing would leave focus on it as it silently flips state. The set therefore uses #[code data-auto-focus] (here #[code "heading"]): a keyboard advance moves focus into the new step, and the user meets #[strong Next] again fresh — hearing the reason if it is still blocked.
+
+	+section("Using it")
+		p Add #[code data-panelflow] to the control (the tab strip that already carries #[code data-panelcontrol]) and initialise the three layers in order. The per-page flow script disappears:
+
+		+codeblock('JS').
+			import { PanelSet, PanelControl } from 'panelset';
+			import { PanelFlow } from 'panelflow'; // preview
+
+			PanelSet.init();
+			PanelControl.init();
+			PanelFlow.init();      // every [data-panelflow]
+
+		p See the #[a(href="/panelflow/examples/wizard.html") Wizard] example — the same gated flow as the #[a(href="/panelcontrol/examples/wizard.html") PanelControl wizard], with the hand-written flow logic replaced by one #[code PanelFlow.init()].
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			PanelSet.init();
+	else
+		script(type="module").
+			import { PanelSet } from 'panelset';
+			PanelSet.init();

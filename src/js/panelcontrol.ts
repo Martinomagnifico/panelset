@@ -1,7 +1,7 @@
 import type { PanelControlConfig } from './panelcontrol.types';
 import type { ShowOptions } from './panelset.types';
 import { parseDataAttrs, type AttrMap } from './functions/config';
-import { log } from './functions/utils';
+import { log, setDescribedBy } from './functions/utils';
 
 declare global {
 	interface HTMLElement {
@@ -122,7 +122,9 @@ export class PanelControl {
 	 * apply — it does not decide *when* a tab should be locked (that is the
 	 * caller's concern, e.g. a flow controller). 'disabled' sets aria-disabled so
 	 * keyboard nav skips the tab and clicks / Enter no longer activate it;
-	 * 'enabled' clears it.
+	 * 'enabled' clears it. A tab may carry data-pc-disabled-hint="hintId"; that
+	 * hint is attached to aria-describedby only while the tab is disabled, so a
+	 * focusable (aria-disabled) tab can explain why it is locked.
 	 * @param panelId - aria-controls target id of the tab(s) to update.
 	 * @param state - 'enabled' or 'disabled'.
 	 */
@@ -130,6 +132,8 @@ export class PanelControl {
 		const disabled = state === 'disabled';
 		this.element.querySelectorAll<HTMLElement>(`[aria-controls="${panelId}"]`).forEach(tab => {
 			tab.setAttribute('aria-disabled', String(disabled));
+			const hint = tab.getAttribute('data-pc-disabled-hint');
+			if (hint) setDescribedBy(tab, hint, disabled);
 			if (this._isTablist && disabled) tab.tabIndex = -1; // can't hold the roving stop
 		});
 		// If the disabled tab held the roving stop, hand it to an enabled tab.

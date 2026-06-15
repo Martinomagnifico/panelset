@@ -62,6 +62,17 @@
       ]
     },
     {
+      "title": "PanelFlow (preview)",
+      "links": [
+        { "text": "PanelFlow | Overview", "label": "Overview", "href": "/panelflow/index.html" }
+      ],
+      "examples": [
+        { "text": "PanelFlow | Examples | Wizard", "label": "Wizard", "href": "/panelflow/examples/wizard.html" },
+        { "text": "PanelFlow | Examples | Finalize", "label": "Finalize", "href": "/panelflow/examples/finalize.html" },
+        { "text": "PanelFlow | Examples | Branching", "label": "Branching", "href": "/panelflow/examples/branching.html" }
+      ]
+    },
+    {
       "title": "Shared concepts",
       "links": [
         { "text": "Accessibility", "href": "/sharedconcepts/accessibility.html" },

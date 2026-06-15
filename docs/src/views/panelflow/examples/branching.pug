@@ -1,0 +1,178 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelFlow | Examples | Branching"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Branching
+				p.lead One flow definition, loaded three ways — the panel that comes next depends on your answer.
+
+	+section("The loader seam")
+		p Here the steps are #[strong data], not markup: a small flow definition where each step carries its own #[code next] (a case-map on an answer). PanelFlow resolves which step is next, the #[strong loader] fetches that step's data, and the panel is materialised into a PanelSet on demand — a sliding window of #[code [previous, current]]. Because the entry is the first step and a step with no #[code next] is terminal, the extremes stay intrinsic; only the branch in the middle needs the definition.
+		p The point of this page: the #[strong same] flow runs through different loaders. Only the #[code load(id)] function changes.
+
+	+section("Same flow, three loaders")
+		.card
+			.demo
+				h3 Inline
+				p The flow object lives in the page.
+				br
+				form.pf-demo
+					.pf-set.tab-content(data-panelset data-panelflow-src="#pf-flow" data-auto-focus="heading")
+						.panel-wrapper
+					.pf-nav
+						button.secondary(type="button" data-pf-back) Back
+						button(type="button" data-pf-continue) Continue
+			.demo
+				h3 Fetched
+				p Loaded from a static #[code flow.json].
+				br
+				form.pf-demo
+					.pf-set.tab-content(data-panelset data-panelflow-src="../flow.json" data-auto-focus="heading")
+						.panel-wrapper
+					.pf-nav
+						button.secondary(type="button" data-pf-back) Back
+						button(type="button" data-pf-continue) Continue
+			.demo
+				h3 Mocked API
+				p A service worker answers per step.
+				br
+				form.pf-demo
+					.pf-set.tab-content(data-panelset data-panelflow-src="/pf-api/flow/:id" data-auto-focus="heading")
+						.panel-wrapper
+					.pf-nav
+						button.secondary(type="button" data-pf-back) Back
+						button(type="button" data-pf-continue) Continue
+
+			p #[strong Try it]: pick #[em scenic] and you visit an extra step; pick #[em skip] and you go straight to the end. #[strong Back] retraces your actual path (a history stack, not the JSON). All three columns behave identically — the only difference is where the steps come from.
+
+		//- The inline column and the mocked endpoint both read this authored flow.
+		script#pf-flow(type="application/json").
+			{
+			  "entry": "q1",
+			  "steps": {
+			    "q1": { "title": "Which path?",
+			            "fields": [{ "name": "path", "type": "radio", "label": "Pick a route",
+			                        "options": [{ "value": "a", "label": "Take the scenic route" }, { "value": "b", "label": "Skip to the end" }] }],
+			            "next": { "field": "path", "cases": { "a": "q2a", "b": "done" } } },
+			    "q2a": { "title": "Scenic detail",
+			             "fields": [{ "name": "detail", "type": "text", "label": "Anything you noticed" }],
+			             "next": { "default": "done" } },
+			    "done": { "title": "All done" }
+			  }
+			}
+
+	+section("The same flow, validated")
+		p Identical wiring — the one addition is a per-step #[strong validation gate]. #[strong Continue] stays disabled until the current step is answered: step 1 needs a route picked, step 2 needs its field filled. The flow layer simply won't advance from an incomplete step.
+		.card
+			.demo
+				h3 Inline
+				p The flow object lives in the page.
+				br
+				form.pf-demo(data-pf-validate)
+					.pf-set.tab-content(data-panelset data-panelflow-src="#pf-flow" data-auto-focus="heading")
+						.panel-wrapper
+					.pf-nav
+						button.secondary(type="button" data-pf-back) Back
+						button(type="button" data-pf-continue) Continue
+			.demo
+				h3 Fetched
+				p Loaded from a static #[code flow.json].
+				br
+				form.pf-demo(data-pf-validate)
+					.pf-set.tab-content(data-panelset data-panelflow-src="../flow.json" data-auto-focus="heading")
+						.panel-wrapper
+					.pf-nav
+						button.secondary(type="button" data-pf-back) Back
+						button(type="button" data-pf-continue) Continue
+			.demo
+				h3 Mocked API
+				p A service worker answers per step.
+				br
+				form.pf-demo(data-pf-validate)
+					.pf-set.tab-content(data-panelset data-panelflow-src="/pf-api/flow/:id" data-auto-focus="heading")
+						.panel-wrapper
+					.pf-nav
+						button.secondary(type="button" data-pf-back) Back
+						button(type="button" data-pf-continue) Continue
+
+		p #[strong Try it]: #[strong Continue] is greyed out until you choose a route; on the scenic step it re-greys until you type something. Same three loaders, same flow — only the gate is new.
+
+	+section("How it is wired")
+		p The flow definition — each step is content (#[code title]/#[code fields]) plus a #[code next] edge. #[code done] has no #[code next], so it is the terminal:
+		+codeblock('JSON').
+			{
+			  "entry": "q1",
+			  "steps": {
+			    "q1": { "title": "Which path?", "fields": [/* radio: path = a | b */],
+			            "next": { "field": "path", "cases": { "a": "q2a", "b": "done" } } },
+			    "q2a": { "title": "Scenic detail", "next": { "default": "done" } },
+			    "done": { "title": "All done" }
+			  }
+			}
+
+		p Mount it over an #[strong empty] PanelSet — the controller materialises panels as you go. #[code loaderFromSource()] reads the declared #[code data-panelflow-src] and returns the right loader:
+		+codeblock('JS').
+			import { PanelSet } from 'panelset';
+			import { FlowController, loaderFromSource } from 'panelflow'; // preview
+
+			new PanelSet(setEl);                  // empty set is fine
+			const loader = loaderFromSource(setEl.dataset.panelflowSrc);
+			const fc = new FlowController(setEl.panelSet, loader, { render });
+			await fc.start('q1');                  // → fc.advance() / fc.back()
+
+		p The columns differ only in one attribute — #[code data-panelflow-src] — and #[code loaderFromSource()] turns each value into the matching loader:
+		+codeblock('HTML').
+			<!-- inline: JSON in a <script type="application/json" id="pf-flow"> -->
+			<div data-panelset data-panelflow-src="#pf-flow"></div>
+
+			<!-- static file: fetched once, then served by id -->
+			<div data-panelset data-panelflow-src="flow.json"></div>
+
+			<!-- endpoint: one fetch per step (:id or {id} token) -->
+			<div data-panelset data-panelflow-src="/api/flow/:id"></div>
+
+		p The mocked column's endpoint is a #[strong simulated] service-worker handler (MSW) — the page registers it at runtime. Replace it with your real URL and the loader is unchanged:
+		+codeblock('JS').
+			import { setupWorker } from 'msw/browser';
+			import { http, HttpResponse } from 'msw';
+
+			setupWorker(
+				http.get('/pf-api/flow/:id', ({ params }) =>
+					HttpResponse.json(FLOW.steps[params.id])),
+			).start();
+
+	+section("What this shows")
+		p Resolving the next step (logical) is separate from fetching it (the loader) and from rendering it (PanelSet). Swap the loader for a lazy per-step endpoint or a real API and nothing else changes — exactly the three columns above. PanelFlow is still a preview, incubating here; see the #[a(href="/panelflow/index.html") overview].
+
+
+append styles
+	style.
+		.pf-set {
+			--ps-panel-out-speed: 0.25s;
+			--ps-panel-in-speed: 0.25s;
+			--ps-panel-in-delay: 0.25s;
+
+
+		}
+		.pf-set .panel-wrapper [role="tabpanel"] { paddings: 1rem; }
+		.pf-field { margin: 0.75rem 0; border: 0; padding: 0; }
+		.pf-opt { display: block; margin: 0.35rem 0; }
+		.pf-nav {
+			display: flex;
+			justify-content: space-between;
+			gap: 0.5rem;
+			margin-top: 0.75rem;
+		}
+		.pf-nav button[disabled] { opacity: 0.4; cursor: not-allowed; }
+		.muted { color: var(--text-muted, #666); font-size: 0.9em; margin-top: 0; }
+
+
+append scripts
+	if isProd
+		script(type="module" src=`${basePath}assets/scripts/example-pfflow.js` vite-ignore)
+	else
+		script(type="module" src="/src/assets/scripts/example-pfflow.js")

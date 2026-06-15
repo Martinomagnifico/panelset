@@ -97,7 +97,10 @@ export default defineConfig(({ mode }) => {
 			alias: {
 				'panelset': isDev
 					? resolve(__dirname, '../src/js/index.ts')
-					: resolve(__dirname, '../dist/panelset.esm.js')
+					: resolve(__dirname, '../dist/panelset.esm.js'),
+				// PanelFlow (preview) has no built dist — alias to the TS source in both
+				// modes; Vite compiles + bundles it into the demo asset.
+				'panelflow': resolve(__dirname, '../panelflow/index.ts')
 			}
 		}
 	};

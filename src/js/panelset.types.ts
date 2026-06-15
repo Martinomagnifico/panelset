@@ -16,6 +16,12 @@ export interface PanelSetConfig {
 	loop?: boolean;
 	closable?: boolean;
 	closeOnTab?: boolean;
+	/** How PanelSet disables its own verb buttons (data-ps-next/prev/close) at the
+	 *  ends of the range. 'aria' (default) toggles aria-disabled and leaves the
+	 *  native disabled attribute to the author; 'native' toggles the native
+	 *  disabled attribute (PanelSet owns it) and leaves aria-disabled to the
+	 *  author. Tab-strip locking is PanelControl's concern and is always aria. */
+	disabledMode?: 'aria' | 'native';
 	loadingHeight?: number;
 	loadingDelay?: number;
 	returnFocus?: boolean;
@@ -79,6 +85,10 @@ export interface ShowOptions {
 	event?: Event;
 	transition?: boolean;
 	autoFocus?: AutoFocusMode;
+	/** Force the levels slide direction regardless of DOM order. next()/prev()
+	 *  set this so a loop wrap slides in the step's direction ('forward' = like
+	 *  Next, even when wrapping to an earlier panel). Only affects sets with levels. */
+	direction?: 'forward' | 'backward';
 }
 
 export type AsyncContentHandler = (

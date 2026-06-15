@@ -131,6 +131,57 @@ block content
 						ul
 							li #[code close-on-tab]
 
+			+apiOption("levels: boolean")
+				p Give panels a depth order from their DOM position — a later panel is "higher". Moving forward slides one way, back the other, and #[code .levelup] / #[code .leveldown] classes are added so CSS can reverse the transform on backward navigation.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { levels: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-ps-levels]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code ps-levels]
+
+			+apiOption("loop: boolean")
+				p Make #[code next()] / #[code prev()] wrap around the ends instead of stopping: past the last panel goes to the first, past the first to the last. With loop on, PanelSet never disables its #[code data-ps-next] / #[code data-ps-prev] verb buttons, since every panel stays reachable. Suits carousels — see the #[a(href="/panelset/examples/wizard.html") Wizard] page for a live cycler.
+				h4 Default: #[code false]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { loop: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-ps-loop]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code ps-loop]
+
+			+apiOption("disabledMode: 'aria' | 'native'")
+				p How PanelSet disables its own #[code data-ps-next] / #[code data-ps-prev] verb buttons at the ends of the range (when #[code loop] is off). #[code 'aria'] toggles #[code aria-disabled] and leaves the native #[code disabled] attribute to you — the button stays focusable, so a hint can be announced. #[code 'native'] toggles the native #[code disabled] attribute (PanelSet owns it) and moves focus off a button before disabling it. Tab-strip locking is unaffected (always aria).
+				h4 Default: #[code 'aria']
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { disabledMode: 'native' }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-ps-disabled-mode="native"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code ps-disabled-mode="native"]
+
 			+apiOption("debug: boolean")
 				p Log activation events to the console.
 				h4 Default: #[code false]

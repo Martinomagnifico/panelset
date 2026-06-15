@@ -7,6 +7,28 @@ export function log(prefix: string, element: HTMLElement, debug: boolean, messag
 }
 
 
+/**
+ * Add or remove id token(s) on an element's aria-describedby, leaving any other
+ * tokens (author-set descriptions) intact. `ids` may be a single id or a
+ * space-separated list. Used to attach a "why is this disabled" hint only while
+ * a control is disabled, so it is not announced when the control is enabled.
+ */
+export function setDescribedBy(el: HTMLElement, ids: string, present: boolean): void {
+	const want = ids.split(/\s+/).filter(Boolean);
+	if (!want.length) return;
+	const cur = (el.getAttribute('aria-describedby') || '').split(/\s+/).filter(Boolean);
+	let changed = false;
+	for (const id of want) {
+		const has = cur.includes(id);
+		if (present && !has) { cur.push(id); changed = true; }
+		else if (!present && has) { cur.splice(cur.indexOf(id), 1); changed = true; }
+	}
+	if (!changed) return;
+	if (cur.length) el.setAttribute('aria-describedby', cur.join(' '));
+	else el.removeAttribute('aria-describedby');
+}
+
+
 let _interpolateSizeLogged = false;
 
 /**
