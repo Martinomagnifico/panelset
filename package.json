@@ -30,9 +30,6 @@
     "docs:preview": "npm run build && cd docs && rm -rf dist && npm run build && npm run preview",
     "build": "npm run clean && npm run build:lib",
     "build:lib": "vite build",
-    "test": "vitest run",
-    "test:watch": "vitest",
-    "typecheck:flow": "tsc -p panelflow/tsconfig.json",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist",
     "postinstall": "[ -d docs ] && cd docs && npm install || true"
@@ -49,14 +46,11 @@
   "devDependencies": {
     "@vituum/vite-plugin-pug": "^2.0.1",
     "fast-glob": "^3.3.3",
-    "jsdom": "^29.1.1",
-    "puppeteer-core": "^25.1.0",
     "sass": "^1.97.3",
     "terser": "^5.46.0",
     "typescript": "^5.9.3",
     "vite": "^8.0.0",
     "vite-plugin-dts": "5.0.0-beta.6",
-    "vitest": "^4.1.8",
     "vituum": "^2.0.1"
   }
 }

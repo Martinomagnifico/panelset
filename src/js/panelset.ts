@@ -31,6 +31,9 @@ declare global {
  *    every [aria-controls] trigger so assistive tech tracks the active panel.
  *    Selection-trigger *clicks* and the tablist keyboard model (arrows, Home/End,
  *    roving tabindex) live in PanelControl, not here.
+ *  - Trigger labelling (manageLabels): linking each panel back to the trigger that
+ *    controls it via aria-labelledby (generating a trigger id if needed). Static, so
+ *    it runs at init / refresh; never overrides an existing aria-label(ledby).
  *  - Verb buttons: wiring its own data-ps-next / -prev / -close buttons to
  *    next() / prev() / close(), and reflecting end-of-range as aria-disabled
  *    (unless loop). One delegated document listener covers all instances.
@@ -67,6 +70,7 @@ export class PanelSet {
 		deepLink: false,
 		interruptible: true,
 		manageTriggers: true,
+		manageLabels: true,
 		debug: false
 	};
 
@@ -117,6 +121,7 @@ export class PanelSet {
 		deepLink:       ['panelDeeplink',  'boolean'],
 		interruptible:  ['interruptible',  'boolean'],
 		manageTriggers: ['manageTriggers', 'boolean'],
+		manageLabels:   ['manageLabels',   'boolean'],
 		debug:          ['debug',          'boolean'],
 	};
 
@@ -370,6 +375,7 @@ export class PanelSet {
 		this.element.style.height = '';
 		this._updateHighestPanel();
 		if (this.config.manageTriggers) this._updateTabTriggers(this.activePanel);
+		if (this.config.manageLabels) this._reflectLabels();
 	}
 	
 
@@ -440,6 +446,40 @@ export class PanelSet {
 				trigger.setAttribute('aria-selected', String(panel === activePanel));
 			});
 		});
+	}
+
+	// Auto-label each panel from the trigger that controls it (the reverse of the
+	// [aria-controls] link). This is static structure, so it runs at init / refresh
+	// only, never on activation. Conservative: it never overrides an existing
+	// accessible name, and only acts when one trigger unambiguously controls the panel.
+	private _reflectLabels(): void {
+		this.panels.forEach(panel => {
+			if (!panel.id) return;
+			if (panel.hasAttribute('aria-labelledby') || panel.hasAttribute('aria-label')) return;
+
+			const triggers = Array.from(
+				document.querySelectorAll<HTMLElement>(`[aria-controls="${panel.id}"]`)
+			);
+			if (triggers.length === 0) return;
+
+			// Prefer a single role="tab" when several controls point at this panel
+			// (e.g. a tab plus a remote control); otherwise require exactly one trigger.
+			const tabs = triggers.filter(t => t.getAttribute('role') === 'tab');
+			const labelling = tabs.length === 1 ? tabs[0]
+				: triggers.length === 1 ? triggers[0]
+				: null;
+			if (!labelling) return; // ambiguous — leave naming to the author
+
+			if (!labelling.id) labelling.id = this._uniqueId(`${panel.id}-tab`);
+			panel.setAttribute('aria-labelledby', labelling.id);
+		});
+	}
+
+	// A document-unique id derived from a base, for a generated trigger id.
+	private _uniqueId(base: string): string {
+		let id = base, n = 2;
+		while (document.getElementById(id)) id = `${base}-${n++}`;
+		return id;
 	}
 
 	private _setTriggersActivating(active: boolean): void {

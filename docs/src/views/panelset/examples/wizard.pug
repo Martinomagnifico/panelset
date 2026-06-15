@@ -55,7 +55,7 @@ block content
 
 
 			h3 Previous and next buttons
-			p Add #[code data-ps-prev] / #[code data-ps-next] to the buttons and PanelSet wires them to #[code prev()] / #[code next()] — no stepping logic of your own. The nav sits outside the set here, so the attribute names the set it drives:
+			p Add #[code data-ps-prev] / #[code data-ps-next] to the buttons and PanelSet wires them to #[code prev()] / #[code next()] (no stepping logic of your own). The nav sits outside the set here, so the attribute names the set it drives:
 
 			+codeblock('HTML')
 				.wizard-nav
@@ -63,13 +63,13 @@ block content
 					button(data-ps-next="#wizard") Next
 
 			h3 Disabling the buttons at the ends
-			p With #[code loop] off, PanelSet reflects end-of-range onto these buttons as #[code aria-disabled] — #[code data-ps-prev] at the first panel, #[code data-ps-next] at the last. It uses #[code aria-disabled] rather than the native #[code disabled], so the button stays focusable and no focus juggling is needed; just style the state:
+			p With #[code loop] off, PanelSet reflects end-of-range onto these buttons as #[code aria-disabled]: #[code data-ps-prev] at the first panel, #[code data-ps-next] at the last. It uses #[code aria-disabled] rather than the native #[code disabled], so the button stays focusable and no focus juggling is needed; just style the state:
 
 			+codeblock('CSS').
 				[data-ps-prev][aria-disabled="true"],
 				[data-ps-next][aria-disabled="true"] { opacity: 0.4; cursor: not-allowed; }
 
-			p Because #[code aria-disabled] keeps the button #[strong focusable], a keyboard or screen-reader user can land on it — so tell them #[em why]. Point #[code data-ps-disabled-hint] at a hidden element and PanelSet adds it to the button's #[code aria-describedby] only while the button is disabled:
+			p Because #[code aria-disabled] keeps the button #[strong focusable], a keyboard or screen-reader user can land on it, so tell them #[em why]. Point #[code data-ps-disabled-hint] at a hidden element and PanelSet adds it to the button's #[code aria-describedby] only while the button is disabled:
 
 			+codeblock('HTML')
 				.wizard-nav
@@ -81,7 +81,7 @@ block content
 			p For a "Finish" call-to-action on the last step instead of a disabled Next, listen for #[code ps:activationstart] (it carries #[code atStart] / #[code atEnd]) and swap the button yourself.
 
 			h3 Or wrap instead: looping
-			p Add #[code data-ps-loop] and Prev / Next #[strong wrap] instead of stopping — #[code next()] past the last panel goes to the first, #[code prev()] past the first to the last. The ends are always reachable, so PanelSet never disables the buttons. This suits a #[strong carousel] or cycler, not a gated wizard (wrapping past the end would skip the validation gate). With #[code data-ps-levels] on too, the wrap still slides in the button's direction — #[strong Next] keeps moving forward, even from the last slide back to the first.
+			p Add #[code data-ps-loop] and Prev / Next #[strong wrap] instead of stopping: #[code next()] past the last panel goes to the first, #[code prev()] past the first to the last. The ends are always reachable, so PanelSet never disables the buttons. This suits a #[strong carousel] or cycler, not a gated wizard (wrapping past the end would skip the validation gate). With #[code data-ps-levels] on too, the wrap still slides in the button's direction: #[strong Next] keeps moving forward, even from the last slide back to the first.
 
 			.demo
 				#cycler.tab-content(data-panelset data-ps-levels data-ps-loop)
@@ -94,7 +94,7 @@ block content
 							p And #[strong Previous] wraps the other way, from the first slide to the last.
 						#cycle-3(role="tabpanel" hidden aria-label="Slide 3")
 							h3 Slide 3
-							p Three slides, no ends — the buttons never disable.
+							p Three slides, no ends: the buttons never disable.
 				.wizard-nav
 					button.secondary(data-ps-prev="#cycler") Previous
 					button(data-ps-next="#cycler") Next
@@ -220,7 +220,7 @@ block content
 				vwizard.addEventListener('ps:activationcomplete', refresh);
 				refresh();
 
-			p #[strong Heads up]: the tab locking above is still hand-written bookkeeping — recompute on every #[code change] and mirror it into #[code aria-disabled] on each tab. The same shape recurs in every wizard, a strong hint it belongs in a small reusable tab-strip layer over PanelSet. That layer is #[a(href="/panelcontrol/examples/wizard.html") PanelControl], which wires the tabs and takes the locking through #[code setTabState()] — and attaches each locked tab's #[code data-pc-disabled-hint] to #[code aria-describedby] so a screen-reader user hears why it is locked.
+			p #[strong Heads up]: the tab locking above is still hand-written bookkeeping: recompute on every #[code change] and mirror it into #[code aria-disabled] on each tab. The same shape recurs in every wizard, a strong hint it belongs in a small reusable tab-strip layer over PanelSet. That layer is #[a(href="/panelcontrol/examples/wizard.html") PanelControl], which wires the tabs and takes the locking through #[code setTabState()] (and attaches each locked tab's #[code data-pc-disabled-hint] to #[code aria-describedby] so a screen-reader user hears why it is locked).
 
 
 

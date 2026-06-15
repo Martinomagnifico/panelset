@@ -75,7 +75,7 @@ block content
 
 	+section("Scope")
 		p PanelControl wires controls and reflects state: activation, keyboard nav, roving #[code tabindex], #[code aria-selected] / disabled. It also exposes #[code setTabState(id, 'disabled' | 'enabled')] so external code can lock or unlock a tab; PanelControl just applies it.
-		p Validation, Previous / Next flow, step gating, and persistence are #[strong not] part of PanelControl. Those belong to a separate, higher-level flow controller that calls #[code setTabState] when a step should lock. It only ever drives downward — the flow layer calls PanelControl, which calls PanelSet, never the reverse.
+		p Validation, Previous / Next flow, step gating, and persistence are #[strong not] part of PanelControl. Those belong to a separate, higher-level flow controller that calls #[code setTabState] when a step should lock. It only ever drives downward: the flow layer calls PanelControl, which calls PanelSet, never the reverse.
 		p Next: every option in #[a(href="/panelcontrol/configuration.html") Configuration], and the method list in the #[a(href="/panelcontrol/api.html") API] reference.
 
 

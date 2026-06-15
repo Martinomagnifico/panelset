@@ -65,7 +65,7 @@ block content
 				li It only works from 0 to something for a single panel. No cross transitioning between panels.
 				li The element needs to be assigned as a grid, even though it may not be a real grid. Grid is just used here because it accidentally results in the behaviour we are pursuing, not because the content calls for a grid layout. It’s a CSS hack.
 
-	+section("The lock-measure–animate–unlock (LMAU) cycle", "LMAU")
+	+section("The lock-measure-animate-unlock (LMAU) cycle", "LMAU")
 
 		p Panel and PanelSet seem to be able to transition to or from a natural size, but they just use measurement to get explicit values. ‘Explicit’ sounds fancy, but it just means using real or relative values instead of #[code auto]. It is the same basic approach as used in for example react-collapse, but extended here to horizontal axes and panel switching. The sequence is the same for both:
 

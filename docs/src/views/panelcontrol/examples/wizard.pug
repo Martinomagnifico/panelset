@@ -50,7 +50,7 @@ block content
 
 			p #[strong Try it]: with the current step unticked, #[strong Next] is disabled (focus it to hear why) and the later tabs stay locked. Tick the box and #[strong Next] enables and the next tab unlocks. A tab further ahead stays locked until you reach it.
 
-			p Every disabled control here explains itself, and #[em why] it is disabled decides who owns the hint. #[strong Position] — you are at an end — is PanelSet's: #[strong Previous] carries #[code data-ps-disabled-hint], attached on the first step. #[strong Validation] — a step is incomplete — is flow's: the locked tabs use #[code data-pc-disabled-hint] (applied by PanelControl), and #[strong Next], which can be blocked either way, has its hint set by the flow script — "last step" at the end, "complete this step" when the current step is unticked. Because the default #[code disabledMode] is #[code aria], every disabled control stays focusable, so a keyboard or screen-reader user lands on it and hears the reason — and the hint rides #[code aria-describedby] only while the control is disabled, never on an enabled one.
+			p Every disabled control here explains itself, and #[em why] it is disabled decides who owns the hint. #[strong Position] (you are at an end) is PanelSet's: #[strong Previous] carries #[code data-ps-disabled-hint], attached on the first step. #[strong Validation] (a step is incomplete) is flow's: the locked tabs use #[code data-pc-disabled-hint] (applied by PanelControl), and #[strong Next], which can be blocked either way, has its hint set by the flow script: "last step" at the end, "complete this step" when the current step is unticked. Because the default #[code disabledMode] is #[code aria], every disabled control stays focusable, so a keyboard or screen-reader user lands on it and hears the reason (the hint rides #[code aria-describedby] only while the control is disabled, never on an enabled one).
 
 			h4 Markup
 			+codeblock('HTML')
@@ -89,8 +89,8 @@ block content
 			const panelOf = tab => document.getElementById(tab.getAttribute('aria-controls'));
 			const valid   = panel => !panel.querySelector('[required]:invalid');
 
-			// Hard gate: one listener covers every path into show() — tab clicks,
-			// the data-ps-prev/next buttons, and keyboard.
+			// Hard gate: one listener covers every path into show() (tab clicks,
+			// the data-ps-prev/next buttons, and keyboard).
 			setEl.addEventListener('ps:beforeactivate', e => {
 				const { outgoingPanel, targetPanel } = e.detail;
 				const forward = outgoingPanel &&
@@ -103,8 +103,8 @@ block content
 
 			// Soft state: lock steps beyond the first incomplete one, and disable Next
 			// until the current step is valid. PanelSet disables Next at the last step;
-			// this adds the validation rule — and, since the button stays focusable,
-			// sets its hint to match the reason it is disabled.
+			// this adds the validation rule (and, since the button stays focusable,
+			// sets its hint to match the reason it is disabled).
 			function refresh() {
 				const firstInvalid = tabs.findIndex(t => !valid(panelOf(t)));
 				tabs.forEach((t, i) => pc.setTabState(
@@ -123,12 +123,12 @@ block content
 			setEl.addEventListener('ps:activationcomplete', refresh);
 			refresh();
 
-		p Next to the #[a(href="/panelset/examples/wizard.html") hand-wired PanelSet version], the tab click handlers, the keyboard logic, and the whole Previous / Next block — wiring and end-disabling — are gone. Stepping is now markup (#[code data-ps-prev] / #[code data-ps-next], disabled at the ends by PanelSet), and locking goes through #[code setTabState()] (which also keeps the roving #[code tabindex] correct) instead of poking #[code aria-disabled] directly. What stays on the page is the validation gate and the lock policy. That is the seam: #[strong PanelControl and PanelSet own the UI, the page owns the flow] — and a higher-level flow layer would package this remainder.
+		p Next to the #[a(href="/panelset/examples/wizard.html") hand-wired PanelSet version], the tab click handlers, the keyboard logic, and the whole Previous / Next block (wiring and end-disabling) are gone. Stepping is now markup (#[code data-ps-prev] / #[code data-ps-next], disabled at the ends by PanelSet), and locking goes through #[code setTabState()] (which also keeps the roving #[code tabindex] correct) instead of poking #[code aria-disabled] directly. What stays on the page is the validation gate and the lock policy. That is the seam: #[strong PanelControl and PanelSet own the UI, the page owns the flow] (and a higher-level flow layer would package this remainder).
 
 	+section("What is not solved yet")
 		p Two rough edges show on purpose. They are what a future flow layer (plus one small addition to PanelControl) would tidy up:
 		ul
-			li #[strong A locked tab's click is silent.] A focused locked tab now explains itself — #[code data-pc-disabled-hint] adds an #[code aria-describedby] note while it is locked — but #[em clicking] one still does nothing and says nothing. The #[strong Next] button, by contrast, hits the #[code ps:beforeactivate] gate and focuses the missing field. A future #[code pc:lockedactivation] event would give the locked-tab click the same chance to explain itself.
+			li #[strong A locked tab's click is silent.] A focused locked tab now explains itself (#[code data-pc-disabled-hint] adds an #[code aria-describedby] note while it is locked), but #[em clicking] one still does nothing and says nothing. The #[strong Next] button, by contrast, hits the #[code ps:beforeactivate] gate and focuses the missing field. A future #[code pc:lockedactivation] event would give the locked-tab click the same chance to explain itself.
 			li #[strong Arrow keys skip locked tabs.] Today a locked tab leaves the roving order, so arrows jump over it. For a wizard you might prefer to arrow #[em onto] a locked step to read it, while still refusing to activate it. That is a behaviour choice for the flow layer to make, not a fixed rule.
 
 

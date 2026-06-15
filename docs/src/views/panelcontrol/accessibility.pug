@@ -1,0 +1,54 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelControl | Accessibility"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 PanelControl accessibility
+				p.lead PanelControl is the accessibility layer: it implements the tablist keyboard pattern and reflects state, so you do not hand-write it.
+
+	+section("What PanelControl provides")
+		p The keyboard navigation that PanelSet's accessibility page lists as "you still need to provide" is exactly what PanelControl adds. Point it at a #[code role="tablist"] container and it wires the WAI-ARIA tabs pattern over the #[code [aria-controls]] triggers, then keeps the roving #[code tabindex] and locked-tab state correct as the user moves.
+
+	+section("Keyboard navigation")
+		p #[code role="tablist"] on the #[code data-panelcontrol] container turns on the full keyboard model. Without it, PanelControl wires clicks only.
+		ul
+			li #[strong Arrow keys] move focus between tabs. Add #[code aria-orientation="vertical"] for up/down instead of left/right.
+			li #[strong Home] / #[strong End] jump to the first / last tab.
+			li #[strong Roving #[code tabindex]]: only the active tab is in the page tab order, so #[strong Tab] enters and leaves the strip as one stop.
+			li #[strong Enter] / #[strong Space] (or a click) commits the focused tab when #[code activation: 'manual'] (the default). With #[code 'auto'], arrowing also activates.
+
+		+codeblock('HTML')
+			nav(role="tablist" data-panelcontrol aria-label="Settings sections")
+				button(role="tab" aria-controls="panel-1" aria-selected="true") Overview
+				button(role="tab" aria-controls="panel-2") Security
+
+		p Manual and auto activation (and why auto self-downgrades) are covered on the #[a(href="/panelcontrol/activation.html") Activation] page.
+
+	+section("Selection state")
+		p Selection is reflected as #[code aria-selected] on the triggers by #[strong PanelSet], immediately when a tab is committed. PanelControl manages the matching #[strong roving #[code tabindex]] so the active tab is the one reachable by #[strong Tab]. The two stay in step automatically as panels activate.
+
+	+section("Locking tabs")
+		p A higher-level flow (a wizard, a gated form) decides when a step should be unreachable. It calls #[code setTabState()]; PanelControl only applies it.
+
+		+codeblock('JS').
+			control.setTabState('step-3', 'disabled');   // lock
+			control.setTabState('step-3', 'enabled');    // unlock
+
+		p #[code 'disabled'] sets #[code aria-disabled] on the tab(s) controlling that panel: keyboard navigation skips it, clicks / Enter no longer activate it, and it cannot hold the roving tab stop (the stop hands off to an enabled tab). Tab locking always uses #[code aria-disabled] rather than the native #[code disabled] attribute, so a locked tab stays #[strong focusable] and a screen-reader user can still land on it and hear why.
+
+	+section("Disabled hints")
+		p Because a locked tab stays focusable, tell the user why it is locked. Point #[code data-pc-disabled-hint] at a hidden element, and PanelControl adds it to the tab's #[code aria-describedby] only while the tab is locked, removing it again when unlocked.
+
+		+codeblock('HTML')
+			button(role="tab" aria-controls="step-3" data-pc-disabled-hint="step3-hint") Confirm
+			span#step3-hint(hidden) Complete the previous step first
+
+		.callout
+			+warning()
+			p #[strong Note]: a locked tab's #[em click] is silent (it simply does not activate). The hint covers the focusable, keyboard / screen-reader path; the #[strong Next] button in a wizard, which hits the #[code ps:beforeactivate] gate, is what surfaces the reason on a forward attempt.
+
+		p See the #[a(href="/panelcontrol/examples/wizard.html") Wizard example] for locking and hints working together.

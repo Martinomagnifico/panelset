@@ -65,7 +65,7 @@ block content
 				ul
 					li #[code false]: no focus movement
 					li #[code true]: focus the panel element itself
-					li #[code 'heading']: first h1–h6 in the panel
+					li #[code 'heading']: first h1-h6 in the panel
 					li #[code 'first']: first focusable element (keyboard events only)
 					li #[code 'input']: first form field (bypasses keyboard-only check)
 				p Priority order: #[code show()] call &gt; trigger attribute &gt; element attribute &gt; JS config.
@@ -132,7 +132,7 @@ block content
 							li #[code close-on-tab]
 
 			+apiOption("levels: boolean")
-				p Give panels a depth order from their DOM position — a later panel is "higher". Moving forward slides one way, back the other, and #[code .levelup] / #[code .leveldown] classes are added so CSS can reverse the transform on backward navigation.
+				p Give panels a depth order from their DOM position: a later panel is "higher". Moving forward slides one way, back the other, and #[code .levelup] / #[code .leveldown] classes are added so CSS can reverse the transform on backward navigation.
 				h4 Default: #[code false]
 				.card-row
 					.card
@@ -149,7 +149,7 @@ block content
 							li #[code ps-levels]
 
 			+apiOption("loop: boolean")
-				p Make #[code next()] / #[code prev()] wrap around the ends instead of stopping: past the last panel goes to the first, past the first to the last. With loop on, PanelSet never disables its #[code data-ps-next] / #[code data-ps-prev] verb buttons, since every panel stays reachable. Suits carousels — see the #[a(href="/panelset/examples/wizard.html") Wizard] page for a live cycler.
+				p Make #[code next()] / #[code prev()] wrap around the ends instead of stopping: past the last panel goes to the first, past the first to the last. With loop on, PanelSet never disables its #[code data-ps-next] / #[code data-ps-prev] verb buttons, since every panel stays reachable. Suits carousels (see the #[a(href="/panelset/examples/wizard.html") Wizard] page for a live cycler).
 				h4 Default: #[code false]
 				.card-row
 					.card
@@ -166,7 +166,7 @@ block content
 							li #[code ps-loop]
 
 			+apiOption("disabledMode: 'aria' | 'native'")
-				p How PanelSet disables its own #[code data-ps-next] / #[code data-ps-prev] verb buttons at the ends of the range (when #[code loop] is off). #[code 'aria'] toggles #[code aria-disabled] and leaves the native #[code disabled] attribute to you — the button stays focusable, so a hint can be announced. #[code 'native'] toggles the native #[code disabled] attribute (PanelSet owns it) and moves focus off a button before disabling it. Tab-strip locking is unaffected (always aria).
+				p How PanelSet disables its own #[code data-ps-next] / #[code data-ps-prev] verb buttons at the ends of the range (when #[code loop] is off). #[code 'aria'] toggles #[code aria-disabled] and leaves the native #[code disabled] attribute to you: the button stays focusable, so a hint can be announced. #[code 'native'] toggles the native #[code disabled] attribute (PanelSet owns it) and moves focus off a button before disabling it. Tab-strip locking is unaffected (always aria).
 				h4 Default: #[code 'aria']
 				.card-row
 					.card
@@ -198,6 +198,23 @@ block content
 						h4 Web Component attribute
 						ul
 							li #[code debug]
+
+			+apiOption("manageLabels: boolean")
+				p Link each panel back to the trigger that controls it with #[code aria-labelledby] (generating a trigger #[code id] when one is missing), so a screen reader announces the panel by its tab's text. Runs at init and on #[code refresh()]; never overrides an existing #[code aria-label] / #[code aria-labelledby]; and only acts when a single trigger unambiguously controls the panel. Set to #[code false] to manage labelling yourself.
+				h4 Default: #[code true]
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { manageLabels: false }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-manage-labels="false"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code manage-labels="false"]
 
 			+apiOption("interruptible: boolean")
 				p When set to #[code false], new activation attempts are ignored while a transition or content load is in progress. The current activation completes first.

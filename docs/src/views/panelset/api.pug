@@ -112,7 +112,7 @@ block content
 		.card.api
 			h3.code panelSet.refresh(): void
 			hr
-			p Re-scans the DOM for this set's panels and reconciles internal state — the active panel, trigger state, and the Prev/Next end-of-range disabling. Call after adding, removing, or reordering #[code [role="tabpanel"]] elements at runtime (for example a lazy or windowed wizard). The active panel is preserved when still present; otherwise it falls back to the #[code .active] panel, then the first. Newly added panels are initialised to the hidden state.
+			p Re-scans the DOM for this set's panels and reconciles internal state: the active panel, trigger state, and the Prev/Next end-of-range disabling. Call after adding, removing, or reordering #[code [role="tabpanel"]] elements at runtime (for example a lazy or windowed wizard). The active panel is preserved when still present; otherwise it falls back to the #[code .active] panel, then the first. Newly added panels are initialised to the hidden state.
 			p #[strong Note:] call when idle, not mid-transition. #[code addPanel()] and #[code removePanel()] call this for you.
 
 		.card.api

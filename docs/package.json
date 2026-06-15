@@ -17,17 +17,11 @@
   "devDependencies": {
     "@vituum/vite-plugin-pug": "^2.0.1",
     "fast-glob": "^3.3.3",
-    "msw": "^2.14.6",
     "sass": "^1.97.3",
     "terser": "^5.46.0",
     "typescript": "^5.9.3",
     "vite": "^8.0.0",
     "vite-plugin-dts": "^4.5.4",
     "vituum": "^2.0.1"
-  },
-  "msw": {
-    "workerDirectory": [
-      "public"
-    ]
   }
 }

@@ -30,6 +30,7 @@ export interface PanelSetConfig {
 	deepLink?: boolean;
 	interruptible?: boolean;
 	manageTriggers?: boolean;
+	manageLabels?: boolean;
 	debug?: boolean;
 }
 

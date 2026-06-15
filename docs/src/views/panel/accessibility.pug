@@ -1,0 +1,68 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Panel | Accessibility"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Panel accessibility
+				p.lead What Panel handles for you, and what you still provide.
+
+	+section("What Panel does automatically")
+		p #[code Panel] manages #[code aria-expanded] on every trigger (#[code [aria-controls]]) automatically. It also applies the #[code inert] attribute to a closed panel, removing it from the tab order and accessibility tree without affecting layout.
+
+	+section("Trigger markup")
+		p A trigger is any element with #[code aria-controls] pointing at the panel id. Panel keeps its #[code aria-expanded] in sync.
+		+codeblock('HTML')
+			// aria-expanded is set automatically by Panel
+			button(aria-controls="my-panel", aria-expanded="false") Toggle
+
+	+section("Panel markup")
+		p Use #[code role="dialog"] for modal-like sidebars, #[code role="region"] for inline panels.
+		+codeblock('HTML')
+			#my-panel(data-panel data-panel-axis="horizontal")
+				.panel-wrapper(role="dialog" aria-label="Settings")
+					button(data-panel-close aria-label="Close Settings") ✕
+					// content
+
+	+section("Focus management")
+		p Use #[code autoFocus] to move focus into the panel on open, and #[code returnFocus] to return it to the trigger on close.
+		+codeblock('JS').
+			new Panel('#my-panel', {
+				autoFocus: 'first',   // focus first focusable element on open
+				returnFocus: true     // return focus to trigger on close
+			});
+
+	+section("autoFocus options")
+		p Both #[code Panel] and #[code PanelSet] support the same #[code autoFocus] values.
+
+		.card.api
+			table.table
+				thead
+					tr
+						th Value
+						th What it focuses
+						th Best for
+				tbody
+					tr
+						td #[code 'heading']
+						td First #[code h1-h6] in panel (needs #[code tabindex="-1"])
+						td Standard tabs with headings
+					tr
+						td #[code 'first']
+						td First focusable element (button, link, input)
+						td Wizard steps, forms
+					tr
+						td #[code true]
+						td The panel element itself
+						td Panels with #[code aria-label]
+					tr
+						td #[code 'input']
+						td First form field (input, select, textarea)
+						td Forms, bypasses keyboard-only check
+					tr
+						td #[code false]
+						td Nothing (no focus movement)
+						td Page load, mouse-only interfaces

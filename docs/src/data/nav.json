@@ -11,7 +11,8 @@
         { "text": "Panel | Configuration", "label": "Configuration", "href": "/panel/configuration.html" },
         { "text": "Panel | Events", "label": "Events", "href": "/panel/events.html" },
         { "text": "Panel | Transitions", "label": "Transitions", "href": "/panel/transitions.html" },
-        { "text": "Panel | API", "label": "API", "href": "/panel/api.html" }
+        { "text": "Panel | API", "label": "API", "href": "/panel/api.html" },
+        { "text": "Panel | Accessibility", "label": "Accessibility", "href": "/panel/accessibility.html" }
       ],
       "examples": [
         { "text": "Panel | Examples | Absolute positioning", "label": "Absolute positioning", "href": "/panel/examples/absolute.html" },
@@ -31,7 +32,8 @@
         { "text": "PanelSet | Configuration", "label": "Configuration", "href": "/panelset/configuration.html" },
         { "text": "PanelSet | Events", "label": "Events", "href": "/panelset/events.html" },
         { "text": "PanelSet | Transitions", "label": "Transitions", "href": "/panelset/transitions.html" },
-        { "text": "PanelSet | API", "label": "API", "href": "/panelset/api.html" }
+        { "text": "PanelSet | API", "label": "API", "href": "/panelset/api.html" },
+        { "text": "PanelSet | Accessibility", "label": "Accessibility", "href": "/panelset/accessibility.html" }
       ],
       "examples": [
         { "text": "PanelSet | Examples | Absolute positioning", "label": "Absolute positioning", "href": "/panelset/examples/absolute.html" },
@@ -50,7 +52,8 @@
         { "text": "PanelControl | Getting started", "label": "Getting started", "href": "/panelcontrol/index.html" },
         { "text": "PanelControl | Configuration", "label": "Configuration", "href": "/panelcontrol/configuration.html" },
         { "text": "PanelControl | API", "label": "API", "href": "/panelcontrol/api.html" },
-        { "text": "PanelControl | Activation", "label": "Activation", "href": "/panelcontrol/activation.html" }
+        { "text": "PanelControl | Activation", "label": "Activation", "href": "/panelcontrol/activation.html" },
+        { "text": "PanelControl | Accessibility", "label": "Accessibility", "href": "/panelcontrol/accessibility.html" }
       ],
       "examples": [
         { "text": "PanelControl | Examples | Wizard", "label": "Wizard", "href": "/panelcontrol/examples/wizard.html" },
@@ -62,20 +65,8 @@
       ]
     },
     {
-      "title": "PanelFlow (preview)",
-      "links": [
-        { "text": "PanelFlow | Overview", "label": "Overview", "href": "/panelflow/index.html" }
-      ],
-      "examples": [
-        { "text": "PanelFlow | Examples | Wizard", "label": "Wizard", "href": "/panelflow/examples/wizard.html" },
-        { "text": "PanelFlow | Examples | Finalize", "label": "Finalize", "href": "/panelflow/examples/finalize.html" },
-        { "text": "PanelFlow | Examples | Branching", "label": "Branching", "href": "/panelflow/examples/branching.html" }
-      ]
-    },
-    {
       "title": "Shared concepts",
       "links": [
-        { "text": "Accessibility", "href": "/sharedconcepts/accessibility.html" },
         { "text": "Deep linking", "href": "/sharedconcepts/deep-linking.html" },
         { "text": "Persisting state", "href": "/sharedconcepts/persisting.html" }
       ]
