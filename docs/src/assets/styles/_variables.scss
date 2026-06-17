@@ -244,39 +244,3 @@ body {
 	background: var(--bg-surface);
 }
 
-
-
-
-bodyx {
-
-	--ps-open-speed:     10s;
-	--ps-open-timing:    ease-in-out;
-	--ps-close-speed:    10s;
-	--ps-close-timing:   ease-in-out;
-
-	/* Panel only */
-	--ps-panel-width:    320px;  /* inner .panel-wrapper width (horizontal panels) */
-	--ps-closed-opacity: 0;      /* set to 1 to keep content visible while closed/closing */
-
-	/* PanelSet */
-	--ps-panel-out-speed:          1.5s;
-	--ps-panel-in-speed:           1.5s;
-	--ps-panel-in-delay:           1.5s;
-	--ps-height-duration-ratio:  1;
-	--ps-transition-timing:      ease-in-out;
-	--ps-panel-out-timing:         ease-in;
-	--ps-panel-in-timing:          ease-in-out;
-	--ps-loading-panel-opacity:  .3;
-
-	/* Loading spinner */
-	--ps-spinner-size:           40px;
-	--ps-spinner-thickness:      4px;
-	--ps-spinner-speed:          3s;
-
-	/* Calculated: override these directly if you change the loading vars above */
-	--ps-loading-dim-duration:   11.5s; //  calc(var(--ps-panel-out-speed) * (1 - var(--ps-loading-panel-opacity)));
-	--ps-loading-fadeout-duration: 11.5s; //calc(var(--ps-panel-out-speed) * var(--ps-loading-panel-opacity));
-
-
-
-}

@@ -44,7 +44,7 @@ block content
 							#vc-3(role="tabpanel" hidden) …
 
 	+section("Grouped sidebar: navigation, not tabs")
-		p A categorized sidebar need a bit of different handling. A tablist can not contain headings or any text as category indicator. So just do not make it a tablist. The buttons are still wired by PanelControl via #[code data-panelcontrol], but they are normal buttons in the accessibility tree, not tabs. Tabbing through the list stops at each item, and the arrow keys do not apply.
+		p A categorized sidebar need a bit of different handling. A tablist can not contain headings or any text as category indicator. So just do not make it a tablist. The buttons are still handled by PanelControl via #[code data-panelcontrol], but they are normal buttons in the accessibility tree, not tabs. Tabbing through the list stops at each item, and the arrow keys do not apply.
 
 		p #[strong So why not grouped tablists?] Because normally, the ‘tab pattern’ uses a roving #[code tabindex]: the user uses the #[strong tab keys] to get into the list, and then #[strong arrow keys] navigate #[em inside] it. Two tablists means two roving islands. That is really annoying. Try it, youll see.
 

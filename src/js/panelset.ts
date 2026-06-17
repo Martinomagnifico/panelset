@@ -7,7 +7,7 @@ import { readPanelParam, writePanelParam, readStored, writeStored } from './func
 
 import type { PanelSetConfig, ReadyEventDetail, BeforeActivateEventDetail, BeforeOpenEventDetail, ActivationEventDetail, ActivationAbortedEventDetail, HandlerOptions, ShowOptions, AsyncContentHandler } from './panelset.types';
 import { parseDataAttrs, type AttrMap } from './functions/config';
-import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, setDescribedBy } from './functions/utils';
+import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil, setDescribedBy } from './functions/utils';
 
 declare global {
 	interface HTMLElement {
@@ -1173,8 +1173,10 @@ export class PanelSet {
 			targetPanel: newPanel,
 			outgoingPanel: prevPanel,
 			signal,
-			promise: null
+			promise: null,
+			waitUntil() {} // wired below; closes over the detail so it is safe to destructure
 		};
+		attachWaitUntil(beforeOpenDetail);
 
 		const beforeOpenEvent = new CustomEvent('ps:beforeopen', {
 			detail: beforeOpenDetail,

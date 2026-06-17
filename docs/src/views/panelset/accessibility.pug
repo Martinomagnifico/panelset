@@ -205,7 +205,7 @@ block content
 				p #[strong Best practice:] Always pass #[code event] to #[code show()]. Without it, #[code autoFocus] fires on every activation including mouse clicks, which can cause unwanted scrolling on mobile.
 
 	+section("Labeling panels")
-		p Every panel needs an accessible name so screen readers can announce what content is being shown. PanelSet wires this up for tabbed panels automatically (#[code manageLabels]); the patterns below are what it produces, and what to write yourself for panels without a tab.
+		p Every panel needs an accessible name so screen readers can announce what content is being shown. PanelSet sets this up for tabbed panels automatically (#[code manageLabels]); the patterns below are what it produces, and what to write yourself for panels without a tab.
 
 		.card.api
 			h3 aria-labelledby (recommended for tabs)

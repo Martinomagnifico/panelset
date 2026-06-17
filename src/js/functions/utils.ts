@@ -42,15 +42,34 @@ export function logInterpolateSizeOnce(debug: boolean): void {
 }
 
 
+/** A before-open event detail that carries an awaitable promise for async content. */
+export interface Awaitable {
+	/** Underlying mechanism the open awaits; prefer waitUntil(). */
+	promise: Promise<unknown> | null;
+	/** Delay the open until p resolves. Safe to call more than once (the open awaits
+	 *  all of them), and safe to destructure (it closes over the detail, not `this`). */
+	waitUntil(p: Promise<unknown>): void;
+}
+
+/**
+ * Wire detail.waitUntil() so it sets detail.promise, combining via Promise.all when
+ * called more than once. Direct `detail.promise = …` keeps working alongside it.
+ */
+export function attachWaitUntil(detail: Awaitable): void {
+	detail.waitUntil = (p) => {
+		detail.promise = detail.promise ? Promise.all([detail.promise, p]) : p;
+	};
+}
+
 /**
  * Register an async content handler on a CustomEvent.
  * The handler receives the target element and an AbortSignal.
- * If it returns a Promise, that promise is attached to event.detail.promise
- * so the consuming code can await it.
+ * If it returns a Promise, it is handed to event.detail.waitUntil() so the
+ * consuming code awaits it (combining with any other waitUntil calls).
  * Pass once:true to skip the handler after the first successful load
  * (tracked via target.dataset.loaded).
  */
-export function registerBeforeOpenHandler<D extends { signal: AbortSignal; promise: Promise<void> | null }>(
+export function registerBeforeOpenHandler<D extends Awaitable & { signal: AbortSignal }>(
 	element: HTMLElement,
 	eventName: string,
 	getTarget: (detail: D) => HTMLElement,
@@ -65,9 +84,9 @@ export function registerBeforeOpenHandler<D extends { signal: AbortSignal; promi
 		if (once && target.dataset.loaded === 'true') return;
 		const result = handler(target, signal);
 		if (result && typeof result.then === 'function') {
-			event.detail.promise = result.then(() => {
+			event.detail.waitUntil(result.then(() => {
 				if (once) target.dataset.loaded = 'true';
-			});
+			}));
 		}
 	});
 }

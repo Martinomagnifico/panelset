@@ -40,7 +40,7 @@ block content
 
 			+collapse('h3', "Transitioning height")
 				
-				p During a tab switch the container animates its height so panels of different sizes don't jump. The duration is derived from the panel speed. This is the default behaviour and can't really be changed. But you can speed it up or slow it down relative to the panel transition with #[code --ps-height-duration-ratio], and change the easing with #[code --ps-transition-timing].
+				p During a tab switch the container animates its height so panels of different sizes don’t jump. The duration is derived from the panel speed. This is the default behaviour and can’t really be changed. But you can speed it up or slow it down relative to the panel transition with #[code --ps-height-duration-ratio], and change the easing with #[code --ps-transition-timing].
 
 				dl.bg-surface-tint
 					dt #[code --ps-height-duration-ratio]
@@ -257,7 +257,7 @@ block content
 					}
 
 			+collapse('h3', "Level-based direction")
-				p With #[code levels] enabled, the slide direction follows the panels' order: moving to a later panel slides one way, moving back slides the other. The order is taken straight from the DOM (a later panel is "higher"), so you don't set anything per panel. Just turn the feature on.
+				p With #[code levels] enabled, the slide direction follows the panels' order: moving to a later panel slides one way, moving back slides the other. The order is taken straight from the DOM (a later panel is "higher"), so you don’t set anything per panel. Just turn the feature on.
 
 				p Enable it with #[code data-ps-levels] on the container or #[code levels: true] in the config. JS then adds #[code .levelup] or #[code .leveldown] to the panels as they switch. Backward navigation (#[code .leveldown]) automatically #[strong swaps] #[code --ps-panel-in-transform-from] and #[code --ps-panel-out-transform-to] so the motion reverses. No extra variables, and it works for any transform.
 

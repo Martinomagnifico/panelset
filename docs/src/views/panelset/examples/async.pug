@@ -84,10 +84,10 @@ block content
 					return new Promise((resolve) => {
 						// Simulate heavy calculation
 						setTimeout(() => {
-							const result = fibonacci(40); // Actually slow!
+							const result = fibonacci(42); // Actually slow!
 							targetPanel.innerHTML = `
 								<h3>Calculation Complete</h3>
-								<p>Fibonacci(40) = ${result}</p>
+								<p>Fibonacci(42) = ${result}</p>
 							`;
 							resolve();
 						}, 2000);
@@ -159,7 +159,7 @@ block content
 
 		+codeblock('JS').
 			const panelSet = new PanelSet('#my-panelset', {
-				loadingHeight: 200  // 200px minimum during load
+				loadingHeight: 200  // Example increase from default 150 during load
 			});
 
 	+section("Abort handling")

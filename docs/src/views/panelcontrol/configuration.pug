@@ -31,11 +31,11 @@ block content
 	+section("Markup that drives behaviour")
 		p Two things in the markup decide what PanelControl does. They are contracts, not JS options:
 		ul
-			li #[code data-panelcontrol] marks the container whose #[code [aria-controls]] triggers get wired. It is also the default #[code init()] selector.
-			li #[code role="tablist"] on that container turns on keyboard navigation (arrow keys, #[code Home] / #[code End], roving #[code tabindex]). Add #[code aria-orientation="vertical"] for up/down arrows. Without #[code role="tablist"], PanelControl wires clicks only.
+			li #[code data-panelcontrol] marks the container whose #[code [aria-controls]] triggers it manages. It is also the default #[code init()] selector.
+			li #[code role="tablist"] on that container turns on keyboard navigation (arrow keys, #[code Home] / #[code End], roving #[code tabindex]). Add #[code aria-orientation="vertical"] for up/down arrows. Without #[code role="tablist"], PanelControl only listens to clicks.
 		p PanelControl finds its PanelSet automatically, through the panels its triggers point at. Usually there is no target to set. The lookup is lazy and cached on first use, so a PanelSet added to the page #[em after] init is still found on the first interaction.
 
-		p #[strong Explicit target (optional).] When discovery cannot reach the set (a remote control whose panels are not in the DOM yet, or an ambiguous case), give #[code data-panelcontrol] a #[strong CSS selector] value and PanelControl binds to that instead:
+		p #[strong Explicit target (optional).] When discovery cannot reach the set (a remote control whose panels are not in the DOM yet, or a case where the right set is unclear), give #[code data-panelcontrol] a #[strong CSS selector] value and PanelControl binds to that instead:
 
 		+codeblock('HTML')
 			nav(role="tablist" data-panelcontrol="#my-tabs")

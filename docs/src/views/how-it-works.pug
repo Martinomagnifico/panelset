@@ -134,7 +134,7 @@ block content
 
 					/* You get this instead */
 					::ng-deep .mat-expansion-panel {
-						border-radius: 12px !important; /* still doesn't work */
+						border-radius: 12px !important; /* still doesn’t work */
 					}
 					::ng-deep .mat-expansion-panel-header {
 						background: none !important;
@@ -163,7 +163,7 @@ block content
 				h3 It is used, but not all browsers support it
 				p Both Panel and PanelSet use #[code interpolate-size: allow-keywords] as a “progressive enhancement” for opening and closing.
 
-				p With #[code interpolate-size: allow-keywords], CSS can animate directly between #[code 0] and #[code height: auto]. If your browser supports that, then the #[u LOCK], #[u MEASURE] and #[u UNLOCK] steps from the LMAU cycle are simply skipped. That leaves the #[u ANIMATE] step. The JavaScript (yeah, it is still needed) detects support with #[code CSS.supports()] and then takes the shorter path: it just toggles state classes and listens to events. If your browser does not support it, it uses the normal JavaScript LMAU cycle.
+				p With #[code interpolate-size: allow-keywords], CSS can animate directly between #[code 0] and #[code height: auto]. If your browser supports that, then the #[u LOCK], #[u MEASURE] and #[u UNLOCK] steps from the LMAU cycle are simply skipped. That leaves the #[u ANIMATE] step. The JavaScript (yeah, it is still needed) detects support with #[code CSS.supports()] and then does far less: it just toggles state classes and listens to events. If your browser does not support it, it uses the normal JavaScript LMAU cycle.
 
 				+codeblock('CSS').
 					@supports (interpolate-size: allow-keywords) {
@@ -176,7 +176,7 @@ block content
 
 			+faq("But you should use <code>@view-transition</code>")
 				h3 Yeah it was considered
-				p View Transitions allows animating between different DOM states, and it can handle size changes. But VT wants to controle the whole visual transition in a before/after snapshot and can't work with CSS variables. 
+				p View Transitions allows animating between different DOM states, and it can handle size changes. But VT wants to controle the whole visual transition in a before/after snapshot and can’t work with CSS variables. 
 				p Maybe later when Level 2 element-scoped transitions mature and allow more control.
 
 

@@ -200,7 +200,7 @@ block content
 							li #[code debug]
 
 			+apiOption("manageLabels: boolean")
-				p Link each panel back to the trigger that controls it with #[code aria-labelledby] (generating a trigger #[code id] when one is missing), so a screen reader announces the panel by its tab's text. Runs at init and on #[code refresh()]; never overrides an existing #[code aria-label] / #[code aria-labelledby]; and only acts when a single trigger unambiguously controls the panel. Set to #[code false] to manage labelling yourself.
+				p Link each panel back to the trigger that controls it with #[code aria-labelledby] (generating a trigger #[code id] when one is missing), so a screen reader announces the panel by its tab’s text. Runs at init and on #[code refresh()]; never overrides an existing #[code aria-label] / #[code aria-labelledby]; and only acts when exactly one trigger controls the panel. Set to #[code false] to manage labelling yourself.
 				h4 Default: #[code true]
 				.card-row
 					.card
@@ -253,7 +253,7 @@ block content
 
 			+apiOption("loadingHeight: number")
 				p Placeholder height in pixels while async content loads and no previous panel is visible.
-				h4 Default: #[code 200]
+				h4 Default: #[code 150]
 				.card-row
 					.card
 						h4 JavaScript
@@ -262,11 +262,11 @@ block content
 					.card
 						h4 Data attribute
 						ul
-							li #[code data-loading-height="320"]
+							li #[code data-loading-height="200"]
 					.card
 						h4 Web Component attribute
 						ul
-							li #[code loading-height="320"]
+							li #[code loading-height="200"]
 
 			+apiOption("manageTriggers: boolean")
 				p When set to #[code false], PanelSet stops updating #[code aria-selected] and the #[code is-activating] class on trigger elements, and ignores #[code data-auto-focus] attributes on triggers.

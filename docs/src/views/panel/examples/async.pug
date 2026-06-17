@@ -70,17 +70,21 @@ block content
 
 		+codeblock('JS').
 			document.querySelector('#my-panel').addEventListener('panel:beforeopen', e => {
+				// panel:beforeopen bubbles, so read the panel from e.target (the dispatching
+				// panel). e.currentTarget breaks under event delegation; e.target does not.
+				const panel = e.target;
 				const { signal } = e.detail;
 
-				// Skip if already loaded
-				if (e.currentTarget.dataset.loaded === 'true') return;
+				if (panel.dataset.loaded === 'true') return; // skip if already loaded
 
-				e.detail.promise = fetch('/api/content', { signal })
-					.then(r => r.text())
-					.then(html => {
-						e.currentTarget.querySelector('.panel-wrapper').innerHTML = html;
-						e.currentTarget.dataset.loaded = 'true';
-					});
+				e.detail.waitUntil(
+					fetch('/api/content', { signal })
+						.then(r => r.text())
+						.then(html => {
+							panel.querySelector('.panel-wrapper').innerHTML = html;
+							panel.dataset.loaded = 'true';
+						})
+				);
 			});
 
 		.card.api
@@ -89,34 +93,76 @@ block content
 				dt signal
 				dd #[code AbortSignal]: pass to #[code fetch()] so in-flight requests cancel when the user closes the panel before it opens.
 
+				dt waitUntil(promise)
+				dd #[strong Recommended.] Delay opening until #[code promise] resolves. Safe to call more than once: the open waits for all of them.
+
 				dt promise
-				dd #[code Promise | null]: set this to delay opening until the promise resolves. Leave as #[code null] to open immediately.
+				dd #[code Promise | null]: the underlying property #[code waitUntil()] sets. You can still assign it directly, but #[code waitUntil()] is preferred. Leave as #[code null] to open immediately.
 
 				dt trigger
 				dd #[code HTMLElement | null]: the element that initiated the open (e.g. the button).
 
 
 	+section("Heavy computation")
-		p Works for CPU-heavy operations too, not just network requests:
+		p Works for CPU-heavy operations too, not just network requests. Two flavours:
 
-		+codeblock('JS').
-			panel.onBeforeOpen((el, signal) => {
-				return new Promise((resolve) => {
-					setTimeout(() => {
-						const result = fibonacci(40); // Actually slow!
-						el.querySelector('.panel-wrapper').innerHTML = `
-							<h3>Calculation Complete</h3>
-							<p>Fibonacci(40) = ${result}</p>
-						`;
+		h3 Simulated slow load (demo only)
+		p This one does no real work. It only simulates latency with a timer, so the spinner is easy to see. The signal cancels the timer if you close the panel first.
+
+		.card
+			.demo
+				button(aria-controls="heavy-sim" aria-expanded="false") Simulate slow load
+				#heavy-sim(data-panel data-panel-loading-delay="200")
+					.panel-wrapper
+						// content injected by JS
+
+			+codeblock('JS').
+				panel.onBeforeOpen((el, signal) => new Promise((resolve, reject) => {
+					// Demo only: no real work happens here, the timer just simulates latency.
+					const t = setTimeout(() => {
+						el.querySelector('.panel-wrapper').innerHTML = '<h3>Done</h3><p>Simulated 2s load.</p>';
 						resolve();
 					}, 2000);
-				});
-			});
+					signal.addEventListener('abort', () => {
+						clearTimeout(t);
+						reject(new DOMException('Aborted', 'AbortError'));
+					});
+				}), { once: true });
 
-			function fibonacci(n) {
-				if (n <= 1) return n;
-				return fibonacci(n - 1) + fibonacci(n - 2);
-			}
+		h3 Genuine CPU-heavy work
+		p Real heavy work has to leave the main thread. Doing it synchronously inside the promise would still freeze the UI (and the spinner); a Web Worker is what keeps the page responsive. The signal terminates the worker on close.
+
+		.card
+			.demo
+				button(aria-controls="heavy-worker" aria-expanded="false") Compute fibonacci(42)
+				#heavy-worker(data-panel data-panel-loading-delay="200")
+					.panel-wrapper
+						// content injected by JS
+
+			+codeblock('JS').
+				panel.onBeforeOpen((el, signal) => new Promise((resolve, reject) => {
+					const worker = new Worker('/assets/scripts/fib-worker.js');
+					worker.postMessage(42);
+					worker.onmessage = (e) => {
+						el.querySelector('.panel-wrapper').innerHTML =
+							`<h3>Calculation complete</h3><p>fibonacci(42) = ${e.data}</p>`;
+						worker.terminate();
+						resolve();
+					};
+					signal.addEventListener('abort', () => {
+						worker.terminate();
+						reject(new DOMException('Aborted', 'AbortError'));
+					});
+				}), { once: false });
+
+		p The worker file (#[code fib-worker.js]) does the calculation off the main thread:
+
+		+codeblock('JS').
+			// fib-worker.js
+			onmessage = (e) => {
+				const fib = (n) => (n <= 1 ? n : fib(n - 1) + fib(n - 2));
+				postMessage(fib(e.data));
+			};
 
 
 	+section("Loading states")
@@ -141,11 +187,11 @@ block content
 
 		+codeblock('JS').
 			const panel = new Panel('#my-panel', {
-				loadingHeight: 150  // 150px reserved during load
+				loadingHeight: 200  // Example increase from default 150 during load
 			});
 
 		+codeblock('HTML')
-			div(data-panel data-panel-loading-height="150") ...
+			div(data-panel data-panel-loading-height="200") ...
 
 
 	+section("Abort handling")

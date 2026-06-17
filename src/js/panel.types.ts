@@ -18,7 +18,10 @@ export interface PanelConfig {
 
 export interface BeforeOpenEventDetail {
 	signal: AbortSignal;
-	promise: Promise<void> | null;
+	/** Underlying mechanism the open awaits; prefer waitUntil(). */
+	promise: Promise<unknown> | null;
+	/** Delay the open until p resolves. May be called more than once (awaits all). */
+	waitUntil(p: Promise<unknown>): void;
 	trigger: HTMLElement | null;
 }
 

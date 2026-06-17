@@ -11,7 +11,7 @@ block content
 				p.lead One panel or many. CSS does the animating.
 
 	+section("What is it?")
-		p This package exports three classes. Two main classes: #[strong Panel] and #[strong PanelSet] and a class #[strong PanelControl]. The two main animate a dimension (height or width) between sizes using an #[a(href="/how-it-works.html#lmau") LMAU]* cycle. PanelControl is jan addition to PanelSet for wiring up tab strips and sidebar trees.
+		p This package exports three classes. Two main classes: #[strong Panel] and #[strong PanelSet] and a class #[strong PanelControl]. The two main animate a dimension (height or width) between sizes using an #[a(href="/how-it-works.html#lmau") LMAU]* cycle. PanelControl is an addition to PanelSet for tab strips and sidebars.
 
 		p Both main classes use the same animation core and share most config options. Animation is CSS-only: JS measures and sets pixel values, then hands off to the browser. For async content, pass a promise to #[code onBeforeOpen()] to hold the open until it resolves. A spinner kicks in if loading takes longer than #[code loadingDelay]ms. Both also handle focus management.
 
@@ -23,7 +23,7 @@ block content
 			.card
 				+anchor(title="Panel")
 				p A single element that can be #[strong opened and closed]. Use it for sidebars, show-more blocks, accordions, or any element that expands and collapses.
-				p Triggers are any element with #[code aria-controls] pointing to the panel’s ID. Or a #[code button] with #[code data-panel-trigger] if it is a sibling of a panel, which wires up the #[code id] and ARIA for you.
+				p Triggers are any element with #[code aria-controls] pointing to the panel’s ID. Or a #[code button] with #[code data-panel-trigger] if it is a sibling of a panel, which sets up the #[code id] and ARIA for you.
 				p You can add a close button that uses #[code data-panel-close].
 
 

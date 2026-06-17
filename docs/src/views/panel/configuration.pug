@@ -223,12 +223,12 @@ block content
 
 			+apiOption("loadingHeight: number")
 				p The pixel height the panel expands to while async content loads.
-				h4 Default: #[code 80]
+				h4 Default: #[code 150]
 				.card-row
 					.card
 						h4 JavaScript
 						ul
-							li #[code { loadingHeight: 80 }]
+							li #[code { loadingHeight: 200 }]
 					.card
 						h4 Data attribute
 						ul
@@ -349,7 +349,7 @@ block content
 		p Without #[code data-panel-close-siblings], panels in a group are independent. Any number can be open at the same time. The wrapper can be any element. Multiple independent groups on the same page are supported.
 
 	+section("Implicit trigger wiring", "Implicit wiring")
-		p When a trigger and its panel sit next to each other in the markup, you can omit the #[code id] / #[code aria-controls] pair entirely. To achieve this, add #[code data-panel-trigger] to the button. Panel will find the next #[code [data-panel]] sibling, assign it a stable generated ID, and wire up #[code aria-controls] and #[code aria-expanded] automatically.
+		p When a trigger and its panel sit next to each other in the markup, you can omit the #[code id] / #[code aria-controls] pair entirely. To achieve this, add #[code data-panel-trigger] to the button. Panel will find the next #[code [data-panel]] sibling, assign it a stable generated ID, and set up #[code aria-controls] and #[code aria-expanded] automatically.
 
 		+codeblock('HTML')
 			button(data-panel-trigger) Toggle

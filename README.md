@@ -90,7 +90,7 @@ Panel.init();
 | `persist` | `boolean` | `false` | Save open/closed state to localStorage |
 | `deepLink` | `boolean` | `false` | Update the `?panel=` URL param on open/close |
 | `loadingDelay` | `number` | `300` | ms before spinner appears during async loading |
-| `loadingHeight` | `number` | `80` | px height while async content loads |
+| `loadingHeight` | `number` | `150` | px height while async content loads |
 | `debug` | `boolean` | `false` | Log events to the console |
 
 All options are also available as data attributes, e.g. `data-panel-axis="horizontal"`.
@@ -152,7 +152,7 @@ document.addEventListener('click', e => {
 | `persist` | `boolean` | `false` | Save the active panel ID to localStorage |
 | `deepLink` | `boolean` | `false` | Update the `?panel=` URL param on activation |
 | `loadingDelay` | `number` | `300` | ms before spinner appears during async loading |
-| `loadingHeight` | `number` | `200` | px height while async content loads |
+| `loadingHeight` | `number` | `150` | px height while async content loads |
 | `debug` | `boolean` | `false` | Log events to the console |
 
 ### Async content (PanelSet)

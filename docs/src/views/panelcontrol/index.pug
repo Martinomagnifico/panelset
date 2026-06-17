@@ -11,7 +11,7 @@ block content
 				p.lead An external controller for a PanelSet.
 
 	+section("What it does")
-		p A #[strong PanelSet] switches panels, but it does not bind the clicks on your tabs. On the PanelSet example pages that is all done with JavaScript, an extra script on each page. If you just read the docs of PanelSet, you might think you have to write that code yourself.
+		p A #[strong PanelSet] switches panels, but it does not automatically listen to the clicks on your tabs. On the PanelSet example pages that is all done with JavaScript, an extra script on each page. If you just read the docs of PanelSet, you might think you have to write that code yourself.
 		p #[strong PanelControl] to the rescue: assign it to the element that holds your triggers and it activates the right panel on click, adds keyboard navigation, and reflects state back onto the controls.
 		p It finds its PanelSet through the panels the triggers point at, so the control can live #[strong anywhere] in the DOM. It does not need to sit next to the PanelSet. One PanelControl drives one PanelSet.
 
@@ -59,23 +59,21 @@ block content
 			PanelControl.init();            // every [data-panelcontrol]
 			PanelControl.init('#my-tabs');  // or a specific control
 
-		p #[strong PanelSet is required.] PanelControl #[em drives] a PanelSet. It does not replace it, and it holds no panel-switching logic of its own. With no PanelSet initialised, clicks are no-ops (in #[code debug] mode PanelControl logs why). For plain tabs with no animation, keep PanelSet and turn transitions off: #[code PanelSet.init({ transitions: false })].
+		p #[strong PanelSet is required.] PanelControl #[em drives] a PanelSet. It does not replace it, and it holds no panel-switching logic of its own. With no PanelSet initialised, clicks do nothing (in #[code debug] mode PanelControl logs why). For plain tabs with no animation, keep PanelSet and turn transitions off: #[code PanelSet.init({ transitions: false })].
 
 	+section("Layout patterns")
-		p The control's #[code role] decides its keyboard model (and how much ARIA you take on).
+		p The control’s #[code role] decides its keyboard model (and how much ARIA you take on).
 		dl
 			dt: strong Horizontal tablist
 			dd #[code role="tablist"] with #[code role="tab"] children. Left / Right arrows, #[code Home] / #[code End], roving tabindex. The default, best-supported pattern.
 			dt: strong Vertical tablist
 			dd The same, plus #[code aria-orientation="vertical"]: arrows become Up / Down; everything else is identical. CSS lays it out as a sidebar. Covers most "sidebar that switches panels" needs, with no extra ARIA.
-			dt: strong Tree (planned)
-			dd #[code role="tree"] is a different interaction model: collapsible nodes, #[code aria-expanded], Right / Left to expand and collapse. Genuinely more complex, and only needed for #[em hierarchical] navigation (grouped or collapsible steps). It will arrive later behind a #[code mode: 'tree'] option, most likely driven by a higher-level flow layer. For a flat sidebar, reach for a vertical tablist.
 
 		p See #[a(href="/panelcontrol/activation.html") Activation], #[a(href="/panelcontrol/examples/closable.html") Closable], and #[a(href="/panelcontrol/examples/vertical.html") Vertical display] for worked examples.
 
 	+section("Scope")
-		p PanelControl wires controls and reflects state: activation, keyboard nav, roving #[code tabindex], #[code aria-selected] / disabled. It also exposes #[code setTabState(id, 'disabled' | 'enabled')] so external code can lock or unlock a tab; PanelControl just applies it.
-		p Validation, Previous / Next flow, step gating, and persistence are #[strong not] part of PanelControl. Those belong to a separate, higher-level flow controller that calls #[code setTabState] when a step should lock. It only ever drives downward: the flow layer calls PanelControl, which calls PanelSet, never the reverse.
+		p PanelControl manages controls and reflects state: activation, keyboard nav, roving #[code tabindex], #[code aria-selected] / disabled. It also exposes #[code setTabState(id, 'disabled' | 'enabled')] so external code can lock or unlock a tab; PanelControl just applies it.
+		p Validation, Previous / Next flow, step locking, and persistence are #[strong not] part of PanelControl. Those are up to your own code, which calls #[code setTabState] when a step should lock. The direction is one way: your code calls PanelControl, which calls PanelSet, never the reverse.
 		p Next: every option in #[a(href="/panelcontrol/configuration.html") Configuration], and the method list in the #[a(href="/panelcontrol/api.html") API] reference.
 
 

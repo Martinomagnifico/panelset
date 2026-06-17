@@ -30,6 +30,7 @@
     "docs:preview": "npm run build && cd docs && rm -rf dist && npm run build && npm run preview",
     "build": "npm run clean && npm run build:lib",
     "build:lib": "vite build",
+    "size": "node scripts/size.mjs",
     "prepublishOnly": "npm run build",
     "clean": "rm -rf dist",
     "postinstall": "[ -d docs ] && cd docs && npm install || true"

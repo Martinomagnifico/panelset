@@ -30,7 +30,7 @@ block content
 		.card.api
 			h3.code panelSet.show(panelId: string, options?): Promise&lt;void&gt;
 			hr
-			p Activates a panel by ID. No-op if the panel is already active (unless #[code closeOnTab] is enabled).
+			p Activates a panel by ID. Does nothing if the panel is already active (unless #[code closeOnTab] is enabled).
 			h4 Parameters:
 			dl
 				dt.code panelId
@@ -54,7 +54,7 @@ block content
 		.card.api
 			h3.code panelSet.open(options?): void
 			hr
-			p Opens a closable PanelSet (#[code closable: true] required). No-op if already open.
+			p Opens a closable PanelSet (#[code closable: true] required). Does nothing if it is already open.
 			h4 Parameters:
 			dl
 				dt.code options (optional)
@@ -63,7 +63,7 @@ block content
 		.card.api
 			h3.code panelSet.close(options?): void
 			hr
-			p Closes a closable PanelSet. No-op if already closed.
+			p Closes a closable PanelSet. Does nothing if it is already closed.
 			h4 Parameters:
 			dl
 				dt.code options (optional)
@@ -112,7 +112,7 @@ block content
 		.card.api
 			h3.code panelSet.refresh(): void
 			hr
-			p Re-scans the DOM for this set's panels and reconciles internal state: the active panel, trigger state, and the Prev/Next end-of-range disabling. Call after adding, removing, or reordering #[code [role="tabpanel"]] elements at runtime (for example a lazy or windowed wizard). The active panel is preserved when still present; otherwise it falls back to the #[code .active] panel, then the first. Newly added panels are initialised to the hidden state.
+			p Re-scans the DOM for this set’s panels and reconciles internal state: the active panel, trigger state, and the Prev/Next end-of-range disabling. Call after adding, removing, or reordering #[code [role="tabpanel"]] elements at runtime (for example a lazy or windowed wizard). The active panel is preserved when still present; otherwise it falls back to the #[code .active] panel, then the first. Newly added panels are initialised to the hidden state.
 			p #[strong Note:] call when idle, not mid-transition. #[code addPanel()] and #[code removePanel()] call this for you.
 
 		.card.api
@@ -136,7 +136,7 @@ block content
 		.card.api
 			h3.code panelSet.removePanel(panelId: string): void
 			hr
-			p Removes a panel by ID and refreshes. If the removed panel was active, #[code refresh()] promotes a fallback. No-op if the ID is not found.
+			p Removes a panel by ID and refreshes. If the removed panel was active, #[code refresh()] promotes a fallback. Does nothing if the ID is not found.
 
 		.card.api
 			h3.code panelSet.onBeforeOpen(handler, options?): void

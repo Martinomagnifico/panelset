@@ -6,7 +6,7 @@ import { findBody, lockBody, unlockBody } from './functions/pinning';
 
 import type { PanelConfig, BeforeOpenEventDetail, PanelEventDetail, AsyncOpenHandler } from './panel.types';
 import { parseDataAttrs, type AttrMap } from './functions/config';
-import { log, logInterpolateSizeOnce, registerBeforeOpenHandler } from './functions/utils';
+import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil } from './functions/utils';
 
 declare global {
 	interface HTMLElement {
@@ -379,8 +379,10 @@ export class Panel {
 		const beforeOpenDetail: BeforeOpenEventDetail = {
 			signal,
 			promise: null,
+			waitUntil() {}, // wired below; closes over the detail so it is safe to destructure
 			trigger: this._returnFocusTarget
 		};
+		attachWaitUntil(beforeOpenDetail);
 
 		this.element.dispatchEvent(
 			new CustomEvent('panel:beforeopen', { detail: beforeOpenDetail, bubbles: true })
@@ -399,7 +401,7 @@ export class Panel {
 	private async _openAsync(
 		signal:         AbortSignal,
 		cssProp:        'height' | 'width',
-		contentPromise: Promise<void>,
+		contentPromise: Promise<unknown>,
 		event?:         Event
 	) {
 		// Race content arrival against loadingDelay.
