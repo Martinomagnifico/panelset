@@ -34,7 +34,7 @@ block content
 				.panel-wrapper ...
 
 
-		p JavaScript options and data attributes are both covered above. When both are set, precedence runs from least to most specific: #[strong defaults &gt; JS options &gt; group attribute &gt; element attribute]. The most specific wins, so a per-element data attribute always overrides a global #[code init()] option.
+		p JavaScript options and data attributes are both covered above. When both are set, precedence runs from least to most specific: #[strong defaults -&gt; JS options -&gt; group attribute -&gt; element attribute]. The most specific wins, so a per-element data attribute always overrides a global #[code init()] option.
 
 		p This is what lets an element opt out of a global flag. For example, with #[code Panel.init({ persist: true })] applied to every panel, a single panel can still disable it:
 
@@ -403,7 +403,7 @@ block content
 	+section("CSS variables")
 		p Transitions are controlled by CSS custom properties set on the element or any ancestor. All timing values must include a unit (#[code 0s] not #[code 0]). 
 
-		p These same variables apply when using #[code &lt;ps-panelset&gt;]. Set them on the element directly or via CSS targeting #[code ps-panelset].
+		p These same variables apply when using #[code &lt;ps-panel&gt;]. Set them on the element directly or via CSS targeting #[code ps-panel].
 
 
 		+codeblock('CSS').

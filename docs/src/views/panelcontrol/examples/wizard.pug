@@ -17,7 +17,7 @@ block content
 
 		.card
 			.demo
-				nav.tabs#pcwiz-tabs(role="tablist" data-panelcontrol aria-label="Steps")
+				.tabs#pcwiz-tabs(role="tablist" data-panelcontrol aria-label="Steps")
 					button(role="tab" aria-controls="pcwiz-step-1" aria-selected="true") Account
 					button(role="tab" aria-controls="pcwiz-step-2" data-pc-disabled-hint="pcwiz-lock-hint") Profile
 					button(role="tab" aria-controls="pcwiz-step-3" data-pc-disabled-hint="pcwiz-lock-hint") Confirm
@@ -54,7 +54,7 @@ block content
 
 			h4 Markup
 			+codeblock('HTML')
-				nav.tabs(role="tablist" data-panelcontrol aria-label="Steps")
+				.tabs#pcwiz-tabs(role="tablist" data-panelcontrol aria-label="Steps")
 					button(role="tab" aria-controls="pcwiz-step-1" aria-selected="true") Account
 					button(role="tab" aria-controls="pcwiz-step-2" data-pc-disabled-hint="pcwiz-lock-hint") Profile
 					button(role="tab" aria-controls="pcwiz-step-3" data-pc-disabled-hint="pcwiz-lock-hint") Confirm

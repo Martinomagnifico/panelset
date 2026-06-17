@@ -27,11 +27,11 @@ block content
 
 		.title-text
 			h3 Module: import and done
-			p Just import this path and both elements are registered. Nothing to call.
+			p Just import this path and all three elements are registered. Nothing to call.
 
 		+codeblock('JS').
 			import 'panelset/register';
-			// <ps-panel> and <ps-panelset> are now registered
+			// <ps-panel>, <ps-panelset>, <ps-panelcontrol> are now registered
 
 		.title-text
 			h3 Module: explicit call
@@ -39,7 +39,7 @@ block content
 
 		+codeblock('JS').
 			import { register } from 'panelset';
-			register(); // registers <ps-panel> and <ps-panelset>
+			register(); // registers <ps-panel>, <ps-panelset>, <ps-panelcontrol>
 
 	+section("Basic example")
 		p A show-more panel using #[code &lt;ps-panel&gt;] with plain attributes. The attribute names match the data attributes but without the #[code data-] prefix: #[code data-panel-axis] becomes #[code panel-axis].
@@ -98,8 +98,8 @@ block content
 		+codeblock('JS').
 			import { register } from 'panelset';
 
-			register();         // <ps-panel>, <ps-panelset>
-			register('solar'); // <solar-panel>, <solar-panelset>
+			register();         // <ps-panel>, <ps-panelset>, <ps-panelcontrol>
+			register('solar'); // <solar-panel>, <solar-panelset>, <solar-panelcontrol>
 
 		p It is safe to call #[code register()] multiple times. It skips any name that is already defined.
 

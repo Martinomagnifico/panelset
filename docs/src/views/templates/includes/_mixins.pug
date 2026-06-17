@@ -170,7 +170,7 @@ mixin examplepanelset(id, wc=false)
 mixin exampletabset(id, tabs=false)
 
 	if tabs
-		nav.tabs(role="tablist" aria-label="Content sections")&attributes(attributes)
+		.tabs(role="tablist" aria-label="Content sections")&attributes(attributes)
 			button(role="tab" aria-controls=`${id}-panel-1` aria-selected="true") Features
 			button(role="tab" aria-controls=`${id}-panel-2`) Pricing
 			button(role="tab" aria-controls=`${id}-panel-3`) Support
@@ -293,3 +293,119 @@ mixin logoicon
 		path(d="M15.6 7c1.2 0 2 1 1.8 2l-.7 6c-.2 1.1-1.2 2-2.3 2h-6c-.8 0-1.4-.4-1.7-1")
 		path(d="M20.2 11c1 0 2 .9 1.8 2l-.8 6c0 1.1-1 2-2.2 2h-6.1c-.8 0-1.3-.4-1.6-1m-1.5-7c1.2 0 2.2-.9 2.3-2l.8-6c0-1-.7-2-1.8-2H5C3.8 3 2.8 4 2.7 5L2 11c-.1 1.1.7 2 1.8 2z")
 
+
+// Install wizard: tabbed npm/Download/CDN setup card. `imports` is the import
+// binding shown in the code (e.g. 'PanelSet' or 'Panel, PanelSet, PanelControl').
+mixin installWizard(name, imports)
+	- const cdn = 'https://cdn.jsdelivr.net/npm/panelset@latest/dist'
+	- const dl = 'https://github.com/martinomagnifico/panelset/releases/latest/download/panelset.zip'
+
+	.card.no-padding.install-wizard(data-iw-imports=imports data-iw-cdn=cdn)
+		div(role="tablist").tabs
+			button(role="tab" aria-controls="iw-npm") npm
+			button(role="tab" aria-controls="iw-download") Download
+			button(role="tab" aria-controls="iw-cdn") CDN
+
+		.card-content(data-panelset)
+			.panel-wrapper
+
+				div(role="tabpanel" id="iw-npm" class="active" data-iw-source="npm")
+					.column.gap-2
+						div.column.gap-1
+							h3 Installing #{name}
+							.code-block
+								.code-header
+									| Terminal
+									button.copy Copy
+								pre: code npm install panelset
+						hr
+						div.column.gap-1
+							h3 Using #{name}
+							.install-controls
+								.control-row
+									.control-item
+										label Format
+										select.styled-select(disabled)
+											button
+												selectedcontent
+												+chevron(18, 'down')
+											option.choice(value="esm") ESM module
+									.control-item
+										label Usage
+										select.styled-select.iw-usage
+											button
+												selectedcontent
+												+chevron(18, 'down')
+											option.choice(value="api") JS API
+											option.choice(value="wc") Web Component
+							.code-block
+								.code-header
+									span.iw-lang
+									button.copy Copy
+								pre: code.iw-code
+
+				div(role="tabpanel" id="iw-download" hidden data-iw-source="download")
+					.column.gap-2
+						.column.gap-1
+							h3 Installing #{name}
+							p Download the ZIP from the #[a(href=dl) releases page], unzip, and place the files somewhere your HTML can reach.
+						hr
+						.column.gap-1
+							h3 Using #{name}
+							.install-controls
+								.control-row
+									.control-item
+										label Format
+										select.styled-select.iw-format
+											button
+												selectedcontent
+												+chevron(18, 'down')
+											option.choice(value="esm") ESM module
+											option.choice(value="iife") Script tag
+									.control-item
+										label Usage
+										select.styled-select.iw-usage
+											button
+												selectedcontent
+												+chevron(18, 'down')
+											option.choice(value="api") JS API
+											option.choice(value="wc") Web Component
+							.code-block
+								.code-header
+									span.iw-lang
+									button.copy Copy
+								pre: code.iw-code
+
+				div(role="tabpanel" id="iw-cdn" hidden data-iw-source="cdn")
+					.column.gap-2
+						.column.gap-1
+							h3 Installing #{name}
+							p No download needed. Files are served directly from #[a(href="https://www.jsdelivr.com/") jsDelivr].
+							.code-block
+								.code-header Base URL
+								pre: code= cdn + '/'
+						hr
+						.column.gap-1
+							h3 Using #{name}
+							.install-controls
+								.control-row
+									.control-item
+										label Format
+										select.styled-select(disabled)
+											button
+												selectedcontent
+												+chevron(18, 'down')
+											option.choice(value="iife") Script tag
+									.control-item
+										label Usage
+										select.styled-select.iw-usage
+											button
+												selectedcontent
+												+chevron(18, 'down')
+											option.choice(value="api") JS API
+											option.choice(value="wc") Web Component
+							.code-block
+								.code-header
+									span.iw-lang
+									button.copy Copy
+								pre: code.iw-code

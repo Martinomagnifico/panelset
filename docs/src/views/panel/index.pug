@@ -3,99 +3,6 @@ extends /views/templates/layouts/_base
 append variables
 	- pagetitle = "Panel | Getting started"
 
-mixin installWizard(cls)
-	- const named = `{ ${cls} }`
-	- const init = `${cls}.init();`
-	- const cdnBase = 'https://cdn.jsdelivr.net/npm/panelset/dist'
-	- const ghReleases = 'https://github.com/Martinomagnifico/panelset/releases'
-	- const pfx = `iw-${cls.toLowerCase()}`
-
-	.card.no-padding.install-wizard.border
-		nav(role="tablist").tabs
-			button(role="tab" aria-controls=`${pfx}-download`) Download
-			button(role="tab" aria-controls=`${pfx}-npm`) npm
-			button(role="tab" aria-controls=`${pfx}-cdn`) CDN
-
-
-		.card-content(data-panelset)
-			.panel-wrapper
-
-				div(role="tabpanel" id=`${pfx}-download` class="active")
-					.column.gap-1
-						h3 Install with downloaded files
-						p Download the files from the #[a(href=ghReleases) releases page].
-						p How do you intend to use it?
-						.demo-controls
-							button.is-active(data-choice="type" aria-pressed="true") Module
-							button(data-choice="type" aria-pressed="false") Script tag
-						.install-option
-							p Get #[code panelset.esm.js] and #[code panelset.css], then:
-							+codeblock('HTML').
-								<link rel="stylesheet" href="./panelset.css">
-								<script type="module">
-									import #{named} from './panelset.esm.js';
-									#{init}
-								</script>
-						.install-option(hidden)
-							p Get #[code panelset.js] and #[code panelset.css], then:
-							+codeblock('HTML').
-								<link rel="stylesheet" href="./panelset.css">
-								<script src="./panelset.js"></script>
-								<script>#{init}</script>
-
-
-
-				div(role="tabpanel" id=`${pfx}-npm` hidden)
-					.column.gap-1
-						h3 Install with npm
-						+codeblock('bash', 'Terminal').
-							npm install panelset
-						p How do you intend to use it?
-						.demo-controls
-							button.is-active(data-choice="type" aria-pressed="true") Module
-							button(data-choice="type" aria-pressed="false") Script tag
-						.install-option
-							+codeblock('JS').
-								import #{named} from 'panelset';
-								import 'panelset/style.css';
-								#{init}
-
-						.install-option(hidden)
-							p Copy #[code node_modules/panelset/dist/panelset.js] and #[code panelset.css] to your project, then:
-							+codeblock('HTML').
-								<link rel="stylesheet" href="./panelset.css">
-								<script src="./panelset.js"></script>
-								<script>#{init}</script>
-
-				div(role="tabpanel" id=`${pfx}-cdn` hidden)
-					.column.gap-1
-						h3 Install with a CDN
-						p Link to the files on a CDN like #[a(href=ghReleases) jsDelivr]. Use the #[code .esm.js] version for native module support, or #[code .js] for a classic script tag.
-							br
-							small Note: the module version is recommended for better tree-shaking and performance.
-
-						+codeblock('HTML').
-							<link rel="stylesheet" href="#{cdnBase}/panelset.css">
-						//
-
-						p How do you intend to use it?
-						.demo-controls
-							button.is-active(data-choice="type" aria-pressed="true") Module
-							button(data-choice="type" aria-pressed="false") Script tag
-						.install-option
-							+codeblock('HTML').
-								<link rel="stylesheet" href="#{cdnBase}/panelset.css">
-								<script type="module">
-									import #{named} from '#{cdnBase}/panelset.esm.js';
-									#{init}
-								</script>
-						.install-option(hidden)
-							+codeblock('HTML').
-								<link rel="stylesheet" href="#{cdnBase}/panelset.css">
-								<script src="#{cdnBase}/panelset.js"></script>
-								<script>#{init}</script>
-
-
 block content
 	.lane
 		.container
@@ -114,17 +21,7 @@ block content
 
 
 	+section("Setup")
-		+installWizard('Panel')
-
-	+section("Installation")
-		.code-block
-			.code-header Terminal
-			pre
-				code npm install panelset
-
-		+codeblock('JS').
-			import { Panel } from 'panelset';
-			import 'panelset/style.css';
+		+installWizard('Panel', 'Panel')
 
 	+section("Markup")
 		p Add #[code data-panel] to your element and give it an #[code id]. Panels start closed by default (no class required). Wrap the content in #[code .panel-wrapper].
@@ -249,25 +146,3 @@ append scripts
 			//- PanelSet.init('.install-wizard [data-panelset]');
 			Panel.init();
 			PanelSet.init();
-
-
-
-	script.
-		document.querySelectorAll('.install-wizard').forEach(function(wizard) {
-			wizard.querySelectorAll('[data-choice]').forEach(function(btn) {
-				btn.addEventListener('click', function() {
-					var tab = btn.closest('[role="tabpanel"]');
-					var btns = tab.querySelectorAll('[data-choice]');
-					var opts = tab.querySelectorAll('.install-option');
-					var idx = Array.from(btns).indexOf(btn);
-
-					btns.forEach(function(b, i) {
-						b.classList.toggle('is-active', i === idx);
-						b.setAttribute('aria-pressed', i === idx ? 'true' : 'false');
-					});
-					opts.forEach(function(opt, i) {
-						opt.hidden = i !== idx;
-					});
-				});
-			});
-		});

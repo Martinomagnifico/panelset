@@ -220,12 +220,12 @@
 .demo button {
   border: 3px solid var(--special-normal);
   background: none;
-  background: var(--demo-btn-bg-off);
+  background: var(--color-special-tint-25);
   color: var(--special-hover);
   padding: 0.25rem 1rem;
   border-radius: 24px;
   font-size: 1rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: color 0.125s, background-color 0.125s, box-shadow 0.125s, border-color 0.125s;
   outline-offset: 1px;
@@ -240,6 +240,8 @@
   &[aria-expanded="true"],
   &[aria-selected="true"] {
     background: var(--demo-btn-bg);
+    color: var(--special-active);
+    border-color: var(--special-active);
 
     &[role="tab"] {
       background: var(--demo-surface);
@@ -251,7 +253,7 @@
       cursor: default;
   }
 
-  &:not([aria-disabled="true"]):hover {
+  &:not([aria-disabled="true"]):not([aria-selected="true"]):hover {
     box-shadow: 0 4px 8px var(--special-shadow);
     background: var(--demo-btn-bg);
   }

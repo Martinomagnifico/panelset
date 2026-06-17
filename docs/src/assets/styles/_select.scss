@@ -1,0 +1,191 @@
+.styled-select {
+	// --- baseline: also covers the non-supporting fallback ---
+	appearance: none;
+	font: inherit;
+	&, & button {
+		font-size: 1rem;
+	}
+	color: var(--sidebar-item-text);
+	background: none;
+	border: 1px solid var(--border-default);
+	border-radius: 0.25rem;
+	padding: calc(0.5rem - 1px) calc(1rem - 1px);
+	cursor: pointer;
+
+	background-color: var(--bg-sidebar);
+	.card & {
+		background-color: var(--bg-surface);
+	}
+
+
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234C461D' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: right 0.75em center;
+	background-size: 20px 20px;
+	padding-inline-end: 2.25em;
+	font-weight: 500;
+	transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, color 0.15s ease-in-out;
+
+	&:hover {
+		border-color: var(--link-focus);
+	}
+
+	&[disabled], &[aria-disabled="true"] {
+		cursor: default;
+		opacity: 0.65;
+		background-color: transparent;
+
+		&:hover {
+			border-color: var(--border-default);
+		}
+
+	}
+
+	@supports (appearance: base-select) {
+
+		background-image: none;
+		padding-inline-end: 0.75em;
+
+		&,
+		&::picker(select) {
+			appearance: base-select;
+		}
+
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+		text-align: left;
+		font-weight: 500;
+
+
+		&:focus-visible {
+			border-color: transparent;
+		}
+
+		&::picker-icon {
+			display: none;
+		}
+
+		.chevron {
+			flex-shrink: 0;
+			width: 20px; 
+			height: 20px; 
+			stroke-width: 1.6px;
+			transition: transform var(--ps-open-speed, 0.15s) var(--ps-open-timing, ease-in-out);
+
+			@media (prefers-reduced-motion: reduce) {
+				transition: none !important;
+			}
+		}
+		&:open .chevron {
+			transform: rotate(-180deg);
+		}
+
+		// the dropdown panel
+		&::picker(select) {
+			background: var(--bg-sidebar);
+			background: white;
+			border: 1px solid var(--border-default);
+			border-radius: 0.25rem;
+			padding: 0.5rem;
+			margin-block-start: 2px;
+			box-shadow: 0 8px 20px var(--special-shadow-dark);
+
+			// closed state
+			opacity: 0;
+			height: 0;
+			overflow: clip;
+
+			transform: var(--ps-wrapper-transform-from, translateY(-0.25rem));
+			transition:
+				opacity 0.15s var(--ps-open-timing, ease-in-out),
+				transform 0.15s var(--ps-open-timing, ease-in-out),
+				display 0.15s var(--ps-open-timing, ease-in-out) allow-discrete,
+				height 0.15s var(--ps-open-timing, ease-in-out) allow-discrete,
+				overlay 0.15s var(--ps-open-timing, ease-in-out) allow-discrete;
+
+			@media (prefers-reduced-motion: reduce) {
+				transition: none !important;
+			}
+		}
+
+		&:open::picker(select) {
+			opacity: 1;
+			transform: none;
+
+			height: calc-size(auto, size);
+			overflow: auto;
+
+
+			// where the entry animation starts from
+			@starting-style {
+				height: 0;
+				opacity: 0;
+				transform: var(--ps-wrapper-transform-from, translateY(-0.25rem));
+			}
+		}
+
+		// each option, styled like a sidebar nav link
+		option {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			padding: 0.25em 0.75em;
+			border-radius: 0.25rem;
+			color: var(--sidebar-item-text);
+			text-decoration: none;
+
+			&:hover {
+				background: var(--sidebar-item-hover-bg);
+				color: var(--sidebar-item-hover-text);
+			}
+
+			// mirrors your nav a.active
+			&:checked {
+				background: var(--sidebar-item-active-bg);
+				color: var(--sidebar-item-active-text);
+				font-weight: 600;
+			}
+			&:not(.choice) {
+				font-weight: 400;
+				color: var(--text-muted);
+			}
+
+			&::checkmark {
+				display: none;
+			}
+		}
+	}
+}
+
+.control-row {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 1rem 1.5rem;
+}
+
+.control-item {
+	display: flex;
+	flex-direction: column;
+	gap: 0.35rem;
+
+	> label {
+		font-size: 0.85rem;
+		font-weight: 600;
+		color: var(--text-muted);
+	}
+
+	.styled-select {
+		width: auto;
+		min-inline-size: 12rem;
+	}
+
+	// The right-hand select sits at the row's right edge, so open its dropdown aligned
+	// to that edge (extending left) instead of the default left-alignment.
+	&:last-child .styled-select::picker(select) {
+		left: auto;
+		right: anchor(right);
+	}
+}

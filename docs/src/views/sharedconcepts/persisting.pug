@@ -88,6 +88,8 @@ block content
 						+codeblock('HTML')
 							#tabs(data-panelset data-panel-persist) ...
 
+						p Note: a PanelSet uses #[code data-panel-persist] (the #[code panel-] prefix), not #[code data-panelset-persist]. The persistence attributes are shared with Panel, so the prefix stays #[code panel-] on both.
+
 			p Play around with the two examples above, and reload the page. Both come back in the same state you left them.
 
 		p For accordion groups, set #[code data-panel-persist] on the #[code [data-panel-group]] element to cover all panels in the group at once.

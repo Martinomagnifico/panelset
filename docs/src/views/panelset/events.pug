@@ -87,6 +87,16 @@ block content
 					dd ID of the panel being activated.
 					dt.code trigger: HTMLElement | null
 					dd The element that triggered the activation, or #[code null] if programmatic.
+					dt.code outgoingPanel: HTMLElement | null
+					dd The panel being deactivated, or #[code null] on the first activation.
+					dt.code index: number
+					dd Zero-based position of the activated panel in DOM order.
+					dt.code total: number
+					dd Number of panels in the set.
+					dt.code atStart: boolean
+					dd #[code true] when the activated panel is the first one.
+					dt.code atEnd: boolean
+					dd #[code true] when the activated panel is the last one.
 				+codeblock('JavaScript').
 					container.addEventListener('ps:activationstart', e => {
 						console.log('Activating:', e.detail.panelId);
@@ -102,6 +112,14 @@ block content
 					dd The element that triggered the activation, or #[code null] if programmatic.
 					dt.code outgoingPanel: HTMLElement | null
 					dd The panel that was deactivated, or #[code null] on the first activation.
+					dt.code index: number
+					dd Zero-based position of the activated panel in DOM order.
+					dt.code total: number
+					dd Number of panels in the set.
+					dt.code atStart: boolean
+					dd #[code true] when the activated panel is the first one.
+					dt.code atEnd: boolean
+					dd #[code true] when the activated panel is the last one.
 				+codeblock('JavaScript').
 					container.addEventListener('ps:activationcomplete', e => {
 						console.log('Now active:', e.detail.panelId);

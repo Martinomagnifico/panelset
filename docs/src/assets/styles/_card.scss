@@ -237,6 +237,10 @@ dl.bg-surface-tint {
 		padding-top: 0;
 	}
 
+	& > .tabs {
+		border-bottom: 1px solid var(--border-default);
+	}
+
 	.card {
 		background: var(--bg-surface-tint);
 
@@ -254,7 +258,9 @@ dl.bg-surface-tint {
 		h3 + p {
 			margin-top: 0;
 		}
-
+		.code-block {
+			background: var(--bg-surface);
+		}
 
 	}
 }

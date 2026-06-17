@@ -58,7 +58,7 @@ block content
 			p For proper tab interfaces, wrap buttons in a #[code role="tablist"] with #[code role="tab"] and #[code aria-controls].
 
 			+codeblock('HTML')
-				nav(role="tablist" aria-label="Settings sections")
+				div(role="tablist" aria-label="Settings sections")
 					button(role="tab" id="tab-1" aria-controls="panel-1" aria-selected="true") Overview
 					button(role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false") Security
 
@@ -67,7 +67,7 @@ block content
 
 		.card
 			+anchor('h3', 'a11y-heading')(title="autoFocus: 'heading'")
-			p Focus moves to the first heading in the incoming panel. Headings must have #[code tabindex="-1"] to be programmatically focusable.
+			p Focus moves to the first heading in the incoming panel. PanelSet adds #[code tabindex="-1"] to the heading automatically if it does not already have one (a heading cannot take focus otherwise).
 
 			.demo
 				.demo-controls
@@ -144,7 +144,7 @@ block content
 					.panel-wrapper
 						div.active(role="tabpanel" id="a11y-i-panel-1" aria-label="Welcome")
 							h3 Welcome
-							p We have an other panel for you.
+							p We have another panel for you.
 
 						div(role="tabpanel" id="a11y-i-panel-2" hidden aria-label="Sign in")
 							h3 Sign in
@@ -166,7 +166,7 @@ block content
 				tbody
 					tr
 						td #[code 'heading']
-						td First #[code h1-h6] in panel (needs #[code tabindex="-1"])
+						td First #[code h1-h6] in panel (gets #[code tabindex="-1"] automatically)
 						td Standard tabs with headings
 					tr
 						td #[code 'first']

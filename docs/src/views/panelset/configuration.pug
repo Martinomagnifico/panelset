@@ -30,7 +30,7 @@ block content
 			div(data-panelset data-transitions="false" data-closable data-loading-height="320" data-debug)
 				// panels
 
-		p JavaScript options and data attributes are both covered above. When both are set, precedence runs from least to most specific: #[strong defaults &gt; JS options &gt; element attribute]. The most specific wins, so a per-element data attribute always overrides a global #[code init()] option. That lets one set opt out of a global flag (e.g. #[code data-panel-persist="false"] on a set initialised with #[code PanelSet.init({ persist: true })]).
+		p JavaScript options and data attributes are both covered above. When both are set, precedence runs from least to most specific: #[strong defaults -&gt; JS options -&gt; element attribute]. The most specific wins, so a per-element data attribute always overrides a global #[code init()] option. That lets one set opt out of a global flag (e.g. #[code data-panel-persist="false"] on a set initialised with #[code PanelSet.init({ persist: true })]).
 
 		p Web component configuration uses plain attributes directly on #[code &lt;ps-panelset&gt;]. No #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panelset/examples/webcomponent.html") Web Component integration page] for full usage examples.
 
@@ -68,7 +68,7 @@ block content
 					li #[code 'heading']: first h1-h6 in the panel
 					li #[code 'first']: first focusable element (keyboard events only)
 					li #[code 'input']: first form field (bypasses keyboard-only check)
-				p Priority order: #[code show()] call &gt; trigger attribute &gt; element attribute &gt; JS config.
+				p Priority order: #[code show()] call -&gt; trigger attribute -&gt; element attribute -&gt; JS config.
 				h4 Default: #[code false]
 				.card-row
 					.card

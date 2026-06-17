@@ -1,5 +1,5 @@
 :root {
-	--main-hue: 100.0;
+	--main-hue: 120.0;
 	--special-hue: calc(var(--main-hue) + 135);
 	--special-hue: mod(calc(var(--main-hue) + 135), 360);
 }
@@ -73,8 +73,9 @@
 	--doc-code-transparent: oklch(from var(--color-tint-700) l c h / 0.08);
 
 	--special-demoblock: var(--color-special-tint-300);
-	--special-normal: var(--color-special-tint-500);
-	--special-hover: var(--color-special-tint-600);
+	--special-normal: var(--color-special-tint-600);
+	--special-hover: var(--color-special-tint-700);
+	--special-active: var(--color-special-tint-700);
 	--special-shadow: oklch(from var(--special-normal) l c h / 0.33);
 	--special-shadow-dark: oklch(from var(--special-normal) calc(l * 0.1) calc(c * 2) h / 0.2);
 
@@ -176,6 +177,7 @@
 
 		--special-normal: var(--color-special-tint-300);
 		--special-hover: var(--color-special-tint-25);
+
 		--special-shadow: oklch(from var(--special-normal) l c h / 0.25);
 
 		--tab-text-normal: var(--color-tint-300);

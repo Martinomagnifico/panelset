@@ -140,6 +140,7 @@
 		svg {
 			flex-shrink: 0;
 			transition: transform var(--ps-open-speed, 0.25s) var(--ps-open-timing, ease-in-out);
+			transform: rotate(-180deg);
 
 			@media (prefers-reduced-motion: reduce) {
 				transition: none !important;
@@ -147,7 +148,7 @@
 		}
 
 		&[aria-expanded="false"] svg {
-			transform: rotate(-180deg);
+			transform: rotate(0deg);
 		}
 		&.active {
 			font-weight: 600;

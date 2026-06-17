@@ -21,10 +21,10 @@ block content
 		h3 Data attributes
 
 		+codeblock('HTML')
-			nav(role="tablist" data-panelcontrol data-activation="auto")
+			div(role="tablist" data-panelcontrol data-activation="auto")
 				// tab buttons with aria-controls
 
-		p Precedence runs from least to most specific: #[strong defaults &gt; JS options &gt; element attribute]. A per-element data attribute overrides a global #[code init()] option, so one control can opt into #[code auto] while others initialised by the same call stay #[code manual].
+		p Precedence runs from least to most specific: #[strong defaults -&gt; JS options -&gt; element attribute]. A per-element data attribute overrides a global #[code init()] option, so one control can opt into #[code auto] while others initialised by the same call stay #[code manual].
 
 		p Web component configuration uses plain attributes on #[code &lt;ps-panelcontrol&gt;], no #[code data-] prefix. See the #[a(href="/panelcontrol/integrations/webcomponent.html") Web Component integration page].
 
@@ -38,7 +38,7 @@ block content
 		p #[strong Explicit target (optional).] When discovery cannot reach the set (a remote control whose panels are not in the DOM yet, or a case where the right set is unclear), give #[code data-panelcontrol] a #[strong CSS selector] value and PanelControl binds to that instead:
 
 		+codeblock('HTML')
-			nav(role="tablist" data-panelcontrol="#my-tabs")
+			div(role="tablist" data-panelcontrol="#my-tabs")
 				button(role="tab" aria-controls="t-1") One
 				button(role="tab" aria-controls="t-2") Two
 			// … elsewhere in the DOM …

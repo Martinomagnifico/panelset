@@ -19,7 +19,7 @@ block content
 
 
 	+section("Auto activation")
-		p It is also possible to enable auto activation. This allows users to activate a tab as they arrow across, without needing to press #[strong Enter] / #[strong Space] / click (#[code activation: 'auto']). Set #[code data-activation="auto"] (or #[code init({ activation: 'auto' })]) to enable this behavior.
+		p It is also possible to enable auto activation. This allows users to activate a tab as they arrow across, without needing to press #[strong Enter] / #[strong Space] / click (#[code activation: 'auto']). Set #[code data-activation="auto"] (or #[code init({ activation: 'auto' })]) to enable this behaviour.
 
 		.card
 			.demo
@@ -29,7 +29,7 @@ block content
 			+codeblock('JS').
 				PanelControl.init({ activation: 'auto' });
 				// or per control, in markup:
-				// <nav role="tablist" data-panelcontrol data-activation="auto">
+				// <div role="tablist" data-panelcontrol data-activation="auto">
 
 	+section("Arrow protection (from auto back to manual)")
 		p #[code auto] falls back to manual whenever activating-on-arrow would hurt: when the PanelSet uses #[code autoFocus] (focus would jump into the panel, out of the strip) or loads content asynchronously (every keystroke would fire a load). The #[code autoFocus] check covers the JS option, #[code data-auto-focus] on the set, and #[code data-auto-focus] on any individual tab.
@@ -38,7 +38,7 @@ block content
 
 		.card
 			.demo
-				nav.tabs(role="tablist" data-panelcontrol data-activation="auto")
+				.tabs(role="tablist" data-panelcontrol data-activation="auto")
 					button(role="tab" aria-controls="df-1" aria-selected="true") Account
 					button(role="tab" aria-controls="df-2") Profile
 					button(role="tab" aria-controls="df-3") Confirm

@@ -16,7 +16,7 @@ block content
 		.card
 			p A wrapper for the background is added so that the optical background does not get shorter than the sidebar, but it can get higher.
 			.demo.horizontal.gap-1
-				nav.tabs.rail(role="tablist" aria-orientation="vertical" data-panelcontrol)
+				.tabs.rail(role="tablist" aria-orientation="vertical" data-panelcontrol)
 					button(role="tab" aria-controls="vc-1" aria-selected="true") Features
 					button(role="tab" aria-controls="vc-2") Pricing
 					button(role="tab" aria-controls="vc-3") Support
@@ -31,7 +31,7 @@ block content
 								+example-3
 
 			+codeblock('HTML')
-				nav(role="tablist" aria-orientation="vertical" data-panelcontrol)
+				div(role="tablist" aria-orientation="vertical" data-panelcontrol)
 					button(role="tab" aria-controls="vc-1" aria-selected="true") Features
 					button(role="tab" aria-controls="vc-2") Pricing
 					button(role="tab" aria-controls="vc-3") Support
@@ -50,7 +50,7 @@ block content
 
 		.card
 			.demo.horizontal.gap-1
-				nav.rail(aria-label="Settings" data-panelcontrol)
+				.rail(aria-label="Settings" data-panelcontrol)
 					h4 Account
 					button(aria-controls="grp-1") Features
 					button(aria-controls="grp-2") Pricing
@@ -68,7 +68,7 @@ block content
 								+example-3
 	
 			+codeblock('HTML')
-				nav(aria-label="Settings" data-panelcontrol)
+				div(aria-label="Settings" data-panelcontrol)
 					h4 Account
 					button(aria-controls="grp-1") Features
 					button(aria-controls="grp-2") Pricing

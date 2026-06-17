@@ -5,6 +5,7 @@ block scripts
 	if isProd
 		script(src=`${basePath}assets/scripts/copybutton.js` vite-ignore)
 		script(src=`${basePath}assets/scripts/anchorlink.js` vite-ignore)
+		script(src=`${basePath}assets/scripts/install-wizard.js` vite-ignore)
 		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			Panel.init('.docs-sidebar [data-panel]', { returnFocus: false });
@@ -12,6 +13,7 @@ block scripts
 	else
 		script(type="module" src="/src/assets/scripts/copybutton.js")
 		script(type="module" src="/src/assets/scripts/anchorlink.js")
+		script(type="module" src="/src/assets/scripts/install-wizard.js")
 		script(type="module").
 			import { Panel } from 'panelset';
 			Panel.init('.docs-sidebar [data-panel]', { returnFocus: false });
