@@ -8,12 +8,16 @@ block content
 		.container
 			.page-header
 				h1 Panel events
-				p.lead Panel dispatches custom events from the #[code data-panel] element.
+				p.lead Panel dispatches custom events.
+
+			p Panel fires its custom events from the #[code [data-panel]] element. They bubble, so listen on the panel itself or on #[code document].
+
 
 	+section("Available events")
 		.column.gap-1(data-panel-group data-panel-close-siblings)
 			+apiEvent("panel:beforeopen")
-				p Fires before the panel opens. Attach a promise to #[code e.detail.promise] to delay opening until async content is ready.
+				p Fires just before the panel opens. This is the hook for loading content: hand a promise to #[code e.detail.promise] and the open waits until it settles.
+
 				h4 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
@@ -28,7 +32,7 @@ block content
 							.then(r => r.text())
 							.then(html => { panelEl.querySelector('.panel-wrapper').innerHTML = html; });
 					});
-				p Or use the convenience method:
+				p Or skip the event and use the convenience method:
 				+codeblock('JavaScript').
 					panel.onBeforeOpen(async (el, signal) => {
 						const html = await fetch('/content', { signal }).then(r => r.text());
@@ -36,28 +40,28 @@ block content
 					}, { once: true });
 
 			+apiEvent("panel:opening")
-				p Fires when the open animation begins.
+				p Fires when the open animation starts.
 				h4 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
 					dd The element that initiated the open, or #[code null] if opened programmatically.
 
 			+apiEvent("panel:opened")
-				p Fires when the panel is fully open (transition complete).
+				p Fires once the panel is fully open and the transition has finished.
 				h4 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
 					dd The element that initiated the open, or #[code null] if opened programmatically.
 
 			+apiEvent("panel:closing")
-				p Fires when the close animation begins.
+				p Fires when the close animation starts.
 				h4 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
 					dd The element that last opened the panel, or #[code null] if closed programmatically.
 
 			+apiEvent("panel:closed")
-				p Fires when the panel is fully closed (transition complete).
+				p Fires once the panel is fully closed and the transition has finished.
 				h4 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
@@ -75,7 +79,7 @@ block content
 
 	+section("Examples")
 		.card
-			p Opening this panel plays the video. Closing it pauses playback and resets the position. Events are logged to the console.
+			p Open this panel and the video plays; close it and the video pauses and rewinds to the start. The events are logged to the console so you can watch the order they fire in.
 			.demo
 				button(aria-controls="ev-video-panel") Toggle video
 				div#ev-video-panel(data-panel)

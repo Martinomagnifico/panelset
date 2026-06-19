@@ -8,13 +8,14 @@ block content
 		.container
 			.page-header
 				h1 Panel API
-				p.lead Constructor, instance methods, properties, and static methods.
+				p.lead Everything you can call on a Panel.
 
 	+section("Constructor")
 		.indented
 			h3.code new Panel(elementOrSelector: HTMLElement | string, options?: PanelConfig)
 			hr
-			p Creates a new Panel instance.
+			p Builds a Panel on a single element, from a selector or an element reference. Reach for this when you want a handle on one panel. To wire up many at once, #[code Panel.init()] (further down) is less typing.
+
 			h4 Parameters:
 			dl
 				dt.code elementOrSelector
@@ -31,23 +32,23 @@ block content
 		.indented
 			h3.code panel.open(event?): Promise&lt;void&gt;
 			hr
-			p Opens the panel. Nothing happens if it is already open.
+			p OOpen the panel. Nothing happens if it is already open.
 			h4 Parameters:
 			dl
 				dt.code event (optional)
 				dd The triggering event. When passed, #[code autoFocus] only fires on keyboard events. Mouse clicks are ignored, preventing unwanted scroll.
 			h4 Returns:
-			p A promise that resolves when the opening transition completes.
+			p A promise that resolves once the opening transition has finished.
 
 		.indented
 			h3.code panel.close(): void
 			hr
-			p Closes the panel. Nothing happens if it is already closed.
+			p Close the panel. Nothing happens if it is already closed.
 
 		.indented
 			h3.code panel.toggle(event?): void
 			hr
-			p Opens the panel if closed, closes it if open. Reverses a mid-animation close if called while closing.
+			p Open the panel if it is closed, close it if it is open. If you catch it mid-close, toggle reverses and opens it again.
 			h4 Parameters:
 			dl
 				dt.code event (optional)
@@ -56,7 +57,8 @@ block content
 		.indented
 			h3.code panel.onBeforeOpen(handler, options?): void
 			hr
-			p Registers a handler for async content loading before the panel opens. The handler runs before every open unless #[code once: true] is set.
+			p Register a handler that runs just before the panel opens, which is where content loading goes. Return a promise from it and the open waits for that promise to settle. It runs before every open unless you pass #[code once: true].
+
 			h4 Parameters:
 			dl
 				dt.code handler
@@ -70,7 +72,7 @@ block content
 					el.querySelector('.panel-wrapper').innerHTML = html;
 				}, { once: true });
 
-			p You can also define the handler as a named function. This keeps it clean and lets you share the same function across multiple panels.
+			p You can pass a named function instead of an inline one. It keeps the call site tidy, and it lets you reuse the same loader across several panels.
 
 			+codeblock('JavaScript').
 				async function loadContent(el, signal) {
@@ -81,32 +83,32 @@ block content
 				panel.onBeforeOpen(loadContent, { once: true });
 
 		.indented
-			// TODO, DOES THIS EXIST?
 			h3.code panel.destroy(): void
 			hr
-			p Tears down the instance: aborts any in-progress animation, removes all event listeners, resets the element to closed state, and clears the #[code element.panel] reference so the element can be re-initialised.
+			p Destroy it. It aborts any animation in progress, removes its event listeners, resets the element to its closed state, and clears the #[code element.panel] reference so the element can be initialised again.
 
 	+section("Instance properties")
 		.indented
 			h3.code panel.isOpen: boolean
 			hr
-			p #[strong Read-only.] #[code true] if the panel is open or mid-open-animation.
+			p #[strong Read-only.] #[code true] while the panel is open, or part-way through opening.
 
 		.indented
 			h3.code panel.element: HTMLElement
 			hr
-			p #[strong Read-only.] The #[code [data-panel]] DOM element.
+			p #[strong Read-only.] The #[code [data-panel]] element itself.
 
 		.indented
 			h3.code panel.config: PanelConfig
 			hr
-			p #[strong Read-only.] The merged configuration (1. defaults 2. constructor options 3. data attributes).
+			p #[strong Read-only.] The merged configuration. Precedence runs least specific to most: defaults first, then constructor options, then data attributes.
 
 	+section("Static methods")
 		.indented
 			h3.code Panel.init(selectorOrOptions?, options?): Panel[]
 			hr
-			p Auto-initialises all panels matching the selector. Also connects #[code [data-panel-trigger]] / #[code [data-panel]] implicit pairs.
+			p Find every panel matching the selector and initialise the lot in one call. It also connects implicit #[code [data-panel-trigger]] / #[code [data-panel]] pairs that sit next to each other.
+
 			h4 Parameters:
 			dl
 				dt.code selectorOrOptions (optional)
@@ -114,7 +116,7 @@ block content
 				dt.code options (optional)
 				dd Config object, only used when the first argument is a selector string.
 			h4 Returns:
-			p An array of created Panel instances.
+			p An array of the Panel instances it created.
 
 			+codeblock('JavaScript').
 				Panel.init();
@@ -124,7 +126,7 @@ block content
 		.indented
 			h3.code Panel.defaults: PanelConfig
 			hr
-			p #[strong Static property.] Default configuration applied to all new instances. Modify to change defaults globally.
+			p #[strong Static property.] The default config handed to every new instance. Change it here to move the defaults for the whole page at once.
 
 			+codeblock('JavaScript').
 				Panel.defaults.axis = 'vertical';

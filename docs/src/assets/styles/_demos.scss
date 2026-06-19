@@ -238,6 +238,7 @@
   user-select: none;
 
   &[aria-expanded="true"],
+  &[aria-expanded="false"],
   &[aria-selected="true"] {
     background: var(--demo-btn-bg);
     color: var(--special-active);
@@ -253,10 +254,25 @@
       cursor: default;
   }
 
-  &:not([aria-disabled="true"]):not([aria-selected="true"]):hover {
+  // &:not([aria-disabled="true"]):not([aria-selected="true"]):hover {
+  //   box-shadow: 0 4px 8px var(--special-shadow);
+  //   background: var(--demo-btn-bg);
+  // }
+  &:hover {
     box-shadow: 0 4px 8px var(--special-shadow);
     background: var(--demo-btn-bg);
   }
+  &[aria-selected="true"]:hover {
+    box-shadow: none;
+  }
+
+
+  // &.accordion-trigger:hover {
+  //   box-shadow: none;
+  //   background: none;
+  // }
+
+
   &:not([aria-disabled="true"]):hover, 
   &:not([aria-disabled="true"]):focus-visible {
     border-color: var(--special-hover);

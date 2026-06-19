@@ -8,13 +8,17 @@ block content
 		.container
 			.page-header
 				h1 PanelSet events
-				p.lead PanelSet dispatches custom events from the #[code data-panelset] container element.
+				p.lead PanelSet dispatches some custom events.
+
+			p PanelSet fires its custom events from the #[code [data-panelset]] container element. Listen on the container (most examples below do), or on #[code document], since the events bubble.
 
 	+section("Available events")
 		.column.gap-1(data-panel-group data-panel-close-siblings)
 			+apiEvent("ps:ready")
-				p Fires when the PanelSet instance is fully initialised.
+				p Fires once the PanelSet instance is fully initialised and ready to use.
+
 				h4 Detail:
+
 				dl
 					dt.code container: HTMLElement
 					dd The #[code [data-panelset]] container element.
@@ -27,7 +31,10 @@ block content
 					});
 
 			+apiEvent("ps:beforeactivate")
-				p Fires at the very start of an activation, #[strong before any state changes]. This event is #[strong cancelable]: call #[code e.preventDefault()] to veto the switch. Every activation path goes through here (tab clicks, #[code next()] / #[code prev()], deep links and programmatic #[code show()]), so it is the place to control navigation (for example, a wizard that refuses to advance until the current step is valid).
+
+				p Fires at the very start of an activation, before anything changes. This one is cancelable: call #[code e.preventDefault()] to veto the switch. It fires whether a user clicked a tab, your script called #[code next()], #[code prev()], or #[code show()], or a #[code ?panel=] link opened a panel on load. They all arrive here first, so it is the place to control navigation (for example, a wizard that refuses to advance until the current step is valid).
+
+				
 				h4 Detail:
 				dl
 					dt.code panelId: string
@@ -47,7 +54,9 @@ block content
 					});
 
 			+apiEvent("ps:beforeopen")
-				p Fires before a panel activation begins. Attach a promise to #[code e.detail.promise] to delay the transition until async content is ready.
+
+				p Fires just before an activation begins. This is the hook for loading content: hand a promise to #[code e.detail.promise] and the transition waits until it settles.
+
 				h4 Detail:
 				dl
 					dt.code panelId: string
@@ -71,7 +80,7 @@ block content
 								targetPanel.dataset.loaded = 'true';
 							});
 					});
-				p Or use the convenience method:
+				p Or skip the event and use the convenience method:
 				+codeblock('JavaScript').
 					panelSet.onBeforeOpen((targetPanel, signal) => {
 						return fetch(`/api/panel/${targetPanel.id}`, { signal })
@@ -80,8 +89,10 @@ block content
 					}, { once: true });
 
 			+apiEvent("ps:activationstart")
-				p Fires when activation is committed and transitions are about to begin (after async loading, if any).
+				p Fires once the activation is committed and the transitions are about to start (after any async loading). The veto window has closed by now, so this is where you react to a switch that is definitely happening.
+
 				h4 Detail:
+
 				dl
 					dt.code panelId: string
 					dd ID of the panel being activated.
@@ -103,7 +114,9 @@ block content
 					});
 
 			+apiEvent("ps:activationcomplete")
-				p Fires when the height and panel transitions have both finished.
+
+				p Fires when the height animation and the panel transition have both finished. The switch is done and the set is idle again.
+
 				h4 Detail:
 				dl
 					dt.code panelId: string
@@ -126,7 +139,8 @@ block content
 					});
 
 			+apiEvent("ps:activationaborted")
-				p Fires when an in-progress activation is interrupted by a new one.
+				p Fires when an activation-in-progress is interrupted by a newer one. This is the impatient-clicking case: the first switch never completes, and this tells you which panel got dropped.
+
 				h4 Detail:
 				dl
 					dt.code panelId: string
@@ -140,7 +154,7 @@ block content
 
 	+section("Examples")
 		.card
-			p Switching to the Video tab plays the video. Switching away pauses it and resets the position. Activation events are logged to the console.
+			p Switch to the Video tab and it plays; switch away and it pauses and rewinds to the start. The activation events are logged to the console so you can watch the order they fire in.
 			.demo
 				.demo-controls
 					button(aria-controls="ev-vid-panel-1") Tab 1

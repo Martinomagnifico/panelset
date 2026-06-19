@@ -266,11 +266,18 @@ export class Panel {
 			if (!trigger.hasAttribute('aria-expanded')) trigger.setAttribute('aria-expanded', 'false');
 			trigger.removeAttribute('data-panel-trigger');
 		};
+		// The trigger can be the sibling itself, or a direct child of a heading
+		// sibling (e.g. <h2><button data-panel-trigger>…</button></h2>).
+		const triggerIn = (el: HTMLElement): HTMLElement | null =>
+			el.hasAttribute('data-panel-trigger') ? el
+			: /^H[1-6]$/.test(el.tagName) ? el.querySelector<HTMLElement>(':scope > [data-panel-trigger]')
+			: null;
 		// Nearest trigger on each side, without crossing into another panel.
 		for (const dir of ['previousElementSibling', 'nextElementSibling'] as const) {
 			let el = this.element[dir] as HTMLElement | null;
 			while (el && !isPanel(el)) {
-				if (el.hasAttribute('data-panel-trigger')) { wire(el); break; }
+				const trigger = triggerIn(el);
+				if (trigger) { wire(trigger); break; }
 				el = el[dir] as HTMLElement | null;
 			}
 		}

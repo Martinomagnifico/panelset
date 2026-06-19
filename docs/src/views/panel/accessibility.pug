@@ -11,10 +11,10 @@ block content
 				p.lead What Panel handles for you, and what you still provide.
 
 	+section("What Panel does automatically")
-		p #[code Panel] manages #[code aria-expanded] on every trigger (#[code [aria-controls]]) automatically. It also applies the #[code inert] attribute to a closed panel, removing it from the tab order and accessibility tree without affecting layout.
+		p Panel keeps #[code aria-expanded] in sync on every trigger (any element with #[code [aria-controls]]). It also applies #[code inert] to a closed panel, taking it out of the tab order and the accessibility tree without touching the layout.
 
 	+section("Trigger markup")
-		p A trigger is any element with #[code aria-controls] pointing at the panel id. Panel keeps its #[code aria-expanded] in sync.
+		p A trigger is any element whose #[code aria-controls] points at the panel's id. Panel keeps that trigger's #[code aria-expanded] in sync.
 		+codeblock('HTML')
 			// aria-expanded is set automatically by Panel
 			button(aria-controls="my-panel", aria-expanded="false") Toggle
@@ -28,7 +28,8 @@ block content
 					// content
 
 	+section("Focus management")
-		p Use #[code autoFocus] to move focus into the panel on open, and #[code returnFocus] to return it to the trigger on close.
+		p Use #[code autoFocus] to move focus into the panel when it opens, and #[code returnFocus] to send it back to the trigger when it closes.
+
 		+codeblock('JS').
 			new Panel('#my-panel', {
 				autoFocus: 'first',   // focus first focusable element on open
@@ -36,7 +37,7 @@ block content
 			});
 
 	+section("autoFocus options")
-		p Both #[code Panel] and #[code PanelSet] support the same #[code autoFocus] values.
+		p Panel and PanelSet take the same #[code autoFocus] values.
 
 		.card.api
 			table.table

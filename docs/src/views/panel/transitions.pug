@@ -22,13 +22,13 @@ block content
 
 	+section("1. Container")
 
-		p The container is the #[code [data-panel]] box. It animates its #[strong height] (or #[strong width] on the horizontal axis) between #[code 0] and the natural size when opening and closing.
+		p The container is the #[code [data-panel]] box. It animates between #[code 0] and the content’s natural size: height by default, or width on the horizontal axis..
 
 		.column.gap-1(data-panel-group data-panel-close-siblings data-panel-persist)
 
 			+collapse('h3', "Transitioning opening &amp; closing")
 
-				p These control the container’s size animation when the panel opens and closes.
+				p These control the container’s size animation as the panel opens and closes.
 
 				dl.bg-surface-tint
 					dt #[code --ps-open-speed]
@@ -44,7 +44,7 @@ block content
 					dd Easing when closing. Default: #[code ease-in-out].
 
 				h4 Demo
-				p Both speeds set to 1 second, so the two parts of the transition are easy to see separately: the container animates while the content fades in, and the content fades out while the container collapses.
+				p Both speeds are set to 1 second, so you can see the two halves separately: the container grows while the content fades in, and the content fades out while the container collapses.
 
 				.demo
 					button(aria-controls="panel-slow-demo" aria-expanded="false") Toggle panel
@@ -63,7 +63,7 @@ block content
 
 			+collapse('h3', "Transitioning extra transitions")
 
-				p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the size, for example a border or shadow. The value is appended to the #[code transition] shorthand directly, so use the same format: #[code property duration timing-function].
+				p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate extra CSS properties alongside the size, say a border or a shadow. The value is tacked onto the transition shorthand as-is, so write it in the same shape: #[code property duration timing-function].
 
 				p A common use is #[code box-shadow], including an #[code inset] box-shadow as a border, because it has no effect on layout, it never interferes with the size measurement.
 
@@ -97,13 +97,13 @@ block content
 
 	+section("2. Wrapper")
 
-		p The wrapper is the #[code .panel-wrapper] that holds your content. It fades in as the container opens (and out as it closes), and can additionally transform in.
+		p The wrapper is the #[code .panel-wrapper] that holds your content. It fades in as the container opens (and out as it closes), and can slide in on top of that.
 
 		.column.gap-1(data-panel-group data-panel-close-siblings data-panel-persist)
 
 			+collapse('h3', "The fade")
 
-				p By default the wrapper fades from #[code 0] to full opacity as the panel opens. Set #[code --ps-closed-opacity] to #[code 1] to keep the content fully visible while the container grows and shrinks. Only the size animates, no fade.
+				p By default the wrapper fades from #[code 0] to full opacity as the panel opens. Set #[code --ps-closed-opacity] to #[code 1] to keep the content fully visible while the container grows and shrinks, so only the size animates and there is no fade.
 
 				dl.bg-surface-tint
 					dt #[code --ps-closed-opacity]
@@ -126,9 +126,9 @@ block content
 
 			+collapse('h3', "The transform")
 
-				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears. It animates from that transform to #[code none] on open and back on close, sharing the #[code --ps-open-*] / #[code --ps-close-*] timing. Default #[code none] is a pure fade.
+				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears. It animates from that transform to #[code none] on open, and back on close, sharing the #[code --ps-open-] / #[code --ps-close-] timing. The default #[code none] is a plain fade.
 
-				p Open and close transforms can also have independent delays, both #[code 0s] by default. Set #[code --ps-wrapper-open-delay] to hold the content back until the box has grown a little, and #[code --ps-wrapper-close-delay] if you want it to linger before collapsing.
+				p The open and close transitions can have their own delays, both #[code 0s] by default. Use #[code --ps-wrapper-open-delay] to hold the content back until the box has grown a little, and #[code --ps-wrapper-close-delay] to let it linger before everything collapses.
 
 				dl.bg-surface-tint
 					dt #[code --ps-wrapper-transform-from]
@@ -156,12 +156,12 @@ block content
 
 
 	+section("Disabling transitions", "Disabling")
-		p Pass #[code transitions: false] (or #[code data-panel-transitions="false"]) to skip the animation entirely. Useful for the initial page load.
+		p Pass #[code transitions: false] (or #[code data-panel-transitions="false"]) to skip the animation entirely. Useful for the first paint on page load.
 
 		+codeblock('JavaScript').
 			new Panel('#my-panel', { transitions: false });
 
-		p Panel also respects #[code prefers-reduced-motion] automatically. All transitions are suppressed via CSS when the user has requested reduced motion.
+		p anel also honours #[code prefers-reduced-motion] on its own: when a user has asked for reduced motion, the CSS drops every transition.
 
 
 append styles

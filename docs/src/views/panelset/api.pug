@@ -8,13 +8,13 @@ block content
 		.container
 			.page-header
 				h1 PanelSet API
-				p.lead Constructor, instance methods, properties, and static methods.
+				p.lead Everything you can call on a PanelSet.
 
 	+section("Constructor")
 		.card.api
 			h3.code new PanelSet(elementOrSelector: HTMLElement | string, options?: PanelSetConfig)
 			hr
-			p Creates a new PanelSet instance.
+			p Builds a PanelSet on a single container, from a selector or an element. This is the manual route, for when you want a reference to one specific instance. To wire up several at once, #[code PanelSet.init()] (further down) is less typing.
 			h4 Parameters:
 			dl
 				dt.code elementOrSelector
@@ -30,7 +30,8 @@ block content
 		.card.api
 			h3.code panelSet.show(panelId: string, options?): Promise&lt;void&gt;
 			hr
-			p Activates a panel by ID. Does nothing if the panel is already active (unless #[code closeOnTab] is enabled).
+			p Activate a panel by its ID. If it is already the active one, nothing happens. The exception is #[code closeOnTab]: with that on, asking for the active panel again closes the whole set (well, if closable).
+
 			h4 Parameters:
 			dl
 				dt.code panelId
@@ -42,7 +43,7 @@ block content
 						li #[code transition?: boolean]: Whether to animate. Default: #[code true].
 						li #[code autoFocus?: AutoFocusMode]: Override the global #[code autoFocus] for this activation.
 			h4 Returns:
-			p Promise that resolves when the activation transition completes.
+			p A promise that resolves once the activation transition has finished.
 
 			+codeblock('JavaScript').
 				panelSet.show('panel-2');
@@ -54,7 +55,8 @@ block content
 		.card.api
 			h3.code panelSet.open(options?): void
 			hr
-			p Opens a closable PanelSet (#[code closable: true] required). Does nothing if it is already open.
+			p Open a closable set (it needs #[code closable: true]). Does nothing if it is already open.
+			
 			h4 Parameters:
 			dl
 				dt.code options (optional)
@@ -63,7 +65,7 @@ block content
 		.card.api
 			h3.code panelSet.close(options?): void
 			hr
-			p Closes a closable PanelSet. Does nothing if it is already closed.
+			p Close a closable set. Does nothing if it is already closed.
 			h4 Parameters:
 			dl
 				dt.code options (optional)
@@ -72,12 +74,13 @@ block content
 		.card.api
 			h3.code panelSet.toggle(options?): void
 			hr
-			p Opens if closed, closes if open. Same options as #[code open()].
+			p Open if closed, close if open. Kind of logical. Takes the same options as #[code open()]. 
 
 		.card.api
 			h3.code panelSet.next(options?): void
 			hr
-			p Activates the next panel in DOM order, stepping from the currently active (or pending) panel. By default it stops at the last panel; enable the #[code loop] config option (or #[code data-ps-loop]) to wrap to the first.
+			p Activate the next panel in DOM order, counting from the active (or pending) panel. By default it stops at the last one. Turn on #[code loop] (or #[code data-ps-loop]) to wrap round to the first instead.
+
 			h4 Parameters:
 			dl
 				dt.code options (optional)
@@ -89,7 +92,8 @@ block content
 		.card.api
 			h3.code panelSet.prev(options?): void
 			hr
-			p Activates the previous panel in DOM order. By default it stops at the first panel; enable the #[code loop] config option (or #[code data-ps-loop]) to wrap to the last.
+			p Activate the previous panel in DOM order. By default it stops at the first one. Turn on #[code loop] (or #[code data-ps-loop]) to wrap round to the last instead.
+
 			h4 Parameters:
 			dl
 				dt.code options (optional)
@@ -101,7 +105,7 @@ block content
 		.card.api
 			h3.code panelSet.getActive(): string | null
 			hr
-			p Returns the ID of the currently active (or pending) panel, or #[code null].
+			p The ID of the active (or pending) panel, or #[code null] if there is not one yet. During a transition you get the incoming panel, the one being activated, not the one on its way out.
 
 			+codeblock('JavaScript').
 				const current = panelSet.getActive();
@@ -112,14 +116,17 @@ block content
 		.card.api
 			h3.code panelSet.refresh(): void
 			hr
-			p Re-scans the DOM for this set’s panels and reconciles internal state: the active panel, trigger state, and the Prev/Next end-of-range disabling. Call after adding, removing, or reordering #[code [role="tabpanel"]] elements at runtime (for example a lazy or windowed wizard). The active panel is preserved when still present; otherwise it falls back to the #[code .active] panel, then the first. Newly added panels are initialised to the hidden state.
-			p #[strong Note:] call when idle, not mid-transition. #[code addPanel()] and #[code removePanel()] call this for you.
+			p Re-scan the DOM for this set’s panels and reconcile the internal state: which panel is active, the trigger state, and the Prev/Next end-of-range disabling. Call it after you add, remove, or reorder #[code [role="tabpanel"]] elements at runtime (a lazy or windowed wizard, say). The active panel is kept if it is still there. If it has gone, the fallback is the #[code .active] panel, then the first. Any new panels start hidden.
+			
+			p #[strong Note:] call it when the set is idle, not mid-transition. #[code addPanel()] and #[code removePanel()] already do it for you.
 
 		.card.api
 			h3.code panelSet.addPanel(panel: HTMLElement, position?): HTMLElement
 			hr
-			p Inserts a panel at runtime and refreshes. The node is appended to the wrapper unless a position is given. Ensures the element carries #[code role="tabpanel"]. Returns the inserted panel.
+			p Insert a panel at runtime, then refresh. Without a position it is appended to the wrapper. The element picks up #[code role="tabpanel"] if it does not already have one. Returns the panel you inserted.
+
 			h4 Parameters:
+
 			dl
 				dt.code panel
 				dd The element to insert.
@@ -136,12 +143,13 @@ block content
 		.card.api
 			h3.code panelSet.removePanel(panelId: string): void
 			hr
-			p Removes a panel by ID and refreshes. If the removed panel was active, #[code refresh()] promotes a fallback. Does nothing if the ID is not found.
+			p Remove a panel by ID, then refresh. If it happened to be the active one, #[code refresh()] promotes a fallback. Nothing happens if the ID is not found.
 
 		.card.api
 			h3.code panelSet.onBeforeOpen(handler, options?): void
 			hr
-			p Registers a handler for async content loading before panel activation.
+			p Register a handler that runs just before a panel activates, which is where content loading goes. Return a promise from it and activation waits for that promise to settle.
+
 			h4 Parameters:
 			dl
 				dt.code handler
@@ -156,7 +164,7 @@ block content
 						.then(html => targetPanel.innerHTML = html);
 				}, { once: true });
 
-			p You can also define the handler as a named function. This keeps the call site clean and lets you share the same function across multiple panelsets.
+			p You can pass a named function instead of an inline one. It keeps the call site tidy, and it lets you reuse the same loader across several panelsets.
 
 			+codeblock('JavaScript').
 				async function loadPanel(targetPanel, signal) {
@@ -169,18 +177,18 @@ block content
 		.card.api
 			h3.code panelSet.destroy(): void
 			hr
-			p Tears down the instance: aborts any pending animations, disconnects the height-tracking #[code ResizeObserver], and removes the #[code element.panelSet] reference. The DOM (panels, classes) is left as-is. Re-initialise with #[code new PanelSet()] or #[code PanelSet.init()] afterwards if needed.
+			p Destroy, delete, you get the point. It aborts any pending animation, disconnects the height-tracking #[code ResizeObserver], and drops the #[code element.panelSet] reference. The DOM is left exactly as it found it: panels, classes, all of it. Re-initialise with #[code new PanelSet()] or #[code PanelSet.init()] if you want it back.
 
 	+section("Instance properties")
 		.card.api
 			h3.code panelSet.element: HTMLElement
 			hr
-			p #[strong Read-only.] The #[code [data-panelset]] container element.
+			p #[strong Read-only.] The #[code [data-panelset]] container element itself.
 
 		.card.api
 			h3.code panelSet.panels: HTMLElement[]
 			hr
-			p #[strong Read-only.] Array of all #[code [role="tabpanel"]] elements in this PanelSet.
+			p #[strong Read-only.] Every #[code [role="tabpanel"]] element in this set, as an array.
 
 		.card.api
 			h3.code panelSet.activePanel: HTMLElement
@@ -190,23 +198,26 @@ block content
 		.card.api
 			h3.code panelSet.pendingPanel: HTMLElement
 			hr
-			p #[strong Read-only.] The panel being activated. Equal to #[code activePanel] when idle, but during a transition it is the incoming panel. #[code getActive()] returns its ID, and #[code next()] / #[code prev()] step relative to it so rapid clicks queue correctly.
+			p #[strong Read-only.] The panel being activated. It matches #[code activePanel] when the set is idle; during a transition it is the incoming one. #[code getActive()] returns its ID, and #[code next()] / #[code prev()] step relative to it, so rapid clicks queue up in the right order.
 
 		.card.api
 			h3.code panelSet.panelWrapper: HTMLElement
 			hr
-			p #[strong Read-only.] The direct-child #[code .panel-wrapper] element that holds the panels (created automatically if absent). Runtime inserts via #[code addPanel()] go here.
+			p #[strong Read-only.] The direct-child #[code .panel-wrapper] that holds the panels (created for you if it is missing). Runtime inserts from #[code addPanel()] land here.
 
 		.card.api
 			h3.code panelSet.config: PanelSetConfig
 			hr
-			p #[strong Read-only.] The merged configuration (1. defaults 2. constructor options 3. data attributes).
+			p #[strong Read-only.] The merged configuration. Precedence runs least specific to most: defaults first, then constructor options, then data attributes.
 
 	+section("Static methods")
 		.card.api
 			h3.code PanelSet.init(selectorOrOptions?, options?): PanelSet[]
 			hr
-			p Auto-initialises all panelsets matching the selector. Stores the instance on each container as #[code container.panelSet].
+			p Find every panelset matching the selector and initialise the lot in one call. Each instance is parked on its container as #[code container.panelSet], so you can reach it again later.
+			
+			p The selector is optional: if you leave it out, every #[code [data-panelset]] on the page will be included. The options object is only needed if you use a selector string: if you pass an element or leave the first argument out, options go in there.
+
 			h4 Parameters:
 			dl
 				dt.code selectorOrOptions (optional)
@@ -214,7 +225,7 @@ block content
 				dt.code options (optional)
 				dd Config object: only used when the first argument is a selector string.
 			h4 Returns:
-			p Array of created PanelSet instances.
+			p An array of the PanelSet instances it created.
 
 			+codeblock('JavaScript').
 				PanelSet.init();
@@ -227,7 +238,7 @@ block content
 		.card.api
 			h3.code PanelSet.defaults: PanelSetConfig
 			hr
-			p #[strong Static property.] Default configuration applied to all new instances. Modify to change defaults globally.
+			p #[strong Static property.] The default config handed to every new instance. Change it here to move the defaults for the whole page at once.
 
 			+codeblock('JavaScript').
 				PanelSet.defaults.autoFocus = 'heading';

@@ -8,10 +8,10 @@ block content
 		.container
 			.page-header
 				h1 PanelSet accessibility
-				p.lead What PanelSet handles for you, the markup it needs, and focus management.
+				p.lead What PanelSet handles for you, and what you still need to do.
 
 	+section("What PanelSet does automatically")
-		p PanelSet manages #[code aria-selected] automatically on all #[code [aria-controls]] trigger elements. It is set immediately when a tab switch is committed, before the animation ends. The #[code inert] attribute is applied to the closed container and to panels that are not yet visible during a transition.
+		p PanelSet keeps #[code aria-selected] in sync on every #[code [aria-controls]] trigger, setting it the moment a switch is committed, well before the animation ends. It also applies #[code inert] to a closed container and to panels that are not visible yet during a transition, so nothing offscreen stays reachable.
 
 		.card
 			table.table
@@ -35,18 +35,17 @@ block content
 
 	+section("What you still need to provide")
 		ul
-			li You should add keyboard navigation (arrow keys, Home, End) if using a proper #[code role="tablist"] pattern. You can use #[a(href="/panelcontrol/accessibility.html") PanelControl] to automate this for you.
-			li You should add an accessible name for panels, if there is #[strong no] controlling tab (give them #[code aria-label]). Panels that #[em are] controlled by a tab get #[code aria-labelledby] automatically (see #[a(href="/panelset/configuration.html?panel=option-managelabels#available-options") manageLabels], the auto-adding of the attribute can be turned off).
+			li Keyboard navigation (arrow keys, Home, End) if you are using a real #[code role="tablist"] pattern. You can use #[a(href="/panelcontrol/index.html") PanelControl] to automate this for you.
 
+			li An accessible name for any panel with #[strong no] controlling tab (give them #[code aria-label]). Panels that #[em do] have a tab get #[code aria-labelledby] for free (see #[a(href="/panelset/configuration.html?panel=option-managelabels#available-options") manageLabels], the auto-adding of the attribute can be switched off).
 
+			li The initial #[code aria-selected] state in your HTML. PanelSet overrides it on init, but it keeps the no-JS fallback correct.
 
-
-			li Initial #[code aria-selected] state in HTML (overridden on init, but correct for no-JS fallback)
 
 	+section("Required markup")
 		.card.api
 			h3 Panel elements
-			p Every panel must have #[code role="tabpanel"] and a unique #[code id].
+			p Every panel needs #[code role="tabpanel"] and a unique #[code id].
 
 			+codeblock('HTML')
 				div(data-panelset)
@@ -55,7 +54,7 @@ block content
 
 		.card.api
 			h3 Tab buttons
-			p For proper tab interfaces, wrap buttons in a #[code role="tablist"] with #[code role="tab"] and #[code aria-controls].
+			p For a real tab interface, wrap the buttons in a #[code role="tablist"], and give each one #[code role="tab"] and #[code aria-controls].
 
 			+codeblock('HTML')
 				div(role="tablist" aria-label="Settings sections")
@@ -63,11 +62,11 @@ block content
 					button(role="tab" id="tab-2" aria-controls="panel-2" aria-selected="false") Security
 
 	+section("Focus management")
-		p Switch panels with your #[strong keyboard] to see #[code autoFocus] in action. Tab to a button, press Enter, and watch where focus lands.
+		p Switch panels with the keyboard to see #[code autoFocus] at work. Tab to a button, press Enter, and watch where focus lands.
 
 		.card
 			+anchor('h3', 'a11y-heading')(title="autoFocus: 'heading'")
-			p Focus moves to the first heading in the incoming panel. PanelSet adds #[code tabindex="-1"] to the heading automatically if it does not already have one (a heading cannot take focus otherwise).
+			p Focus moves to the first heading in the incoming panel. PanelSet adds #[code tabindex="-1"] to that heading for you if it has not got one (a heading cannot take focus otherwise).
 
 			.demo
 				.demo-controls
@@ -91,7 +90,7 @@ block content
 
 		.card
 			+anchor('h3', 'a11y-first')(title="autoFocus: 'first'")
-			p Focus moves to the first focusable element. Kind of ideal for wizard steps where you want the user in the form immediately.
+			p Focus moves to the first focusable element. Ideal for wizard steps, where you want the user in the form straight away.
 
 			.demo
 				.demo-controls
@@ -130,9 +129,10 @@ block content
 
 		+anchor('h3', 'a11y-input')(title="autoFocus: 'input'")
 		p Focus moves to the first #[code input], #[code select], or #[code textarea] in the incoming panel.
+
 		.callout
 			+warning()
-			p #[strong Note]: this moves the focus for ALL users, not just keyboard.
+			p #[strong Note]: this one moves focus for everyone, not just keyboard users.
 
 		.card
 			.demo
@@ -154,7 +154,7 @@ block content
 								input(type="email" placeholder="you@example.com")
 
 	+section("autoFocus options")
-		p Both #[code Panel] and #[code PanelSet] support the same #[code autoFocus] values.
+		p Panel and PanelSet take the same #[code autoFocus] values.
 
 		.card.api
 			table.table
@@ -188,7 +188,7 @@ block content
 		.card.api
 			h3 Keyboard vs. mouse detection
 
-			p When you pass the #[code event] to #[code show()], PanelSet only moves focus on keyboard activation (Enter/Space). Mouse clicks skip the focus movement, preventing unwanted scroll.
+			p Pass the event to #[code show()] and PanelSet only moves focus on keyboard activation (Enter or Space). Mouse clicks skip the focus move, which keeps the page from jumping unexpectedly.
 
 			+codeblock('JS').
 				button.addEventListener('click', (event) => {
@@ -202,14 +202,14 @@ block content
 
 			.callout
 				+warning()
-				p #[strong Best practice:] Always pass #[code event] to #[code show()]. Without it, #[code autoFocus] fires on every activation including mouse clicks, which can cause unwanted scrolling on mobile.
+				p #[strong Best practice:] always pass #[code event] to #[code show()]. Without it, #[code autoFocus] fires on every activation, mouse clicks included, which can scroll the page out from under a mobile user. You do not want that.
 
 	+section("Labeling panels")
-		p Every panel needs an accessible name so screen readers can announce what content is being shown. PanelSet sets this up for tabbed panels automatically (#[code manageLabels]); the patterns below are what it produces, and what to write yourself for panels without a tab.
+		p Every panel needs an accessible name, so a screen reader can say what it is showing. PanelSet does this for tabbed panels automatically (#[code manageLabels]); the patterns below are what it produces, plus what to write yourself for panels that have no tab.
 
 		.card.api
 			h3 aria-labelledby (recommended for tabs)
-			p Links the panel to its tab button, so the button’s text becomes the panel’s accessible name. PanelSet applies this automatically (generating a tab #[code id] if needed); write it yourself only to override, or when #[code manageLabels] is off.
+			p Links the panel to its tab button, so the button’s text becomes the panel’s accessible name. PanelSet applies this for you (it comes up with a tab id if needed); write it by hand only to override, or when #[code manageLabels] is off.
 
 			+codeblock('HTML')
 				button(role="tab" id="tab-overview" aria-controls="panel-overview") Overview
@@ -219,7 +219,7 @@ block content
 
 		.card.api
 			h3 aria-label (for panels without tabs)
-			p Use for wizard steps, sub-panels, or any panel without a corresponding tab.
+			p For wizard steps, sub-panels, or any panel with no tab of its own.
 
 			+codeblock('HTML')
 				div(role="tabpanel" id="step-2" aria-label="Step 2: Contact Information")

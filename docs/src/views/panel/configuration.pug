@@ -11,9 +11,7 @@ block content
 				p.lead Options via constructor, data attributes, or both
 
 	+section("Setting options")
-		.title-text
-			h3 JavaScript options
-			p Pass an options object to the constructor or #[code init()].
+		h3 JavaScript options
 
 		+codeblock('JS').
 			Panel.init({ axis: 'horizontal', closeOnResize: true });
@@ -25,18 +23,16 @@ block content
 				returnFocus: true
 			});
 
-		.title-text
-			h3 Data attributes
-			p Configure individual panels directly in HTML.
+		h3 Data attributes
 
 		+codeblock('HTML')
 			#my-panel(data-panel data-panel-axis="horizontal" data-panel-close-on-resize data-panel-transitions="false")
 				.panel-wrapper ...
 
 
-		p JavaScript options and data attributes are both covered above. When both are set, precedence runs from least to most specific: #[strong defaults -&gt; JS options -&gt; group attribute -&gt; element attribute]. The most specific wins, so a per-element data attribute always overrides a global #[code init()] option.
+		p When the same option is set more than one way, the most specific wins: #[strong defaults -&gt; JS options -&gt; group attribute -&gt; element attribute]. So a data attribute on one panel always beats a global #[code init()] option.
 
-		p This is what lets an element opt out of a global flag. For example, with #[code Panel.init({ persist: true })] applied to every panel, a single panel can still disable it:
+		p That is how one panel opts out of a flag the rest of the page opted into. With #[code Panel.init({ persist: true })] covering every panel, a single panel can still switch it off:
 
 		+codeblock('HTML')
 			// Persists (inherits the global init option)
@@ -47,16 +43,19 @@ block content
 			#not-saved(data-panel data-panel-persist="false")
 				.panel-wrapper ...
 
-		p For #[code persist] and #[code deepLink], a #[code data-panel-group] can also set the option for all panels inside it. An individual panel’s own attribute still overrides the group.
+		p For #[code persist] and #[code deepLink], a #[code data-panel-group] can set the option for every panel inside it at once. A panel’s own attribute still wins over the group’s.
 
-		p Web component configuration uses plain attributes directly on #[code &lt;ps-panel&gt;]. No #[code data-] prefix, no JS call. These are documented in the third card of each option below. A global JS config object has no equivalent in the web component path: #[code connectedCallback] fires per element in isolation, with no shared initialisation moment. For global defaults across many elements, the JS init path is the better tool. Both paths can coexist on the same page. See the #[a(href="/panel/examples/webcomponent.html") Web Component integration page] for full usage examples.
+		p On #[code &lt;ps-panel&gt;] (a web component) the same options are plain attributes: no #[code data-] prefix, no JS call (third card of each option below). There is no web-component equivalent of a global config object, because #[code connectedCallback] fires per element on its own, with no shared init moment. So for page-wide defaults across many elements, JS #[code init()] is the better tool. A web component can easily coexist with the regular JS version. Full examples on the #[a(href="/panel/examples/webcomponent.html") Web Component integration] page.
 
 	+section("Available options")
-		p Plain attributes (e.g. #[code panel-axis], #[code panel-align]) are used when authoring with #[code &lt;ps-panel&gt;]. JavaScript options, data attributes, and plain attributes all map to the same underlying config.
+		p Every option below shows three ways to set it: a JS key, a data attribute, and a plain attribute for #[code &lt;ps-panel&gt;]. All three land on the same config, so pick whichever suits how you are authoring.
 
 		.column.gap-1(data-panel-group data-panel-close-siblings)
+
 			+apiOption("align: 'start' | 'center' | 'end'")
-				p This is where the content sits within the clipped container as it animates. Useful for panels that reveal from the center or from the far edge.
+
+				p Where the content sits inside the clipped container while it animates. Handy for panels that reveal from the centre or the far edge.
+
 				h4 Default: #[code 'start']
 				.card-row
 					.card
@@ -79,14 +78,16 @@ block content
 							li #[code panel-align="end"]
 
 			+apiOption("autoFocus: false | true | 'heading' | 'first' | 'input'")
-				p Move focus into the panel when it opens. Helps screen reader users know content has changed.
+				p Move focus into the panel when it opens, so a screen-reader user knows the content has changed.
 				ul
 					li #[code false]: no focus movement
 					li #[code true]: focus the panel element itself
 					li #[code 'heading']: focus the first h1-h6
 					li #[code 'first']: focus the first focusable element (keyboard events only)
 					li #[code 'input']: focus the first input/select/textarea (bypasses keyboard check)
-				p When you pass the original #[code Event] to #[code open()] or #[code toggle()], keyboard and mouse events are distinguished: mouse clicks skip autofocus to prevent unwanted scroll.
+
+				p Pass the original event to #[code open()] or #[code toggle()] and Panel tells keyboard from mouse: a mouse click skips autofocus, which keeps the page from jumping.
+
 				h4 Default: #[code false]
 				.card-row
 					.card
@@ -113,7 +114,9 @@ block content
 							li #[code panel-auto-focus="input"]
 
 			+apiOption("axis: 'vertical' | 'horizontal'")
-				p Which dimension animates. #[code vertical] animates #[code height]; #[code horizontal] animates #[code width].
+			
+				p Which dimension animates: #[code vertical] grows the height, #[code horizontal] grows the width.
+
 				h4 Default: #[code 'vertical']
 				.card-row
 					.card
@@ -133,7 +136,8 @@ block content
 							li #[code panel-axis="horizontal"]
 
 			+apiOption("closeOnResize: boolean")
-				p Closes the panel on resize. Useful for horizontal panels whose surrounding layout may break at different viewport widths.
+				p Close the panel when the window resizes. Useful for horizontal panels, whose surrounding layout can break at other viewport widths.
+
 				h4 Default: #[code false]
 				.card-row
 					.card
@@ -150,7 +154,8 @@ block content
 							li #[code panel-close-on-resize]
 
 			+apiOption("closeSiblings: boolean")
-				p Close other open panels in the same #[code [data-panel-group]] when this panel opens. Can also be set on the group element itself with #[code data-panel-close-siblings].
+				p When this panel opens, close any other open panel in the same #[code [data-panel-group]]. You can also set it on the group element with #[code data-panel-close-siblings].
+
 				h4 Default: #[code false]
 				.card-row
 					.card
@@ -168,10 +173,11 @@ block content
 
 				.callout 
 					+warning()
-					p #[strong Note]: whenever this is set, the closing of any opened sibling will use the #[code --ps-open-speed] and #[code --ps-open-timing] CSS variables for its transition. This is because we want to avoid mismatched transitions that may result in a wobbly look.
+					p #[strong Note]: when this is on, a closing sibling animates with the #[code --ps-open-speed] and #[code --ps-open-timing] variables, not its own close timing. That keeps the two movements in step instead of looking wobbly.
 
 			+apiOption("debug: boolean")
-				p Log open/close events to the console.
+				p Log open and close events to the console. Handy when something is opening that shouldn’t be, quiet otherwise.
+
 				h4 Default: #[code false]
 				.card-row
 					.card
@@ -188,7 +194,9 @@ block content
 							li #[code debug]
 
 			+apiOption("interruptible: boolean")
-				p When set to #[code false], new open or close attempts are ignored while an animation or content load is in progress. The current animation completes first.
+
+				p Leave it on. With it off, any open or close that arrives mid-animation or mid-load is dropped, and the one already running finishes first.
+
 				h4 Default: #[code true]
 				.card-row
 					.card
@@ -205,7 +213,9 @@ block content
 							li #[code panel-interruptible="false"]
 
 			+apiOption("loadingDelay: number")
-				p Milliseconds before the loading spinner appears during async content loading. Prevents spinner flash on fast connections.
+
+				p How long to wait before showing the spinner while async content loads. It prevents spinner flash on fast connections.
+
 				h4 Default: #[code 320]
 				.card-row
 					.card
@@ -222,7 +232,8 @@ block content
 							li #[code panel-loading-delay="320"]
 
 			+apiOption("loadingHeight: number")
-				p The pixel height the panel expands to while async content loads.
+				p The height, in pixels, the panel holds while async content loads. Somewhere for the spinner to live until the real content turns up.
+
 				h4 Default: #[code 150]
 				.card-row
 					.card
@@ -239,8 +250,10 @@ block content
 							li #[code panel-loading-height="200"]
 
 			+apiOption("persist: boolean")
-				p When enabled, opening or closing a panel saves its state to #[code localStorage]. On the next page load the panel is restored to its last state.
-				p It can also be set on a #[code [data-panel-group]] element to apply to all direct panels in the group, without setting it individually on each panel.
+				p Save the panel’s open or closed state to #[code localStorage] on every change, and restore it on the next load, so the panel comes back the way the user left it.
+
+				p You can also set it on a #[code [data-panel-group]] to cover every direct panel in the group, instead of marking each one.
+
 				h4 Default: #[code false]
 				.card-row
 					.card
@@ -256,13 +269,14 @@ block content
 						h4 Web Component attribute
 						ul
 							li #[code panel-persist]
-				p The panel must have an #[code id] for #[code persist] to work.
+				p The panel needs an #[code id], or there is nothing to key the storage on.
 
 			+apiOption("deepLink: boolean")
-				p When enabled, opening or closing a panel updates the #[code ?panel=] URL param via #[code history.replaceState]. This keeps the address bar in sync so the current state can be copied and shared. No new history entry is created.
-				p The #[code ?panel=] param is always read on load regardless of this option. #[code deepLink] only controls whether open/close #[em writes] back to the URL.
-				p To combine shareable URLs with localStorage restoration, enable both #[code persist] and #[code deepLink].
+
+				p Keep the #[code ?panel=] URL param in sync as the panel opens and closes (via #[code history.replaceState], so no new history entries pile up). The address bar then always reflects the current state, ready to copy and share. Reading the param on load happens regardless: #[code deepLink] only decides whether opening and closing write back to it. Want shareable URLs and #[code localStorage] restore? Turn on #[code persist] and #[code deepLink] together.
+
 				h4 Default: #[code false]
+
 				.card-row
 					.card
 						h4 JavaScript
@@ -276,10 +290,11 @@ block content
 						h4 Web Component attribute
 						ul
 							li #[code panel-deeplink]
-				p The panel must have an #[code id] for #[code deepLink] to work.
+				p The panel needs an #[code id], or there is nothing to put in the URL.
 
 			+apiOption("returnFocus: boolean")
-				p Return focus to the trigger element when the panel closes.
+				p When the panel closes, send focus back to the trigger that opened it, so a keyboard user picks up where they were.
+
 				h4 Default: #[code true]
 				.card-row
 					.card
@@ -297,7 +312,7 @@ block content
 							li #[code panel-return-focus="false"]
 
 			+apiOption("transitions: boolean")
-				p Enable or disable the CSS dimension transition.
+				p Turn the CSS size animation on or off.
 				h4 Default: #[code true]
 				.card-row
 					.card
@@ -315,7 +330,8 @@ block content
 							li #[code panel-transitions="false"]
 
 	+section("Grouping panels", "Grouping panels")
-		p Panel uses #[code data-panel-group] as a neutral scope marker. It does not enable any behaviour on its own, but it is the element where group-level options live: #[code data-panel-close-siblings], #[code data-panel-persist], and #[code data-panel-deeplink]. It also makes the group easy to target in CSS.
+
+		p #[code data-panel-group] is just a scope marker. On its own it does nothing, but it is where the group-level options live (#[code data-panel-close-siblings], #[code data-panel-persist], #[code data-panel-deeplink]), and it gives you a handle to target the group in CSS.
 
 		+codeblock('HTML')
 			div(data-panel-group)
@@ -330,7 +346,7 @@ block content
 					.panel-wrapper Answer 2
 
 
-		p Add #[code data-panel-close-siblings] to make opening one panel close the others. That is what turns a group into an accordion.
+		p Add #[code data-panel-close-siblings] so opening one panel closes the rest. That is the line that turns a group into an accordion.
 
 		+codeblock('HTML')
 			div(data-panel-group data-panel-close-siblings)
@@ -346,10 +362,10 @@ block content
 
 
 
-		p Without #[code data-panel-close-siblings], panels in a group are independent. Any number can be open at the same time. The wrapper can be any element. Multiple independent groups on the same page are supported.
+		p Without #[code data-panel-close-siblings] the panels are independent: any number can be open at once. The group element can be any tag, and you can have as many separate groups on a page as you like.
 
 	+section("Implicit trigger wiring", "Implicit wiring")
-		p When a trigger and its panel sit next to each other in the markup, you can omit the #[code id] / #[code aria-controls] pair entirely. To achieve this, add #[code data-panel-trigger] to the button. Panel will find the next #[code [data-panel]] sibling, assign it a stable generated ID, and set up #[code aria-controls] and #[code aria-expanded] automatically.
+		p When a button sits right next to its panel in the markup, you can skip the #[code id] / #[code aria-controls] pairing altogether. Put #[code data-panel-trigger] on the button and Panel finds the next #[code [data-panel]] sibling, gives it a stable generated id, and wires up #[code aria-controls] and #[code aria-expanded] for you.
 
 		+codeblock('HTML')
 			button(data-panel-trigger) Toggle
@@ -357,12 +373,21 @@ block content
 			div(data-panel)
 				.panel-wrapper Content
 
-		p This is especially useful for repeated collapse patterns (accordions, catalogues) where inventing a unique ID for every item is pure boilerplate. The generated IDs (#[code panel-1], #[code panel-2], …) are stable within a page load and increment in DOM order.
+		p The #[code data-panel-trigger] button can also sit inside a heading. If it is a direct child of a heading (#[code h1]–#[code h6]) that is the panel’s sibling, Panel wires it the same way, which keeps an accordion’s heading markup clean:
 
-		p If the panel already has an #[code id], it is left unchanged. #[code data-panel-trigger] only assigns an ID when one is absent.
+		+codeblock('HTML')
+			h3
+				button(data-panel-trigger) Toggle
+			+n
+			div(data-panel)
+				.panel-wrapper Content
+
+		p This earns its keep on repeated collapse patterns (accordions, catalogues), where inventing a unique id for every item is pure boilerplate. The generated ids (#[code panel-1], #[code panel-2], and so on) stay stable for the life of the page load and count up in DOM order.
+
+		p If the panel already has an #[code id], Panel leaves it alone. #[code data-panel-trigger] only comes up with one when it is missing.
 
 	+section("Events")
-		p Panel dispatches custom events on the panel element as it opens and closes. All events bubble and carry a #[code detail] object with a #[code trigger] property, which is the element that started the action (#[code null] when called programmatically).
+		p Panel dispatches custom events on the panel element as it opens and closes. They all bubble, and each carries a #[code detail] object with a #[code trigger]: the element that started the action, or #[code null] when your script did it.
 
 		.card
 			table.table
@@ -401,10 +426,7 @@ block content
 			});
 
 	+section("CSS variables")
-		p Transitions are controlled by CSS custom properties set on the element or any ancestor. All timing values must include a unit (#[code 0s] not #[code 0]). 
-
-		p These same variables apply when using #[code &lt;ps-panel&gt;]. Set them on the element directly or via CSS targeting #[code ps-panel].
-
+		p Timing and look come from CSS custom properties, set on the element or any ancestor. Every duration needs a unit (#[code 0s], never a bare #[code 0], or the browser ignores it). The same variables work on #[code <ps-panel>]: set them on the element, or target #[code ps-panel] in CSS.
 
 		+codeblock('CSS').
 			[data-panel] {
