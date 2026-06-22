@@ -37,8 +37,7 @@ block content
 						#pcwiz-step-3(role="tabpanel" hidden aria-label="Confirm")
 							h3 Step 3. Confirm
 							label.wizard-check
-								input(type="checkbox" required)
-								span I accept the terms and conditions
+								span Thank you for signing up! No more steps, so no checkbox here.
 
 				.wizard-nav
 					button.secondary(data-ps-prev="#pcwiz" data-ps-disabled-hint="pcwiz-prev-hint") Previous
@@ -89,8 +88,6 @@ block content
 			const panelOf = tab => document.getElementById(tab.getAttribute('aria-controls'));
 			const valid   = panel => !panel.querySelector('[required]:invalid');
 
-			// Hard rule: one listener covers every path into show() (tab clicks,
-			// the data-ps-prev/next buttons, and keyboard).
 			setEl.addEventListener('ps:beforeactivate', e => {
 				const { outgoingPanel, targetPanel } = e.detail;
 				const forward = outgoingPanel &&
@@ -101,10 +98,6 @@ block content
 				}
 			});
 
-			// Soft state: lock steps beyond the first incomplete one, and disable Next
-			// until the current step is valid. PanelSet disables Next at the last step;
-			// this adds the validation rule (and, since the button stays focusable,
-			// sets its hint to match the reason it is disabled).
 			function refresh() {
 				const firstInvalid = tabs.findIndex(t => !valid(panelOf(t)));
 				tabs.forEach((t, i) => pc.setTabState(
@@ -123,13 +116,9 @@ block content
 			setEl.addEventListener('ps:activationcomplete', refresh);
 			refresh();
 
-		p Next to the #[a(href="/panelset/examples/wizard.html") hand-built PanelSet version], the tab click handlers, the keyboard logic, and the whole Previous / Next block (setup and end-disabling) are gone. Stepping is now markup (#[code data-ps-prev] / #[code data-ps-next], disabled at the ends by PanelSet), and locking goes through #[code setTabState()] (which also keeps the roving #[code tabindex] correct) instead of poking #[code aria-disabled] directly. What stays on the page is the validation and the lock policy. That is a clear split: #[strong PanelControl and PanelSet own the UI, the page owns the flow].
+		p Compared to the #[a(href="/panelset/examples/wizard.html") hand-built PanelSet version], the tab click handlers, the keyboard logic, and the whole Previous / Next block (setup and end-disabling) are gone. 
+		p Stepping is now markup (#[code data-ps-prev] / #[code data-ps-next], disabled at the ends by PanelSet), and locking goes through #[code setTabState()] (which also keeps the roving #[code tabindex] correct) instead of poking #[code aria-disabled] directly. What stays on the page is the validation and the lock policy. #[strong PanelControl and PanelSet own the UI, the page owns the flow].
 
-	+section("Rough edges")
-		p Two rough edges show on purpose:
-		ul
-			li #[strong A locked tab’s click is silent.] A focused locked tab now explains itself (#[code data-pc-disabled-hint] adds an #[code aria-describedby] note while it is locked), but #[em clicking] one still does nothing and says nothing. The #[strong Next] button, by contrast, goes through the #[code ps:beforeactivate] check and focuses the missing field.
-			li #[strong Arrow keys skip locked tabs.] A locked tab leaves the roving order, so arrows jump over it. For a wizard you might prefer to arrow #[em onto] a locked step to read it, while still refusing to activate it. That is a design choice, not a fixed rule.
 
 
 append styles

@@ -1,7 +1,7 @@
-import type { PanelControlConfig } from './panelcontrol.types';
-import type { ShowOptions } from './panelset.types';
-import { parseDataAttrs, type AttrMap } from './functions/config';
-import { log, setDescribedBy } from './functions/utils';
+import type { PanelControlConfig } from './panelcontrol.types.js';
+import type { ShowOptions } from './panelset.types.js';
+import { parseDataAttrs, type AttrMap } from './functions/config.js';
+import { log, setDescribedBy } from './functions/utils.js';
 
 declare global {
 	interface HTMLElement {
@@ -9,22 +9,6 @@ declare global {
 	}
 }
 
-/*
- * PanelControl — an external controller for a PanelSet.
- * -----------------------------------------------------
- * A [data-panelcontrol] container holds the triggers (tabs, links, buttons)
- * that drive a single PanelSet. On click, the trigger's [aria-controls] target
- * is activated via the PanelSet instance's show().
- *
- * It finds its PanelSet through the panels the triggers point at, so the control
- * can live anywhere in the DOM — it does not need to be a sibling of the set.
- * One PanelControl drives exactly one PanelSet.
- *
- * When the control element is a [role="tablist"], it also provides the WAI-ARIA
- * tablist keyboard pattern: roving tabindex, arrow keys (orientation-aware),
- * Home/End, skipping disabled/hidden tabs. Non-tablist controls get click
- * wiring only (native Tab still works).
- */
 export class PanelControl {
 	static defaults: Required<Omit<PanelControlConfig, 'selector'>> = {
 		activation: 'manual',

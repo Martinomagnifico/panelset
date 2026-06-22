@@ -11,9 +11,16 @@ block content
 				p.lead One panel or many. CSS animates.
 
 	+section("What is it?")
-		p This package exports three classes. Two main classes: #[strong Panel] and #[strong PanelSet] and a class #[strong PanelControl]. Both main classes animate a size between values using an #[a(href="/how-it-works.html#lmau") LMAU]* cycle: Panel animates height or width (whichever its #[code axis] selects), PanelSet animates height. PanelControl is an addition to PanelSet that handles navigation for tabs.
+		p It is a transition helper for panels that you want to show or hide.
+		
+		p The package exports three classes. Two main classes: #[strong Panel] and #[strong PanelSet] and a class #[strong PanelControl]. Both main classes animate a size between values using an #[a(href="/how-it-works.html#lmau") LMAU]* cycle: 
+		
+		ul
+			li Panel animates height or width
+			li PanelSet animates height of a whole set of panels, showing one at a time
+			li PanelControl is an addition to PanelSet that handles navigation for tabs
 
-		p Both main classes use the same animation core and share most config options. Animation is CSS-only: JS measures and sets pixel values, then hands off to the browser. For async content, pass a promise to #[code onBeforeOpen()] to hold the open until it resolves. A spinner kicks in if loading takes longer than #[code loadingDelay]ms. Both also handle focus management.
+		p The two main classes use the same animation core and share most config options. Animation is CSS-only: JS measures and sets pixel values, then hands off to the browser. For async content, pass a promise to #[code onBeforeOpen()] to hold the open until it resolves. A spinner kicks in if loading takes longer than #[code loadingDelay]ms. Both also handle focus management.
 
 		p * LMAU: Lock-Measure-Animate-Unlock #[span.small (I should trademark the term)].
 
@@ -119,8 +126,6 @@ block content
 
 append styles
 	style.
-		/* PanelControl sits under PanelSet (col 2); no placeholder element, so
-		   the single-column layout has no empty cell and no double gap. */
 		.grid-2 > .start-2 { grid-column: 2; }
 		@container (max-width: 600px) {
 			.grid-2 > .start-2 { grid-column: auto; }
@@ -140,4 +145,3 @@ append scripts
 			import { PanelSet, Panel } from 'panelset';
 			PanelSet.init({ debug: true });
 			Panel.init({ debug: true });
-			//-new Panel('#intro-panel', { debug: true });

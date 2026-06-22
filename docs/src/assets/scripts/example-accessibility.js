@@ -1,8 +1,3 @@
-// Wizard controls for the autoFocus: 'first' demo.
-// next()/prev() handle the stepping (and clamp at the ends), and the
-// ps:activationstart event hands us atStart/atEnd, so there's no step
-// array or index math to keep in sync.
-
 const wizardEl  = document.getElementById('a11y-first-demo');
 const backBtn   = document.getElementById('a11y-wizard-back');
 const nextBtn   = document.getElementById('a11y-wizard-next');

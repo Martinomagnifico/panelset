@@ -1,25 +1,20 @@
 # PanelSet
 
-**Flexible panel management with smooth transitions**
+**Flexible panel management with smooth transitions.**
 
-A TypeScript/SCSS library for animating elements between sizes. Two classes — one for a single collapsible panel, one for switching between mutually exclusive panels — both built on the same lock-measure-animate-unlock cycle.
+A TypeScript + SCSS library for animating elements between sizes. Three classes share one animation core (a lock / measure / animate / unlock cycle): the browser does the animating, JavaScript only measures and sets pixel values. Accessible by default (managed ARIA and focus), interrupt-safe, and it respects `prefers-reduced-motion`.
 
-## Support
-   PanelSet is free and open source. If it saves you time, consider [sponsoring my work](https://ko-fi.com/martinomagnifico)
+> **Documentation:** this README is a quick reference. The full guides, every option, and live examples live in the HTML docs. Source and issues: <https://github.com/martinomagnifico/panelset>.
 
----
+## The three classes
 
-## Classes
+| Class | What it does |
+|---|---|
+| **`Panel`** | A single element that opens and closes (accordions, show-more, sidebars, drawers). Animates `height` or `width`. |
+| **`PanelSet`** | A container that switches between mutually exclusive panels (tabs, wizards, steppers). Animates its own height to fit the incoming panel. |
+| **`PanelControl`** | Optional. Makes a tab strip or sidebar drive a `PanelSet`: keyboard navigation, roving `tabindex`, `aria-selected`, and tab locking through `setTabState()`. |
 
-### `Panel`
-
-A single element that opens and closes. Use it for accordions, show-more blocks, sidebars, or any collapsible element. Triggers are any `[aria-controls]` element pointing to the panel's ID.
-
-### `PanelSet`
-
-A container that switches between mutually exclusive panels. Use it for tabs or wizard interfaces. The container animates its own height to match the incoming panel.
-
----
+`PanelControl` is side-effect-free, so it tree-shakes out of the ESM build when you don’t import it.
 
 ## Installation
 
@@ -28,27 +23,28 @@ npm install panelset
 ```
 
 ```js
-import { Panel, PanelSet } from 'panelset';
+import { Panel, PanelSet, PanelControl } from 'panelset';
 import 'panelset/style.css';
 ```
 
-Or via CDN (IIFE):
+Or as a script tag (IIFE bundle):
 
 ```html
+<link rel="stylesheet" href="panelset.css">
 <script src="panelset.js"></script>
+<!-- exposes window.Panel / PanelSet / PanelControl and registers
+     <ps-panel> / <ps-panelset> / <ps-panelcontrol> -->
 ```
 
----
+## Panel
 
-## Panel, quick start
+Panels are **closed by default** (no class needed). Add `is-open` to start open.
 
 ```html
 <button aria-controls="my-panel" aria-expanded="false">Toggle</button>
 
-<div id="my-panel" data-panel class="is-closed">
-  <div class="panel-wrapper">
-    Content here
-  </div>
+<div id="my-panel" data-panel>
+  <div class="panel-wrapper">Content here</div>
 </div>
 ```
 
@@ -57,45 +53,41 @@ import { Panel } from 'panelset';
 Panel.init();
 ```
 
+Any `[aria-controls]` element is a trigger. As a shortcut, a `[data-panel-trigger]` button placed next to a panel (or as the direct child of a heading next to it) gets its `id` and ARIA set up automatically.
+
 ### Accordion (group)
 
 ```html
 <div data-panel-group data-panel-close-siblings>
   <button aria-controls="acc-1" aria-expanded="false">Item 1</button>
-  <div id="acc-1" data-panel class="is-closed">
-    <div class="panel-wrapper">Answer 1</div>
-  </div>
+  <div id="acc-1" data-panel><div class="panel-wrapper">Answer 1</div></div>
 
   <button aria-controls="acc-2" aria-expanded="false">Item 2</button>
-  <div id="acc-2" data-panel class="is-closed">
-    <div class="panel-wrapper">Answer 2</div>
-  </div>
+  <div id="acc-2" data-panel><div class="panel-wrapper">Answer 2</div></div>
 </div>
 ```
 
-`data-panel-group` scopes the group. `data-panel-close-siblings` (or `closeSiblings: true`) makes opening one panel close the others.
+`data-panel-close-siblings` (or `closeSiblings: true`) makes opening one panel close the others.
 
 ### Panel options
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `axis` | `'vertical' \| 'horizontal'` | `'vertical'` | Which dimension animates |
+| `axis` | `'vertical' \| 'horizontal'` | `'vertical'` | Which dimension animates (height or width) |
 | `align` | `'start' \| 'center' \| 'end'` | `'start'` | Content alignment within the clipped container |
 | `transitions` | `boolean` | `true` | Enable/disable CSS transitions |
 | `autoFocus` | `false \| true \| 'heading' \| 'first' \| 'input'` | `false` | Move focus into the panel on open |
 | `returnFocus` | `boolean` | `true` | Return focus to the trigger on close |
 | `closeSiblings` | `boolean` | `false` | Close other open panels in the same group |
 | `closeOnResize` | `boolean` | `false` | Close the panel when the window is resized |
-| `interruptible` | `boolean` | `true` | Allow a new open/close to interrupt an animation in progress |
-| `persist` | `boolean` | `false` | Save open/closed state to localStorage |
-| `deepLink` | `boolean` | `false` | Update the `?panel=` URL param on open/close |
-| `loadingDelay` | `number` | `300` | ms before spinner appears during async loading |
-| `loadingHeight` | `number` | `150` | px height while async content loads |
+| `interruptible` | `boolean` | `true` | Allow a new open/close to interrupt one in progress |
+| `persist` | `boolean` | `false` | Save open/closed state to `localStorage` |
+| `deepLink` | `boolean` | `false` | Reflect open state in the `?panel=` URL |
+| `loadingDelay` | `number` | `320` | ms before the spinner appears during async loading |
+| `loadingHeight` | `number` | `150` | px reserved while async content loads |
 | `debug` | `boolean` | `false` | Log events to the console |
 
-All options are also available as data attributes, e.g. `data-panel-axis="horizontal"`.
-
-### Async content (Panel)
+### Async content
 
 ```js
 const panel = new Panel('#my-panel');
@@ -103,19 +95,19 @@ const panel = new Panel('#my-panel');
 panel.onBeforeOpen((el, signal) => {
   return fetch('/api/content', { signal })
     .then(r => r.text())
-    .then(html => {
-      el.querySelector('.panel-wrapper').innerHTML = html;
-    });
+    .then(html => { el.querySelector('.panel-wrapper').innerHTML = html; });
 }, { once: true });
 ```
 
----
+Or listen for the `panel:beforeopen` event and call `e.detail.waitUntil(promise)` to hold the open until it resolves.
 
-## PanelSet, quick start
+## PanelSet
 
 ```html
-<button aria-controls="panel-1">Tab 1</button>
-<button aria-controls="panel-2">Tab 2</button>
+<nav role="tablist" data-panelcontrol>
+  <button role="tab" aria-controls="panel-1" aria-selected="true">Tab 1</button>
+  <button role="tab" aria-controls="panel-2">Tab 2</button>
+</nav>
 
 <div data-panelset>
   <div class="panel-wrapper">
@@ -126,36 +118,36 @@ panel.onBeforeOpen((el, signal) => {
 ```
 
 ```js
-import { PanelSet } from 'panelset';
+import { PanelSet, PanelControl } from 'panelset';
 PanelSet.init();
-
-document.addEventListener('click', e => {
-  const btn = e.target.closest('button[aria-controls]');
-  if (!btn) return;
-  const id = btn.getAttribute('aria-controls');
-  document.getElementById(id)?.closest('[data-panelset]')?.panelSet?.show(id, { event: e });
-});
+PanelControl.init();   // keyboard navigation + state for the tab strip
 ```
+
+Mark the starting panel with `class="active"` and every other panel `hidden`.
 
 ### PanelSet options
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `align` | `'start' \| 'center' \| 'end'` | `'start'` | Container alignment |
-| `transitions` | `boolean \| { panels?: boolean, height?: boolean }` | `true` | Enable/disable transitions independently |
-| `closable` | `boolean` | `false` | Allow the container to be fully closed |
-| `closeOnTab` | `boolean` | `false` | Clicking the active tab closes the container |
+| `align` | `'start' \| 'center' \| 'end'` | `'start'` | Alignment while opening/closing |
+| `transitions` | `boolean \| { panels?: boolean, height?: boolean }` | `true` | Enable/disable transitions (or per axis) |
+| `levels` | `boolean` | `false` | Give panels a depth order from DOM position; forward/back slide opposite ways |
+| `loop` | `boolean` | `false` | `next()` / `prev()` wrap around the ends |
+| `closable` | `boolean` | `false` | Allow the whole container to open and close |
+| `closeOnTab` | `boolean` | `false` | Clicking the active tab closes the container (needs `closable`) |
+| `disabledMode` | `'aria' \| 'native'` | `'aria'` | How `data-ps-next` / `-prev` buttons are disabled at the ends |
 | `autoFocus` | `false \| true \| 'heading' \| 'first' \| 'input'` | `false` | Move focus into the panel on activation |
 | `returnFocus` | `boolean` | `false` | Return focus to the trigger on close |
 | `interruptible` | `boolean` | `true` | Allow a new activation to interrupt one in progress |
-| `manageTriggers` | `boolean` | `true` | Let PanelSet update `aria-selected` and trigger state |
-| `persist` | `boolean` | `false` | Save the active panel ID to localStorage |
-| `deepLink` | `boolean` | `false` | Update the `?panel=` URL param on activation |
-| `loadingDelay` | `number` | `300` | ms before spinner appears during async loading |
-| `loadingHeight` | `number` | `150` | px height while async content loads |
+| `manageTriggers` | `boolean` | `true` | Reflect `aria-selected` / activating state onto `[aria-controls]` triggers |
+| `manageLabels` | `boolean` | `true` | Link each panel to its tab via `aria-labelledby` (auto-generates a tab id if needed) |
+| `persist` | `boolean` | `false` | Save the active panel id to `localStorage` |
+| `deepLink` | `boolean` | `false` | Reflect the active panel in the `?panel=` URL |
+| `loadingDelay` | `number` | `320` | ms before the spinner appears during async loading |
+| `loadingHeight` | `number` | `150` | px reserved while async content loads |
 | `debug` | `boolean` | `false` | Log events to the console |
 
-### Async content (PanelSet)
+### Async content
 
 ```js
 const ps = new PanelSet('#my-panelset');
@@ -163,49 +155,59 @@ const ps = new PanelSet('#my-panelset');
 ps.onBeforeOpen((targetPanel, signal) => {
   return fetch(`/api/${targetPanel.id}`, { signal })
     .then(r => r.json())
-    .then(data => {
-      targetPanel.innerHTML = render(data);
-    });
+    .then(data => { targetPanel.innerHTML = render(data); });
 }, { once: true });
 ```
 
----
+## PanelControl
 
-## CSS variables
+Drives one `PanelSet` from its trigger elements, so you do not hand-write the tab interaction. Put `data-panelcontrol` on the container; add `role="tablist"` (with `role="tab"` buttons) to switch on the keyboard model (arrow keys, `Home` / `End`, roving `tabindex`). It finds its `PanelSet` through the panels the triggers point at, so the control can live anywhere in the DOM.
 
-### Panel
+Lock or unlock a tab from your own code:
+
+```js
+control.setTabState('panel-3', 'disabled');  // lock
+control.setTabState('panel-3', 'enabled');   // unlock
+```
+
+| Option | Type | Default | Description |
+|---|---|---|---|
+| `activation` | `'manual' \| 'auto'` | `'manual'` | `manual`: arrows move focus, Enter/Space/click activates. `auto`: arrows activate too. |
+| `debug` | `boolean` | `false` | Log to the console |
+
+## Configuration sources
+
+Every option can also be set as a **data attribute** in the markup, or as a plain attribute on the **web component**. When the same option is set more than once, the most specific wins: **defaults -> JS options -> data attribute**. The exact attribute names are listed per option in the docs.
+
+## Web components
+
+`register()` defines `<ps-panel>`, `<ps-panelset>`, and `<ps-panelcontrol>` (the script-tag build calls it for you). On the elements, options are plain attributes, no `data-` prefix.
+
+```js
+import { register } from 'panelset';
+register();            // default 'ps' prefix
+register('acme');      // <acme-panel>, <acme-panelset>, <acme-panelcontrol>
+```
+
+## CSS
+
+Timing and sizing are CSS custom properties, set on the element or any ancestor (all timing values need a unit, e.g. `0.25s` not `0`). For example, on a Panel:
 
 ```css
 [data-panel] {
-  --ps-open-speed:          0.25s;
-  --ps-open-timing:         ease-in-out;
-  --ps-close-speed:         0.25s;
-  --ps-close-timing:        ease-in-out;
-  --ps-panel-width:         320px;  /* horizontal panels */
-  --ps-closed-opacity:      0;      /* set to 1 to keep content visible while closed */
+  --ps-open-speed:   0.25s;
+  --ps-open-timing:  ease-in-out;
+  --ps-close-speed:  0.25s;
+  --ps-close-timing: ease-in-out;
 }
 ```
 
-### PanelSet
+`PanelSet` exposes a similar set for its fade and height timing. See the docs for the full list.
 
-```css
-[data-panelset] {
-  --ps-fadeout-speed:         0.125s;
-  --ps-fadeout-timing:        ease-in;
-  --ps-fadein-speed:          0.125s;
-  --ps-fadein-timing:         ease-in-out;
-  --ps-fadein-delay:          0.125s;
-  --ps-height-duration-ratio: 1;
-  --ps-transition-timing:     ease-in-out;
-  --ps-open-speed:            0.25s;
-  --ps-open-timing:           ease-in-out;
-  --ps-close-speed:           0.25s;
-  --ps-close-timing:          ease-in-out;
-}
-```
+## Support
 
----
+PanelSet is free and open source. If it saves you time, consider [sponsoring my work](https://ko-fi.com/martinomagnifico).
 
 ## License
 
-MIT © [Martinomagnifico](https://github.com/Martinomagnifico)
+MIT © [Martinomagnifico](https://github.com/martinomagnifico)

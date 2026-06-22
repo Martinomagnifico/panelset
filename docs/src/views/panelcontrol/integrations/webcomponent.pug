@@ -77,20 +77,6 @@ block content
 		p It is safe to call multiple times; it skips any name that is already defined.
 
 
-//-append styles
-	style.
-		ps-panelcontrol.tabs {
-			display: flex;
-		}
-		#wc-pc {
-			border: 1px solid var(--border-default);
-			border-radius: 8px;
-		}
-		#wc-pc .panel-wrapper [role="tabpanel"] {
-			padding: 1.25rem;
-		}
-
-
 append scripts
 	if isProd
 		script(src=`${basePath}lib/panelset.js` vite-ignore)

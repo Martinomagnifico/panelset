@@ -1,4 +1,4 @@
-import type { AutoFocusMode } from './functions/focus';
+import type { AutoFocusMode } from './functions/focus.js';
 
 export interface PanelConfig {
 	axis?: 'vertical' | 'horizontal';

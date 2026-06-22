@@ -140,8 +140,7 @@ block content
 						#vstep-3(role="tabpanel" hidden aria-label="Confirm")
 							h3 Step 3. Confirm
 							label.wizard-check
-								input(type="checkbox" required)
-								span I accept the terms and conditions
+								span Thank you for signing up! No more steps, so no checkbox here.
 				.wizard-nav
 					button.secondary(data-ps-prev="#vwizard" data-ps-disabled-hint="vwiz-prev-hint") Previous
 					button(data-ps-next="#vwizard") Next
@@ -184,13 +183,11 @@ block content
 				const panelOf = tab => document.getElementById(tab.getAttribute('aria-controls'));
 				const valid   = panel => !panel.querySelector('[required]:invalid');
 
-				// Tabs jump to a panel. The data-ps-prev/next buttons are handled by PanelSet.
 				tabs.forEach(tab => tab.addEventListener('click', event => {
 					if (tab.getAttribute('aria-disabled') !== 'true')
 						ps.show(tab.getAttribute('aria-controls'), { event });
 				}));
 
-				// Hard rule: covers tab clicks, buttons, keyboard, every path.
 				vwizard.addEventListener('ps:beforeactivate', event => {
 					const { outgoingPanel, targetPanel } = event.detail;
 					const forward = outgoingPanel &&
@@ -201,9 +198,6 @@ block content
 					}
 				});
 
-				// Soft state: lock steps beyond the first incomplete one, and disable Next
-				// until the current step is valid. PanelSet disables Next at the last step;
-				// since it stays focusable, set its hint to match why it is disabled.
 				function refresh() {
 					const firstInvalid = tabs.findIndex(t => !valid(panelOf(t)));
 					tabs.forEach((t, i) =>
@@ -220,7 +214,9 @@ block content
 				vwizard.addEventListener('ps:activationcomplete', refresh);
 				refresh();
 
-			p #[strong Heads up]: the tab locking above is still done by hand: recompute on every #[code change] and mirror it into #[code aria-disabled] on each tab. The same shape recurs in every wizard, a strong hint it belongs in a small reusable tab-strip layer over PanelSet. That layer is #[a(href="/panelcontrol/examples/wizard.html") PanelControl], which handles the tabs and takes the locking through #[code setTabState()] (and attaches each locked tab’s #[code data-pc-disabled-hint] to #[code aria-describedby] so a screen-reader user hears why it is locked).
+			.callout
+				+warning()
+				p #[strong Note]: the tab locking above is still done by hand. If you want to avoid that, just use #[a(href="/panelcontrol/examples/wizard.html") PanelControl].
 
 
 

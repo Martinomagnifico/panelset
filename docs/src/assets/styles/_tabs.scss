@@ -82,8 +82,6 @@
 		}
 	}
 
-	// Closable sets (PanelControl stamps [data-closeable]) keep the active
-	// trigger clickable, so re-clicking it can close the panel.
 	&[data-closeable] button[aria-selected="true"] {
 		pointer-events: auto;
 		cursor: pointer;

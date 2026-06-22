@@ -17,7 +17,26 @@ block content
 
 		p A Panel has two transitionable parts: the #[strong container] that animates its size open and closed, and the inner #[strong wrapper] that holds your content and fades (or transforms) in.
 
-		//- TODO: structure diagram (Container + Wrapper) goes here.
+
+		svg.img-transitions(xmlns='http://www.w3.org/2000/svg' width='340' height='340' fill='none' viewbox='0 0 340 340')
+			rect.sw-2.wrap(width='180' height='160' x='80' y='141' stroke-dasharray='8 8' rx='8')
+
+			rect.sw-3.cont(stroke-dasharray='8 8' x='65' y='126' width='210' height='190' rx='16')
+			rect.sw-4.cont(x='65' y='126' width='210' height='138' rx='16')
+
+			path.sw-2.anim-indicator(d='M41 264v52M49 272l-8-8-8 8M33 308l8 8 8-8')
+
+			path.sw-3.indicator(d='M65 217H31V26')
+			circle.indicator(cx='65' cy='217' r='6')
+			path.sw-3.indicator(d='M170 217h146V109')
+			circle.indicator(cx='170' cy='217' r='6')
+			path.sw-3.indicator(d='M170 141V52')
+			circle.indicator(cx='170' cy='141' r='6')
+
+			text: tspan(x='0' y='15.892') 1. Container (data-panel)
+			text: tspan(x='80.359' y='43.892') 2. Wrapper (.panel-wrapper)
+			text: tspan(x='261.672' y='98.892') Content
+
 
 
 	+section("1. Container")

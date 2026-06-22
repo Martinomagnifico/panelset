@@ -144,12 +144,6 @@ dl.bg-surface-tint {
 	margin-top: -3px;
 	margin-bottom: -3px;
 
-	// border: 1px solid black;
-
-
-
-	// border-radius: 1rem;
-
 	&:before {
 		content: '';
 		z-index: -1;
@@ -162,7 +156,6 @@ dl.bg-surface-tint {
 		background: transparent;
 		transition: background-color 0.15s ease-in-out;
 		border-bottom: 1px solid transparent;
-		// opacity: 0;
 	}
 
 
@@ -174,8 +167,6 @@ dl.bg-surface-tint {
 			background: var(--btn-plain-hover-bg);
 
 		}
-		// text-decoration: underline;
-		// background: var(--btn-plain-hover-bg);
 	}
 
 	h3, h4 {

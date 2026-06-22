@@ -32,7 +32,6 @@ p code, li code, h3.code, dt.code {
 }
 
 pre {
-	// background: var(--bg-surface-tint);
 	border-radius: 6px;
 	padding: 1rem;
 	overflow-x: auto;
@@ -81,7 +80,6 @@ dl.horizontal {
 	.code-header {
 		padding: 0.5rem 0.5rem 0.5rem 1rem;
 		border-bottom: 1px solid var(--border-default);
-		// border-bottom: none;
 		border-radius: 6px 6px 0 0;
 		font-size: 0.875rem;
 		font-weight: 600;
@@ -128,14 +126,6 @@ dl.horizontal {
 		font-weight: 600;
 	}
 }
-
-// pre code.hljs {
-// 	padding: 0;
-// 	background: none;
-// }
-
-
-
 
 
 button.copy {

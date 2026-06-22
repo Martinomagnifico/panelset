@@ -1,2 +1,2 @@
-import { register } from './index';
+import { register } from './index.js';
 register();

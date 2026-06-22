@@ -21,7 +21,11 @@
     gap: 0;
   }
 
-  button {
+  button, 
+  button[aria-selected="true"],
+  button[aria-expanded="true"],
+  button[aria-expanded="false"],
+  button:hover {
     all: revert;
     margin-right: 0.1rem;
 

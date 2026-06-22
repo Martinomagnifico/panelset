@@ -3,6 +3,7 @@
  * start() aborts the previous cycle and returns a fresh AbortSignal.
  * Pass it to fetch() and cancelling the animation cancels the request too.
  */
+
 export class Core {
 	private _controller = new AbortController();
 

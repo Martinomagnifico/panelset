@@ -1,6 +1,6 @@
-import { PanelSet } from './panelset';
-import type { PanelSetConfig } from './panelset.types';
-import { parseAttrs } from './functions/config';
+import { PanelSet } from './panelset.js';
+import type { PanelSetConfig } from './panelset.types.js';
+import { parseAttrs } from './functions/config.js';
 
 export class PanelSetElement extends HTMLElement {
 	connectedCallback(): void {

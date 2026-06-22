@@ -1,0 +1,111 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "PanelSet | Closable & alignment"
+
+
+mixin align-demo(uid, align)
+	.flex.vertical
+		h5 #[code data-panelset-align="#{align}"]
+		.demo
+			.demo-controls
+				button(aria-controls=`${uid}-panel-1`)
+					span Features
+					+chevron(16, 'down')
+				button(aria-controls=`${uid}-panel-2`)
+					span Pricing
+					+chevron(16, 'down')
+
+			+examplepanelset(uid)(data-closable data-close-on-tab data-panelset-align=(align !== 'start' ? align : undefined))
+
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Closable PanelSets
+				p.lead Close ’em. Hide ’em. Align ’em.
+
+	+section("Closable PanelSets")
+		p Set #[code closable] to make a PanelSet... closable. This can be done through the JavaScript config or through a #[code data-attribute]. The closing and opening can be controlled with buttons that have attributes: #[code data-panelset-close="#the-id"], #[code data-panelset-open="#the-id"], and #[code data-panelset-toggle="#the-id"].
+
+		p You can also set #[code closeOnTab] to make the active button/tab close the set when clicked, instead of just switching panels. This is especially useful for a megamenu, where you want to click the active tab to hide the menu.
+
+		.demo
+			.demo-controls(data-closeable)
+				button(aria-controls="closable-panel-1")
+					span Panel 1
+					+chevron(16, 'down')
+				button(aria-controls="closable-panel-2")
+					span Panel 2
+					+chevron(16, 'down')
+				button(aria-controls="closable-panel-3")
+					span Panel 3
+					+chevron(16, 'down')
+				button(data-panelset-close="#closable-set") Close
+				button(data-panelset-open="#closable-set") Open
+				button(data-panelset-toggle="#closable-set") Toggle
+
+			#closable-set(data-panelset data-closable data-close-on-tab)
+				.panel-wrapper
+					.active#closable-panel-1(role="tabpanel", aria-label="Key features")
+						+example-1
+					#closable-panel-2(role="tabpanel", hidden, aria-label="Pricing plans")
+						+example-2
+					#closable-panel-3(role="tabpanel" hidden, aria-label="Support options")
+						+example-3
+
+
+		+codeblock('HTML')
+			div(data-panelset data-closable data-close-on-tab)
+				.panel-wrapper
+					div(role="tabpanel" class="active" aria-label="Features") …
+					div(role="tabpanel" hidden aria-label="Pricing") …
+					div(role="tabpanel" hidden aria-label="Support") …
+
+		+codeblock('JS').
+			PanelSet.init('#my-set', { closable: true, closeOnTab: true });
+
+
+
+	+section("Alignment")
+		p Alignment only affects #[strong closable] PanelSets, and #[strong only] while it is opening, closing, or sitting closed. As the container animates its height between 0 and the panel’s full height, #[code align] decides which edge the content is anchored to: it grows from the top (#[code start]), from the middle (#[code center]), or from the bottom (#[code end]). Each set is closable with #[code closeOnTab], so the chevron buttons switch panels, and clicking the active one closes the set. Open and close each one to see the difference.
+
+		.card.alignment-demos
+			.grid-3
+				+align-demo('align-start', 'start')
+				+align-demo('align-center', 'center')
+				+align-demo('align-end', 'end')
+
+		.callout
+			+warning()
+			p #[strong The difference shows during the motion.] Once a set is fully open its height matches the content, so all three look the same at rest. Alignment is what you see #[em while] it opens and closes (and where the content parks while closed).
+
+		+anchor('h3')(title="How to use it")
+		p Set it as a config option, or with the #[code data-panelset-align] attribute on the container. The default is #[code start], so you only need the attribute for #[code center] or #[code end].
+
+		+codeblock('HTML')
+			div(data-panelset data-closable data-close-on-tab data-panelset-align="end")
+				.panel-wrapper
+					div(role="tabpanel" class="active" aria-label="Features") …
+					div(role="tabpanel" hidden aria-label="Pricing") …
+					div(role="tabpanel" hidden aria-label="Support") …
+
+		+codeblock('JS').
+			PanelSet.init('#my-set', { closable: true, align: 'end' });
+
+		+anchor('h3')(title="Vertical only")
+		p Unlike #[a(href="/panel/examples/alignment.html") Panel], PanelSet has no horizontal axis. A PanelSet animates its height, so alignment runs along that single vertical axis, and there is no push or pin behaviour. It also has no effect on a non-closable set, where panels simply switch in place.
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}assets/scripts/example-closable.js` vite-ignore)
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			PanelSet.init();
+	else
+		script(type="module" src="/src/assets/scripts/example-closable.js")
+		script(type="module").
+			import PanelSet from 'panelset';
+			PanelSet.init({ debug: true });

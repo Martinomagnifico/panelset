@@ -1,5 +1,4 @@
-// Suppress transitions on the parent container and everything inside it
-// when a panel is snap-opened from a URL parameter or localStorage.
+
 :has(> [data-panel].is-restored),
 :has(> [data-panel].is-restored) * {
   transition: none !important;
@@ -10,7 +9,6 @@
 }
 
 .api {
-  // gap: 0;
 
   h3.code {
     font-size: 1.2rem;
@@ -34,21 +32,6 @@
       margin-top: 1rem;
     }
   }
-
-  // p:where(:not(:first-child)) {
-  //   margin-top: 1rem;
-  // }
-
-  // hr + p, h4 + p {
-  //   margin-top: 0;
-  // }
-
-
-
-  // dl + .code-block {
-  //   margin-top: 1.5rem;
-  // }
-
 }
 
 .column {
@@ -121,7 +104,7 @@
   }
 }
 
-.btn.bottom, .bottom {
+.btn.bottom, .bottom:not(.column) {
   margin-top: auto;
 }
 
@@ -200,7 +183,6 @@
 .demo-controls {
   display: flex;
   gap: 1rem;
-  // margin-bottom: var(--standard-padding);
   flex-wrap: wrap;
 
   &.center {
@@ -237,6 +219,10 @@
   -ms-user-select: none;
   user-select: none;
 
+  &:has(.chevron) {
+    padding-right: 0.6rem;
+  }
+
   &[aria-expanded="true"],
   &[aria-expanded="false"],
   &[aria-selected="true"] {
@@ -250,14 +236,6 @@
 
   }
 
-  &[aria-selected="true"] {
-      cursor: default;
-  }
-
-  // &:not([aria-disabled="true"]):not([aria-selected="true"]):hover {
-  //   box-shadow: 0 4px 8px var(--special-shadow);
-  //   background: var(--demo-btn-bg);
-  // }
   &:hover {
     box-shadow: 0 4px 8px var(--special-shadow);
     background: var(--demo-btn-bg);
@@ -265,13 +243,6 @@
   &[aria-selected="true"]:hover {
     box-shadow: none;
   }
-
-
-  // &.accordion-trigger:hover {
-  //   box-shadow: none;
-  //   background: none;
-  // }
-
 
   &:not([aria-disabled="true"]):hover, 
   &:not([aria-disabled="true"]):focus-visible {
@@ -285,6 +256,19 @@
   }
 }
 
+// Disable 'active' state specifically for closable panelsets where one panel must still be active.
+.demo:has([data-panelset][inert]) {
+
+  [aria-selected="true"]:not(:hover):not([role="tab"]) {
+    background: var(--color-special-tint-25);
+    border-color: var(--special-normal);
+    color: var(--special-normal);
+  }
+
+}
+
+
+
 [data-closeable] > button[aria-selected="true"] {
   pointer-events: auto;
   cursor: pointer;
@@ -293,7 +277,6 @@
 .demo {
   .tabs {
     background: var(--demo-surface-tint);
-    // z-index: 9999999;
     button,
     button:hover,
     button[aria-selected="true"] {
@@ -314,4 +297,46 @@ button[aria-expanded="true"] .when-closed {
   h3 + p {
     margin-top: 0.5rem;
   }
+}
+
+.img-transitions {
+  path, rect {
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .sw-2 {
+    stroke-width: 2px;
+  }
+  .sw-3 {
+    stroke-width: 3px;
+  }
+  .sw-4 {
+    stroke-width: 4px;
+  }
+  .cont {
+    stroke: var(--btn-plain-text);
+  }
+  .wrap {
+    fill: var(--special-normal);
+    fill-opacity: 0.2;
+    stroke: var(--special-normal);
+  }
+  .panel {
+    stroke: var(--btn-plain-text);
+  }
+  .anim-indicator {
+    stroke: var(--btn-plain-text);
+  }
+  path.indicator {
+    stroke: var(--text-default);
+  }
+  circle.indicator {
+    fill: var(--text-default);
+  }
+  text {
+    fill: var(--text-default);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 16px;
+  }
+
 }

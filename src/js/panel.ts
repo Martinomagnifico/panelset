@@ -1,12 +1,12 @@
 import '../style/panelset.scss';
-import { Core } from './functions/core';
-import { autoFocus } from './functions/focus';
-import { readPanelParam, writePanelParam, readStored, writeStored } from './functions/persist';
-import { findBody, lockBody, unlockBody } from './functions/pinning';
+import { Core } from './functions/core.js';
+import { autoFocus } from './functions/focus.js';
+import { readPanelParam, writePanelParam, readStored, writeStored } from './functions/persist.js';
+import { findBody, lockBody, unlockBody } from './functions/pinning.js';
 
-import type { PanelConfig, BeforeOpenEventDetail, PanelEventDetail, AsyncOpenHandler } from './panel.types';
-import { parseDataAttrs, type AttrMap } from './functions/config';
-import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil } from './functions/utils';
+import type { PanelConfig, BeforeOpenEventDetail, PanelEventDetail, AsyncOpenHandler } from './panel.types.js';
+import { parseDataAttrs, type AttrMap } from './functions/config.js';
+import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil } from './functions/utils.js';
 
 declare global {
 	interface HTMLElement {

@@ -15,23 +15,35 @@ block content
 
 	+section("Transitionable elements")
 
-		svg(xmlns="http://www.w3.org/2000/svg", width="340", height="340", fill="none", viewBox="0 0 340 340")
-			path(stroke="var(--special-normal)", stroke-linejoin="round", stroke-width="3", d="M110 171h140v98H110z", opacity=".2")
-			path(fill="var(--special-normal)", fill-opacity=".2", stroke="var(--special-normal)", stroke-width="3", d="M90 151h140v140H90z")
-			path(stroke="var(--special-normal)", stroke-linejoin="round", stroke-width="3", d="M100 161h140v170H100z", opacity=".2")
-			path(stroke="var(--btn-plain-text)", stroke-dasharray="4 4", stroke-linejoin="round", d="M80 141h180v160H80z")
-			rect(width="210", height="190", x="65", y="126", stroke="var(--btn-plain-text)", stroke-linejoin="round", stroke-width="4", rx="16")
-			path(fill="var(--text-default)", d="M64.5 209.3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM32 25.4a1.5 1.5 0 1 0-3 0h3zm-1.5 191.8H29c0 .8.7 1.4 1.5 1.4v-1.4zm34 0v-1.6h-34v3h34v-1.4zm-34 0H32V25.4h-3v191.8h1.5zM160 209.3a8 8 0 1 0 0 16 8 8 0 0 0 0-16zM317.5 102a1.5 1.5 0 0 0-3 0h3zM316 217.3v1.4a1.5 1.5 0 0 0 1.5-1.4H316zm-156 0v1.4h156v-3H160v1.6zm156 0h1.5V102h-3v115.3h1.5zM113.5 133a8 8 0 1 0 0 16 8 8 0 0 0 0-16zm1.5-71a1.5 1.5 0 1 0-3 0h3zm-1.5 79h1.5V62h-3v79h1.5z")
-
-			text(fill="var(--text-default)", style="white-space:pre", font-family="Source Sans 3", font-size="1rem", letter-spacing="0em")
-				tspan(x="24", y="15.9") Container (data-panels)
-			text(fill="var(--text-default)", style="white-space:pre", font-family="Source Sans 3", font-size="1rem", letter-spacing="0em")
-				tspan(x="86", y="53.9") Wrapper (.panel-wrapper)
-			text(fill="var(--text-default)", style="white-space:pre", font-family="Source Sans 3", font-size="1rem", letter-spacing="0em")
-				tspan(x="167", y="91.9") Panel (role="tabpanel")
+		p A PanelSet has three transitionable parts: the #[strong container] that animates its size open and closed, the #[strong wrapper] that holds your content and fades (or transforms) in, and the #[strong panel] that can transition to other panels.
 
 
-	
+		svg.img-transitions(xmlns='http://www.w3.org/2000/svg' width='340' height='340' fill='none' viewbox='0 0 340 340')
+
+			rect.sw-3.panel(x='108' y='169' width='140' height='165' opacity='.2' rx='4')
+			rect.sw-2.wrap(stroke-dasharray='6 6' x='80' y='141' width='180' height='160' rx='8')
+			rect.sw-3.panel(y='153' x='92' width='140' height='136' rx='4')
+			rect.sw-3.cont(stroke-dasharray='8 8' x='65' y='126' width='210' height='190' rx='16')
+			rect.sw-4.cont(x='65' y='126' width='210' height='138' rx='16')
+
+			path.sw-2.anim-indicator(d='M245 241h-52M237 249l8-8-8-8M201 233l-8 8 8 8M41 264v52M49 272l-8-8-8 8M33 308l8 8 8-8')
+
+			path.sw-3.indicator(d='M65 217H31V26')
+			circle.indicator(cx='65' cy='217' r='6')
+			path.sw-3.indicator(d='M160 217h156V109')
+			circle.indicator(cx='160' cy='217' r='6')
+			path.sw-3.indicator(d='M180 153V81')
+			circle.indicator(cx='180' cy='153' r='6')
+			path.sw-3.indicator(d='M124 141V52')
+			circle.indicator(cx='124' cy='141' r='6')
+
+			text: tspan(x='0' y='15.892') 1. Container (data-panelset)
+			text: tspan(x='62' y='43.892') 2. Wrapper (.panel-wrapper)
+			text: tspan(x='153.172' y='71.892') 3. Panel (role=&quot;tabpanel&quot;)
+			text: tspan(x='261.672' y='98.892') Content
+
+
+
 	+section("1. Container")
 
 		p The container is the #[code [data-panelset]] (or #[code [data-panel]]) box. It animates its #[strong height] to fit the active panel while switching, and (when #[code closable]) opens and closes as a whole.
@@ -77,7 +89,7 @@ block content
 
 				.demo
 					+exampletabset('opendemo')
-					+examplepanelset('opendemo')(data-closable data-close-on-tab)
+					+examplepanelset('opendemo')(data-closable data-close-on-tab data-panel-axis=horizontal data-panel-align=center)
 
 				+codeblock('CSS').
 					[data-panelset] {
@@ -102,7 +114,7 @@ block content
 
 				.demo
 					+exampletabset('borderdemo')
-					+examplepanelset('borderdemo')(data-closable data-close-on-tab)
+					+examplepanelset('borderdemo')(data-closable data-close-on-tab data-panel-axis=horizontal data-panel-align=center)
 
 				+codeblock('CSS').
 					#borderdemo {
@@ -336,6 +348,10 @@ append styles
 		#wrapperdemo {
 			--ps-wrapper-transform-from: translateY(-1rem);
 			--ps-wrapper-open-delay: 0.1s;
+		}
+		#opendemo {
+			--ps-open-speed: 1s;
+			--ps-close-speed:  1s;
 		}
 
 append scripts

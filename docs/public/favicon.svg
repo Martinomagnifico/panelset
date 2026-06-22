@@ -1,17 +1,5 @@
 <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <style>
-	rect {
-		stroke: #0073CC;
-	}
-    @media (prefers-color-scheme: dark) {
-      rect { stroke: #fff; }
-    }
-  </style>
-
-<rect opacity="0.15" x="29" y="16" width="16" height="16" rx="2"/>
-<rect x="29" y="16" width="16" height="16" rx="2" stroke="#0073CC"/>
-<rect opacity="0.15" x="17" y="12" width="24" height="24" rx="2" fill="white"/>
-<rect x="17" y="12" width="24" height="24" rx="3" stroke="#0073CC" stroke-width="2"/>
-<rect opacity="0.15" x="4" y="8" width="32" height="32" rx="4" fill="white"/>
-<rect x="4" y="8" width="32" height="32" rx="4" stroke="#0073CC" stroke-width="3"/>
+<path d="M40.4192 22C42.6522 22 44.2418 23.7909 43.9697 26L42.4914 38C42.2193 40.2091 40.1885 42 37.9555 42L25.8259 42C24.3293 42 23.1218 41.1956 22.5699 40" stroke="#047DAD" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M31.2966 14C33.5296 14 35.1192 15.7909 34.8471 18L33.3689 30C33.0967 32.2091 31.0659 34 28.8329 34L16.7033 34C15.2068 34 13.9992 33.1956 13.4474 32" stroke="#047DAD" stroke-width="2.75" stroke-linecap="round"/>
+<path d="M5.50856 10C5.78069 7.79086 7.81151 6 10.0445 6L22.1741 6C24.4071 6 25.9967 7.79086 25.7246 10L24.2464 22C23.9742 24.2091 21.9434 26 19.7104 26L7.58079 26C5.34779 26 3.75819 24.2091 4.03033 22L5.50856 10Z" stroke="#047DAD" stroke-width="2.9" stroke-linecap="round"/>
 </svg>

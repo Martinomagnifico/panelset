@@ -1,4 +1,4 @@
-import type { AutoFocusMode } from './functions/focus';
+import type { AutoFocusMode } from './functions/focus.js';
 
 export interface PanelSetConfig {
 	selector?: string;
@@ -36,7 +36,7 @@ export interface PanelSetConfig {
 
 export interface ReadyEventDetail {
 	container: HTMLElement;
-	instance: import('./panelset').PanelSet;
+	instance: import('./panelset.js').PanelSet;
 }
 
 export interface BeforeActivateEventDetail {

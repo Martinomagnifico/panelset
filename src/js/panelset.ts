@@ -1,13 +1,13 @@
 import '../style/panelset.scss';
-import { Core } from './functions/core';
-import { autoFocus } from './functions/focus';
-import type { AutoFocusMode } from './functions/focus';
-import { readPanelParam, writePanelParam, readStored, writeStored } from './functions/persist';
+import { Core } from './functions/core.js';
+import { autoFocus } from './functions/focus.js';
+import type { AutoFocusMode } from './functions/focus.js';
+import { readPanelParam, writePanelParam, readStored, writeStored } from './functions/persist.js';
 
 
-import type { PanelSetConfig, ReadyEventDetail, BeforeActivateEventDetail, BeforeOpenEventDetail, ActivationEventDetail, ActivationAbortedEventDetail, HandlerOptions, ShowOptions, AsyncContentHandler } from './panelset.types';
-import { parseDataAttrs, type AttrMap } from './functions/config';
-import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil, setDescribedBy } from './functions/utils';
+import type { PanelSetConfig, ReadyEventDetail, BeforeActivateEventDetail, BeforeOpenEventDetail, ActivationEventDetail, ActivationAbortedEventDetail, HandlerOptions, ShowOptions, AsyncContentHandler } from './panelset.types.js';
+import { parseDataAttrs, type AttrMap } from './functions/config.js';
+import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil, setDescribedBy } from './functions/utils.js';
 
 declare global {
 	interface HTMLElement {
@@ -15,43 +15,6 @@ declare global {
 	}
 }
 
-/*
- * Why JavaScript is always required — even when CSS enhancements are active
- * -------------------------------------------------------------------------
- * CSS handles *presentation*: transitions, opacity fades, and (where supported)
- * native interpolate-size animations. JS owns *state*, *semantics*, and
- * *behaviour* — these are complementary layers, not competing ones.
- *
- * Specifically, JS remains responsible for:
- *
- *  - State classes: toggling active, is-transitioning, is-loading, is-open,
- *    is-opening, is-closing on panels and the container. Closable sets are
- *    closed by default; the .is-open class (absent by default) marks open.
- *  - Trigger state: reflecting aria-selected (and an is-activating class) onto
- *    every [aria-controls] trigger so assistive tech tracks the active panel.
- *    Selection-trigger *clicks* and the tablist keyboard model (arrows, Home/End,
- *    roving tabindex) live in PanelControl, not here.
- *  - Trigger labelling (manageLabels): linking each panel back to the trigger that
- *    controls it via aria-labelledby (generating a trigger id if needed). Static, so
- *    it runs at init / refresh; never overrides an existing aria-label(ledby).
- *  - Verb buttons: wiring its own data-ps-next / -prev / -close buttons to
- *    next() / prev() / close(), and reflecting end-of-range as aria-disabled
- *    (unless loop). One delegated document listener covers all instances.
- *  - ARIA: managing aria-hidden / inert and the panels' own active state so
- *    assistive technology tracks the active panel correctly.
- *  - Focus management: moving focus into the new panel on activation (autoFocus)
- *    and returning it to the trigger on close (returnFocus).
- *  - Lifecycle events: dispatching ps:ready, ps:beforeactivate (cancelable),
- *    ps:beforeopen, ps:activationstart, ps:activationcomplete, and
- *    ps:activationaborted for userland hooks.
- *  - prefers-reduced-motion: CSS variables gate the CSS transitions, but JS
- *    must also check the media query before calling startViewTransition() —
- *    the View Transitions API does not consult prefers-reduced-motion itself.
- *  - Async content: awaiting ps:beforeopen promises, showing the loading
- *    spinner, and sequencing the reveal once content has settled.
- *  - Persist / deep-link: reading and writing the ?panel= URL param and
- *    localStorage so panel state survives navigation.
- */
 export class PanelSet {
 	// Default configuration
 	static defaults: Required<Omit<PanelSetConfig, 'selector'>> = {
@@ -204,6 +167,7 @@ export class PanelSet {
 		// The attribute is the most specific signal, so it wins — this lets an
 		// element opt out of a global flag, e.g. data-panel-persist="false"
 		// overriding PanelSet.init({ persist: true }).
+		
 		const dataConfig = parseDataAttrs<PanelSetConfig>(element.dataset, PanelSet.attrs);
 		this.config = { ...PanelSet.defaults, ...options, ...dataConfig } as Required<Omit<PanelSetConfig, 'selector'>>;
 
@@ -707,8 +671,7 @@ export class PanelSet {
 	}
 
 	/**
-	 * Remove a panel by id and refresh. If the removed panel was active, refresh()
-	 * promotes a fallback panel. No-op if the id is not found.
+	 * Remove a panel by id and refresh.
 	 * @param panelId - ID of the panel to remove.
 	 */
 	removePanel(panelId: string): void {
@@ -719,10 +682,7 @@ export class PanelSet {
 	}
 
 	/**
-	 * Tear down this instance: abort any pending animations, disconnect the
-	 * height-tracking ResizeObserver, and drop the reference from the element.
-	 * The DOM (panels, classes) is left as-is. Re-init with new PanelSet() or
-	 * PanelSet.init() afterwards if needed.
+	 * Destroy this instance
 	 */
 	destroy(): void {
 		this._animShow.start();       // abort pending .then() callbacks (they check signal.aborted)

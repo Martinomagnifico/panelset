@@ -1,4 +1,4 @@
-export { PanelSet } from './panelset';
+export { PanelSet } from './panelset.js';
 export type {
 	PanelSetConfig,
 	ReadyEventDetail,
@@ -9,33 +9,26 @@ export type {
 	HandlerOptions,
 	ShowOptions,
 	AsyncContentHandler,
-} from './panelset.types';
+} from './panelset.types.js';
 
-export { Panel } from './panel';
+export { Panel } from './panel.js';
 export type {
 	PanelConfig,
 	// Aliased: PanelSet also exports a (differently shaped) BeforeOpenEventDetail.
 	BeforeOpenEventDetail as PanelBeforeOpenEventDetail,
 	PanelEventDetail,
 	AsyncOpenHandler,
-} from './panel.types';
+} from './panel.types.js';
 
-// PanelControl ships in this package and is available from the main entry. It is
-// side-effect-free, so app bundlers tree-shake it out when you don't import it.
-export { PanelControl } from './panelcontrol';
-export type { PanelControlConfig } from './panelcontrol.types';
+export { PanelControl } from './panelcontrol.js';
+export type { PanelControlConfig } from './panelcontrol.types.js';
 
-import { PanelElement } from './panel.element';
-import { PanelSetElement } from './panelset.element';
-import { PanelControlElement, registerPanelControl } from './panelcontrol.element';
+import { PanelElement } from './panel.element.js';
+import { PanelSetElement } from './panelset.element.js';
+import { PanelControlElement, registerPanelControl } from './panelcontrol.element.js';
 export { PanelElement, PanelSetElement, PanelControlElement, registerPanelControl };
 
-/**
- * Register the custom element wrappers: <ps-panel>, <ps-panelset>, <ps-panelcontrol>.
- * Call with no argument to use the default 'ps' prefix.
- * Call with a custom prefix to avoid name collisions ('acme-panel', …).
- * Safe to call multiple times: uses customElements.get() guard before each define().
- */
+
 export function register(prefix = 'ps'): void {
 	const define = (name: string, ctor: CustomElementConstructor) => {
 		if (!customElements.get(name)) customElements.define(name, ctor);
@@ -45,4 +38,4 @@ export function register(prefix = 'ps'): void {
 	define(`${prefix}-panelcontrol`, PanelControlElement);
 }
 
-export { PanelSet as default } from './panelset';
+export { PanelSet as default } from './panelset.js';

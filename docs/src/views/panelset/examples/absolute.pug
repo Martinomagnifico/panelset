@@ -50,7 +50,7 @@ block content
 						button(data-panelset-open="#megamenu") Open
 						button(data-panelset-toggle="#megamenu") Toggle
 					hr.no-margin
-					#megamenu(data-panelset data-closable data-close-on-tab)
+					#megamenu(data-panelset data-closable data-close-on-tab data-panelset-align="end")
 						// Panels here
 
 
@@ -114,24 +114,6 @@ block content
 					}
 				}
 			});
-
-
-append styles
-	style.
-		//- .megamenu-wrapper {
-		//- 	position: relative;
-		//- 	width: max-content;
-		//- }
-
-		//- #megamenu {
-		//- 	position: absolute;
-		//- 	right: 0;
-		//- 	z-index: 10;
-		//- 	width: 320px;
-		//- 	border-radius: 8px;
-		//- 	background: var(--demo-btn-bg);
-		//- 	box-shadow: 0 8px 20px var(--special-shadow-dark);
-		//- }
 
 
 append scripts

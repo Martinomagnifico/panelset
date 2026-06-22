@@ -33,11 +33,9 @@
 	hr {
 		border: none;
 		height: var(--demo-border-width);
-		// height: 1px;
 		background: var(--special-demoblock);
 		border-radius: var(--demo-border-width);
 		position: relative;
-		// z-index: 5;
 	}
 	&.horizontal {
 		display: flex;

@@ -1,7 +1,7 @@
 extends /views/templates/layouts/_base
 
 append variables
-	- pagetitle = "Panel | Examples | Alignment"
+	- pagetitle = "Panel | Alignment"
 
 
 mixin alignment-body(uid, pinlocation)
@@ -41,8 +41,8 @@ block content
 	.lane
 		.container
 			.page-header
-				h1=pagetitle
-				p.lead Open panels has effect on inner and outer content.
+				h1 Alignment
+				p.lead Alignment of the wrapper.
 
 	+section("Live demo (vertical)")
 
@@ -52,15 +52,15 @@ block content
 			.grid-3
 				.flex.vertical
 					h5 #[code data-panel-align="start"]
-					.demo
+					.demo.no-padding
 						+alignment('example-2', 'vertical', 'start', 'start')
 				.flex.vertical
 					h5 #[code data-panel-align="center"]
-					.demo
+					.demo.no-padding
 						+alignment('example-3', 'vertical', 'center', 'start')
 				.flex.vertical
 					h5 #[code data-panel-align="end"]
-					.demo
+					.demo.no-padding
 						+alignment('example-4', 'vertical', 'end', 'start')
 
 
@@ -77,15 +77,15 @@ block content
 
 			.flex.vertical
 				h5 #[code data-panel-align="start"]
-				.demo
+				.demo.no-padding
 					+alignment('example-5', 'horizontal', 'start', 'start')
 			.flex.vertical
 				h5 #[code data-panel-align="center"]
-				.demo
+				.demo.no-padding
 					+alignment('example-6', 'horizontal', 'center', 'start')
 			.flex.vertical
 				h5 #[code data-panel-align="end"]
-				.demo
+				.demo.no-padding
 					+alignment('example-7', 'horizontal', 'end', 'start')
 
 
@@ -103,14 +103,14 @@ block content
 
 		h3 Start aligned, pinned content
 		.card.alignment-demos
-			.demo
+			.demo.no-padding
 				+alignment('example-8', 'horizontal', 'start', 'start', 'start')
 			+codeblock('HTML')
 				+alignment('example-8', 'horizontal', 'start', 'start', 'start')
 
 		h3 End aligned, pinned content
 		.card.alignment-demos
-			.demo
+			.demo.no-padding
 				+alignment('example-9', 'horizontal', 'end', 'end', 'end')
 			+codeblock('HTML')
 				+alignment('example-9', 'horizontal', 'end', 'end', 'end')

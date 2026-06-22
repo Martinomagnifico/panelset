@@ -2,6 +2,7 @@
 import { defineConfig, build } from 'vite';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
+import { rename, mkdir, readdir } from 'fs/promises';
 
 const iifeBuild = () => ({
   name: 'iife-build',
@@ -29,10 +30,28 @@ const iifeBuild = () => ({
   }
 });
 
+// Move .d.ts files into dist/types.
+
+const groupTypes = () => ({
+  name: 'group-types',
+  closeBundle: async () => {
+    const dist = resolve(__dirname, 'dist');
+    const typesDir = resolve(dist, 'types');
+    await mkdir(typesDir, { recursive: true });
+    for (const e of await readdir(dist, { withFileTypes: true })) {
+      if (e.name === 'types') continue;
+      if (e.name.endsWith('.d.ts') || e.name === 'functions') {
+        await rename(resolve(dist, e.name), resolve(typesDir, e.name));
+      }
+    }
+  }
+});
+
 export default defineConfig({
   plugins: [
-    dts({ insertTypesEntry: true, outDir: 'dist', include: ['src/js/**/*'], rollupTypes: true }),
-    iifeBuild()
+    dts({ insertTypesEntry: true, outDir: 'dist', include: ['src/js/**/*'] }),
+    iifeBuild(),
+    groupTypes()
   ],
   build: {
     lib: {

@@ -7,14 +7,19 @@
     "**/*.css",
     "**/*.scss"
   ],
-  "main": "./dist/panelset.js",
-  "types": "./dist/index.d.ts",
+  "main": "./dist/panelset.esm.js",
+  "types": "./dist/types/index.d.ts",
+  "unpkg": "./dist/panelset.js",
+  "jsdelivr": "./dist/panelset.js",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
+      "types": "./dist/types/index.d.ts",
       "import": "./dist/panelset.esm.js"
     },
-    "./register": "./dist/register.js",
+    "./register": {
+      "types": "./dist/types/register.d.ts",
+      "import": "./dist/register.js"
+    },
     "./style.css": "./dist/panelset.css"
   },
   "files": [
@@ -31,9 +36,9 @@
     "build": "npm run clean && npm run build:lib",
     "build:lib": "vite build",
     "size": "node scripts/size.mjs",
-    "prepublishOnly": "npm run build",
+    "prepack": "npm run build",
     "clean": "rm -rf dist",
-    "postinstall": "[ -d docs ] && cd docs && npm install || true"
+    "setup": "cd docs && npm install"
   },
   "keywords": [
     "panels",

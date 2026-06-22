@@ -3,7 +3,6 @@
 	gap: 2rem;
 
 	.demo {
-		padding: 0;
 		overflow: hidden;
 		display: flex;
 		flex-direction: column;
@@ -18,7 +17,7 @@
 		min-width: 0;
 	}
 
-	.demo-body, .panel-wrapper {
+	.demo-body, [data-panel] .panel-wrapper {
 		padding: 1rem;
 	}
 

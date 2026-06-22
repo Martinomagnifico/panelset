@@ -1,6 +1,6 @@
-import { PanelControl } from './panelcontrol';
-import type { PanelControlConfig } from './panelcontrol.types';
-import { parseAttrs } from './functions/config';
+import { PanelControl } from './panelcontrol.js';
+import type { PanelControlConfig } from './panelcontrol.types.js';
+import { parseAttrs } from './functions/config.js';
 
 export class PanelControlElement extends HTMLElement {
 	connectedCallback(): void {

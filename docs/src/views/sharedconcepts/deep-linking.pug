@@ -115,6 +115,11 @@ block content
 			<!-- Activate the Pricing tab and open the sidebar in one link -->
 			<a href="?panel=pricing,sidebar">View pricing with sidebar open</a>
 
+append styles
+	style.
+		[data-panelset-trackheight] {
+			height: var(--ps-max-height);
+		}
 
 append scripts
 	if isProd
