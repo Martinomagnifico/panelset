@@ -2,9 +2,14 @@
 
 **Flexible panel management with smooth transitions.**
 
+[![Version](https://img.shields.io/npm/v/panelset)]()
+
+
 A TypeScript + SCSS library for animating elements between sizes. Three classes share one animation core (a lock / measure / animate / unlock cycle): the browser does the animating, JavaScript only measures and sets pixel values. Accessible by default (managed ARIA and focus), interrupt-safe, and it respects `prefers-reduced-motion`.
 
-> **Documentation:** this README is a quick reference. The full guides, every option, and live examples live in the HTML docs. Source and issues: <https://github.com/martinomagnifico/panelset>.
+**Documentation:** the full guides, every option, and live examples are at <https://martinomagnifico.github.io/panelset/>. This README is a quick reference. 
+
+
 
 ## The three classes
 
