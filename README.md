@@ -4,7 +4,7 @@
 
 **Flexible panel management with smooth transitions.**
 
-A TypeScript + SCSS library for animating elements between sizes. Three classes share one animation core (a lock / measure / animate / unlock cycle): the browser does the animating, JavaScript only measures and sets pixel values. Accessible by default (managed ARIA and focus), interrupt-safe, and it respects `prefers-reduced-motion`.
+A small library for animating elements between sizes. Three classes share one animation core (a lock / measure / animate / unlock cycle): transitions are CSS only, JavaScript only measures and sets pixel values. Accessible by default (managed ARIA and focus), interrupt-safe, and it respects `prefers-reduced-motion`.
 
 **Documentation:** the full guides, every option, and live examples are at <https://martinomagnifico.github.io/panelset/>. This README is a quick reference. 
 
