@@ -45,7 +45,7 @@ block content
 
 		p For #[code persist] and #[code deepLink], a #[code data-panel-group] can set the option for every panel inside it at once. A panel’s own attribute still wins over the group’s.
 
-		p On #[code &lt;ps-panel&gt;] (a web component) the same options are plain attributes: no #[code data-] prefix, no JS call (third card of each option below). There is no web-component equivalent of a global config object, because #[code connectedCallback] fires per element on its own, with no shared init moment. So for page-wide defaults across many elements, JS #[code init()] is the better tool. A web component can easily coexist with the regular JS version. Full examples on the #[a(href="/panel/examples/webcomponent.html") Web Component integration] page.
+		p On #[code &lt;ps-panel&gt;] (a web component) the same options are plain attributes: no #[code data-] prefix, no JS call (third card of each option below). There is no web-component equivalent of a global config object, because #[code connectedCallback] fires per element on its own, with no shared init moment. So for page-wide defaults across many elements, JS #[code init()] is the better tool. A web component can easily coexist with the regular JS version. Full examples on the #[a(href=url('/panel/examples/webcomponent.html')) Web Component integration] page.
 
 	+section("Available options")
 		p Every option below shows three ways to set it: a JS key, a data attribute, and a plain attribute for #[code &lt;ps-panel&gt;]. All three land on the same config, so pick whichever suits how you are authoring.

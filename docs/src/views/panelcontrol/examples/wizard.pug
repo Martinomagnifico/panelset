@@ -11,7 +11,7 @@ block content
 				p.lead A multi-step flow with per-step validation. PanelControl owns the tab UI, the page owns only the flow.
 
 	+section("Live demo")
-		p The PanelSet #[a(href="/panelset/examples/wizard.html") Wizard] builds its tab strip and locking by hand, and ends on a hint: that repetitive work "belongs in a small reusable tab-strip layer over PanelSet." This page is that layer. PanelControl handles the tab clicks, keyboard navigation, roving #[code tabindex], and the #[code aria-disabled] locking; PanelSet handles the Previous / Next buttons (#[code data-ps-prev] / #[code data-ps-next]) and disables them at the ends. What is left on the page is purely #[strong flow]: validate a step, allow or block a forward move, and decide which tabs to lock.
+		p The PanelSet #[a(href=url('/panelset/examples/wizard.html')) Wizard] builds its tab strip and locking by hand, and ends on a hint: that repetitive work "belongs in a small reusable tab-strip layer over PanelSet." This page is that layer. PanelControl handles the tab clicks, keyboard navigation, roving #[code tabindex], and the #[code aria-disabled] locking; PanelSet handles the Previous / Next buttons (#[code data-ps-prev] / #[code data-ps-next]) and disables them at the ends. What is left on the page is purely #[strong flow]: validate a step, allow or block a forward move, and decide which tabs to lock.
 
 		p A required checkbox on each step controls whether you can move on. Because tab clicks, #[code next()], #[code prev()], keyboard and deep links all funnel through #[code show()], a single #[code ps:beforeactivate] listener guards every path. Stepping #[strong back] is always allowed.
 
@@ -116,7 +116,7 @@ block content
 			setEl.addEventListener('ps:activationcomplete', refresh);
 			refresh();
 
-		p Compared to the #[a(href="/panelset/examples/wizard.html") hand-built PanelSet version], the tab click handlers, the keyboard logic, and the whole Previous / Next block (setup and end-disabling) are gone. 
+		p Compared to the #[a(href=url('/panelset/examples/wizard.html')) hand-built PanelSet version], the tab click handlers, the keyboard logic, and the whole Previous / Next block (setup and end-disabling) are gone. 
 		p Stepping is now markup (#[code data-ps-prev] / #[code data-ps-next], disabled at the ends by PanelSet), and locking goes through #[code setTabState()] (which also keeps the roving #[code tabindex] correct) instead of poking #[code aria-disabled] directly. What stays on the page is the validation and the lock policy. #[strong PanelControl and PanelSet own the UI, the page owns the flow].
 
 

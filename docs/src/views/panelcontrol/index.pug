@@ -18,7 +18,7 @@ block content
 	+section("Setup")
 		p PanelControl ships inside the #[code panelset] package, so there is nothing extra to install.
 		+installWizard('PanelControl', 'PanelControl')
-		p With the script-tag build, #[code window.PanelControl] is available and the custom elements are already registered. See the #[a(href="/panelcontrol/integrations/webcomponent.html") Web Component] page to learn more.
+		p With the script-tag build, #[code window.PanelControl] is available and the custom elements are already registered. See the #[a(href=url('/panelcontrol/integrations/webcomponent.html')) Web Component] page to learn more.
 
 	+section("Markup")
 		p Put #[code data-panelcontrol] on the element holding your triggers. Each trigger points at a panel with #[code aria-controls]. Add #[code role="tablist"] (with #[code role="tab"] on the buttons) to switch on keyboard (arrow) navigation.
@@ -61,12 +61,12 @@ block content
 			dt: strong Vertical tablist
 			dd The same, plus #[code aria-orientation="vertical"]: arrows become Up / Down; everything else is identical. CSS lays it out as a sidebar. Covers most "sidebar that switches panels" needs, with no extra ARIA.
 
-		p See #[a(href="/panelcontrol/activation.html") Activation], #[a(href="/panelcontrol/examples/closable.html") Closable], and #[a(href="/panelcontrol/examples/vertical.html") Vertical display] for worked examples.
+		p See #[a(href=url('/panelcontrol/activation.html')) Activation], #[a(href=url('/panelcontrol/examples/closable.html')) Closable], and #[a(href=url('/panelcontrol/examples/vertical.html')) Vertical display] for worked examples.
 
 	+section("Scope")
 		p PanelControl manages controls and reflects state: activation, keyboard nav, roving #[code tabindex], #[code aria-selected] / disabled. It also exposes #[code setTabState(id, 'disabled' | 'enabled')] so external code can lock or unlock a tab; PanelControl just applies it.
 		p Validation, Previous / Next flow, step locking, and persistence are #[strong not] part of PanelControl. Those are up to your own code, which calls #[code setTabState] when a step should lock. The direction is one way: your code calls PanelControl, which calls PanelSet, never the reverse.
-		p Next: every option in #[a(href="/panelcontrol/configuration.html") Configuration], and the method list in the #[a(href="/panelcontrol/api.html") API] reference.
+		p Next: every option in #[a(href=url('/panelcontrol/configuration.html')) Configuration], and the method list in the #[a(href=url('/panelcontrol/api.html')) API] reference.
 
 
 append scripts

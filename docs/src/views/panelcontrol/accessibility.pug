@@ -26,7 +26,7 @@ block content
 				button(role="tab" aria-controls="panel-1" aria-selected="true") Overview
 				button(role="tab" aria-controls="panel-2") Security
 
-		p Manual and auto activation (and why auto self-downgrades) are covered on the #[a(href="/panelcontrol/activation.html") Activation] page.
+		p Manual and auto activation (and why auto self-downgrades) are covered on the #[a(href=url('/panelcontrol/activation.html')) Activation] page.
 
 	+section("Selection state")
 		p Selection of triggers is managed by PanelSet. So if a user clicks a tab, then it will get #[code [aria-selected="true"]], while the previous tab gets #[code [aria-selected="false"]]. That is all automatic. PanelControl adds a bit to that: it makes sure the #[code [tabindex]] is also correct during tabbing.
@@ -51,4 +51,4 @@ block content
 			+warning()
 			p #[strong Note]: a locked tab’s #[em click] is silent (it simply does not activate). The hint covers keyboard and screen-reader users, who can focus the locked tab; the #[strong Next] button in a wizard, which goes through the #[code ps:beforeactivate] check, is what surfaces the reason on a forward attempt.
 
-		p See the #[a(href="/panelcontrol/examples/wizard.html") Wizard example] for locking and hints working together.
+		p See the #[a(href=url('/panelcontrol/examples/wizard.html')) Wizard example] for locking and hints working together.

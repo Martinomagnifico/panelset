@@ -12,7 +12,7 @@ export default defineConfig(({ mode }) => {
     const isProd = mode === 'production';
 
 	return {
-		base: '/',
+		base: isProd ? '/panelset/' : '/',
 		build: {
 	        outDir: "dist",
 	        emptyOutDir: false,
@@ -70,11 +70,12 @@ export default defineConfig(({ mode }) => {
 	        }),
 	        pug({
 	            root: "src",
-	            globals: {
-	                isProd: isProd,
-	                basePath: '/',
-	                sidebar: navData,
-	            },
+				globals: {
+					isProd: isProd,
+					basePath: isProd ? '/panelset/' : '/',
+					url: (h) => (isProd ? '/panelset/' : '/') + String(h).replace(/^\//, ''),
+					sidebar: navData,
+				},
 	            options: {
 	                pretty: true,
 	                cache: false,

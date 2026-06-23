@@ -15,14 +15,14 @@ block content
 		.card
 			ol
 				li #[strong URL param] (#[code ?panel=]): Reading of the URL parameter will always be done, no config needed. See below.
-				li #[strong localStorage]: used when #[code persist] is enabled and no URL param applied. See #[a(href="/sharedconcepts/persisting.html") Persisting state].
+				li #[strong localStorage]: used when #[code persist] is enabled and no URL param applied. See #[a(href=url('/sharedconcepts/persisting.html')) Persisting state].
 				li #[strong HTML default]: the markup state like #[code class="active"] panel (PanelSet) or #[code class="is-open"] (Panel / closable PanelSet).
 
 		p On this page we delve a bit deeper into #[strong deep linking]. 
 
 
 	+section("Reading the URL parameter")
-		p #[strong Reading is always on.] Panel and PanelSet always check the #[code ?panel=] param on load. Any link with #[code ?panel=id] opens that panel. For example, a link like #[a(href="/index.html?panel=demo-panel-4") index.html?panel=demo-panel-4] opens the panel with ID #[code demo-panel-4] on page load. Note that we do not use just a hash, because that is much more limited. The #[code ?panel=] param is designed to be purely for panel state.
+		p #[strong Reading is always on.] Panel and PanelSet always check the #[code ?panel=] param on load. Any link with #[code ?panel=id] opens that panel. For example, a link like #[a(href=url('/index.html?panel=demo-panel-4')) index.html?panel=demo-panel-4] opens the panel with ID #[code demo-panel-4] on page load. Note that we do not use just a hash, because that is much more limited. The #[code ?panel=] param is designed to be purely for panel state.
 
 
 		p The #[code ?panel=] query param is a comma-separated list of panel IDs.

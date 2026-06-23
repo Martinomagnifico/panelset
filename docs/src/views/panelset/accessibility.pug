@@ -35,9 +35,9 @@ block content
 
 	+section("What you still need to provide")
 		ul
-			li Keyboard navigation (arrow keys, Home, End) if you are using a real #[code role="tablist"] pattern. You can use #[a(href="/panelcontrol/index.html") PanelControl] to automate this for you.
+			li Keyboard navigation (arrow keys, Home, End) if you are using a real #[code role="tablist"] pattern. You can use #[a(href=url('/panelcontrol/index.html')) PanelControl] to automate this for you.
 
-			li An accessible name for any panel with #[strong no] controlling tab (give them #[code aria-label]). Panels that #[em do] have a tab get #[code aria-labelledby] for free (see #[a(href="/panelset/configuration.html?panel=option-managelabels#available-options") manageLabels], the auto-adding of the attribute can be switched off).
+			li An accessible name for any panel with #[strong no] controlling tab (give them #[code aria-label]). Panels that #[em do] have a tab get #[code aria-labelledby] for free (see #[a(href=url('/panelset/configuration.html?panel=option-managelabels#available-options')) manageLabels], the auto-adding of the attribute can be switched off).
 
 			li The initial #[code aria-selected] state in your HTML. PanelSet overrides it on init, but it keeps the no-JS fallback correct.
 

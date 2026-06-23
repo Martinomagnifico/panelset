@@ -14,7 +14,7 @@ block content
 		p Both components determine the initial state on every page load from these sources, checked in order:
 		.card
 			ol
-				li #[strong URL param] (#[code ?panel=]): Reading of the URL parameter will always be done, no config needed. See #[a(href="/sharedconcepts/deep-linking.html") Deep linking].
+				li #[strong URL param] (#[code ?panel=]): Reading of the URL parameter will always be done, no config needed. See #[a(href=url('/sharedconcepts/deep-linking.html')) Deep linking].
 				li #[strong localStorage]: used when #[code persist] is enabled and no URL param applied. See below.
 				li #[strong HTML default]: the markup state like #[code class="active"] panel (PanelSet) or #[code class="is-open"] (Panel / closable PanelSet).
 

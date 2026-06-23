@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.0] - 2026-06-22
+
+### Added
+- PanelControl: a tablist controller with keyboard navigation
+- Web component versions
+- PNavigation on PanelSet: `next()`, `prev()` etc
+- `addPanel()` and `removePanel()`
+- `refresh()`
+- Verb buttons wired by delegation: `data-ps-next`, `data-ps-prev`, `data-ps-close`.
+- Lifecycle events
+- Async content loading
+
+
 ## [1.0.9] - 2026-04-10
 
 ### Added

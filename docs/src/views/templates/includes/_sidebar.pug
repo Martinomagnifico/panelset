@@ -1,12 +1,12 @@
 aside.docs-sidebar
-	a.logo(href="/")
+	a.logo(href=url('/'))
 		+logoicon
 		| PanelSet
 
 	nav(data-panel-group data-panel-close-siblings)
 		each link, i in sidebar.mainLinks
 			- let active = (link.text === pagetitle);
-			a(class=[(active ? "active" : ""), (i > 0 ? "main-link-sep" : "")].filter(Boolean).join(" ") href=link.href) #{link.text}
+			a(class=[(active ? "active" : ""), (i > 0 ? "main-link-sep" : "")].filter(Boolean).join(" ") href=url(link.href)) #{link.text}
 
 
 		each section in sidebar.sections
@@ -26,7 +26,7 @@ aside.docs-sidebar
 								each link in section.links
 									- let active = (link.text === pagetitle);
 									li
-										a(class=(active ? "active" : "") href=link.href tabindex=(active ? "-1" : false)) #{link.label || link.text}
+										a(class=(active ? "active" : "") href=url(link.href) tabindex=(active ? "-1" : false)) #{link.label || link.text}
 							
 							if section.examples
 								p.nav-examples-label Examples
@@ -34,7 +34,7 @@ aside.docs-sidebar
 									each link in section.examples
 										- let active = (link.text === pagetitle);
 										li
-											a(class=(active ? "active" : "") href=link.href tabindex=(active ? "-1" : false)) #{link.label || link.text}
+											a(class=(active ? "active" : "") href=url(link.href) tabindex=(active ? "-1" : false)) #{link.label || link.text}
 
 							if section.integrations
 								p.nav-examples-label Integrations
@@ -42,8 +42,8 @@ aside.docs-sidebar
 									each link in section.integrations
 										- let active = (link.text === pagetitle);
 										li
-											a(class=(active ? "active" : "") href=link.href tabindex=(active ? "-1" : false)) #{link.label || link.text}
+											a(class=(active ? "active" : "") href=url(link.href) tabindex=(active ? "-1" : false)) #{link.label || link.text}
 
 	.sidebar-about-wrap
-		a.sidebar-about(href="/about.html" class=(pagetitle === "About / Buy me a coffee" ? "active" : "")) 
+		a.sidebar-about(href=url('/about.html') class=(pagetitle === "About / Buy me a coffee" ? "active" : "")) 
 			| About / #[+coffee()] Buy me a coffee

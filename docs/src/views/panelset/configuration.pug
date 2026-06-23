@@ -34,7 +34,7 @@ block content
 
 		p This is exactly how you let one set opt out of a flag the rest of the page opted into (e.g. #[code data-panel-persist="false"] on a set that #[code PanelSet.init({ persist: true })] would otherwise persist).
 
-		p On #[code &lt;ps-panelset&gt;] the same options become plain attributes. No #[code data-] prefix, no JS call (third card of each option below). There’s no web-component equivalent of a global config object: #[code connectedCallback] fires per element, on its own, with no shared init moment. So for page-wide defaults, reach for the JS init() path instead. The two coexist happily. Full examples on the #[a(href="/panelset/examples/webcomponent.html") Web Component integration page].
+		p On #[code &lt;ps-panelset&gt;] the same options become plain attributes. No #[code data-] prefix, no JS call (third card of each option below). There’s no web-component equivalent of a global config object: #[code connectedCallback] fires per element, on its own, with no shared init moment. So for page-wide defaults, reach for the JS init() path instead. The two coexist happily. Full examples on the #[a(href=url('/panelset/examples/webcomponent.html')) Web Component integration page].
 
 	+section("Available options")
 		p Every option below shows three ways to set it: a JS key, a data attribute, and a plain attribute for #[code &lt;ps-panelset&gt;]. All three land on the same config. Pick whichever suits you.
@@ -163,7 +163,7 @@ block content
 							li #[code ps-levels]
 
 			+apiOption("loop: boolean")
-				p Let #[code next()] / #[code prev()] wrap instead of stopping at the ends: past the last panel you’re back at the first, and the other way round. With loop on there’s nowhere unreachable, so PanelSet never disables its #[code data-ps-next] / #[code data-ps-prev] buttons. Carousel territory (see the #[a(href="/panelset/examples/wizard.html") Wizard] page).
+				p Let #[code next()] / #[code prev()] wrap instead of stopping at the ends: past the last panel you’re back at the first, and the other way round. With loop on there’s nowhere unreachable, so PanelSet never disables its #[code data-ps-next] / #[code data-ps-prev] buttons. Carousel territory (see the #[a(href=url('/panelset/examples/wizard.html')) Wizard] page).
 
 				h4 Default: #[code false]
 
