@@ -283,7 +283,7 @@ section {
 			font-family: inherit;
 			font-weight: 400;
 			padding: 0.2em 0.5em;
-			background: var(--btn-primary-bg);
+			background: var(--btn-primary-bg-hover);
 			color: var(--bg-surface);
 			border-radius: 4px;
 			pointer-events: none;
@@ -413,16 +413,17 @@ hr {
 }
 
 .callout {
-	border: 1px solid rgba(red, 0.25);
+	border: 1px solid var(--color-error);
+
 	padding: 0.5rem;
 	padding-left: 2.5rem;
-	background: rgba(red, 0.05);
+	background: oklch(from var(--color-error) l c h / 0.05);
 	position: relative;
 	border-radius: 0.25rem;
 
 	svg {
 		stroke-width: 1.44px;
-		color: rgba(rgb(193, 0, 0), 0.5);
+		color: oklch(from var(--color-error) l c h / 0.8);
 		width: 24px;
 		height: 24px;
 		position: absolute;

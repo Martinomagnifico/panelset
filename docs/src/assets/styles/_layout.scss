@@ -167,3 +167,62 @@ button + ps-panel .panel-wrapper,
 footer {
 	margin-top: 3rem;
 }
+
+a.github-corner {
+	background: none;
+	display: flex;
+	padding: 0;
+	position: relative;
+	border: 0;
+	margin: 0;
+	z-index: 9999;
+	align-self: end;
+	margin-bottom: -80px;
+
+	.triangle {
+		fill: var(--btn-primary-bg-normal);
+		transition: fill 0.125s ease-in-out;
+	}
+
+	.octo-body, .octo-arm {
+		fill: var(--bg-surface);
+	}
+
+	.octo-arm {
+		transform-origin: 42px 34px;
+	}
+
+
+	&:hover {
+		.octo-arm {
+			animation:octocat-wave 560ms ease-in-out
+		}
+		.triangle {
+			fill: var(--btn-primary-bg-hover);
+		}
+	}
+	
+	@keyframes octocat-wave{
+		0%, 100%{
+			transform:rotate(0)
+		}
+		20%, 60% {
+			transform:rotate(-25deg)
+		}
+		40%, 80% {
+			transform:rotate(10deg)
+		}
+	}
+	@media (max-width:500px){
+		&:hover .octo-arm{
+			animation:none
+		}
+		& .octo-arm{
+			animation:octocat-wave 560ms ease-in-out
+		}
+	}
+
+
+
+}
+

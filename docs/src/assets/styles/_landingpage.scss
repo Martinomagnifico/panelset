@@ -16,26 +16,10 @@ html.index {
 	a.btn {
 		justify-self: center;
 		align-self: center;
+		width: 100%;
 
-		background: var(--btn-primary-bg);
-		color: var(--btn-primary-text);
-		border: none;
-		padding: 0.5rem 1rem;
-		border-radius: 4px;
-		font-size: 1rem;
-		line-height: 1.5;
-		min-height: 40px;
-		cursor: pointer;
-		transition: background-color 0.125s;
-
-		&.chevron {
-			gap: 0.5rem;
-			padding-right: 0.5rem;
-		}
-
-		&:hover {
-			text-decoration: none;
-			background: var(--btn-primary-hover);
+		@media (min-width: 480px) {
+			width: auto;
 		}
 	}
 

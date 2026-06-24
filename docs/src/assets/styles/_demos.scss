@@ -46,15 +46,28 @@
 }
 
 
+
+.card,
+.demo,
+[data-panelset] > .panel-wrappers > [role=tabpanel] {
+  padding: var(--standard-padding);
+
+	@container (min-width: 480px) {
+		padding: var(--padding-medium);
+	}
+
+	@container (min-width: 769px) {
+    padding: var(--padding-large);
+	}
+}
+
 .demo, .card.demo {
   position: relative;
   background: var(--demo-surface-tint);
-  border-radius: 8px;
-  padding: var(--standard-padding);
-
   border: 3px solid var(--special-demoblock);
-
+  border-radius: 8px;
 }
+
 .example.demo {
   background: var(--demo-surface-tint);
 }
@@ -121,13 +134,13 @@
   transition: all 0.125s ease-in-out;
 
   &.solid {
-    background: var(--btn-primary-bg);
-    color: var(--btn-primary-text);
+    background: var(--btn-primary-bg-normal);
+    color: var(--btn-primary-text-normal);
     transition: background-color 0.125s;
     outline-offset: 2px;
 
     &:hover {
-      background: var(--btn-primary-hover);
+      background: var(--btn-primary-bg-hover);
     }
   }
 
@@ -142,6 +155,12 @@
 
     .card &, &.block {
       align-self: auto;
+    }
+    &.mobileblock {
+      align-self: auto;
+      @container (min-width: 480px) {
+        align-self: flex-start;
+      }
     }
 
     svg.chevron {
@@ -182,7 +201,15 @@
 
 .demo-controls {
   display: flex;
-  gap: 1rem;
+
+  gap: 0.5rem;
+	@container (min-width: 480px) {
+		  gap: 0.75rem;
+	}
+	@container (min-width: 769px) {
+    gap: 1rem;
+	}
+
   flex-wrap: wrap;
 
   &.center {
@@ -200,10 +227,11 @@
 }
 
 .demo button {
-  border: 3px solid var(--special-normal);
-  background: none;
-  background: var(--color-special-tint-25);
-  color: var(--special-hover);
+  background: var(--btn-primary-bg-normal);
+  border: 3px solid var(--btn-primary-stroke-normal);
+  color: var(--btn-primary-text-normal);
+  
+
   padding: 0.25rem 1rem;
   border-radius: 24px;
   font-size: 1rem;
@@ -226,9 +254,9 @@
   &[aria-expanded="true"],
   &[aria-expanded="false"],
   &[aria-selected="true"] {
-    background: var(--demo-btn-bg);
-    color: var(--special-active);
-    border-color: var(--special-active);
+    background: var(--btn-primary-bg-current);
+    color: var(--btn-primary-text-current);
+    border-color: var(--btn-primary-stroke-current);
 
     &[role="tab"] {
       background: var(--demo-surface);
@@ -238,7 +266,8 @@
 
   &:hover {
     box-shadow: 0 4px 8px var(--special-shadow);
-    background: var(--demo-btn-bg);
+    background: var(--btn-primary-bg-hover);
+    color: var(--btn-primary-text-hover);
   }
   &[aria-selected="true"]:hover {
     box-shadow: none;
@@ -246,7 +275,7 @@
 
   &:not([aria-disabled="true"]):hover, 
   &:not([aria-disabled="true"]):focus-visible {
-    border-color: var(--special-hover);
+    border-color: var(--btn-primary-stroke-hover);
   }
 
   &:disabled {
@@ -256,18 +285,22 @@
   }
 }
 
-// Disable 'active' state specifically for closable panelsets where one panel must still be active.
-.demo:has([data-panelset][inert]) {
 
-  [aria-selected="true"]:not(:hover):not([role="tab"]) {
-    background: var(--color-special-tint-25);
-    border-color: var(--special-normal);
-    color: var(--special-normal);
+.demo:has([data-panelset]) {
+  [aria-selected="true"]:not([role="tab"]):hover {
+    cursor: default;
+    //box-shadow: 0 4px 8px var(--special-shadow);
   }
-
 }
 
-
+// Disable 'active' style specifically for closable panelsets where one panel must still be active.
+.demo:has([data-panelset][inert]) {
+  [aria-selected="true"]:not(:hover):not([role="tab"]) {
+    background: var(--btn-primary-bg-normal);
+    border-color: var(--btn-primary-stroke-normal);
+    color: var(--btn-primary-text-hover);
+  }
+}
 
 [data-closeable] > button[aria-selected="true"] {
   pointer-events: auto;
