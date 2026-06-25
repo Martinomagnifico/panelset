@@ -207,7 +207,7 @@ dl.bg-surface-tint {
 
 	&:has(> button[aria-expanded="true"]), 
 	&.border {
-		background: var(--demo-btn-bg);
+		background: var(--bg-surface-tint);
 		border-color: var(--border-default)
 	}
 
@@ -234,7 +234,7 @@ dl.bg-surface-tint {
 	}
 
 	.card {
-		background: var(--bg-surface-tint);
+		background: var(--bg-surface-tint-contrast);
 
 		@media (prefers-color-scheme: dark) {
 			background: var(--bg-surface-tint-contrast);
