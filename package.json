@@ -1,6 +1,6 @@
 {
   "name": "panelset",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Flexible panel management with smooth transitions",
   "type": "module",
   "sideEffects": [
