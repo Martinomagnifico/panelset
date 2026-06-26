@@ -20,5 +20,7 @@ block scripts
 
 
 	script.
+		// Highlight. Exclude install wizard
+		hljs.configure({ cssSelector: 'pre code:not(.iw-code)' });
 		hljs.highlightAll();
 		hljs.initLineNumbersOnLoad();
