@@ -14,6 +14,7 @@
 	--color-tint-300: oklch(0.72 0.070 var(--main-hue));
 	--color-tint-400: oklch(0.64 0.080 var(--main-hue));
 	--color-tint-500: oklch(0.60 0.090 var(--main-hue));
+	--color-tint-550: oklch(0.54 0.093 var(--main-hue));
 	--color-tint-600: oklch(0.48 0.095 var(--main-hue));
 	--color-tint-700: oklch(0.39 0.060 var(--main-hue));
 	--color-tint-750: oklch(0.27 0.040 var(--main-hue));
@@ -100,8 +101,8 @@
 	--special-shadow: oklch(from var(--special-normal) l c h / 0.33);
 	--special-shadow-dark: oklch(from var(--special-normal) calc(l * 0.1) calc(c * 2) h / 0.2);
 
-	--tab-text-normal: var(--color-tint-500);
-	--tab-text-hover: var(--color-tint-600);
+	--tab-text-normal: var(--color-tint-600);
+	--tab-text-hover: var(--color-tint-700);
 	--tab-text-active: var(--color-tint-600);
 
 	--tab-underline-hover: var(--color-tint-300);
