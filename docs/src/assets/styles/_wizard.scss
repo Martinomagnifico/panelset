@@ -29,8 +29,9 @@
 	width: 100%;
 
 	svg {
-		margin: -1rem auto -2rem auto;
+		margin: -0.5rem auto -1rem auto;
 		display: block;
+		transform: scale(0.8);
 	}
 
 	&:before,
@@ -38,7 +39,7 @@
 		content: '';
 		position: absolute;
 		top: 0;
-		width: calc(50% - 20px);
+		width: calc(50% - 16px);
 		height: 50%;
 		border-bottom: 1px solid currentColor;
 	}

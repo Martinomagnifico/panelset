@@ -85,8 +85,9 @@
 .grid-3 {
   display: grid;
   grid-template-rows: 1fr;
-  grid-column-gap: 2rem;
-  grid-row-gap: 2rem;
+  grid-column-gap: var(--standard-padding);
+  grid-row-gap: var(--standard-padding);
+
 
   & > div {
     flex: 1;

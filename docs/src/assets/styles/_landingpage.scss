@@ -23,8 +23,12 @@ html.index {
 		}
 	}
 
-	.demo {
-		margin-top: 2rem;
+	.demo, footer {
+		margin-top: var(--standard-padding);
+	}
+
+	h1 {
+		margin-top: calc(var(--standard-padding) * 2);
 	}
 
 	.docs-content {

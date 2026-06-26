@@ -176,7 +176,7 @@ mixin exampletabset(id, tabs=false)
 			button(role="tab" aria-controls=`${id}-panel-3`) Support
 
 	else
-		.demo-controls
+		.demo-controls&attributes(attributes)
 			button(aria-controls=`${id}-panel-1`) Features
 			button(aria-controls=`${id}-panel-2`) Pricing
 			button(aria-controls=`${id}-panel-3`) Support
@@ -289,7 +289,7 @@ mixin chevron(size, dir)
 mixin arrow
 	hr.sr-only
 	.arrowdown(aria-hidden='true')
-		svg(xmlns='http://www.w3.org/2000/svg' width='86' height='72' viewbox='0 0 86 72' fill='white' fill-opacity='0.15' stroke='currentColor' stroke-width='1' stroke-linecap='round' stroke-linejoin='round')
+		svg(xmlns='http://www.w3.org/2000/svg' width='86' height='72' viewbox='0 0 86 72' fill='white' fill-opacity='0.25' stroke='currentColor' stroke-width='1' stroke-linecap='round' stroke-linejoin='round')
 			path(d='M23 41V1h40v40h22L43 71 1 41z')
 
 
@@ -337,14 +337,14 @@ mixin installWizard(name, imports)
 							h3 Using #{name}
 							.install-controls
 								.control-row
-									.control-item
+									.control-item.mobileblock
 										label Format
 										select.styled-select(disabled)
 											button
 												selectedcontent
 												+chevron(18, 'down')
 											option.choice(value="esm") ESM module
-									.control-item
+									.control-item.mobileblock
 										label Usage
 										select.styled-select.iw-usage
 											button
@@ -368,7 +368,7 @@ mixin installWizard(name, imports)
 							h3 Using #{name}
 							.install-controls
 								.control-row
-									.control-item
+									.control-item.mobileblock
 										label Format
 										select.styled-select.iw-format
 											button
@@ -376,7 +376,7 @@ mixin installWizard(name, imports)
 												+chevron(18, 'down')
 											option.choice(value="esm") ESM module
 											option.choice(value="iife") Script tag
-									.control-item
+									.control-item.mobileblock
 										label Usage
 										select.styled-select.iw-usage
 											button
@@ -403,14 +403,14 @@ mixin installWizard(name, imports)
 							h3 Using #{name}
 							.install-controls
 								.control-row
-									.control-item
+									.control-item.mobileblock
 										label Format
 										select.styled-select(disabled)
 											button
 												selectedcontent
 												+chevron(18, 'down')
 											option.choice(value="iife") Script tag
-									.control-item
+									.control-item.mobileblock
 										label Usage
 										select.styled-select.iw-usage
 											button

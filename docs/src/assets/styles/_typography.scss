@@ -1,5 +1,10 @@
 @import url("https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap");
 
+html {
+	-webkit-text-size-adjust: 100%;
+	text-size-adjust: 100%;
+}
+
 body {
 	font-family: "Source Sans 3", sans-serif;
 	font-weight: 400;
@@ -12,6 +17,9 @@ body {
 
 button {
 	font-family: inherit;
+}
+
+* {
 	-webkit-tap-highlight-color: transparent;
 }
 
@@ -370,15 +378,6 @@ input {
 	* + & {
 		margin-top: 0.5rem;
 	}
-}
-
-input[type="checkbox"] {
-	background: red;
-	padding: 20px;
-	width: 16px;
-	height: 16px;
-	border-radius: 2px;
-	outline-offset: 2px;
 }
 
 .docs-sidebar a,
