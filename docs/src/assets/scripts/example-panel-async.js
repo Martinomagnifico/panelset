@@ -78,7 +78,7 @@ document.getElementById('heavy-sim')?.panel?.onBeforeOpen((el, signal) => new Pr
 // b) Genuine CPU-heavy work: doing fibonacci(42) inline would freeze the UI, so it
 //    runs in a Web Worker. The signal terminates the worker if the panel closes.
 document.getElementById('heavy-worker')?.panel?.onBeforeOpen((el, signal) => new Promise((resolve, reject) => {
-	const worker = new Worker('/assets/scripts/fib-worker.js');
+	const worker = new Worker(`${import.meta.env.BASE_URL}assets/scripts/fib-worker.js`);
 	worker.postMessage(42);
 	worker.onmessage = (e) => {
 		el.querySelector('.panel-wrapper').innerHTML =
