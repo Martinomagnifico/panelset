@@ -93,13 +93,18 @@
 			height: 0;
 			overflow: clip;
 
+			--picker-height-transition: ;
+			@supports (height: calc-size(auto, size)) {
+				--picker-height-transition: , height var(--ps-open-speed, 0.15s) var(--ps-open-timing, ease-in-out) allow-discrete;
+			}
+
 			transform: var(--ps-wrapper-transform-from, translateY(-0.25rem));
 			transition:
-				opacity 0.15s var(--ps-open-timing, ease-in-out),
-				transform 0.15s var(--ps-open-timing, ease-in-out),
-				display 0.15s var(--ps-open-timing, ease-in-out) allow-discrete,
-				height 0.15s var(--ps-open-timing, ease-in-out) allow-discrete,
-				overlay 0.15s var(--ps-open-timing, ease-in-out) allow-discrete;
+				opacity var(--ps-open-speed, 0.15s) var(--ps-open-timing, ease-in-out),
+				transform var(--ps-open-speed, 0.15s) var(--ps-open-timing, ease-in-out),
+				display var(--ps-open-speed, 0.15s) var(--ps-open-timing, ease-in-out) allow-discrete,
+				overlay var(--ps-open-speed, 0.15s) var(--ps-open-timing, ease-in-out) allow-discrete
+				var(--picker-height-transition);
 
 			@media (prefers-reduced-motion: reduce) {
 				transition: none !important;
@@ -110,7 +115,12 @@
 			opacity: 1;
 			transform: none;
 
-			height: calc-size(auto, size);
+			height: auto;
+			@supports (height: calc-size(auto, size)) {
+				height: calc-size(auto, size);
+			}
+			
+
 			overflow: auto;
 
 			@starting-style {

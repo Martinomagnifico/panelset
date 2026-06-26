@@ -338,15 +338,15 @@ mixin installWizard(name, imports)
 							.install-controls
 								.control-row
 									.control-item.mobileblock
-										label Format
-										select.styled-select(disabled)
+										label(for="formatselectnpm") Format
+										select#formatselectnpm.styled-select(disabled)
 											button
 												selectedcontent
 												+chevron(18, 'down')
 											option.choice(value="esm") ESM module
 									.control-item.mobileblock
-										label Usage
-										select.styled-select.iw-usage
+										label(for="usageselectnpm") Usage
+										select#usageselectnpm.styled-select.iw-usage
 											button
 												selectedcontent
 												+chevron(18, 'down')
@@ -369,16 +369,16 @@ mixin installWizard(name, imports)
 							.install-controls
 								.control-row
 									.control-item.mobileblock
-										label Format
-										select.styled-select.iw-format
+										label(for="formatselectdownload") Format
+										select#formatselectdownload.styled-select.iw-format
 											button
 												selectedcontent
 												+chevron(18, 'down')
 											option.choice(value="esm") ESM module
 											option.choice(value="iife") Script tag
 									.control-item.mobileblock
-										label Usage
-										select.styled-select.iw-usage
+										label(for="usageselectdownload") Usage
+										select#usageselectdownload.styled-select.iw-usage
 											button
 												selectedcontent
 												+chevron(18, 'down')
@@ -404,15 +404,15 @@ mixin installWizard(name, imports)
 							.install-controls
 								.control-row
 									.control-item.mobileblock
-										label Format
-										select.styled-select(disabled)
+										label(for="formatselectcdn") Format
+										select#formatselectcdn.styled-select(disabled)
 											button
 												selectedcontent
 												+chevron(18, 'down')
 											option.choice(value="iife") Script tag
 									.control-item.mobileblock
-										label Usage
-										select.styled-select.iw-usage
+										label(for="usageselectcdn") Usage
+										select#usageselectcdn.styled-select.iw-usage
 											button
 												selectedcontent
 												+chevron(18, 'down')
