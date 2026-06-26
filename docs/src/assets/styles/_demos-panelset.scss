@@ -15,7 +15,8 @@
 		}
 	}
 
-	&[aria-selected="true"] svg {
+	&[aria-selected="true"] svg,
+	&[aria-current="true"] svg {
 		transform: rotate(0deg);
 	}
 }

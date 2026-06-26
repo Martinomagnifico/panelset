@@ -254,7 +254,8 @@
 
   &[aria-expanded="true"],
   &[aria-expanded="false"],
-  &[aria-selected="true"] {
+  &[aria-selected="true"],
+  &[aria-current="true"] {
     background: var(--btn-primary-bg-current);
     color: var(--btn-primary-text-current);
     border-color: var(--btn-primary-stroke-current);
@@ -270,7 +271,8 @@
     background: var(--btn-primary-bg-hover);
     color: var(--btn-primary-text-hover);
   }
-  &[aria-selected="true"]:hover {
+  &[aria-selected="true"]:hover,
+  &[aria-current="true"]:hover {
     box-shadow: none;
   }
 
@@ -288,7 +290,8 @@
 
 
 .demo:has([data-panelset]) {
-  [aria-selected="true"]:not([role="tab"]):hover {
+  // Non-tab triggers carry aria-current (aria-selected is tab-only).
+  [aria-current="true"]:hover {
     cursor: default;
     //box-shadow: 0 4px 8px var(--special-shadow);
   }
@@ -296,14 +299,15 @@
 
 // Disable 'active' style specifically for closable panelsets where one panel must still be active.
 .demo:has([data-panelset][inert]) {
-  [aria-selected="true"]:not(:hover):not([role="tab"]) {
+  [aria-current="true"]:not(:hover) {
     background: var(--btn-primary-bg-normal);
     border-color: var(--btn-primary-stroke-normal);
     color: var(--btn-primary-text-hover);
   }
 }
 
-[data-closeable] > button[aria-selected="true"] {
+[data-closeable] > button[aria-selected="true"],
+[data-closeable] > button[aria-current="true"] {
   pointer-events: auto;
   cursor: pointer;
 }

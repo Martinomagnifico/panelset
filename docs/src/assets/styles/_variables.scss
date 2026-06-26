@@ -8,7 +8,7 @@
 	--color-tint-0:   oklch(0.99 0.008 var(--main-hue));
 	--color-tint-25:  oklch(0.98 0.010 var(--main-hue));
 	--color-tint-50:  oklch(0.96 0.015 var(--main-hue));
-	--color-tint-100: oklch(0.94 0.018 var(--main-hue));
+	--color-tint-100: oklch(0.935 0.018 var(--main-hue));
 	--color-tint-150: oklch(0.90 0.030 var(--main-hue));
 	--color-tint-200: oklch(0.82 0.060 var(--main-hue));
 	--color-tint-300: oklch(0.72 0.070 var(--main-hue));
@@ -69,12 +69,6 @@
 	--btn-plain-text-hover: var(--color-tint-700);
 	--btn-plain-hover-bg: oklch(from var(--color-tint-500) l c h / 0.1);
 
-
-	//-----// 
-
-	// --btn-primary-bg: var(--color-tint-600);
-	// --btn-primary-text: var(--color-tint-0);
-	// --btn-primary-hover: var(--color-tint-700);
 
 
 	--btn-primary-bg-normal: var(--color-tint-600);

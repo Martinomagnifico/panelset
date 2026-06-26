@@ -16,7 +16,7 @@ mixin apiOption(name)
 	- const id = 'option-' + optionName.replace(/[^a-z0-9]/gi, '-').toLowerCase()
 	.card.api.no-padding
 		button.card-trigger(aria-controls=id aria-expanded="false")
-			h4.code= name
+			h3.code= name
 			+chevron()
 		div(id=id data-panel)
 			.panel-wrapper

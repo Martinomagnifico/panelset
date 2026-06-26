@@ -16,7 +16,7 @@ A small library for animating elements between sizes. Three classes share one an
 |---|---|
 | **`Panel`** | A single element that opens and closes (accordions, show-more, sidebars, drawers). Animates `height` or `width`. |
 | **`PanelSet`** | A container that switches between mutually exclusive panels (tabs, wizards, steppers). Animates its own height to fit the incoming panel. |
-| **`PanelControl`** | Optional. Makes a tab strip or sidebar drive a `PanelSet`: keyboard navigation, roving `tabindex`, `aria-selected`, and tab locking through `setTabState()`. |
+| **`PanelControl`** | Optional. Makes a tab strip or sidebar drive a `PanelSet`: keyboard navigation, roving `tabindex`, selection state (`aria-selected` on real tabs, `aria-current` otherwise), and tab locking through `setTabState()`. |
 
 `PanelControl` is side-effect-free, so it tree-shakes out of the ESM build when you don’t import it.
 
@@ -77,19 +77,19 @@ Any `[aria-controls]` element is a trigger. As a shortcut, a `[data-panel-trigge
 
 | Option | Type | Default | Description |
 |---|---|---|---|
-| `axis` | `'vertical' \| 'horizontal'` | `'vertical'` | Which dimension animates (height or width) |
 | `align` | `'start' \| 'center' \| 'end'` | `'start'` | Content alignment within the clipped container |
-| `transitions` | `boolean` | `true` | Enable/disable CSS transitions |
 | `autoFocus` | `false \| true \| 'heading' \| 'first' \| 'input'` | `false` | Move focus into the panel on open |
-| `returnFocus` | `boolean` | `true` | Return focus to the trigger on close |
-| `closeSiblings` | `boolean` | `false` | Close other open panels in the same group |
+| `axis` | `'vertical' \| 'horizontal'` | `'vertical'` | Which dimension animates (height or width) |
 | `closeOnResize` | `boolean` | `false` | Close the panel when the window is resized |
-| `interruptible` | `boolean` | `true` | Allow a new open/close to interrupt one in progress |
-| `persist` | `boolean` | `false` | Save open/closed state to `localStorage` |
+| `closeSiblings` | `boolean` | `false` | Close other open panels in the same group |
+| `debug` | `boolean` | `false` | Log events to the console |
 | `deepLink` | `boolean` | `false` | Reflect open state in the `?panel=` URL |
+| `interruptible` | `boolean` | `true` | Allow a new open/close to interrupt one in progress |
 | `loadingDelay` | `number` | `320` | ms before the spinner appears during async loading |
 | `loadingHeight` | `number` | `150` | px reserved while async content loads |
-| `debug` | `boolean` | `false` | Log events to the console |
+| `persist` | `boolean` | `false` | Save open/closed state to `localStorage` |
+| `returnFocus` | `boolean` | `true` | Return focus to the trigger on close |
+| `transitions` | `boolean` | `true` | Enable/disable CSS transitions |
 
 ### Async content
 
@@ -134,22 +134,22 @@ Mark the starting panel with `class="active"` and every other panel `hidden`.
 | Option | Type | Default | Description |
 |---|---|---|---|
 | `align` | `'start' \| 'center' \| 'end'` | `'start'` | Alignment while opening/closing |
-| `transitions` | `boolean \| { panels?: boolean, height?: boolean }` | `true` | Enable/disable transitions (or per axis) |
-| `levels` | `boolean` | `false` | Give panels a depth order from DOM position; forward/back slide opposite ways |
-| `loop` | `boolean` | `false` | `next()` / `prev()` wrap around the ends |
+| `autoFocus` | `false \| true \| 'heading' \| 'first' \| 'input'` | `false` | Move focus into the panel on activation |
 | `closable` | `boolean` | `false` | Allow the whole container to open and close |
 | `closeOnTab` | `boolean` | `false` | Clicking the active tab closes the container (needs `closable`) |
-| `disabledMode` | `'aria' \| 'native'` | `'aria'` | How `data-ps-next` / `-prev` buttons are disabled at the ends |
-| `autoFocus` | `false \| true \| 'heading' \| 'first' \| 'input'` | `false` | Move focus into the panel on activation |
-| `returnFocus` | `boolean` | `false` | Return focus to the trigger on close |
-| `interruptible` | `boolean` | `true` | Allow a new activation to interrupt one in progress |
-| `manageTriggers` | `boolean` | `true` | Reflect `aria-selected` / activating state onto `[aria-controls]` triggers |
-| `manageLabels` | `boolean` | `true` | Link each panel to its tab via `aria-labelledby` (auto-generates a tab id if needed) |
-| `persist` | `boolean` | `false` | Save the active panel id to `localStorage` |
+| `debug` | `boolean` | `false` | Log events to the console |
 | `deepLink` | `boolean` | `false` | Reflect the active panel in the `?panel=` URL |
+| `disabledMode` | `'aria' \| 'native'` | `'aria'` | How `data-ps-next` / `-prev` buttons are disabled at the ends |
+| `interruptible` | `boolean` | `true` | Allow a new activation to interrupt one in progress |
+| `levels` | `boolean` | `false` | Give panels a depth order from DOM position; forward/back slide opposite ways |
 | `loadingDelay` | `number` | `320` | ms before the spinner appears during async loading |
 | `loadingHeight` | `number` | `150` | px reserved while async content loads |
-| `debug` | `boolean` | `false` | Log events to the console |
+| `loop` | `boolean` | `false` | `next()` / `prev()` wrap around the ends |
+| `manageLabels` | `boolean` | `true` | Link each panel to its tab via `aria-labelledby` (auto-generates a tab id if needed) |
+| `manageTriggers` | `boolean` | `true` | Reflect selection (`aria-selected` on real tabs, `aria-current` otherwise) / activating state onto `[aria-controls]` triggers |
+| `persist` | `boolean` | `false` | Save the active panel id to `localStorage` |
+| `returnFocus` | `boolean` | `false` | Return focus to the trigger on close |
+| `transitions` | `boolean \| { panels?: boolean, height?: boolean }` | `true` | Enable/disable transitions (or per axis) |
 
 ### Async content
 

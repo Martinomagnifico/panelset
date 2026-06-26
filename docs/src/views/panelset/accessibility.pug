@@ -11,7 +11,7 @@ block content
 				p.lead What PanelSet handles for you, and what you still need to do.
 
 	+section("What PanelSet does automatically")
-		p PanelSet keeps #[code aria-selected] in sync on every #[code [aria-controls]] trigger, setting it the moment a switch is committed, well before the animation ends. It also applies #[code inert] to a closed container and to panels that are not visible yet during a transition, so nothing offscreen stays reachable.
+		p PanelSet keeps the selected state in sync on every #[code [aria-controls]] trigger, setting it the moment a switch is committed, well before the animation ends. A real tab (a #[code role="tab"] inside a #[code role="tablist"]) gets #[code aria-selected]; any other trigger (a nav link, a plain button) gets #[code aria-current] on the active one instead, because #[code aria-selected] is only valid on tabs. It also applies #[code inert] to a closed container and to panels that are not visible yet during a transition, so nothing offscreen stays reachable.
 
 		.card
 			table.table
@@ -22,13 +22,13 @@ block content
 				tbody
 					tr
 						td On initialisation
-						td Sets #[code aria-selected] on all #[code [aria-controls]] triggers to match the active panel
+						td Sets the selected state on all #[code [aria-controls]] triggers to match the active panel: #[code aria-selected] on real tabs, #[code aria-current] on any other trigger
 					tr
 						td On init / refresh
 						td Links each panel to the tab that controls it via #[code aria-labelledby] (generating a tab #[code id] if needed), unless the panel already has a name
 					tr
 						td Tab is switched
-						td Updates #[code aria-selected] immediately when the new tab is committed (before the animation ends)
+						td Updates that state (#[code aria-selected] or #[code aria-current]) immediately when the new tab is committed (before the animation ends)
 					tr
 						td Closable panelset is closed
 						td Adds #[code inert] to the container, removing it and its contents from the tab order entirely
@@ -39,7 +39,7 @@ block content
 
 			li An accessible name for any panel with #[strong no] controlling tab (give them #[code aria-label]). Panels that #[em do] have a tab get #[code aria-labelledby] for free (see #[a(href=url('/panelset/configuration.html?panel=option-managelabels#available-options')) manageLabels], the auto-adding of the attribute can be switched off).
 
-			li The initial #[code aria-selected] state in your HTML. PanelSet overrides it on init, but it keeps the no-JS fallback correct.
+			li The initial selected state in your HTML (#[code aria-selected] on real tabs, or #[code aria-current] on other triggers). PanelSet overrides it on init, but it keeps the no-JS fallback correct.
 
 
 	+section("Required markup")

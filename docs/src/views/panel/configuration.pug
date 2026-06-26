@@ -193,6 +193,27 @@ block content
 						ul
 							li #[code debug]
 
+			+apiOption("deepLink: boolean")
+
+				p Keep the #[code ?panel=] URL param in sync as the panel opens and closes (via #[code history.replaceState], so no new history entries pile up). The address bar then always reflects the current state, ready to copy and share. Reading the param on load happens regardless: #[code deepLink] only decides whether opening and closing write back to it. Want shareable URLs and #[code localStorage] restore? Turn on #[code persist] and #[code deepLink] together.
+
+				h4 Default: #[code false]
+
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { deepLink: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-panel-deeplink]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code panel-deeplink]
+				p The panel needs an #[code id], or there is nothing to put in the URL.
+
 			+apiOption("interruptible: boolean")
 
 				p Leave it on. With it off, any open or close that arrives mid-animation or mid-load is dropped, and the one already running finishes first.
@@ -270,27 +291,6 @@ block content
 						ul
 							li #[code panel-persist]
 				p The panel needs an #[code id], or there is nothing to key the storage on.
-
-			+apiOption("deepLink: boolean")
-
-				p Keep the #[code ?panel=] URL param in sync as the panel opens and closes (via #[code history.replaceState], so no new history entries pile up). The address bar then always reflects the current state, ready to copy and share. Reading the param on load happens regardless: #[code deepLink] only decides whether opening and closing write back to it. Want shareable URLs and #[code localStorage] restore? Turn on #[code persist] and #[code deepLink] together.
-
-				h4 Default: #[code false]
-
-				.card-row
-					.card
-						h4 JavaScript
-						ul
-							li #[code { deepLink: true }]
-					.card
-						h4 Data attribute
-						ul
-							li #[code data-panel-deeplink]
-					.card
-						h4 Web Component attribute
-						ul
-							li #[code panel-deeplink]
-				p The panel needs an #[code id], or there is nothing to put in the URL.
 
 			+apiOption("returnFocus: boolean")
 				p When the panel closes, send focus back to the trigger that opened it, so a keyboard user picks up where they were.

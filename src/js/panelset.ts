@@ -407,7 +407,21 @@ export class PanelSet {
 		this.panels.forEach(panel => {
 			if (!panel.id) return;
 			document.querySelectorAll<HTMLElement>(`[aria-controls="${panel.id}"]`).forEach(trigger => {
-				trigger.setAttribute('aria-selected', String(panel === activePanel));
+				const active = panel === activePanel;
+
+				// aria-selected is only valid on a role="tab" inside a tablist. A real
+				// tab keeps aria-selected on every tab (true/false); anything else (nav,
+				// plain button group) gets aria-current on the active one and nothing on
+				// the rest, so we never put aria-selected on a non-tab.
+				const isTab = trigger.getAttribute('role') === 'tab' && !!trigger.closest('[role="tablist"]');
+				if (isTab) {
+					trigger.setAttribute('aria-selected', String(active));
+					trigger.removeAttribute('aria-current');
+				} else {
+					if (active) trigger.setAttribute('aria-current', 'true');
+					else trigger.removeAttribute('aria-current');
+					trigger.removeAttribute('aria-selected');
+				}
 			});
 		});
 	}

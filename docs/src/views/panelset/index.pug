@@ -43,7 +43,7 @@ block content
 							p Content...
 
 	+section("Starting state")
-		p Choose which panel is visible on load by giving it #[code class="active"] and marking every other panel #[code hidden]. Swap those class and attributes to start on a different panel. PanelSet reads this on init and syncs the triggers’ #[code aria-selected] automatically, so the markup is the only thing you set.
+		p Choose which panel is visible on load by giving it #[code class="active"] and marking every other panel #[code hidden]. Swap those class and attributes to start on a different panel. PanelSet reads this on init and syncs the triggers’ selected state automatically (#[code aria-selected] on real tabs, #[code aria-current] on other triggers), so the markup is the only thing you set.
 
 		.card
 			.demo
@@ -117,7 +117,7 @@ block content
 				container?.panelSet?.show(panelId, { event });
 			});
 
-		p #[strong Bonus:] PanelSet automatically manages #[code aria-selected] and #[code tabindex] for elements with #[code role="tab"].
+		p #[strong Bonus:] PanelSet automatically manages #[code aria-selected] and #[code tabindex] for elements with #[code role="tab"], and uses #[code aria-current] for triggers that are not tabs.
 
 	+section("Public API", "API")
 		+codeblock('JS').

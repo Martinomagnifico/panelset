@@ -143,63 +143,6 @@ block content
 						ul
 							li #[code close-on-tab]
 
-			+apiOption("levels: boolean")
-				p Give panels a sense of depth from their DOM order: a later panel is "higher". Forward slides one way and back the other, with #[code .levelup] / #[code .leveldown] classes added so your CSS can flip the transform for backward moves.
-
-				h4 Default: #[code false]
-
-				.card-row
-					.card
-						h4 JavaScript
-						ul
-							li #[code { levels: true }]
-					.card
-						h4 Data attribute
-						ul
-							li #[code data-ps-levels]
-					.card
-						h4 Web Component attribute
-						ul
-							li #[code ps-levels]
-
-			+apiOption("loop: boolean")
-				p Let #[code next()] / #[code prev()] wrap instead of stopping at the ends: past the last panel you’re back at the first, and the other way round. With loop on there’s nowhere unreachable, so PanelSet never disables its #[code data-ps-next] / #[code data-ps-prev] buttons. Carousel territory (see the #[a(href=url('/panelset/examples/wizard.html')) Wizard] page).
-
-				h4 Default: #[code false]
-
-				.card-row
-					.card
-						h4 JavaScript
-						ul
-							li #[code { loop: true }]
-					.card
-						h4 Data attribute
-						ul
-							li #[code data-ps-loop]
-					.card
-						h4 Web Component attribute
-						ul
-							li #[code ps-loop]
-
-			+apiOption("disabledMode: 'aria' | 'native'")
-				p How PanelSet switches off its own #[code data-ps-next] / #[code data-ps-prev] buttons at the ends of the range (only relevant when loop is off). #[code 'aria'] sets #[code aria-disabled] and leaves the native #[code disabled] attribute to you. The button keeps focus, so a screen reader can still announce why it’s dead. #[code 'native'] sets the real disabled attribute (PanelSet owns it from then on) and moves focus away first. Tab-strip locking ignores all this and always uses aria.
-
-				h4 Default: #[code 'aria']
-
-				.card-row
-					.card
-						h4 JavaScript
-						ul
-							li #[code { disabledMode: 'native' }]
-					.card
-						h4 Data attribute
-						ul
-							li #[code data-ps-disabled-mode="native"]
-					.card
-						h4 Web Component attribute
-						ul
-							li #[code ps-disabled-mode="native"]
-
 			+apiOption("debug: boolean")
 				p Log every activation to the console. Handy when something’s switching that shouldn’t be, quiet the rest of the time.
 
@@ -219,24 +162,43 @@ block content
 						ul
 							li #[code debug]
 
-			+apiOption("manageLabels: boolean")
-				p Link each panel back to the trigger that controls it with #[code aria-labelledby] (generating a trigger #[code id] when one is missing), so a screen reader announces the panel by its tab’s text. Runs at init and on #[code refresh()]; never overrides an existing #[code aria-label] / #[code aria-labelledby]; and only acts when exactly one trigger controls the panel. Set to #[code false] if you prefer to do the labelling yourself.
+			+apiOption("deepLink: boolean")
+				p Keep the #[code ?panel=] URL param in sync as panels switch (via #[code history.replaceState], so no new history entries pile up). The address bar then always points at the current tab, ready to copy and share. Reading the param on load happens regardless. #[code deepLink] only decides whether activation writes back to it. Want shareable URLs and localStorage restore? Turn on #[code persist] and #[code deepLink] together.
 
-				h4 Default: #[code true]
-				
+				h4 Default: #[code false]
+
 				.card-row
 					.card
 						h4 JavaScript
 						ul
-							li #[code { manageLabels: false }]
+							li #[code { deepLink: true }]
 					.card
 						h4 Data attribute
 						ul
-							li #[code data-manage-labels="false"]
+							li #[code data-panel-deeplink]
 					.card
 						h4 Web Component attribute
 						ul
-							li #[code manage-labels="false"]
+							li #[code panel-deeplink]
+	
+			+apiOption("disabledMode: 'aria' | 'native'")
+				p How PanelSet switches off its own #[code data-ps-next] / #[code data-ps-prev] buttons at the ends of the range (only relevant when loop is off). #[code 'aria'] sets #[code aria-disabled] and leaves the native #[code disabled] attribute to you. The button keeps focus, so a screen reader can still announce why it’s dead. #[code 'native'] sets the real disabled attribute (PanelSet owns it from then on) and moves focus away first. Tab-strip locking ignores all this and always uses aria.
+
+				h4 Default: #[code 'aria']
+
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { disabledMode: 'native' }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-ps-disabled-mode="native"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code ps-disabled-mode="native"]
 
 			+apiOption("interruptible: boolean")
 
@@ -257,6 +219,25 @@ block content
 						h4 Web Component attribute
 						ul
 							li #[code interruptible="false"]
+
+			+apiOption("levels: boolean")
+				p Give panels a sense of depth from their DOM order: a later panel is "higher". Forward slides one way and back the other, with #[code .levelup] / #[code .leveldown] classes added so your CSS can flip the transform for backward moves.
+
+				h4 Default: #[code false]
+
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { levels: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-ps-levels]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code ps-levels]
 
 			+apiOption("loadingDelay: number")
 				p How long to wait before showing the spinner. On a fast connection the content usually wins the race, so you never see a spinner you didn’t need.
@@ -297,9 +278,47 @@ block content
 						ul
 							li #[code loading-height="200"]
 
+			+apiOption("loop: boolean")
+				p Let #[code next()] / #[code prev()] wrap instead of stopping at the ends: past the last panel you’re back at the first, and the other way round. With loop on there’s nowhere unreachable, so PanelSet never disables its #[code data-ps-next] / #[code data-ps-prev] buttons. Carousel territory (see the #[a(href=url('/panelset/examples/wizard.html')) Wizard] page).
+
+				h4 Default: #[code false]
+
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { loop: true }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-ps-loop]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code ps-loop]
+
+			+apiOption("manageLabels: boolean")
+				p Link each panel back to the trigger that controls it with #[code aria-labelledby] (generating a trigger #[code id] when one is missing), so a screen reader announces the panel by its tab’s text. Runs at init and on #[code refresh()]; never overrides an existing #[code aria-label] / #[code aria-labelledby]; and only acts when exactly one trigger controls the panel. Set to #[code false] if you prefer to do the labelling yourself.
+
+				h4 Default: #[code true]
+				
+				.card-row
+					.card
+						h4 JavaScript
+						ul
+							li #[code { manageLabels: false }]
+					.card
+						h4 Data attribute
+						ul
+							li #[code data-manage-labels="false"]
+					.card
+						h4 Web Component attribute
+						ul
+							li #[code manage-labels="false"]
+
 			+apiOption("manageTriggers: boolean")
 
-				p With it off, PanelSet stops touching your triggers: no #[code aria-selected] updates, no #[code is-activating] class, and #[code data-auto-focus] on triggers is ignored. That’s for wrapper libraries that manage their own trigger state and drive PanelSet purely through #[code show()]. On your own, leave it on.
+				p With it off, PanelSet stops touching your triggers: no #[code aria-selected] / #[code aria-current] updates, no #[code is-activating] class, and #[code data-auto-focus] on triggers is ignored. That’s for wrapper libraries that manage their own trigger state and drive PanelSet purely through #[code show()]. On your own, leave it on.
 
 				h4 Default: #[code true]
 
@@ -337,25 +356,6 @@ block content
 							li #[code panel-persist]
 				p Needs an #[code id] on the container, or there’s nothing to key the storage on.
 
-			+apiOption("deepLink: boolean")
-				p Keep the #[code ?panel=] URL param in sync as panels switch (via #[code history.replaceState], so no new history entries pile up). The address bar then always points at the current tab, ready to copy and share. Reading the param on load happens regardless. #[code deepLink] only decides whether activation writes back to it. Want shareable URLs and localStorage restore? Turn on #[code persist] and #[code deepLink] together.
-
-				h4 Default: #[code false]
-
-				.card-row
-					.card
-						h4 JavaScript
-						ul
-							li #[code { deepLink: true }]
-					.card
-						h4 Data attribute
-						ul
-							li #[code data-panel-deeplink]
-					.card
-						h4 Web Component attribute
-						ul
-							li #[code panel-deeplink]
-	
 			+apiOption("returnFocus: boolean")
 				p When the set closes, send focus back to whatever opened it, so the keyboard user picks up where they were instead of at the top of the document.
 				h4 Default: #[code false]

@@ -21,8 +21,9 @@
     gap: 0;
   }
 
-  button, 
+  button,
   button[aria-selected="true"],
+  button[aria-current="true"],
   button[aria-expanded="true"],
   button[aria-expanded="false"],
   button:hover {

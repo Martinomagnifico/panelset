@@ -29,7 +29,7 @@ block content
 		p Manual and auto activation (and why auto self-downgrades) are covered on the #[a(href=url('/panelcontrol/activation.html')) Activation] page.
 
 	+section("Selection state")
-		p Selection of triggers is managed by PanelSet. So if a user clicks a tab, then it will get #[code [aria-selected="true"]], while the previous tab gets #[code [aria-selected="false"]]. That is all automatic. PanelControl adds a bit to that: it makes sure the #[code [tabindex]] is also correct during tabbing.
+		p Selection of triggers is managed by PanelSet. So if a user clicks a real tab (a #[code role="tab"] inside a #[code role="tablist"]), it gets #[code [aria-selected="true"]] while the previous tab gets #[code [aria-selected="false"]]. Triggers that are not tabs get #[code [aria-current="true"]] on the active one instead, since #[code aria-selected] is only valid on tabs. That is all automatic. PanelControl adds a bit to that: it makes sure the #[code [tabindex]] is also correct during tabbing.
 
 	+section("Locking tabs")
 		p Your own code (a wizard, a multi-step form) decides when a step should be unreachable. It calls #[code setTabState()]; PanelControl only applies it.

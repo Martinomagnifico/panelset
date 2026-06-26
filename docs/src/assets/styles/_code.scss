@@ -127,6 +127,20 @@ dl.horizontal {
 	}
 }
 
+.hljs-code, .hljs-comment, .hljs-formula {
+	color: var(--text-muted);
+	opacity: 0.8;
+
+	@media (prefers-color-scheme: dark) {
+		color: white;
+	}
+
+}
+
+
+
+
+
 
 button.copy {
 	background: var(--btn-primary-bg);

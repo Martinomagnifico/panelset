@@ -64,7 +64,7 @@ block content
 		p See #[a(href=url('/panelcontrol/activation.html')) Activation], #[a(href=url('/panelcontrol/examples/closable.html')) Closable], and #[a(href=url('/panelcontrol/examples/vertical.html')) Vertical display] for worked examples.
 
 	+section("Scope")
-		p PanelControl manages controls and reflects state: activation, keyboard nav, roving #[code tabindex], #[code aria-selected] / disabled. It also exposes #[code setTabState(id, 'disabled' | 'enabled')] so external code can lock or unlock a tab; PanelControl just applies it.
+		p PanelControl manages controls and reflects state: activation, keyboard nav, roving #[code tabindex], selected state (#[code aria-selected] on tabs, #[code aria-current] otherwise) / disabled. It also exposes #[code setTabState(id, 'disabled' | 'enabled')] so external code can lock or unlock a tab; PanelControl just applies it.
 		p Validation, Previous / Next flow, step locking, and persistence are #[strong not] part of PanelControl. Those are up to your own code, which calls #[code setTabState] when a step should lock. The direction is one way: your code calls PanelControl, which calls PanelSet, never the reverse.
 		p Next: every option in #[a(href=url('/panelcontrol/configuration.html')) Configuration], and the method list in the #[a(href=url('/panelcontrol/api.html')) API] reference.
 
