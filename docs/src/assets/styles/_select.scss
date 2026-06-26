@@ -45,10 +45,7 @@
 		background-image: none;
 		padding-inline-end: 0.75em;
 
-		&,
-		&::picker(select) {
-			appearance: base-select;
-		}
+		appearance: base-select;
 
 		display: flex;
 		align-items: center;
@@ -81,7 +78,7 @@
 			transform: rotate(-180deg);
 		}
 		&::picker(select) {
-			background: var(--bg-sidebar);
+			appearance: base-select;
 			background: white;
 			border: 1px solid var(--border-default);
 			border-radius: 0.25rem;
