@@ -89,7 +89,7 @@ block content
 
 				.demo
 					+exampletabset('opendemo')
-					+examplepanelset('opendemo')(data-closable data-close-on-tab data-panel-axis=horizontal data-panel-align=center)
+					+examplepanelset('opendemo', false, 5)(data-closable data-close-on-tab data-panel-axis=horizontal data-panel-align=center)
 
 				+codeblock('CSS').
 					[data-panelset] {
@@ -114,7 +114,7 @@ block content
 
 				.demo
 					+exampletabset('borderdemo')
-					+examplepanelset('borderdemo')(data-closable data-close-on-tab data-panel-axis=horizontal data-panel-align=center)
+					+examplepanelset('borderdemo', false, 5)(data-closable data-close-on-tab data-panel-axis=horizontal data-panel-align=center)
 
 				+codeblock('CSS').
 					#borderdemo {
@@ -152,7 +152,7 @@ block content
 				h4 Demo
 				.demo
 					+exampletabset('wrapperdemo')
-					+examplepanelset('wrapperdemo')(data-closable data-close-on-tab)
+					+examplepanelset('wrapperdemo', false, 5)(data-closable data-close-on-tab)
 
 
 				+codeblock('CSS').
@@ -188,7 +188,7 @@ block content
 
 				.demo
 					+exampletabset('demo')
-					+examplepanelset('demo')
+					+examplepanelset('demo', false, 4)
 
 				+codeblock('CSS').
 					[data-panelset] {
@@ -205,7 +205,7 @@ block content
 
 				.demo
 					+exampletabset('slowdemo')
-					+examplepanelset('slowdemo')
+					+examplepanelset('slowdemo', false, 5)
 
 				+codeblock('CSS').
 					#slowdemo {
@@ -220,7 +220,7 @@ block content
 
 				.demo
 					+exampletabset('crossfade')
-					+examplepanelset('crossfade')
+					+examplepanelset('crossfade', false, 5)
 
 				+codeblock('CSS').
 					#crossfade {
@@ -245,7 +245,7 @@ block content
 
 				.demo
 					+exampletabset('slidedemo')
-					+examplepanelset('slidedemo')(class="slide")
+					+examplepanelset('slidedemo', false, 4)(class="slide")
 
 				+codeblock('CSS').
 					.slide {
@@ -276,7 +276,7 @@ block content
 
 				.demo
 					+exampletabset('leveldemo')
-					+examplepanelset('leveldemo')(class="slide" data-ps-levels)
+					+examplepanelset('leveldemo', false, 4)(class="slide" data-ps-levels)
 
 				+codeblock('HTML')
 					div(data-panelset data-ps-levels class="slide") …

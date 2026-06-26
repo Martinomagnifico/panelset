@@ -175,6 +175,9 @@ a.github-corner {
 	align-self: end;
 	margin-bottom: -80px;
 
+	outline-width: 2px;
+	outline-offset: 2px;
+
 	.triangle {
 		fill: var(--btn-primary-bg-normal);
 		transition: fill 0.125s ease-in-out;
@@ -189,13 +192,18 @@ a.github-corner {
 	}
 
 
-	&:hover {
+	&:hover,
+	&:focus-visible {
 		.octo-arm {
 			animation:octocat-wave 560ms ease-in-out
 		}
 		.triangle {
 			fill: var(--btn-primary-bg-hover);
 		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.octo-arm { animation: none !important; }
 	}
 	
 	@keyframes octocat-wave{

@@ -153,7 +153,7 @@ dl.bg-surface-tint {
 		left: 0;
 		width: 100%;
 		height: calc(100% - 1px);
-		border-radius: 1rem;
+		border-radius: 0.5rem;
 		background: transparent;
 		transition: background-color 0.15s ease-in-out;
 		border-bottom: 1px solid transparent;
@@ -161,7 +161,7 @@ dl.bg-surface-tint {
 
 
 	&:focus-visible {
-		outline: 3px solid var(--btn-primary-hover);
+		outline: 3px solid var(--link-focus);
 	}
 	&:hover {
 		&:before {
@@ -201,6 +201,8 @@ dl.bg-surface-tint {
 
 .card.no-padding {
 	transition: all var(--ps-open-speed) var(--ps-open-timing);
+
+	border-radius: 0.5rem;
 
 	padding: 0;
 	gap: 0;

@@ -191,7 +191,7 @@ block content
 							button(aria-controls="raw-panel") Toggle panel
 							div#raw-panel(data-panel)
 								.panel-wrapper
-									+example-1
+									+example-1(4)
 
 					div
 						h3 PanelSet
@@ -200,7 +200,7 @@ block content
 								button(aria-controls="raw-ps-panel-1") First
 								button(aria-controls="raw-ps-panel-2") Second
 								button(aria-controls="raw-ps-panel-3") Third
-							+examplepanelset('raw-ps')
+							+examplepanelset('raw-ps', false, 4)
 
 	hr
 	section.no-hr

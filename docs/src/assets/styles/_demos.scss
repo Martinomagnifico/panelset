@@ -259,11 +259,6 @@
     background: var(--btn-primary-bg-current);
     color: var(--btn-primary-text-current);
     border-color: var(--btn-primary-stroke-current);
-
-    &[role="tab"] {
-      background: var(--demo-surface);
-    }
-
   }
 
   &:hover {
@@ -356,7 +351,7 @@ button[aria-expanded="true"] .when-closed {
   }
   .wrap {
     fill: var(--special-normal);
-    fill-opacity: 0.2;
+    fill-opacity: 0.33;
     stroke: var(--special-normal);
   }
   .panel {

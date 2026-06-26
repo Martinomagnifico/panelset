@@ -14,18 +14,18 @@ block content
 	+section("Live demo")
 
 		.card
-			h4 Tracking off
+			h3 Tracking off
 			.demo.largeparent
 				.tabinterface
 					+exampletabset('notracking', true)
-					+examplepanelset('notracking').tab-content
+					+examplepanelset('notracking', false, 5).tab-content
 
-			h4 Tracking on
+			h3 Tracking on
 			.demo.largeparent
 				.tabinterface
 					+exampletabset('demo', true)
 					div(data-panelset-trackheight)
-						+examplepanelset('demo').tab-content
+						+examplepanelset('demo', false, 5).tab-content
 
 
 			p In this demo, we position the panelset and a row of buttons inside a centered interface. The first example doesn’t have tracking enabled, so you can see how the interface height changes as you switch panels, #[strong which might be annoying to use, because the tab buttons move away from the cursor]. The second example has tracking enabled, so the interface height stays consistent.

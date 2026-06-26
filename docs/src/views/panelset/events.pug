@@ -17,7 +17,7 @@ block content
 			+apiEvent("ps:ready")
 				p Fires once the PanelSet instance is fully initialised and ready to use.
 
-				h4 Detail:
+				h3 Detail:
 
 				dl
 					dt.code container: HTMLElement
@@ -35,7 +35,7 @@ block content
 				p Fires at the very start of an activation, before anything changes. This one is cancelable: call #[code e.preventDefault()] to veto the switch. It fires whether a user clicked a tab, your script called #[code next()], #[code prev()], or #[code show()], or a #[code ?panel=] link opened a panel on load. They all arrive here first, so it is the place to control navigation (for example, a wizard that refuses to advance until the current step is valid).
 
 				
-				h4 Detail:
+				h3 Detail:
 				dl
 					dt.code panelId: string
 					dd ID of the panel about to be activated.
@@ -57,7 +57,7 @@ block content
 
 				p Fires just before an activation begins. This is the hook for loading content: hand a promise to #[code e.detail.promise] and the transition waits until it settles.
 
-				h4 Detail:
+				h3 Detail:
 				dl
 					dt.code panelId: string
 					dd ID of the panel being activated.
@@ -91,7 +91,7 @@ block content
 			+apiEvent("ps:activationstart")
 				p Fires once the activation is committed and the transitions are about to start (after any async loading). The veto window has closed by now, so this is where you react to a switch that is definitely happening.
 
-				h4 Detail:
+				h3 Detail:
 
 				dl
 					dt.code panelId: string
@@ -117,7 +117,7 @@ block content
 
 				p Fires when the height animation and the panel transition have both finished. The switch is done and the set is idle again.
 
-				h4 Detail:
+				h3 Detail:
 				dl
 					dt.code panelId: string
 					dd ID of the panel that is now active.
@@ -141,7 +141,7 @@ block content
 			+apiEvent("ps:activationaborted")
 				p Fires when an activation-in-progress is interrupted by a newer one. This is the impatient-clicking case: the first switch never completes, and this tells you which panel got dropped.
 
-				h4 Detail:
+				h3 Detail:
 				dl
 					dt.code panelId: string
 					dd ID of the panel whose activation was aborted.

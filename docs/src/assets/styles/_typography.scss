@@ -94,15 +94,43 @@ h1 {
 h2 {
 	font-size: 1.7rem;
 }
-h3, h3.code{
+h3, h3.code {
 	font-size: 1.33rem;
 }
 h4 {
 	font-size: 1.15rem;
 }
 
+h5, *.h5 {
+	color: var(--text-heading-2);
+	code {
+		color: var(--text-heading-2);
+	}
+}
+
+*.h5 {
+	font-size: 1em;
+	font-weight: bold;
+	line-height: 1.5;
+}
+
+// Demo panel titles. The heading level is set per context (for a correct
+// document outline), but the look is always h3-sized regardless of the tag.
+.demo-title {
+	font-size: 1.33rem;
+	font-weight: 500;
+	color: var(--text-heading-2);
+	line-height: 1.2;
+	padding: 0;
+	&:first-child {
+		margin-top: 0;
+	}
+}
+
 .demo h3 + ul,
-.demo h3 + ol {
+.demo h3 + ol,
+.demo-title + ul,
+.demo-title + ol {
 	padding-top: var(--padding-small);
 }
 
@@ -347,6 +375,7 @@ h1, h2, h3, h4, h5, a, button {
 	transition: all 0.125s ease-in-out;
 	outline-offset: 0;
 }
+
 h3, h4, h5, p a, .heading-anchor a {
 	outline: 2px solid transparent;
 	&:focus-visible {

@@ -18,7 +18,7 @@ block content
 			+apiEvent("panel:beforeopen")
 				p Fires just before the panel opens. This is the hook for loading content: hand a promise to #[code e.detail.promise] and the open waits until it settles.
 
-				h4 Detail:
+				h3 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
 					dd The element that initiated the open, or #[code null] if opened programmatically.
@@ -41,28 +41,28 @@ block content
 
 			+apiEvent("panel:opening")
 				p Fires when the open animation starts.
-				h4 Detail:
+				h3 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
 					dd The element that initiated the open, or #[code null] if opened programmatically.
 
 			+apiEvent("panel:opened")
 				p Fires once the panel is fully open and the transition has finished.
-				h4 Detail:
+				h3 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
 					dd The element that initiated the open, or #[code null] if opened programmatically.
 
 			+apiEvent("panel:closing")
 				p Fires when the close animation starts.
-				h4 Detail:
+				h3 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
 					dd The element that last opened the panel, or #[code null] if closed programmatically.
 
 			+apiEvent("panel:closed")
 				p Fires once the panel is fully closed and the transition has finished.
-				h4 Detail:
+				h3 Detail:
 				dl
 					dt.code trigger: HTMLElement | null
 					dd The element that last opened the panel, or #[code null] if closed programmatically.

@@ -16,7 +16,7 @@ mixin align-demo(uid, align)
 					span Pricing
 					+chevron(16, 'down')
 
-			+examplepanelset(uid)(data-closable data-close-on-tab data-panelset-align=(align !== 'start' ? align : undefined))
+			+examplepanelset(uid, false, 6)(data-closable data-close-on-tab data-panelset-align=(align !== 'start' ? align : undefined))
 
 
 block content
