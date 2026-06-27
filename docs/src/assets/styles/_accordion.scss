@@ -3,6 +3,8 @@ ul[data-panel-group] {
   margin: 0;
   padding: 0;
 
+  gap: 0;
+
   button[aria-controls] {
     font-size: 1.2rem;
     font-weight: 500;
@@ -12,9 +14,6 @@ ul[data-panel-group] {
   }
 
   > li {
-    border: 1px solid var(--special-normal);
-    background: var(--demo-surface);
-    border-radius: 4px;
 
     &:before {
       display: none;
@@ -56,6 +55,13 @@ ul[data-panel-group] {
       padding: var(--padding-medium);
       padding-top: 0;
     }
+
+    & + li {
+      border-top: 1px solid var(--border-default);
+      border-top: 1px solid oklch(from var(--border-default) l c h / 0.5);
+
+    }
+
   }
 }
 
