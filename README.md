@@ -7,7 +7,7 @@
 ----
 ## What is it?
 It is a transition helper for panels that you want to show or hide.
-The package exports *three* classes. *Two* main classes: Panel and PanelSet and *one* additional class PanelControl. Both main classes animate a size between values using an [LMAU](https://martinomagnifico.github.io/panelset/how-it-works.html#lmau)* cycle:
+The package exports *three* classes. *Two* main classes: Panel and PanelSet and *one* additional class PanelControl. Both main classes animate a size between values using an [LMAU](#the-lock-measure-animate-unlock-(LMAU)-cycle)* cycle:
 
 * **Panel** animates height or width
 * **PanelSet** animates height of a whole set of panels, showing one at a time
@@ -17,11 +17,11 @@ The package exports *three* classes. *Two* main classes: Panel and PanelSet and 
 
 * LMAU: Lock-Measure-Animate-Unlock <small>(I should trademark the term)</small>.
 
--------
+------------
 
 **Documentation:** the full guides, every option, and live examples are at <https://martinomagnifico.github.io/panelset/>. This README is a quick reference. 
 
------
+------------
 
 ## Installation
 
@@ -42,6 +42,20 @@ Or as a script tag (IIFE bundle):
 <!-- exposes window.Panel / PanelSet / PanelControl and registers
      <ps-panel> / <ps-panelset> / <ps-panelcontrol> -->
 ```
+
+------------
+
+## The lock-measure-animate-unlock (LMAU) cycle
+
+Panel and PanelSet seem to be able to transition to or from a natural size, but they just use measurement to get explicit values. ‘Explicit’ sounds fancy, but it just means using real or relative values instead of auto. It is the same basic approach as used in for example react-collapse, but extended here to horizontal axes and panel switching. The sequence is the same for both:
+
+1. **Lock**: write the current dimension as an inline style. This gives CSS a concrete start value.
+2. **Measure**: make the target content briefly visible but absolutely positioned (so it does not affect flow), then read its offset dimension (`offsetHeight` or `offsetWidth`). This value is used in the next step.
+3. **Animate**: set the container’s inline style to the measured value inside a `requestAnimationFrame` call. The CSS transition runs between the locked start and the measured end.
+4. **Unlock**: once the transition ends, remove the inline style. The container is responsive again.
+
+
+------------
 
 ## Panel
 
@@ -99,7 +113,7 @@ Panel manages the aria-expanded attributes. You do not need to do that.
 ### Async content
 
 ```js
-const panel = new Panel('#my-panel');
+const panel = new Panel('#my-panel');[]()
 
 panel.onBeforeOpen((el, signal) => {
   return fetch('/api/content', { signal })
@@ -109,6 +123,8 @@ panel.onBeforeOpen((el, signal) => {
 ```
 
 Or listen for the `panel:beforeopen` event and call `e.detail.waitUntil(promise)` to hold the open until it resolves.
+
+------------
 
 ## PanelSet
 
@@ -168,6 +184,9 @@ ps.onBeforeOpen((targetPanel, signal) => {
 }, { once: true });
 ```
 
+------------
+
+
 ## PanelControl
 
 Drives one `PanelSet` from its trigger elements, so you do not hand-write the tab interaction. Put `data-panelcontrol` on the container; add `role="tablist"` (with `role="tab"` buttons) to switch on the keyboard model (arrow keys, `Home` / `End`, roving `tabindex`). It finds its `PanelSet` through the panels the triggers point at, so the control can live anywhere in the DOM.
@@ -183,6 +202,9 @@ control.setTabState('panel-3', 'enabled');   // unlock
 |---|---|---|---|
 | `activation` | `'manual' \| 'auto'` | `'manual'` | `manual`: arrows move focus, Enter/Space/click activates. `auto`: arrows activate too. |
 | `debug` | `boolean` | `false` | Log to the console |
+
+
+------------
 
 ## Configuration sources
 
