@@ -7,7 +7,7 @@
 ----
 ## What is it?
 It is a transition helper for panels that you want to show or hide.
-The package exports *three* classes. *Two* main classes: Panel and PanelSet and *one* additional class PanelControl. Both main classes animate a size between values using an [LMAU](http://localhost:5173/how-it-works.html#lmau)* cycle:
+The package exports *three* classes. *Two* main classes: Panel and PanelSet and *one* additional class PanelControl. Both main classes animate a size between values using an [LMAU](https://martinomagnifico.github.io/panelset/how-it-works.html#lmau)* cycle:
 
 * **Panel** animates height or width
 * **PanelSet** animates height of a whole set of panels, showing one at a time
