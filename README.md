@@ -15,7 +15,7 @@ The package exports *three* classes. *Two* main classes: Panel and PanelSet and 
 
 ⠀The two main classes use the same animation core and share most config options. Animation is CSS-only: JS just measures and sets pixel values, then lets your browser do the rest with CSS. For async content, you can pass a promise to let the panel wait until it resolves. A spinner kicks in if loading takes longer than what you set it to be. Both also handle focus management.
 
-* LMAU: Lock-Measure-Animate-Unlock (I should trademark the term).
+* LMAU: Lock-Measure-Animate-Unlock <small>(I should trademark the term)</small>.
 
 -------
 
@@ -56,7 +56,7 @@ Or as a script tag (IIFE bundle):
 Panels are **closed by default** (no class needed). Add `is-open` to start open.
 
 ```html
-<button aria-controls="my-panel" aria-expanded="false">Toggle</button>
+<button aria-controls="my-panel">Toggle</button>
 
 <div id="my-panel" data-panel>
   <div class="panel-wrapper">Content here</div>
@@ -74,15 +74,17 @@ Any `[aria-controls]` element is a trigger. As a shortcut, a `[data-panel-trigge
 
 ```html
 <div data-panel-group data-panel-close-siblings>
-  <button aria-controls="acc-1" aria-expanded="false">Item 1</button>
+  <button aria-controls="acc-1">Item 1</button>
   <div id="acc-1" data-panel><div class="panel-wrapper">Answer 1</div></div>
 
-  <button aria-controls="acc-2" aria-expanded="false">Item 2</button>
+  <button aria-controls="acc-2">Item 2</button>
   <div id="acc-2" data-panel><div class="panel-wrapper">Answer 2</div></div>
 </div>
 ```
 
 `data-panel-close-siblings` (or `closeSiblings: true`) makes opening one panel close the others.
+
+Panel manages the aria-expanded attributes. You do not need to do that.
 
 ### Panel options
 
