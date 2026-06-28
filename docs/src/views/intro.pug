@@ -13,14 +13,14 @@ block content
 	+section("What is it?")
 		p It is a transition helper for panels that you want to show or hide.
 		
-		p The package exports three classes. Two main classes: #[strong Panel] and #[strong PanelSet] and a class #[strong PanelControl]. Both main classes animate a size between values using an #[a(href=url('/how-it-works.html#lmau')) LMAU]* cycle: 
+		p The package exports #[em three] classes. #[em Two] main classes: #[strong Panel] and #[strong PanelSet] and #[em one] additional class #[strong PanelControl]. Both main classes animate a size between values using an #[a(href=url('/how-it-works.html#lmau')) LMAU]* cycle: 
 		
 		ul
-			li Panel animates height or width
-			li PanelSet animates height of a whole set of panels, showing one at a time
-			li PanelControl is an addition to PanelSet that handles navigation for tabs
+			li #[strong Panel] animates height or width
+			li #[strong PanelSet] animates height of a whole set of panels, showing one at a time
+			li #[strong PanelControl] is an addition to PanelSet that handles navigation for tabs
 
-		p The two main classes use the same animation core and share most config options. Animation is CSS-only: JS measures and sets pixel values, then hands off to the browser. For async content, pass a promise to #[code onBeforeOpen()] to hold the open until it resolves. A spinner kicks in if loading takes longer than #[code loadingDelay]ms. Both also handle focus management.
+		p The two main classes use the same animation core and share most config options. Animation is CSS-only: JS just measures and sets pixel values, then lets your browser do the rest with CSS. For async content, you can pass a promise to let the panel wait until it resolves. A spinner kicks in if loading takes longer than what you set it to be. Both also handle focus management.
 
 		p * LMAU: Lock-Measure-Animate-Unlock #[span.small (I should trademark the term)].
 

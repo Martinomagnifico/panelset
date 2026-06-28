@@ -4,11 +4,24 @@
 
 **Flexible panel management with smooth transitions.**
 
-A small library for animating elements between sizes. Three classes share one animation core (a lock / measure / animate / unlock cycle): transitions are CSS only, JavaScript only measures and sets pixel values. Accessible by default (managed ARIA and focus), interrupt-safe, and it respects `prefers-reduced-motion`.
+----
+## What is it?
+It is a transition helper for panels that you want to show or hide.
+The package exports *three* classes. *Two* main classes: Panel and PanelSet and *one* additional class PanelControl. Both main classes animate a size between values using an ~[LMAU](http://localhost:5173/how-it-works.html#lmau)~* cycle:
+
+* **Panel** animates height or width
+* **PanelSet** animates height of a whole set of panels, showing one at a time
+* **PanelControl** is an addition to PanelSet that handles navigation for tabs
+
+⠀The two main classes use the same animation core and share most config options. Animation is CSS-only: JS just measures and sets pixel values, then lets your browser do the rest with CSS. For async content, you can pass a promise to let the panel wait until it resolves. A spinner kicks in if loading takes longer than what you set it to be. Both also handle focus management.
+
+* LMAU: Lock-Measure-Animate-Unlock (I should trademark the term).
+
+-------
 
 **Documentation:** the full guides, every option, and live examples are at <https://martinomagnifico.github.io/panelset/>. This README is a quick reference. 
 
-
+-----
 
 ## The three classes
 
@@ -17,8 +30,6 @@ A small library for animating elements between sizes. Three classes share one an
 | **`Panel`** | A single element that opens and closes (accordions, show-more, sidebars, drawers). Animates `height` or `width`. |
 | **`PanelSet`** | A container that switches between mutually exclusive panels (tabs, wizards, steppers). Animates its own height to fit the incoming panel. |
 | **`PanelControl`** | Optional. Makes a tab strip or sidebar drive a `PanelSet`: keyboard navigation, roving `tabindex`, selection state (`aria-selected` on real tabs, `aria-current` otherwise), and tab locking through `setTabState()`. |
-
-`PanelControl` is side-effect-free, so it tree-shakes out of the ESM build when you don’t import it.
 
 ## Installation
 
