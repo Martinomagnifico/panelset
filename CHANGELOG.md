@@ -1,11 +1,16 @@
 # Changelog
 
+## [1.2.1] - 2026-06-26
+
+### Fixed
+- Accessibility: use `aria-current` instead of `aria-selected` on non-tab triggers.
+
 ## [1.2.0] - 2026-06-22
 
 ### Added
 - PanelControl: a tablist controller with keyboard navigation
 - Web component versions
-- PNavigation on PanelSet: `next()`, `prev()` etc
+- Navigation on PanelSet: `next()`, `prev()` etc
 - `addPanel()` and `removePanel()`
 - `refresh()`
 - Verb buttons wired by delegation: `data-ps-next`, `data-ps-prev`, `data-ps-close`.
