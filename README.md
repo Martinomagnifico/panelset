@@ -23,14 +23,6 @@ The package exports *three* classes. *Two* main classes: Panel and PanelSet and 
 
 -----
 
-## The three classes
-
-| Class | What it does |
-|---|---|
-| **`Panel`** | A single element that opens and closes (accordions, show-more, sidebars, drawers). Animates `height` or `width`. |
-| **`PanelSet`** | A container that switches between mutually exclusive panels (tabs, wizards, steppers). Animates its own height to fit the incoming panel. |
-| **`PanelControl`** | Optional. Makes a tab strip or sidebar drive a `PanelSet`: keyboard navigation, roving `tabindex`, selection state (`aria-selected` on real tabs, `aria-current` otherwise), and tab locking through `setTabState()`. |
-
 ## Installation
 
 ```bash
