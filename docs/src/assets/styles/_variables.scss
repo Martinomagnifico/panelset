@@ -19,6 +19,7 @@
 	--color-tint-700: oklch(0.39 0.060 var(--main-hue));
 	--color-tint-750: oklch(0.27 0.040 var(--main-hue));
 	--color-tint-800: oklch(0.25 0.035 var(--main-hue));
+	--color-tint-850: oklch(0.24 0.032 var(--main-hue));
 	--color-tint-900: oklch(0.20 0.030 var(--main-hue));
 	--color-tint-925: oklch(0.18 0.028 var(--main-hue));
 	--color-tint-950: oklch(0.15 0.022 var(--main-hue));
@@ -50,6 +51,8 @@
 	--text-heading-3: var(--color-tint-600);
 
 	--bg-surface: var(--color-tint-25);
+	--bg-surface-off: var(--color-tint-25);
+
 	--bg-surface-tint: var(--color-tint-50);
 	--bg-surface-tint-contrast: var(--color-tint-100);
 	--bg-sidebar: var(--color-tint-100);
@@ -167,7 +170,8 @@
 		--text-heading-3: var(--color-tint-300);
 
 		--bg-surface: var(--color-tint-925);
-		--bg-surface-tint: var(--color-tint-900);
+		--bg-surface-off: var(--color-tint-900);
+		--bg-surface-tint: var(--color-tint-850);
 		--bg-surface-tint-contrast: var(--color-tint-750);
 		--bg-sidebar: var(--color-tint-800);
 
@@ -276,8 +280,6 @@
 		--standard-padding: var(--padding-large);
 		--doc-sidebar-width: 256px;
 	}
-
-	
 }
 
 body {

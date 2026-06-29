@@ -25,10 +25,12 @@
 		margin-top: -0.5rem;
 	}
 }
+
 .card {
+	--card-stroke-width: 0px;
 	border-radius: 1rem;
 	background: var(--bg-surface-tint-contrast);
-	border: 3px solid transparent;
+	border: var(--card-stroke-width) solid transparent;
 
 
 
@@ -145,6 +147,7 @@ dl.bg-surface-tint-contrast {
 	justify-content: space-between;
 	background: none;
 	border: none;
+	border-radius: 0px;
 	padding: 0.25rem 0;
 	cursor: pointer;
 	text-align: left;
@@ -153,10 +156,11 @@ dl.bg-surface-tint-contrast {
 	outline-color: transparent;
 	z-index: 0;
 	overflow: hidden;
-	margin-left: -3px;
-	margin-right: -3px;
-	margin-top: -3px;
-	margin-bottom: -3px;
+	
+	margin-left: calc(-1 * var(--card-stroke-width));
+	margin-right: calc(-1 * var(--card-stroke-width));
+	margin-top: calc(-1 * var(--card-stroke-width));
+	margin-bottom: calc(-1 * var(--card-stroke-width));
 
 	&:before {
 		content: '';
@@ -170,6 +174,7 @@ dl.bg-surface-tint-contrast {
 		background: transparent;
 		transition: background-color 0.15s ease-in-out;
 		border-bottom: 1px solid transparent;
+		opacity: 0.5;
 	}
 
 
@@ -179,7 +184,6 @@ dl.bg-surface-tint-contrast {
 	&:hover {
 		&:before {
 			background: var(--btn-plain-hover-bg);
-
 		}
 	}
 
@@ -205,19 +209,19 @@ dl.bg-surface-tint-contrast {
 			transform: rotate(90deg);
 		}
 		&:before {
-			border-radius: 1rem 1rem 0 0;
+			border-radius: 0.5rem 0.5rem 0 0;
 			border-color: var(--border-default);
 		}
 	}
 }
 
-// The trigger holds a rotating SVG chevron. iOS Safari re-rasterizes an animating
-// SVG every frame, which stutters the panel's height reveal. Giving the reveal an
-// invisible sub-pixel transform lets it composite on the GPU and stay smooth; the
-// layer is only promoted while it animates, so there is no permanent cost.
+// The trigger holds a rotating SVG chevron. iOS Safari re-rasterizes an animating SVG every frame, which stutters the panel's height reveal. Giving the reveal an invisible sub-pixel transform lets it composite on the GPU and stay smooth; the layer is only promoted while it animates, so there is no permanent cost.
+
 .card-trigger + [data-panel] > .panel-wrapper {
 	--ps-wrapper-transform-from: translateY(-0.5px);
 }
+
+
 
 .card.no-padding {
 	transition: all var(--ps-open-speed) var(--ps-open-timing);
@@ -227,14 +231,15 @@ dl.bg-surface-tint-contrast {
 	padding: 0;
 	gap: 0;
 
+
 	&:has(> button[aria-expanded="true"]), 
 	&.border {
 		background: var(--bg-surface-tint);
-		border-color: var(--border-default)
+		border-color: var(--bg-surface-tint-contrast);
 	}
 
 	button.card-trigger {
-		padding: var(--padding-medium);
+		padding: var(--standard-padding);
 
 
 		h3, h4 {
@@ -264,7 +269,7 @@ dl.bg-surface-tint-contrast {
 	}
 
 	.card-content {
-		padding: var(--padding-medium);
+		padding: var(--standard-padding);
 		display: flex;
 		flex-direction: column;
 		gap: 0.5rem;
@@ -273,7 +278,7 @@ dl.bg-surface-tint-contrast {
 			margin-top: 0;
 		}
 		.code-block {
-			background: var(--bg-surface);
+			background: var(--bg-surface-off);
 		}
 
 	}

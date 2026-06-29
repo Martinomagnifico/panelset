@@ -69,7 +69,7 @@ dl.horizontal {
 	background: var(--bg-surface-tint-contrast);
 
 	.card & {
-		background: var(--bg-surface);
+		background: var(--bg-surface-off);
 	}
 	.card .tab-content &,
 	.card.indented &,

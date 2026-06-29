@@ -160,8 +160,8 @@ block content
 	+section("FAQ (or: &nbsp;<em>Some remarks that people might have</em>)", "FAQ")
 		.column.gap-1(data-panel-group data-panel-close-siblings)
 			+faq("But you should use <code>interpolate-size: allow-keywords</code>")
-				h3 It is used, but not all browsers support it
-				p Both Panel and PanelSet use #[code interpolate-size: allow-keywords] as a “progressive enhancement” for opening and closing.
+				h3 Check the code again: it is actually used. 
+				p Both Panel and PanelSet use #[code interpolate-size: allow-keywords] as a “progressive enhancement” for opening and closing. Not all browsers support it. If you had checked the CSS, you would have seen that.
 
 				p With #[code interpolate-size: allow-keywords], CSS can animate directly between #[code 0] and #[code height: auto]. If your browser supports that, then the #[u LOCK], #[u MEASURE] and #[u UNLOCK] steps from the LMAU cycle are simply skipped. That leaves the #[u ANIMATE] step. The JavaScript (yeah, it is still needed) detects support with #[code CSS.supports()] and then does far less: it just toggles state classes and listens to events. If your browser does not support it, it uses the normal JavaScript LMAU cycle.
 
