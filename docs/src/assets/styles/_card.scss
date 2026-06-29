@@ -78,8 +78,21 @@
 	
 }
 
-dl.bg-surface-tint {
+.bg-surface {
+	background: var(--bg-surface);
+}
+.bg-surface-tint {
 	background: var(--bg-surface-tint);
+}
+.bg-surface-tint-contrast {
+	background: var(--bg-surface-tint-contrast);
+}
+
+dl.bg-surface,
+dl.bg-surface-tint,
+dl.bg-surface-tint-contrast {
+
+	box-shadow: 0 0 4px var(--bg-surface);
 	border-radius: 4px;
 	padding: 1rem;
 	display: flex;
@@ -87,7 +100,7 @@ dl.bg-surface-tint {
 	gap: 0.25rem;
 
 	dd + dt {
-		margin-top: 0.5rem;
+		margin-top: 1rem;
 	}
 
 	&.no-bg {
@@ -178,7 +191,6 @@ dl.bg-surface-tint {
 
 	.chevron {
 		transition: transform var(--ps-open-speed) var(--ps-open-timing);
-		will-change: transform;
 		flex-shrink: 0;
 		color: var(--text-muted);
 		transform: rotate(-90deg);
@@ -197,6 +209,14 @@ dl.bg-surface-tint {
 			border-color: var(--border-default);
 		}
 	}
+}
+
+// The trigger holds a rotating SVG chevron. iOS Safari re-rasterizes an animating
+// SVG every frame, which stutters the panel's height reveal. Giving the reveal an
+// invisible sub-pixel transform lets it composite on the GPU and stay smooth; the
+// layer is only promoted while it animates, so there is no permanent cost.
+.card-trigger + [data-panel] > .panel-wrapper {
+	--ps-wrapper-transform-from: translateY(-0.5px);
 }
 
 .card.no-padding {

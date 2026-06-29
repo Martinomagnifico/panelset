@@ -49,7 +49,7 @@ block content
 
 				p These control the container’s size animation as the panel opens and closes.
 
-				dl.bg-surface-tint
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-open-speed]
 					dd Size transition duration when opening. Default: #[code 0.25s].
 
@@ -86,7 +86,7 @@ block content
 
 				p A common use is #[code box-shadow], including an #[code inset] box-shadow as a border, because it has no effect on layout, it never interferes with the size measurement.
 
-				dl.bg-surface-tint
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-open-transition-extra]
 					dd Extra #[code transition] shorthand values appended when opening. Unset by default.
 
@@ -124,7 +124,7 @@ block content
 
 				p By default the wrapper fades from #[code 0] to full opacity as the panel opens. Set #[code --ps-closed-opacity] to #[code 1] to keep the content fully visible while the container grows and shrinks, so only the size animates and there is no fade.
 
-				dl.bg-surface-tint
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-closed-opacity]
 					dd Opacity of #[code .panel-wrapper] when closed or closing. Default: #[code 0] (fades out). Set to #[code 1] to disable the inner fade.
 
@@ -145,19 +145,27 @@ block content
 
 			+collapse('h3', "The transform")
 
-				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears. It animates from that transform to #[code none] on open, and back on close, sharing the #[code --ps-open-] / #[code --ps-close-] timing. The default #[code none] is a plain fade.
+				p Set #[code --ps-wrapper-transform-from] to move the wrapper as it appears. It animates from that transform to #[code none] on open, and back on close, sharing the #[code --ps-open-] / #[code --ps-close-] timing. The default #[code none] is a plain fade. It is also the lever for keeping animated SVG icons smooth on iPhone (see the note below).
 
 				p The open and close transitions can have their own delays, both #[code 0s] by default. Use #[code --ps-wrapper-open-delay] to hold the content back until the box has grown a little, and #[code --ps-wrapper-close-delay] to let it linger before everything collapses.
 
-				dl.bg-surface-tint
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-wrapper-transform-from]
 					dd Transform the wrapper reveals from, settling at #[code none]; reverses on close. Any transform. Default: #[code none].
+
+						.callout 
+							+warning
+							p #[strong On iOS]: if a trigger has an SVG icon that animates (like a rotating chevron), then the open and close can stutter. That’s not nice. The offending browser (maybe a ‘standard browser’) tries to redraw the SVG on every frame of the rotation, and that competes with the height animation. Giving the wrapper a transform fixes it: even an almost invisible #[code --ps-wrapper-transform-from: translateY(-0.5px);] lets the panel composite on the GPU and stay smooth. The layer is only GPU-promoted while it animates. (It is exactly what the accordion and card examples here do.)
+
+
 
 					dt #[code --ps-wrapper-open-delay]
 					dd Delay before the wrapper reveals when opening. Default: #[code 0s]. (Legacy alias: #[code --ps-wrapper-delay].)
 
 					dt #[code --ps-wrapper-close-delay]
 					dd Delay before the wrapper starts leaving when closing. Default: #[code 0s].
+
+
 
 				h4 Demo
 				.demo
