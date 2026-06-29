@@ -1,7 +1,8 @@
 
 .raw-demo {
-
-  &, *, &::before, &::after, *::before, *::after {
+  &,
+  *:not(:where([data-panel], [data-panelset], ps-panel, ps-panelset, [role="tabpanel"], .panel-wrapper)),
+  &::before, &::after, *::before, *::after {
     all: revert;
   }
 
