@@ -4,6 +4,9 @@
 
 **Flexible panel management with smooth transitions.**
 
+[<img src="screenshot.png" width="100%">](https://martinomagnifico.github.io/panelset/)
+
+
 ----
 ## What is it?
 It is a transition helper for panels that you want to show or hide.
