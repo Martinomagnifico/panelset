@@ -238,6 +238,8 @@ Timing and sizing are CSS custom properties, set on the element or any ancestor 
 
 `PanelSet` exposes a similar set for its fade and height timing. See the docs for the full list.
 
+On iOS Safari, an opacity animation next to a busy main thread (a rotating SVG chevron, say) can stutter. The library prevents this automatically with `--ps-gpu-nudge` (an invisible `translateY(-0.25px)`) that promotes the animating wrapper to the GPU only while it moves. It is on by default; to opt out and get a plain fade, set `--ps-gpu-nudge: none` on the element (or globally).
+
 ## Support
 
 PanelSet is free and open source. If it saves you time, consider [sponsoring my work](https://ko-fi.com/martinomagnifico).

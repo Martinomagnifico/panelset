@@ -54,7 +54,7 @@ block content
 				
 				p During a tab switch the container animates its height so panels of different sizes don’t jump. The duration is derived from the panel speed. This is the default behaviour and can’t really be changed. But you can speed it up or slow it down relative to the panel transition with #[code --ps-height-duration-ratio], and change the easing with #[code --ps-transition-timing].
 
-				dl.bg-surface-tint
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-height-duration-ratio]
 					dd Multiplier on the height transition duration. This is relative to the total transition time of the inner panels. When you want these inner panels to transition after each other, the in-transition of the second panel can be delayed instead of happening at the same time as the out-transition of the first panel. If so, the delay time is added to the in-transition time of that second panel, and that is the total time for the inner transition, and normally, the height transition uses that exact time, but you can speed it up or down. Default: #[code 1].
 
@@ -71,7 +71,7 @@ block content
 			
 				p With #[code closable: true] the container collapses and expands as a whole. These control that height animation.
 
-				dl.bg-surface-tint
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-open-speed]
 					dd Height transition duration when opening. Default: #[code 0.25s].
 
@@ -103,7 +103,7 @@ block content
 
 				p Use #[code --ps-open-transition-extra] and #[code --ps-close-transition-extra] to animate additional CSS properties alongside the height (for example a drop shadow or opacity). The value is appended to the #[code transition] shorthand directly. 
 
-				dl.bg-surface-tint
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-open-transition-extra]
 					dd Extra #[code transition] shorthand values appended when opening. Unset by default.
 
@@ -139,10 +139,19 @@ block content
 
 				p Open and close transforms on the wrapper can also have independent delays, both #[code 0s] by default. Set #[code --ps-wrapper-open-delay] to hold the content back until the box has grown a little (a common refinement), and #[code --ps-wrapper-close-delay] if you want the content to linger before collapsing.
 
-				dl.bg-surface-tint
+
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-wrapper-transform-from]
 					dd Transform the wrapper reveals from, settling at #[code none]; reverses on close. Any transform. Default: #[code none].
 
+					dt #[code --ps-gpu-nudge]
+					dd Invisible transform applied to the wrapper only while it animates, to keep panel switches and reveals smooth on iOS Safari. Default: #[code translateY(-0.25px)]. Set to #[code none] to opt out (pure fade, no compositor nudge).
+
+
+					.callout
+						+warning
+						p #[strong On iOS], an SVG element that transforms at the same time as a PanelSet transition (like a rotating chevron) can make the transition become choppy. Well, in #[strong Safari] only. All other browsers are #[strong fine], but Safari really has issues with SVG transforms. PanelSet suppresses the choppy transitions with #[code --ps-gpu-nudge] that promotes the animating wrapper to the GPU (only while transitioning).
+					br
 					dt #[code --ps-wrapper-open-delay]
 					dd Delay before the wrapper reveals when opening. Default: #[code 0s]. (Legacy alias: #[code --ps-wrapper-delay].)
 
@@ -170,7 +179,7 @@ block content
 			+collapse('h3', "Speed &amp; timing")
 				p The incoming and outgoing panels each have their own speed and easing, plus a delay on the incoming side.
 
-				dl.bg-surface-tint
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-panel-out-speed]
 					dd Duration of the outgoing panel transition (opacity and transform). Default: #[code 0.25s].
 
@@ -233,7 +242,7 @@ block content
 
 				p By default panels only fade. Give them movement by setting a transform: the incoming panel animates #[strong from] #[code --ps-panel-in-transform-from] to its resting #[code none], and the outgoing panel animates #[strong to] #[code --ps-panel-out-transform-to] from #[code none]. The values are full CSS transforms, so 2D or 3D both work, and the speed/timing variables above still control the timing.
 
-				dl.bg-surface-tint
+				dl.bg-surface-tint-contrast
 					dt #[code --ps-panel-in-transform-from]
 					dd Transform the incoming panel animates #[em from] (it settles at #[code none]). Any transform: #[code translateX(100%)], #[code scale(0.9)], #[code rotateY(90deg)]. Default: #[code none].
 

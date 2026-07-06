@@ -53,10 +53,6 @@ ul[data-panel-group] {
     .panel-wrapper {
       padding: var(--padding-medium);
       padding-top: 0;
-
-      // iOS smoothness: an invisible sub-pixel transform, while it animates only. This make sure that the transition is run on the GPU. We do this because iOS Safari has an issue with rotationg SVG's (that we use, and you may or may not use) that causes the nearby panel transition to be choppy. This is a workaround for that issue. See the note in the Wrapper transform on this page: /panel/transitions.html.
-
-      --ps-wrapper-transform-from: translateY(-0.5px);
     }
 
     & + li {

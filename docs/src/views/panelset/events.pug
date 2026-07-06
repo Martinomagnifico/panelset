@@ -19,7 +19,7 @@ block content
 
 				h3 Detail:
 
-				dl
+				dl.bg-surface-tint-contrast
 					dt.code container: HTMLElement
 					dd The #[code [data-panelset]] container element.
 					dt.code instance: PanelSet
@@ -36,7 +36,7 @@ block content
 
 				
 				h3 Detail:
-				dl
+				dl.bg-surface-tint-contrast
 					dt.code panelId: string
 					dd ID of the panel about to be activated.
 					dt.code targetPanel: HTMLElement
@@ -58,7 +58,7 @@ block content
 				p Fires just before an activation begins. This is the hook for loading content: hand a promise to #[code e.detail.promise] and the transition waits until it settles.
 
 				h3 Detail:
-				dl
+				dl.bg-surface-tint-contrast
 					dt.code panelId: string
 					dd ID of the panel being activated.
 					dt.code targetPanel: HTMLElement
@@ -93,7 +93,7 @@ block content
 
 				h3 Detail:
 
-				dl
+				dl.bg-surface-tint-contrast
 					dt.code panelId: string
 					dd ID of the panel being activated.
 					dt.code trigger: HTMLElement | null
@@ -118,7 +118,7 @@ block content
 				p Fires when the height animation and the panel transition have both finished. The switch is done and the set is idle again.
 
 				h3 Detail:
-				dl
+				dl.bg-surface-tint-contrast
 					dt.code panelId: string
 					dd ID of the panel that is now active.
 					dt.code trigger: HTMLElement | null
@@ -142,7 +142,7 @@ block content
 				p Fires when an activation-in-progress is interrupted by a newer one. This is the impatient-clicking case: the first switch never completes, and this tells you which panel got dropped.
 
 				h3 Detail:
-				dl
+				dl.bg-surface-tint-contrast
 					dt.code panelId: string
 					dd ID of the panel whose activation was aborted.
 					dt.code trigger: HTMLElement | null

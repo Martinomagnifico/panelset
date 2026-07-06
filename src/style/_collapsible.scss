@@ -31,14 +31,17 @@
         // out on close. --ps-closed-opacity: 1 disables the fade;
         // --ps-wrapper-transform-from adds a slide/scale/flip.
         opacity: var(--ps-closed-opacity, 0);
-        transform: var(--ps-wrapper-transform-from, none);
+        transform: var(--ps-wrapper-transform-from, var(--ps-gpu-nudge, none));
         pointer-events: none;
     }
 
     // Open resting state.
+    &.is-open:not(.is-transitioning) {
+        overflow: visible;
+    }
+
     &.is-open {
         height: auto;
-        overflow: visible;
 
         > .panel-wrapper {
             opacity: 1;
@@ -46,6 +49,7 @@
             pointer-events: auto;
         }
     }
+
 
     // Transients keep the box clipped while height animates.
     &.is-opening,
@@ -67,7 +71,7 @@
     // Closing: wrapper animates from the open state back to its closed start.
     &.is-closing > .panel-wrapper {
         opacity: var(--ps-closed-opacity, 0);
-        transform: var(--ps-wrapper-transform-from, none);
+        transform: var(--ps-wrapper-transform-from, var(--ps-gpu-nudge, none));
         transition: opacity   var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)),
                     transform var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing));
         // Close delay is independent and defaults to 0s (content leaves immediately).

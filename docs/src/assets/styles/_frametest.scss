@@ -1,0 +1,128 @@
+// Styles for the frame-test page (frametest.pug). Presentation-only.
+
+.grid-2 > .techcell {
+	gap: 0.25rem;
+}
+
+.techlabel {
+	margin: 0 0 0.5rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--text-muted);
+}
+
+// Toggle and trigger chevrons follow the demo-controls convention:
+// rotate(-180deg) collapsed / inactive, rotate(0) open / active.
+.techtoggle,
+.pstrigger {
+	display: flex;
+	align-items: center;
+	gap: 0.4em;
+}
+
+.techtoggle .chevron,
+.pstrigger .chevron {
+	display: flex;
+	flex-shrink: 0;
+	transform: rotate(-180deg);
+	transition: transform var(--ps-open-speed) var(--ps-open-timing);
+	will-change: transform;
+}
+
+.techtoggle[aria-expanded="true"] .chevron,
+.pstrigger[aria-current="true"] .chevron,
+.pstrigger[aria-selected="true"] .chevron {
+	transform: rotate(0deg);
+}
+
+.techbody {
+	padding-top: 0.6rem;
+
+	p {
+		margin: 0 0 0.4rem;
+	}
+}
+
+// All techniques animate at the same, slightly faster, speed.
+.techregion[data-tech="lib"] {
+	--ps-open-speed: 0.3s;
+	--ps-close-speed: 0.3s;
+}
+
+.techregion[data-tech="panelset"] {
+	--ps-panel-in-speed: 0.15s;
+	--ps-panel-out-speed: 0.15s;
+	--ps-panel-in-delay: 0.15s;
+}
+
+// The "nudge off" rows opt out of the GPU nudge purely via CSS, exactly how a library
+// user would: override --ps-gpu-nudge back to none on the element. With no transform the
+// reveal is a plain opacity fade, WebKit does not promote it, and it stutters on iOS.
+// No JS option, no data-attribute. Beats the inherited :root default at any load order.
+.no-nudge {
+	--ps-gpu-nudge: none;
+}
+
+// Naive JS: JavaScript writes the height every frame; start collapsed.
+.js-collapse {
+	height: 0;
+	overflow: hidden;
+}
+
+// CSS Grid hack: animate the single row from 0fr to 1fr.
+.grid-collapse {
+	display: grid;
+	grid-template-rows: 0fr;
+	transition: grid-template-rows 0.3s var(--ps-open-timing);
+
+	&.open {
+		grid-template-rows: 1fr;
+	}
+
+	> * {
+		overflow: hidden;
+		min-height: 0;
+	}
+}
+
+// Fade the JS and Grid content in like the library's .panel-wrapper reveal,
+// so all three techniques animate the same things (height + opacity).
+.js-collapse > .panel-wrapper,
+.grid-collapse > .panel-wrapper {
+	opacity: 0;
+	transition: opacity 0.3s var(--ps-open-timing);
+}
+
+.js-collapse.open > .panel-wrapper,
+.grid-collapse.open > .panel-wrapper {
+	opacity: 1;
+}
+
+.techreadout {
+	margin: 0.7rem 0 0;
+	font-size: 0.9rem;
+	color: var(--text-muted);
+}
+
+.techout {
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	color: var(--text-default);
+
+	// Severity colors for the dropped-frame percentage.
+	--techout-warn: oklch(0.53 0.15 62); // dark orange (10-15%)
+	--techout-bad:  oklch(0.52 0.20 27); // dark red (> 15%)
+
+	&.is-warn { color: var(--techout-warn); }
+	&.is-bad  { color: var(--techout-bad); }
+}
+
+@media (prefers-color-scheme: dark) {
+	.techout {
+		// Brighter, to keep 4.5:1 against the dark page background.
+		--techout-warn: oklch(0.80 0.15 75);
+		--techout-bad:  oklch(0.72 0.18 25);
+	}
+}

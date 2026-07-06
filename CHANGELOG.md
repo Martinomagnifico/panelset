@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.2] - 2026-07-10
+
+### Added
+- `--ps-gpu-nudge` CSS variable that keeps Panel and PanelSet transitions smooth on iOS Safari, where an animating SVG icon (like a rotating chevron) can otherwise make a transition stutter. It applies an invisible GPU-compositing nudge only while animating.
+
 ## [1.2.1] - 2026-06-26
 
 ### Fixed

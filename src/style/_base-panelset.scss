@@ -47,13 +47,21 @@ ps-panelset { display: block; }
             // Start / end offsets. :not(.active) lets the settled .active state
             // (transform: none) win even against the higher-specificity .leveldown
             // compound selectors below.
-            &.incoming:not(.active)           { transform: var(--ps-panel-in-transform-from, none); }
-            &.outgoing:not(.active)           { transform: var(--ps-panel-out-transform-to,  none); }
+            &.incoming:not(.active) { 
+                transform: var(--ps-panel-in-transform-from, var(--ps-gpu-nudge, none));
+            }
+            &.outgoing:not(.active) {
+                transform: var(--ps-panel-out-transform-to, var(--ps-gpu-nudge, none));
+            }
 
             // Levels: backward navigation reverses the motion by swapping the two
             // transforms. Works for any transform — no sign negation needed.
-            &.leveldown.incoming:not(.active) { transform: var(--ps-panel-out-transform-to,  none); }
-            &.leveldown.outgoing:not(.active) { transform: var(--ps-panel-in-transform-from, none); }
+            &.leveldown.incoming:not(.active) { 
+                transform: var(--ps-panel-out-transform-to, var(--ps-gpu-nudge, none));
+            }
+            &.leveldown.outgoing:not(.active) { 
+                transform: var(--ps-panel-in-transform-from, var(--ps-gpu-nudge, none));
+            }
         }
 
         &[hidden] {
@@ -80,6 +88,23 @@ ps-panelset { display: block; }
         will-change: height;
     }
 
+    // A panel SWITCH (is-transitioning) has no wrapper reveal transition — that
+    // only fires on open/close (see _collapsible.scss). So on iOS the wrapper is
+    // not GPU-promoted during a switch, and a concurrent main-thread cost (a
+    // rotating SVG chevron in a trigger, say) can stutter the cross-fade. This
+    // reuses the same invisible --ps-gpu-nudge, applied as a keyframe because a
+    // transition can't run in this state, to keep the wrapper composited for the
+    // switch's duration. The movement is a fraction of a pixel; it exists purely
+    // for compositing. Uses --ps-gpu-nudge (not --ps-wrapper-transform-from) so an
+    // author's open/close reveal transform never rides along on a switch.
+    // When --ps-gpu-nudge is overridden to none the keyframe animates none -> none, an
+    // identity animation WebKit never promotes, so the nudge is off with no extra rule.
+    &.is-transitioning > .panel-wrapper {
+        animation: ps-wrapper-switch
+            calc((var(--ps-panel-in-speed) + var(--ps-panel-in-delay)) * var(--ps-height-duration-ratio))
+            var(--ps-transition-timing);
+    }
+
     // Alignment
     // Controls where .panel-wrapper sits during open/close — applies while
     // transitioning and while closed (closable, not yet open).
@@ -97,6 +122,15 @@ ps-panelset { display: block; }
             justify-content: flex-end;
         }
     }
+}
+
+
+// Keyframe for the panel-switch compositing nudge (see the
+// `&.is-transitioning > .panel-wrapper` rule above). Animates the wrapper from the
+// invisible nudge to none, purely to hold a compositor layer during the switch.
+@keyframes ps-wrapper-switch {
+    from { transform: var(--ps-gpu-nudge, none); }
+    to   { transform: none; }
 }
 
 
@@ -142,6 +176,7 @@ ps-panelset { display: block; }
 
         .panel-wrapper {
             transition: none !important;
+            animation: none !important; // no switch-nudge keyframe when motion is off
         }
     }
 }

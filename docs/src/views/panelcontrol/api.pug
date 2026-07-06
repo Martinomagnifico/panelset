@@ -11,7 +11,7 @@ block content
 				p.lead Constructor, instance methods, properties, and static methods.
 
 	+section("Constructor")
-		.card.api
+		.indented
 			h3.code new PanelControl(elementOrSelector: HTMLElement | string, options?: PanelControlConfig)
 			hr
 			p Creates a PanelControl bound to one PanelSet. The element is the #[code [data-panelcontrol]] container holding the triggers. The PanelSet is discovered from the panels those triggers point at.
@@ -26,7 +26,7 @@ block content
 				const control = new PanelControl(document.querySelector('[role="tablist"]'), { activation: 'auto' });
 
 	+section("Instance methods")
-		.card.api
+		.indented
 			h3.code panelControl.show(panelId: string, options?): void
 			hr
 			p Activates a tab’s panel through the linked PanelSet (the same thing a trigger click does). Does nothing if there is no linked PanelSet.
@@ -40,7 +40,7 @@ block content
 			+codeblock('JavaScript').
 				control.show('panel-2');
 
-		.card.api
+		.indented
 			h3.code panelControl.setTabState(panelId: string, state: 'enabled' | 'disabled'): void
 			hr
 			p Locks or unlocks the tab(s) controlling a panel. PanelControl only #[strong applies] the state. It does not decide when a tab should be locked (that is the caller’s concern, e.g. your application code).
@@ -55,34 +55,34 @@ block content
 				control.setTabState('step-3', 'disabled');   // lock
 				control.setTabState('step-3', 'enabled');    // unlock
 
-		.card.api
+		.indented
 			h3.code panelControl.destroy(): void
 			hr
 			p Removes all listeners and drops the #[code element.panelControl] reference. The DOM is left as-is.
 
 	+section("Instance properties")
-		.card.api
+		.indented
 			h3.code panelControl.element: HTMLElement
 			hr
 			p #[strong Read-only.] The #[code [data-panelcontrol]] container element.
 
-		.card.api
+		.indented
 			h3.code panelControl.panelSetElement: HTMLElement | null
 			hr
 			p #[strong Read-only.] The PanelSet container this control drives, or #[code null] if none can be found. Resolved lazily on first access and cached. An explicit #[code data-panelcontrol="#selector"] wins, otherwise it is discovered from the triggers. Because it is lazy, a PanelSet added after init resolves on first use.
 
-		.card.api
+		.indented
 			h3.code panelControl.panelSet: PanelSet | undefined
 			hr
 			p #[strong Read-only getter.] The live PanelSet instance, resolved lazily from #[code panelSetElement]. #[code undefined] until that PanelSet has initialised.
 
-		.card.api
+		.indented
 			h3.code panelControl.config: PanelControlConfig
 			hr
 			p #[strong Read-only.] The merged configuration (1. defaults 2. constructor options 3. data attributes).
 
 	+section("Static methods")
-		.card.api
+		.indented
 			h3.code PanelControl.init(selectorOrOptions?, options?): PanelControl[]
 			hr
 			p Initialises all controls matching the selector. Stores the instance on each container as #[code container.panelControl].
@@ -99,13 +99,13 @@ block content
 				PanelControl.init();
 				PanelControl.init({ activation: 'auto' });
 
-		.card.api
+		.indented
 			h3.code PanelControl.defaults: PanelControlConfig
 			hr
 			p #[strong Static property.] Default configuration applied to all new instances. Modify to change defaults globally.
 
 	+section("Web component")
-		.card.api
+		.indented
 			h3.code registerPanelControl(prefix?: string): void
 			hr
 			p Defines the #[code &lt;ps-panelcontrol&gt;] custom element. Pass a prefix to change the name (default #[code ps]). Safe to call multiple times.
@@ -115,7 +115,7 @@ block content
 				registerPanelControl();          // <ps-panelcontrol>
 				registerPanelControl('solar');   // <solar-panelcontrol>
 
-		.card.api
+		.indented
 			h3.code PanelControlElement
 			hr
 			p The #[code HTMLElement] subclass backing #[code &lt;ps-panelcontrol&gt;]. Each instance creates a PanelControl in its #[code connectedCallback].

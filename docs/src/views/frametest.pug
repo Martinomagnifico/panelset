@@ -1,0 +1,131 @@
+extends /views/templates/layouts/_base
+
+
+//- This page is a frametest for iOS Safari. It is NOT in the documentation navigation (sidebar), but you CAN go directly to the page, becaude it IS published.
+
+
+append variables
+	- pagetitle = "Frametest"
+
+mixin techdemo(id, kind, chevron, nudge)
+	- var noNudge = (kind === 'lib' && nudge === false)
+	.techcell
+		p.techlabel= chevron ? 'With chevron' : 'No chevron'
+		.demo.techdemo
+			.demo-controls
+				button.techtoggle(id=`${id}-btn` aria-controls=(kind === 'lib' ? `${id}-region` : false) aria-expanded=(kind === 'lib' ? false : 'false'))
+					span Toggle
+					if chevron
+						+chevron(16, 'down')
+			if kind === 'lib'
+				div.techregion(id=`${id}-region` data-tech='lib' data-panel class=(noNudge ? 'no-nudge' : false))
+					.panel-wrapper.techbody
+						+example-3-content
+			else
+				div.techregion(id=`${id}-region` data-tech=kind class=(kind === 'js' ? 'js-collapse' : 'grid-collapse'))
+					.panel-wrapper.techbody
+						+example-3-content
+		p.techreadout Frames: #[span.techout(id=`${id}-out`) —]
+
+
+mixin psdemo(id, chevron, nudge)
+	- var noNudge = (nudge === false)
+	.techcell
+		p.techlabel= chevron ? 'With chevron' : 'No chevron'
+		.demo.techdemo
+			.demo-controls
+				button.pstrigger(aria-controls=`${id}-p1`)
+					span Short
+					if chevron
+						+chevron(16, 'down')
+				button.pstrigger(aria-controls=`${id}-p2`)
+					span Tall
+					if chevron
+						+chevron(16, 'down')
+			div.techregion(id=`${id}-set` data-tech='panelset' data-panelset data-interruptible='false' class=(noNudge ? 'no-nudge' : false))
+				.panel-wrapper
+					div.techbody(role="tabpanel" id=`${id}-p1` aria-label="Short panel" class="active")
+						+example-1-content
+					div.techbody(role="tabpanel" id=`${id}-p2` aria-label="Tall panel" hidden)
+						+example-2-content
+						+example-3-content
+						
+		p.techreadout Frames: #[span.techout(id=`${id}-out`) —]
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Frametest
+				p.lead Test this on iOS Safari.
+
+			p iOS Safari has a hard time doing an SVG transition at the same time as a height transition, so the library nudges the animating wrapper onto the GPU with an invisible #[code --ps-gpu-nudge] transform. This page compares that default (on) against turning the nudge off (#[code --ps-gpu-nudge: none]). Additionally, we show the JS per-frame and CSS Grid hacks (for panels).
+
+			.callout
+				+warning()
+				p #[strong On a real phone, check the battery first.] Low Power Mode (which a low battery may turn on by itself) throttles the whole phone, so every transition (that does a new layout) may look choppy, chevron or not, fixed or not. The comparison here only means something at the full refresh rate.
+
+	+section("Panel")
+		p We show four ways to animate a Panel's height from zero to its natural height. The first two use the library, with and without the GPU nudge (#[code --ps-gpu-nudge: none]). 
+
+		-
+			var rows = [
+				{ id: 'js',     label: 'JS height per frame',         kind: 'js',   nudge: true  },
+				{ id: 'grid',   label: 'CSS Grid hack',               kind: 'grid', nudge: true  },
+				{ id: 'liboff', label: 'Library (LMAU) — nudge off', kind: 'lib',  nudge: false },
+				{ id: 'libon',  label: 'Library (LMAU) — nudge on',  kind: 'lib',  nudge: true  }
+
+			];
+
+		each row in rows
+			hr
+			h3!= row.label
+			.grid-2
+				+techdemo(row.id + '-n', row.kind, false, row.nudge)
+				+techdemo(row.id + '-c', row.kind, true,  row.nudge)
+
+	+section("PanelSet")
+		p A PanelSet crossfades between panels of different heights, animating the height at the same time.
+
+		-
+			var psrows = [
+				{ id: 'psoff', label: 'Library — nudge off', nudge: false },
+				{ id: 'pson',  label: 'Library — nudge on',  nudge: true  }
+			];
+
+		each row in psrows
+			hr
+			h3!= row.label
+			.grid-2
+				+psdemo(row.id + '-n', false, row.nudge)
+				+psdemo(row.id + '-c', true,  row.nudge)
+
+		hr
+		div(style="height: 5rem")
+
+
+
+
+
+
+
+
+
+
+
+append scripts
+	if isProd
+		script.
+			Panel.init('[data-tech="lib"]', { returnFocus: false });
+			PanelSet.init('[data-tech="panelset"]');
+	else
+		script(type="module").
+			import { Panel, PanelSet } from 'panelset';
+			Panel.init('[data-tech="lib"]', { returnFocus: false });
+			PanelSet.init('[data-tech="panelset"]');
+
+
+	if isProd
+		script(src=`${basePath}assets/scripts/frametest.js` vite-ignore)
+	else
+		script(type="module" src="/src/assets/scripts/frametest.js")

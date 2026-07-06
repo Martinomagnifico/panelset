@@ -20,11 +20,23 @@
     --ps-panel-width:    320px;  /* inner .panel-wrapper width (horizontal panels) */
     --ps-closed-opacity: 0;      /* set to 1 to keep content visible while closed/closing */
 
-    /* Wrapper reveal transform (Panel + closable PanelSet).
-       The .panel-wrapper animates from this transform to none when opening
-       (and back to it when closing). Default none = opacity-only reveal.
-       Accepts any transform, e.g. translateY(-1rem), scale(0.95), rotateX(20deg). */
-    --ps-wrapper-transform-from: none;
+    /* GPU-compositing nudge.
+       A reveal / cross-fade animates opacity (and the container animates height).
+       On iOS Safari an opacity animation is not always promoted to the GPU, so
+       when the main thread is ALSO busy — most commonly a rotating SVG chevron in
+       a toggle, which Safari re-rasterizes on every frame — the animation stutters
+       and drops frames. Giving the animated element a real (but invisible)
+       transform forces a compositor layer for the animation's duration, so the
+       motion stays smooth. A quarter of a pixel is imperceptible (and the opacity fade
+       hides it) yet promotes reliably. It exists ONLY while animating. */
+
+    --ps-gpu-nudge: translateY(-0.25px);
+
+    /* Wrapper reveal transform (Panel + closable PanelSet). UNSET by default so the
+       .panel-wrapper falls back to --ps-gpu-nudge (see above). Set it for a VISIBLE
+       reveal — translateY(-1rem), scale(0.95), rotateX(20deg) — or to none for a
+       guaranteed pure opacity fade. Consumed as
+       var(--ps-wrapper-transform-from, var(--ps-gpu-nudge, none)). */
 
     /* PanelSet */
     --ps-panel-out-speed:          0.16s;
@@ -36,14 +48,12 @@
     --ps-panel-in-timing:          ease-in-out;
     --ps-loading-panel-opacity:  0.1;
 
-    /* Panel-switch transforms (PanelSet).
-       The incoming panel animates from --ps-panel-in-transform-from to none; the outgoing
-       panel animates from none to --ps-panel-out-transform-to. Default none = pure fade.
-       Set them to slide, scale, flip, etc. — any transform, 2D or 3D.
-       With levels enabled, backward (leveldown) navigation swaps the two so the
-       motion reverses. */
-    --ps-panel-in-transform-from:          none;
-    --ps-panel-out-transform-to:           none;
+    /* Panel-switch transforms (PanelSet). UNSET by default so both fall back to
+       --ps-gpu-nudge: the cross-fade composites on iOS while still looking like a
+       pure fade. Set them to slide, scale, flip, etc. — any transform, 2D or 3D —
+       for a visible move, or to none to opt out. With levels enabled, backward
+       (leveldown) navigation swaps the two so the motion reverses. Consumed as
+       var(--ps-panel-in-transform-from, var(--ps-gpu-nudge, none)) and likewise for out. */
 
     /* Loading spinner */
     --ps-spinner-size:           40px;
@@ -56,3 +66,8 @@
     --ps-loading-dim-duration:     calc(var(--ps-panel-out-speed) * (1 - var(--ps-loading-panel-opacity)));
     --ps-loading-fadeout-duration: calc(var(--ps-panel-out-speed) * var(--ps-loading-panel-opacity));
 }
+
+// --ps-gpu-nudge is set on :root above (default translateY(-0.25px)) so it inherits
+// into every panel / panelset and its .panel-wrapper. To turn it off, override the var
+// on the element in your own CSS; it beats the inherited default at any load order:
+//     [data-panelset] { --ps-gpu-nudge: none; }   // pure fade, no compositor nudge
