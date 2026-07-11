@@ -19,6 +19,37 @@ block scripts
 			Panel.init('.docs-sidebar [data-panel]', { returnFocus: false });
 
 
+	//- Dismiss the drawer, and hold focus inside it while it is open. On desktop the nav is static (data-panel-static)
+	script.
+		document.addEventListener('DOMContentLoaded', function () {
+			var nav = document.getElementById('main-nav');
+			if (!nav) return;
+			var content = document.querySelector('.docs-content');
+
+			// Click beside the drawer. The toggle is skipped: it already toggles itself.
+			document.addEventListener('click', function (e) {
+				if (nav.contains(e.target) || e.target.closest('.nav-toggle')) return;
+				nav.panel?.close(e);
+			});
+
+			document.addEventListener('keydown', function (e) {
+				if (e.key === 'Escape') nav.panel?.close(e);
+			});
+
+			// The drawer looks modal, so it behaves modal: nothing behind it is tabbable. The check matters, because the nav sections are panels whose events bubble.
+			nav.addEventListener('panel:opening', function (e) {
+				if (e.target === nav) content?.setAttribute('inert', '');
+			});
+			nav.addEventListener('panel:closed', function (e) {
+				if (e.target === nav) content?.removeAttribute('inert');
+			});
+
+			// Resizing to desktop makes it static, which is not a close, so release here.
+			nav.addEventListener('panel:staticchange', function () {
+				content?.removeAttribute('inert');
+			});
+		});
+
 	script.
 		// Highlight. Exclude install wizard
 		hljs.configure({ cssSelector: 'pre code:not(.iw-code)' });

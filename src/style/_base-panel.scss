@@ -1,17 +1,16 @@
-// Custom element defaults to display:inline; force block so height/overflow work.
+// A custom element is display:inline, so force block or height and overflow do nothing.
 ps-panel { display: block; }
 
 [data-panel], ps-panel {
 	display: flow-root;
-	// Collapsed-by-default, wrapper reveal, and the height open/close transition
-	// are shared with closable PanelSet — see _collapsible.scss.
+	// Closed by default, the wrapper reveal and the height transition are shared with closable PanelSet. See _collapsible.scss.
 
-	// Direct child only, so a nested Panel's wrapper isn't styled by this one.
+	// Direct child only, so this one does not style a nested Panel's wrapper.
 	> .panel-wrapper {
 		z-index: 0;
 	}
 
-	// Horizontal overrides — resets height and switches to width
+	// Horizontal: reset the height and animate the width instead.
 	&[data-panel-axis="horizontal"] {
 		flex-shrink: 0;
 		width: 0;
@@ -26,8 +25,7 @@ ps-panel { display: block; }
 			transition: width var(--ps-tempclose-speed, var(--ps-close-speed)) var(--ps-tempclose-timing, var(--ps-close-timing)), var(--ps-close-transition-extra);
 		}
 
-		// Keep inner content at its natural width so it doesn't reflow
-		// while the container animates. Direct child only.
+		// Hold the content at its natural width so it does not reflow while the container animates.
 		> .panel-wrapper {
 			width: var(--ps-panel-width, 320px);
 			min-width: var(--ps-panel-width, 320px);
@@ -36,11 +34,32 @@ ps-panel { display: block; }
 	}
 }
 
-// Alignment
-// Controls where .panel-wrapper sits within the clipped container as it animates.
-// align: start is the default (normal block flow, no extra CSS needed).
+// Static (static: true, or its media query matches). Not a disclosure any more, just plain open content. The JS puts [data-ps-static] on the panel AND its triggers.
+// Nothing animates: open() and close() do nothing while static, so is-opening and is-closing never turn up.
+[data-panel][data-ps-static], ps-panel[data-ps-static] {
+	height: auto;
+	width: auto;
+	overflow: visible;
 
-// Vertical alignment (default)
+	> .panel-wrapper {
+		opacity: 1;
+		transform: none;
+		pointer-events: auto;
+	}
+}
+
+// A trigger for a static panel can do nothing: open(), close() and toggle() all return early. Left standing it would sit in the tab order and take a click, with no aria-expanded to explain itself. So it hides itself.
+// The attribute is REPEATED to lift the specificity to (0,2,1). Plain `button[data-ps-static]` is (0,1,1), which an everyday rule of yours (`.sidebar button { display: flex }`) ties and then wins on load order, and the dead button walks back in. Not !important, or the escape hatch below would be impossible.
+// To keep the button and give it another job:
+//   button[data-ps-static][data-ps-static] { display: revert; }
+button[data-ps-static][data-ps-static],
+[role="button"][data-ps-static][data-ps-static] {
+	display: none;
+}
+
+// Alignment. Where .panel-wrapper sits inside the clipped container while it animates. align: start needs no CSS, it is ordinary block flow.
+
+// Vertical (default)
 [data-panel], ps-panel {
 	&[data-panel-align="center"] {
 		display: flex;
@@ -55,7 +74,7 @@ ps-panel { display: block; }
 	}
 }
 
-// Horizontal alignment overrides — row direction, no column
+// Horizontal alignment: a row instead of a column.
 [data-panel-axis="horizontal"] {
 	&[data-panel-align="center"] {
 		display: flex;
@@ -77,12 +96,8 @@ ps-panel { display: block; }
 	box-sizing: border-box;
 }
 
-// Native interpolate-size (progressive enhancement)
-// Scoped to is-opening/is-closing, and excluded when is-loading is also present.
-// During async loading (is-loading + is-opening), height:auto would resolve to ~0
-// on the empty wrapper, making the 0→loadingHeight transition a no-op that fires
-// transitionend immediately. Excluding is-loading keeps Phase 1 as pixel-to-pixel;
-// Phase 2 (is-loading removed, is-opening alone) gets the native auto animation.
+// Native interpolate-size, where the browser has it.
+// Only while opening or closing, never while is-loading is on as well: during an async load the wrapper is still empty, so height:auto resolves to about 0, the transition has nothing to cover and transitionend fires at once. Phase 1 stays pixel to pixel, phase 2 gets the native animation to auto.
 @supports (interpolate-size: allow-keywords) {
 	[data-panel]:not(.is-loading), ps-panel:not(.is-loading) {
 		&.is-opening {

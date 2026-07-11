@@ -25,9 +25,7 @@ export const writePanelParam = (ids: string[]): void => {
 
 // localStorage
 //
-// Keys are scoped to the current page path so that auto-assigned ids
-// (panel-1, panel-2, …) on different pages don't collide in shared storage.
-// A panel persisted on /accordion stays distinct from a panel-1 on /intro.
+// Keys carry the page's path, so ids the library hands out itself (panel-1, panel-2) cannot collide across pages in shared storage. A panel remembered on /accordion stays apart from a panel-1 on /intro.
 
 const pageScope = (key: string): string => `${location.pathname}::${key}`;
 

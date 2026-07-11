@@ -1,5 +1,16 @@
 # Changelog
 
+
+## [1.2.3] - 2026-07-11
+
+### Added
+- Panel `static` option (`boolean | media query`, default `false`): make a panel plain expanded content instead of a collapsible disclosure.
+
+### Fixed
+- A closed panel’s hand-authored `[aria-controls]` trigger now gets `aria-expanded="false"` on init.
+
+
+
 ## [1.2.2] - 2026-07-10
 
 ### Added

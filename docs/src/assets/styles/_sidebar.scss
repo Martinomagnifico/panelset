@@ -20,16 +20,10 @@
 	}
 }
 
+
+// Structure, stickiness and the mobile/desktop behaviour live in _nav.scss.
+// This file is the skin: the links, sections, chevrons and the About row.
 .docs-sidebar {
-
-	--ps-wrapper-transform-from: translateY(-0.25rem);
-
-	background: var(--bg-sidebar);
-	border-bottom: 1px solid var(--border-default);
-	padding: var(--standard-padding);
-	display: flex;
-	flex-direction: column;
-	overflow-y: auto;
 
 	a, button {
 		border-radius: 0.25rem;
@@ -42,14 +36,6 @@
 			width: 20px;
 			height: 20px;
 		}
-	}
-
-	@media (min-width: 769px) {
-		border-bottom: none;
-		position: sticky;
-		top: 0;
-		height: 100vh;
-		overflow-y: auto;
 	}
 
 	.logo,
@@ -65,7 +51,7 @@
 	}
 
 	nav {
-		margin-top: 1rem;
+		// margin-top: 1rem;
 		display: flex;
 		gap: var(--padding-medium);
 		flex-direction: column;

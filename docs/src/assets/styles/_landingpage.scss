@@ -49,5 +49,10 @@ html.index {
 			font-size: 1.25rem;
 			opacity: 0.9;
 		}
+
+		.card ul {
+			padding-top: var(--padding-small);
+		}
+
 	}
 }

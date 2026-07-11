@@ -70,8 +70,7 @@ block content
 
 		+codeblock('JS').
 			document.querySelector('#my-panel').addEventListener('panel:beforeopen', e => {
-				// panel:beforeopen bubbles, so read the panel from e.target (the dispatching
-				// panel). e.currentTarget breaks under event delegation; e.target does not.
+				// panel:beforeopen bubbles, so read the panel from e.target (the dispatching panel). e.currentTarget breaks under event delegation; e.target does not.
 				const panel = e.target;
 				const { signal } = e.detail;
 

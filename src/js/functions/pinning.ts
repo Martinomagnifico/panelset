@@ -18,7 +18,7 @@ export const lockBody = (body: HTMLElement): void => {
 	const pins = Array.from(body.querySelectorAll<HTMLElement>('[data-panel-pin]'));
 	if (!pins.length) return;
 
-	// Measure everything before touching any styles — avoids layout thrashing.
+	// Measure everything first, then touch the styles, so the browser is not made to re-layout between reads.
 	const snapshots = pins.map(el => ({
 		el,
 		pin: el.dataset.panelPin as 'start' | 'end',

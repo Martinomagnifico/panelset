@@ -1,10 +1,10 @@
 /**
- * The autoFocus mode. Pass to autoFocus() after opening a panel.
- * - true        : focus the panel element itself
- * - 'heading'   : focus the first heading (h1–h6)
- * - 'first'     : focus the first focusable element
- * - 'input'     : focus the first form field (bypasses keyboard-only check)
- * - function    : custom handler, called with the panel element
+ * The autoFocus mode. Pass it to autoFocus() once a panel has opened.
+ * - true        : focus the panel itself
+ * - 'heading'   : focus the first heading (h1 to h6)
+ * - 'first'     : focus the first thing that can take focus
+ * - 'input'     : focus the first form field (and do it however the panel was opened)
+ * - function    : your own handler, called with the panel element
  */
 export type AutoFocusMode =
 	| boolean
@@ -14,10 +14,8 @@ export type AutoFocusMode =
 	| ((el: HTMLElement) => void);
 
 /**
- * Move focus into a panel after it opens.
- *
- * Skips focus when the triggering event is a mouse/touch click (not
- * keyboard), except for 'input' mode which always focuses.
+ * Move focus into a panel once it is open.
+ * It leaves focus alone when the panel was opened by mouse or touch rather than the keyboard, since moving it then yanks the page around under someone who was only tapping. 'input' always focuses.
  */
 export function autoFocus(el: HTMLElement, mode: AutoFocusMode, event?: Event): void {
 	if (!mode) return;

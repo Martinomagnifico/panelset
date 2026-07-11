@@ -28,9 +28,9 @@ export class PanelControl {
 	private _activationWired = false;
 
 	/**
-	 * Initialise all PanelControl containers matching the selector.
-	 * @param selectorOrOptions - CSS selector string or config object.
-	 * @param options - Config (used when the first argument is a selector).
+	 * Start up every PanelControl container the selector finds.
+	 * @param selectorOrOptions - a CSS selector, or a config object.
+	 * @param options - the config, when the first argument was a selector.
 	 */
 	static init(selectorOrOptions: string | PanelControlConfig = '[data-panelcontrol]', options: PanelControlConfig = {}): PanelControl[] {
 		let selector: string;
@@ -60,7 +60,7 @@ export class PanelControl {
 		}
 		element.panelControl = this;
 
-		// Precedence: defaults < init() options < per-element data-attributes.
+		// What beats what: defaults, then init() options, then the element's own data attributes.
 		const dataConfig = parseDataAttrs<PanelControlConfig>(element.dataset, PanelControl.attrs);
 		this.config = { ...PanelControl.defaults, ...options, ...dataConfig } as Required<Omit<PanelControlConfig, 'selector'>>;
 
@@ -68,17 +68,14 @@ export class PanelControl {
 		this._bindTriggers();
 		if (this._isTablist) this._setupKeyboard();
 
-		// First resolution attempt now — wires the element-dependent bits (roving
-		// sync, closeable reflection) if the PanelSet is already present. The getter
-		// retries on later access, so a PanelSet added after init is picked up too.
+		// A first look for the PanelSet. If it is there, the parts that need it are set up now. The getter tries again later, so a PanelSet that turns up after init is still found.
 		const linked = this.panelSetElement;
 
 		this._log(`Initialized (${linked ? 'linked to a PanelSet' : 'no PanelSet found yet'}${this._isTablist ? ', tablist keyboard nav' : ''})`);
 	}
 
 	/**
-	 * The PanelSet container this control drives. Resolved lazily on first access
-	 * and then cached — so a PanelSet added to the DOM after init is still found.
+	 * The PanelSet container this control drives. Looked up on first use and then kept, so a PanelSet that lands in the DOM after init is still found.
 	 */
 	get panelSetElement(): HTMLElement | null {
 		if (!this._setEl) {
@@ -102,14 +99,10 @@ export class PanelControl {
 	show(panelId: string, options?: ShowOptions): void { this.panelSet?.show(panelId, options); }
 
 	/**
-	 * Lock or unlock a tab. PanelControl only applies the state it is told to
-	 * apply — it does not decide *when* a tab should be locked (that is the
-	 * caller's concern, e.g. a flow controller). 'disabled' sets aria-disabled so
-	 * keyboard nav skips the tab and clicks / Enter no longer activate it;
-	 * 'enabled' clears it. A tab may carry data-pc-disabled-hint="hintId"; that
-	 * hint is attached to aria-describedby only while the tab is disabled, so a
-	 * focusable (aria-disabled) tab can explain why it is locked.
-	 * @param panelId - aria-controls target id of the tab(s) to update.
+	 * Lock a tab, or let it go again. PanelControl applies the state it is given and never decides WHEN a tab should be locked: that is the caller's job (a flow controller, say).
+	 * 'disabled' sets aria-disabled, so the keyboard skips the tab and neither a click nor Enter activates it. 'enabled' takes it off.
+	 * A tab can carry data-pc-disabled-hint="hintId". That hint joins aria-describedby only while the tab is locked, so a tab you can still reach can say why it will not budge.
+	 * @param panelId - the aria-controls id of the tab or tabs to change.
 	 * @param state - 'enabled' or 'disabled'.
 	 */
 	setTabState(panelId: string, state: 'enabled' | 'disabled'): void {
@@ -118,9 +111,9 @@ export class PanelControl {
 			tab.setAttribute('aria-disabled', String(disabled));
 			const hint = tab.getAttribute('data-pc-disabled-hint');
 			if (hint) setDescribedBy(tab, hint, disabled);
-			if (this._isTablist && disabled) tab.tabIndex = -1; // can't hold the roving stop
+			if (this._isTablist && disabled) tab.tabIndex = -1; // a locked tab cannot hold the tab stop
 		});
-		// If the disabled tab held the roving stop, hand it to an enabled tab.
+		// If the locked tab held the tab stop, give it to one that still works.
 		if (this._isTablist && disabled) this._ensureRovingStop();
 	}
 
@@ -128,11 +121,7 @@ export class PanelControl {
 
 	private _log(msg: string) { log('PanelControl', this.element, this.config.debug, msg); }
 
-	// Reflect whether the linked set closes on re-click (closable + closeOnTab)
-	// onto the control as [data-closeable]. CSS can use it to keep the active
-	// trigger interactive — an active-tab pointer-events:none would otherwise
-	// block re-click-to-close. Prefers the merged config (covers JS options and
-	// data attributes); falls back to the set element's attributes pre-init.
+	// Put [data-closeable] on the control when the set closes on a second click (closable + closeOnTab). CSS can then keep the active trigger clickable: a pointer-events:none on the active tab would swallow the very click that closes it. It reads the merged config where it can, and falls back to the set element's attributes before the set has started.
 	private _reflectCloseable = (): void => {
 		const set = this.panelSet;
 		const el = this.panelSetElement;
@@ -147,11 +136,7 @@ export class PanelControl {
 		this.element.toggleAttribute('data-closeable', closeable);
 	};
 
-	// Resolve the PanelSet element. An explicit target — data-panelcontrol="#sel"
-	// — wins (handy for remote or late-added sets). Otherwise discover it from the
-	// first trigger's target panel: [aria-controls] → panel → nearest panelset
-	// container, which is what lets the control sit anywhere in the DOM. One
-	// PanelControl is linked to one PanelSet.
+	// Find the PanelSet element. Naming one with data-panelcontrol="#sel" wins, which is handy for a set elsewhere on the page, or one that arrives late. Otherwise it follows the first trigger: aria-controls gives a panel, and the panel's nearest panelset container is the set. That is what lets the control sit anywhere in the DOM. One PanelControl drives one PanelSet.
 	private _resolvePanelSet(): HTMLElement | null {
 		const target = this.element.getAttribute('data-panelcontrol');
 		if (target) return document.querySelector<HTMLElement>(target);
@@ -163,16 +148,15 @@ export class PanelControl {
 		return panel?.closest<HTMLElement>('[data-panelset], ps-panelset') ?? null;
 	}
 
-	// Wire the element-dependent bits, once — runs when the PanelSet element is
-	// first resolved (which may be after init, on the first click).
+	// Set up the parts that need the PanelSet element, once it is found. That can be long after init, on the first click.
 	private _onElementResolved(el: HTMLElement): void {
 		const { signal } = this._controller;
-		// Keep roving in sync when the set activates a panel (click or programmatic).
+		// Keep the tab stop in step whenever the set activates a panel, by click or from code.
 		if (this._isTablist && !this._activationWired) {
 			el.addEventListener('ps:activationcomplete', this._onActivation as EventListener, { signal });
 			this._activationWired = true;
 		}
-		// Reflect closeable now; re-check once the instance is ready.
+		// Reflect closeable now, and look again once the set is ready.
 		this._reflectCloseable();
 		if (!el.panelSet) {
 			el.addEventListener('ps:ready', this._reflectCloseable, { once: true, signal });
@@ -188,19 +172,17 @@ export class PanelControl {
 		});
 	}
 
-	// Activate the panel a trigger controls, and keep roving tabindex in step.
-	// Locked triggers (aria-disabled) never activate.
+	// Activate the panel a trigger points at, and move the tab stop with it. A locked trigger never activates anything.
 	private _activate(trigger: HTMLElement, event: Event) {
 		if (trigger.getAttribute('aria-disabled') === 'true') return;
 		const panelId = trigger.getAttribute('aria-controls');
 		if (!panelId) return;
-		// The PanelSet does the switching. If its instance isn't there, the most
-		// likely cause is a missing PanelSet.init() — warn rather than no-op silently.
+		// The PanelSet does the switching. If it is not there, a missing PanelSet.init() is the likeliest reason, so say so rather than do nothing.
 		if (!this.panelSet) {
 			this._log(`Can’t activate '${panelId}': its PanelSet is not initialised. Add a PanelSet.init().`);
 			return;
 		}
-		this.panelSet.show(panelId, { event });   // instance resolved lazily
+		this.panelSet.show(panelId, { event });   // the set is looked up on first use
 		if (this._isTablist) this._setRoving(trigger);
 	}
 
@@ -218,8 +200,7 @@ export class PanelControl {
 		this._tabs().forEach(tab => { tab.tabIndex = tab === active ? 0 : -1; });
 	}
 
-	// Make sure one enabled tab still holds the tab stop (e.g. after the tab that
-	// held it was disabled). Prefers the active tab, else the first enabled one.
+	// Make sure a working tab holds the tab stop, which matters just after the tab that held it was locked. It takes the active tab, or the first working one.
 	private _ensureRovingStop() {
 		const tabs = this._tabs();
 		if (tabs.some(t => t.tabIndex === 0 && this._enabled(t))) return;
@@ -231,12 +212,11 @@ export class PanelControl {
 	private _setupKeyboard() {
 		const tabs = this._tabs();
 		if (!tabs.length) return;
-		// Start with the marked-selected tab (or the first) as the tab stop.
+		// The tab stop starts on the tab marked selected, or on the first one.
 		const active = tabs.find(t => t.getAttribute('aria-selected') === 'true') ?? tabs[0];
 		this._setRoving(active);
 		this.element.addEventListener('keydown', this._onKeydown, { signal: this._controller.signal });
-		// The ps:activationcomplete roving sync is wired in _onElementResolved,
-		// once the PanelSet element is known (it may resolve after init).
+		// Keeping the tab stop in step with ps:activationcomplete happens in _onElementResolved, once the PanelSet element is known, which can be after init.
 	}
 
 	private _onActivation = (e: CustomEvent<{ panelId: string }>) => {
@@ -262,8 +242,7 @@ export class PanelControl {
 			case 'End':   target = tabs[tabs.length - 1]; break;
 			case 'Enter':
 			case ' ':
-				// Activate the focused tab (covers non-<button> tabs; buttons would
-				// fire click natively, but handling it here is harmless and uniform).
+				// Activate whichever tab has focus. This is for tabs that are not buttons: a real button fires a click itself, but taking it here too does no harm and keeps them alike.
 				if (idx >= 0) { e.preventDefault(); this._activate(tabs[idx], e); }
 				return;
 			default: return;
@@ -273,21 +252,18 @@ export class PanelControl {
 		e.preventDefault();
 		this._setRoving(target);
 		target.focus();
-		// 'auto' activation, but only when it is safe to do so.
+		// 'auto' activation, but only where it does no harm.
 		if (this._autoActivate()) this._activate(target, e);
 	};
 
-	// 'auto' self-downgrades to manual when activating-on-arrow would fight the
-	// user: autoFocus would yank focus into the panel, async content would fire
-	// loads on every keystroke.
+	// 'auto' falls back to manual wherever activating on an arrow press would work against the user: autoFocus drags focus into the panel, async content sets off a load per keystroke.
 	private _autoActivate(): boolean {
 		return this.config.activation === 'auto'
 			&& !this._autoFocusInPlay()
 			&& !this.panelSet?.hasAsyncContent;
 	}
 
-	// autoFocus can live on the PanelSet (config / data-auto-focus / web attr) or
-	// on an individual trigger (data-auto-focus). Any of them makes auto unsafe.
+	// autoFocus can sit on the PanelSet (config, data-auto-focus, or the web component attribute) or on a single trigger. Any one of them rules 'auto' out.
 	private _autoFocusInPlay(): boolean {
 		const ps = this.panelSet;
 		if (ps && ps.config.autoFocus !== false) return true;
@@ -302,7 +278,7 @@ export class PanelControl {
 		});
 	}
 
-	/** Remove all listeners and drop the reference from the element. */
+	/** Take every listener off again and let go of the element. */
 	destroy() {
 		this._controller.abort();
 		delete this.element.panelControl;

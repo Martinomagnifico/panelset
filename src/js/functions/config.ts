@@ -17,8 +17,7 @@ function _coerce(value: string, type: AttrType): unknown {
 }
 
 /**
- * Parse data attributes from a DOMStringMap into a partial config object.
- * Each entry maps a config key to a [datasetKey, type] pair.
+ * Read data attributes off a DOMStringMap into a config object. Every entry pairs a config key with a [datasetKey, type].
  */
 export function parseDataAttrs<T>(dataset: DOMStringMap, attrMap: AttrMap<T>): Partial<T> {
 	const config: Partial<T> = {};
@@ -32,10 +31,7 @@ export function parseDataAttrs<T>(dataset: DOMStringMap, attrMap: AttrMap<T>): P
 }
 
 /**
- * Parse plain element attributes into a partial config object.
- * Uses the same AttrMap as parseDataAttrs but reads from element.getAttribute()
- * instead of dataset. The datasetKey is converted from camelCase to kebab-case
- * to form the attribute name (e.g. "panelAxis" > "panel-axis").
+ * The same for plain element attributes: same AttrMap, but it reads element.getAttribute() instead of the dataset, turning the datasetKey from camelCase into kebab-case ("panelAxis" becomes "panel-axis").
  */
 export function parseAttrs<T>(element: Element, attrMap: AttrMap<T>): Partial<T> {
 	const config: Partial<T> = {};

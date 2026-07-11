@@ -7,20 +7,13 @@ export interface PanelSetConfig {
 		panels?: boolean;
 		height?: boolean;
 	};
-	/** Enable level-based slide direction. DOM order defines the level
-	 *  (later panel = higher). Adds .levelup / .leveldown to the panels so
-	 *  CSS can reverse the transform on backward navigation. Default false. */
+	/** Slide in the direction you are travelling. The DOM order sets the levels (a later panel is higher), and .levelup or .leveldown goes on the panels so CSS can reverse the transform on the way back. False by default. */
 	levels?: boolean;
-	/** Make next() / prev() wrap around the ends (last → first, first → last).
-	 *  Default false: they stop at the first and last panel. */
+	/** Let next() and prev() come round at the ends, last to first and back again. False by default, so they stop. */
 	loop?: boolean;
 	closable?: boolean;
 	closeOnTab?: boolean;
-	/** How PanelSet disables its own verb buttons (data-ps-next/prev/close) at the
-	 *  ends of the range. 'aria' (default) toggles aria-disabled and leaves the
-	 *  native disabled attribute to the author; 'native' toggles the native
-	 *  disabled attribute (PanelSet owns it) and leaves aria-disabled to the
-	 *  author. Tab-strip locking is PanelControl's concern and is always aria. */
+	/** How PanelSet turns its own buttons (data-ps-next, -prev, -close) off at the ends. 'aria' (the default) toggles aria-disabled and leaves the real disabled attribute to you. 'native' toggles the real disabled attribute (PanelSet owns it) and leaves aria-disabled to you. Locking a tab strip is PanelControl's business, and always aria. */
 	disabledMode?: 'aria' | 'native';
 	loadingHeight?: number;
 	loadingDelay?: number;
@@ -46,8 +39,7 @@ export interface BeforeActivateEventDetail {
 	targetPanel: HTMLElement;
 	/** The currently active panel, if any. */
 	outgoingPanel: HTMLElement | null;
-	/** The element that triggered the activation (button/tab), or null when
-	 *  called programmatically without an event. */
+	/** The button or tab that set this off, or null when your code called it without an event. */
 	trigger: HTMLElement | null;
 }
 
@@ -56,9 +48,9 @@ export interface BeforeOpenEventDetail {
 	targetPanel: HTMLElement;
 	outgoingPanel: HTMLElement | null;
 	signal: AbortSignal;
-	/** Underlying mechanism the open awaits; prefer waitUntil(). */
+	/** What the open actually waits on. Use waitUntil() instead. */
 	promise: Promise<unknown> | null;
-	/** Delay the open until p resolves. May be called more than once (awaits all). */
+	/** Hold the open until p resolves. Call it as often as you like: the open waits for all of them. */
 	waitUntil(p: Promise<unknown>): void;
 }
 
@@ -66,13 +58,13 @@ export interface ActivationEventDetail {
 	panelId: string;
 	trigger: HTMLElement | null;
 	outgoingPanel: HTMLElement | null;
-	/** Zero-based index of the activated panel in DOM order. */
+	/** Where the panel sits in DOM order, counting from 0. */
 	index: number;
-	/** Total number of panels in the set. */
+	/** How many panels the set holds. */
 	total: number;
-	/** True when the activated panel is the first one. */
+	/** True when this is the first panel. */
 	atStart: boolean;
-	/** True when the activated panel is the last one. */
+	/** True when this is the last one. */
 	atEnd: boolean;
 }
 
@@ -89,9 +81,7 @@ export interface ShowOptions {
 	event?: Event;
 	transition?: boolean;
 	autoFocus?: AutoFocusMode;
-	/** Force the levels slide direction regardless of DOM order. next()/prev()
-	 *  set this so a loop wrap slides in the step's direction ('forward' = like
-	 *  Next, even when wrapping to an earlier panel). Only affects sets with levels. */
+	/** Pick which way the levels slide, whatever the DOM order says. next() and prev() set it, so coming round the end still slides the way you were going ('forward' looks like Next, even landing on an earlier panel). Only matters for sets with levels. */
 	direction?: 'forward' | 'backward';
 }
 

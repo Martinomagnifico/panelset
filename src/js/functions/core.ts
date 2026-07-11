@@ -1,7 +1,6 @@
 /**
- * Animation engine for dimension transitions. One instance per element.
- * start() aborts the previous cycle and returns a fresh AbortSignal.
- * Pass it to fetch() and cancelling the animation cancels the request too.
+ * The animation engine behind the height and width transitions. One per element.
+ * start() cancels the cycle before it and returns a new AbortSignal. Give that to fetch(), and cancelling the animation cancels the request too.
  */
 
 export class Core {
@@ -17,8 +16,7 @@ export class Core {
 		return this._controller.signal;
 	}
 
-	// Always resolves. Falls back to setTimeout if transitionend never fires —
-	// e.g. an interrupted zero-delta transition where nothing actually moves.
+	// Always resolves. If transitionend never fires it falls back to a setTimeout, which happens when a transition is interrupted and nothing moves.
 	static waitForTransition(el: HTMLElement, propertyName?: string): Promise<void> {
 		return new Promise(resolve => {
 			const s = getComputedStyle(el);

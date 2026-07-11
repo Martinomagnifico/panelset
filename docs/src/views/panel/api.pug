@@ -83,15 +83,26 @@ block content
 				panel.onBeforeOpen(loadContent, { once: true });
 
 		.indented
+			h3.code panel.setStatic(value: boolean): void
+			hr
+			p Force the panel into (or out of) its static state: plain expanded content instead of a collapsible disclosure. This overrides the #[code static] media query, so use it for a breakpoint the library cannot see, such as a container query or your own breakpoint system.
+			p Switching never animates, and going back to collapsible lands the panel closed. See the #[a(href=url('/panel/configuration.html')) static] option.
+
+		.indented
 			h3.code panel.destroy(): void
 			hr
-			p Destroy it. It aborts any animation in progress, removes its event listeners, resets the element to its closed state, and clears the #[code element.panel] reference so the element can be initialised again.
+			p Destroy it. It aborts any animation in progress, removes its event listeners (including the #[code static] media query watcher), resets the element to its closed state, and clears the #[code element.panel] reference so the element can be initialised again.
 
 	+section("Instance properties")
 		.indented
 			h3.code panel.isOpen: boolean
 			hr
 			p #[strong Read-only.] #[code true] while the panel is open, or part-way through opening.
+
+		.indented
+			h3.code panel.isStatic: boolean
+			hr
+			p #[strong Read-only.] #[code true] while the panel is plain expanded content rather than a disclosure.
 
 		.indented
 			h3.code panel.element: HTMLElement

@@ -4,7 +4,7 @@ import { autoFocus } from './functions/focus.js';
 import { readPanelParam, writePanelParam, readStored, writeStored } from './functions/persist.js';
 import { findBody, lockBody, unlockBody } from './functions/pinning.js';
 
-import type { PanelConfig, BeforeOpenEventDetail, PanelEventDetail, AsyncOpenHandler } from './panel.types.js';
+import type { PanelConfig, BeforeOpenEventDetail, PanelEventDetail, PanelStaticEventDetail, AsyncOpenHandler } from './panel.types.js';
 import { parseDataAttrs, type AttrMap } from './functions/config.js';
 import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil } from './functions/utils.js';
 
@@ -51,6 +51,11 @@ export class Panel {
 	private _listenerController = new AbortController();
 	private _activating = false;
 
+	// Static = not a disclosure right now: expanded content, no inert, no trigger semantics. Driven by the `static` option, or forced with setStatic().
+	private _static = false;
+	private _mql: MediaQueryList | null = null;
+	private _onMqlChange: (() => void) | null = null;
+
 	static defaults: Required<PanelConfig> = {
 		axis: 'vertical',
 		align: 'start',
@@ -64,6 +69,7 @@ export class Panel {
 		interruptible: true,
 		persist: false,
 		deepLink: false,
+		static: false,
 		debug: false,
 	};
 
@@ -80,12 +86,13 @@ export class Panel {
 		interruptible:  ['panelInterruptible',  'boolean'],
 		persist:        ['panelPersist',        'boolean'],
 		deepLink:       ['panelDeeplink',       'boolean'],
+		// Read as a string and sorted out in _normalizeStatic: the value is either a boolean ("", "true", "false") or a media query.
+		static:         ['panelStatic',         'string'],
 		debug:          ['debug',               'boolean'],
 	};
 
-	// True when the browser supports interpolate-size: allow-keywords.
-	// When set, CSS animates height/width 0 to/from auto natively and the JS
-	// measure-animate cycle is skipped (open/close just toggle state classes).
+	// True when the browser supports interpolate-size: allow-keywords. When set, CSS animates height/width 0 to/from auto natively and the JS measure-animate cycle is skipped (open/close just toggle state classes).
+
 	private static readonly _nativeInterpolateSize =
 		typeof CSS !== 'undefined' && CSS.supports('interpolate-size: allow-keywords');
 
@@ -102,10 +109,7 @@ export class Panel {
 			selector = '[data-panel]';
 		}
 
-		// Implicit trigger wiring (a [data-panel-trigger] button next to its panel)
-		// is handled per-instance in the constructor — see _wireImplicitTriggers —
-		// so it works for Panel.init(), the <ps-panel> web component, and any
-		// panel constructed directly, not just [data-panel] in this one pass.
+		// Implicit trigger wiring (a [data-panel-trigger] button next to its panel) is handled per-instance in the constructor. See _wireImplicitTriggers. So it works for Panel.init(), the <ps-panel> web component, and any panel constructed directly, not just [data-panel] in this one pass.
 
 		return Array.from(document.querySelectorAll<HTMLElement>(selector))
 			.filter(el => !el.panel)
@@ -128,10 +132,7 @@ export class Panel {
 			element.appendChild(wrapper);
 		}
 
-		// Precedence: defaults < init() options < per-element data-attributes.
-		// The attribute is the most specific signal, so it wins — this lets an
-		// element opt out of a global flag, e.g. data-panel-persist="false"
-		// overriding Panel.init({ persist: true }).
+		// Precedence: defaults < init() options < per-element data-attributes. The attribute is the most specific signal, so it wins. This lets an element opt out of a global flag, e.g. data-panel-persist="false" overriding Panel.init({ persist: true }).
 		const dataConfig = parseDataAttrs<PanelConfig>(element.dataset, Panel.attrs);
 		this.config = { ...Panel.defaults, ...options, ...dataConfig };
 
@@ -141,25 +142,87 @@ export class Panel {
 		this._wireImplicitTriggers();
 		this._bindTriggers();
 
-		// Start open if persisted/deep-linked state says so, OR if the markup was
-		// authored with .is-open. Either way snap open without animation and sync
-		// the trigger's aria-expanded, so hand-authored markup needs no extra ARIA.
-		if (this._resolveInitialState() || this.element.classList.contains('is-open')) {
+		// A media query is watched for the lifetime of the instance (torn down in destroy). This has to resolve before the initial-state branch below, because static REPLACES open/closed rather than being one of them.
+		this.config.static = this._normalizeStatic(this.config.static);
+		if (typeof this.config.static === 'string') {
+			this._mql = window.matchMedia(this.config.static);
+			this._onMqlChange = () => this._applyStatic(this._mql!.matches);
+			this._mql.addEventListener('change', this._onMqlChange);
+		}
+
+		if (this.config.static === true || (this._mql && this._mql.matches)) {
+			this._applyStatic(true, { initial: true });
+		} else if (this._resolveInitialState() || this.element.classList.contains('is-open')) {
+			// Start open if persisted/deep-linked state says so, OR if the markup was authored with .is-open. Either way snap open without animation and sync the trigger's aria-expanded, so hand-authored markup needs no extra ARIA.
 			this.element.classList.add('is-open');
 			this.element.removeAttribute('inert');
 			this._setTriggerState(true);
-			// is-restored is present for exactly one paint so CSS can suppress
-			// transitions on parent/sibling elements. Double rAF ensures the class
-			// survives the first paint before being removed.
+			// is-restored is there for exactly one paint, so CSS can hold back transitions on whatever sits around the panel. Two rAFs make sure it survives that paint.
 			this.element.classList.add('is-restored');
 			requestAnimationFrame(() => requestAnimationFrame(() => this.element.classList.remove('is-restored')));
 			this._dispatch('panel:opened');
 		} else {
 			this.element.setAttribute('inert', '');
+			// A closed disclosure's trigger says so, whether it was hand-authored with [aria-controls] or wired implicitly.
+			this._setTriggerState(false);
 		}
 
 		if (Panel._nativeInterpolateSize) logInterpolateSizeOnce(this.config.debug);
 		this._log('Initialized');
+	}
+
+	// Bare `data-panel-static` (or "true") means always static, "false" means never, anything else is a media query the panel is static WHILE it matches.
+	private _normalizeStatic(value: boolean | string): boolean | string {
+		if (typeof value === 'boolean') return value;
+		const v = value.trim();
+		if (v === '' || v === 'true') return true;
+		if (v === 'false') return false;
+		return v;
+	}
+
+	private _triggers(): HTMLElement[] {
+		const id = this.element.id;
+		if (!id) return [];
+		return Array.from(document.querySelectorAll<HTMLElement>(`[aria-controls="${id}"]`));
+	}
+
+	// Switch between "collapsible disclosure" and "plain expanded content". Never animates: a resize across the breakpoint should not look like an open.
+	private _applyStatic(next: boolean, opts: { initial?: boolean } = {}) {
+		if (!opts.initial && next === this._static) return;
+		this._static = next;
+
+		this._anim.start(); // abort anything in flight; its .then() checks the signal
+		this.element.classList.remove('is-opening', 'is-closing', 'is-loading');
+		this.element.style[this._cssProp()] = '';
+		const body = findBody(this.element);
+		if (body) unlockBody(body);
+
+		if (next) {
+			// Not a disclosure: expanded, reachable, and the trigger stops claiming to expand anything (it is hidden by [data-ps-static] in author CSS).
+			this.element.classList.add('is-open');
+			this.element.removeAttribute('inert');
+			this.element.setAttribute('data-ps-static', '');
+			this._triggers().forEach(t => {
+				t.setAttribute('data-ps-static', '');
+				t.removeAttribute('aria-expanded');
+			});
+		} else {
+			// Collapsible again, and it lands CLOSED: a drawer that reappears already open over the content is never what you want.
+			this.element.classList.remove('is-open');
+			this.element.setAttribute('inert', '');
+			this.element.removeAttribute('data-ps-static');
+			this._triggers().forEach(t => {
+				t.removeAttribute('data-ps-static');
+				t.setAttribute('aria-expanded', 'false');
+			});
+		}
+
+		this._log(next ? 'Static' : 'Collapsible');
+
+		if (!opts.initial) {
+			const detail: PanelStaticEventDetail = { static: next };
+			this.element.dispatchEvent(new CustomEvent('panel:staticchange', { detail, bubbles: true }));
+		}
 	}
 
 	private _log(msg: string) { log('Panel', this.element, this.config.debug, msg); }
@@ -182,13 +245,9 @@ export class Panel {
 		writePanelParam(next);
 	};
 
-	// Resolve persist/deepLink with precedence: element attribute > group attribute
-	// > init option / default. The element's own attribute is the most specific
-	// signal, so an explicit data-panel-persist="false" opts the element out even
-	// inside a persisting [data-panel-group]. An attribute is "set" only when
-	// present; presence with any value except "false" means true.
+	// Work out persist and deepLink, closest thing wins: the element's own attribute, then the group's, then the init option or default. So data-panel-persist="false" on the element keeps it out, even inside a [data-panel-group] that persists. An attribute counts as set by being there, and anything but "false" means true.
 	private _resolveStateConfig = (): { persist: boolean; deepLink: boolean } => {
-		// undefined = attribute not present on this element.
+		// undefined means the element does not carry the attribute at all.
 		const ownAttr = (name: string): boolean | undefined =>
 			this.element.hasAttribute(name)
 				? this.element.getAttribute(name) !== 'false'
@@ -197,7 +256,7 @@ export class Panel {
 		const ownPersist = ownAttr('data-panel-persist');
 		const ownDeepLink = ownAttr('data-panel-deeplink');
 
-		// Nearest enclosing group (stop at any parent [data-panel]).
+		// The closest group around it, stopping at any [data-panel] on the way up.
 		let groupPersist: boolean | undefined;
 		let groupDeepLink: boolean | undefined;
 		let el = this.element.parentElement;
@@ -219,6 +278,8 @@ export class Panel {
 
 	private _persistState = (open: boolean): void => {
 		if (!this.element.id) return;
+		// A static panel is neither open nor closed in any way worth remembering, so it writes nothing to localStorage or the URL.
+		if (this._static) return;
 
 		const { persist: hasPersist, deepLink: hasDeepLink } = this._resolveStateConfig();
 
@@ -229,8 +290,7 @@ export class Panel {
 		if (hasDeepLink) {
 			this._updatePanelParam(open);
 		} else if (!open && this._parsePanelParam()) {
-			// No deepLink configured: on close, still clean up a stale ?panel= ID
-			// left by a snap-open so the URL doesn't keep reopening the panel.
+			// No deepLink, but a close still clears an old ?panel= id, or the URL would keep opening the panel again.
 			this._updatePanelParam(false);
 		}
 	};
@@ -238,11 +298,9 @@ export class Panel {
 	private _resolveInitialState = (): boolean => {
 		const { id } = this.element;
 		if (!id) return false;
-		// URL param is always honoured: a ?panel=id link is explicit and
-		// page-specific, so shareable deep links work with no config.
+		// The URL always counts: a ?panel=id link is explicit and belongs to this page, so a shareable link works with no config.
 		if (this._parsePanelParam()) return true;
-		// localStorage is opt-in only. Without persist, a stale entry — e.g. an
-		// auto-assigned id (panel-1, …) left by another page — must not reopen this.
+		// localStorage only counts if you ask for it. Without persist, an old entry (an id the library handed out itself, left by another page) must not open this panel.
 		const { persist } = this._resolveStateConfig();
 		if (persist && readStored(`panel:${id}`) === 'open') return true;
 		return false;
@@ -252,12 +310,8 @@ export class Panel {
 		this.config.axis === 'horizontal' ? 'width' : 'height';
 
 
-	// Turn an adjacent [data-panel-trigger] button into a wired aria-controls
-	// trigger for THIS panel. Searching outward from the panel (rather than from
-	// the trigger to a [data-panel] sibling) means it matches however the panel
-	// is authored — a [data-panel] div or a <ps-panel> custom element — and runs
-	// for every construction path, so it no longer depends on calling init().
-	// The panel gets a stable auto-ID only when a trigger actually needs one.
+	// Turn a [data-panel-trigger] button next to the panel into a real aria-controls trigger for THIS panel. It looks outward from the panel, not inward from the trigger, so it works however the panel is written (a [data-panel] div or a <ps-panel>) and however it is built, not only through init().
+	// The panel gets an id of its own only once a trigger needs one to point at.
 	private _wireImplicitTriggers() {
 		const isPanel = (el: HTMLElement): boolean => el.hasAttribute('data-panel') || !!el.panel;
 		const wire = (trigger: HTMLElement): void => {
@@ -266,8 +320,7 @@ export class Panel {
 			if (!trigger.hasAttribute('aria-expanded')) trigger.setAttribute('aria-expanded', 'false');
 			trigger.removeAttribute('data-panel-trigger');
 		};
-		// The trigger can be the sibling itself, or a direct child of a heading
-		// sibling (e.g. <h2><button data-panel-trigger>…</button></h2>).
+		// The trigger can be the sibling itself, or sit inside a heading beside the panel: <h2><button data-panel-trigger>…</button></h2>.
 		const triggerIn = (el: HTMLElement): HTMLElement | null =>
 			el.hasAttribute('data-panel-trigger') ? el
 			: /^H[1-6]$/.test(el.tagName) ? el.querySelector<HTMLElement>(':scope > [data-panel-trigger]')
@@ -331,15 +384,16 @@ export class Panel {
 		const groupClose = group?.hasAttribute('data-panel-close-siblings') ?? false;
 		if (!this.config.closeSiblings && !groupClose) return;
 
+		// A static sibling is not a disclosure, so it is never "an open panel" that should be closed to make room for this one.
 		const toClose: HTMLElement[] = group
 			? trueSiblings(this.element, {
 				groupSelector: '[data-panel-group]',
 				itemSelector:  '[data-panel]',
-				filter:        el => !!el.panel?.isOpen,
+				filter:        el => !!el.panel?.isOpen && !el.panel.isStatic,
 			})
 			: Array.from(this.element.parentElement?.children ?? [])
 				.filter((el): el is HTMLElement =>
-					el instanceof HTMLElement && el !== this.element && !!el.panel?.isOpen
+					el instanceof HTMLElement && el !== this.element && !!el.panel?.isOpen && !el.panel.isStatic
 				);
 
 		if (toClose.length && group) {
@@ -371,11 +425,24 @@ export class Panel {
 		return this.element.classList.contains('is-open') || this.element.classList.contains('is-opening');
 	}
 
+	/** True when the panel is plain expanded content rather than a disclosure. */
+	get isStatic(): boolean {
+		return this._static;
+	}
+
+	/**
+	 * Put the panel into its static, always-open state, or take it out, whatever the `static` media query says.
+	 * For breakpoints the library cannot see: a container query, your own breakpoint system, a feature flag.
+	 */
+	setStatic(value: boolean): void {
+		this._applyStatic(value);
+	}
 
 
 	// open
 
 	async open(event?: Event) {
+		if (this._static) return this._log('open() ignored: panel is static');
 		if (this.isOpen && !this.element.classList.contains('is-closing')) return;
 		if (this.config.interruptible === false && this._activating) return;
 
@@ -411,8 +478,7 @@ export class Panel {
 		contentPromise: Promise<unknown>,
 		event?:         Event
 	) {
-		// Race content arrival against loadingDelay.
-		// If content arrives first, skip Phase 1 entirely — no spinner, no loadingHeight.
+		// Race the content against loadingDelay. If the content wins, phase 1 is skipped: no spinner, no loadingHeight.
 		const contentFirst = await Promise.race([
 			contentPromise.then(() => true as const),
 			new Promise<false>(res => {
@@ -424,25 +490,21 @@ export class Panel {
 		if (signal.aborted) return;
 
 		if (contentFirst) {
-			// Fast path: content ready before loadingDelay — open like a normal panel.
+			// The content beat loadingDelay, so open like any other panel.
 			this._openSync(signal, cssProp, event);
 			return;
 		}
 
-		// Slow path: loadingDelay elapsed, content not yet ready.
-		// Add is-loading BEFORE any forced style flush. If the wrapper is committed
-		// at opacity 1 (e.g. panel was previously open) before is-loading is added,
-		// then adding is-opening creates a 1→0 opacity transition on the wrapper
-		// that makes content visible throughout Phase 1. Adding is-loading first
-		// ensures the wrapper is committed at opacity 0, so no transition fires.
+		// The slow way: loadingDelay ran out and the content is not here.
+		// is-loading goes on BEFORE anything forces the styles to settle. If the wrapper already sits at opacity 1 (the panel was open before) when is-opening arrives, that gives it a 1-to-0 opacity transition and the old content stays in view all through phase 1. is-loading first pins the wrapper at opacity 0, and nothing transitions.
 		this.element.classList.remove('is-closing');
 		this.element.removeAttribute('inert');
 		this.element.classList.add('is-loading');
 
-		// Clear stale content so old content doesn't reappear when is-loading is removed.
+		// Throw the old content out, or it walks back in the moment is-loading comes off.
 		this.element.querySelector(':scope > .panel-wrapper')?.replaceChildren();
 
-		// JS already waited loadingDelay, so the spinner should appear immediately.
+		// The JS already sat through loadingDelay, so the spinner shows at once.
 		this.element.style.setProperty('--ps-loading-delay', '0ms');
 
 		this._setTriggerState(true);
@@ -471,7 +533,7 @@ export class Panel {
 		try {
 			await Promise.all([contentPromise, openTransition].filter(Boolean) as Promise<void>[]);
 		} catch {
-			// AbortError or content error — fall through to signal check below
+			// An abort, or the content failed. Either way, fall through to the signal check below.
 		} finally {
 			this.element.classList.remove('is-loading');
 			this.element.style.removeProperty('--ps-loading-delay');
@@ -479,15 +541,14 @@ export class Panel {
 
 		if (signal.aborted) return;
 
-		// Phase 2: animate from loadingHeight to content height.
+		// Phase 2: run from the loading height to the height the content needs.
 		const currentRect = this.element.getBoundingClientRect();
 		const current = cssProp === 'height' ? currentRect.height : currentRect.width;
 		this.element.style[cssProp] = '';
 
 		if (this.config.transitions) {
 			if (Panel._nativeInterpolateSize) {
-				// Inline cleared; @supports block now applies height:auto.
-				// Browser transitions from loadingHeight to natural auto size.
+				// The inline value is gone, so the @supports block gives it height:auto and the browser runs from the loading height to whatever the content comes to.
 				Core.waitForTransition(this.element, cssProp).then(() => {
 					if (signal.aborted) return;
 					this.element.classList.remove('is-opening');
@@ -497,9 +558,8 @@ export class Panel {
 					this._handleAutoFocus(event);
 				});
 			} else {
-				// JS fallback: measure natural size, re-lock at loadingHeight, animate.
-				// Set to 'auto' before measuring — base CSS gives height:0 so the cleared
-				// inline style would return 0 from getBoundingClientRect.
+				// Everywhere else the JS does it: measure, put the loading height back, animate.
+				// It says 'auto' before measuring, because the base CSS says height:0 and a cleared inline style would measure 0.
 				this.element.style[cssProp] = 'auto';
 				const targetRect = this.element.getBoundingClientRect();
 				const target = cssProp === 'height' ? targetRect.height : targetRect.width;
@@ -549,14 +609,11 @@ export class Panel {
 
 		if (this.config.transitions) {
 			if (Panel._nativeInterpolateSize) {
-				// Native path: lock BEFORE closeGroupSiblings so the layout flush inside
-				// sibling close() sees this panel already committed at 0px, not at its
-				// natural open height. Without this, the flush overwrites the 0px lock
-				// and the 0→auto transition has no delta to animate.
+				// Pin the size BEFORE closing the siblings, so when a sibling's close() settles the layout it already sees this panel at 0px, not at its full open height. Skip it and the settle wipes the 0px, leaving the run to auto with no distance to cover.
 				this.element.classList.add('is-opening');
 				this.element.style[cssProp] = reverseStartSize !== null ? `${reverseStartSize}px` : '0px';
 				if (body) lockBody(body);
-				void getComputedStyle(this.element)[cssProp]; // commit 0px before sibling flush
+				void getComputedStyle(this.element)[cssProp]; // make the 0px stick before the siblings force a settle
 
 				this._setTriggerState(true);
 				this._persistState(true);
@@ -580,10 +637,8 @@ export class Panel {
 				this._persistState(true);
 				this._closeGroupSiblings();
 				this._dispatch('panel:opening');
-				// JS fallback: measure natural size, lock at 0 (or reverse start), animate
-				// to target px, then clear inline on complete.
-				// Set to 'auto' so getBoundingClientRect returns the natural content size.
-				// The base CSS gives height:0, so without this the measured target would be 0.
+				// Everywhere else the JS does it: measure, pin at 0 (or wherever a reversed close left it), run to the target, clear the inline value at the end.
+				// It says 'auto' first so getBoundingClientRect reports the size the content wants. The base CSS says height:0, so otherwise the target measures 0.
 				this.element.style[cssProp] = 'auto';
 
 				const rect   = this.element.getBoundingClientRect();
@@ -592,7 +647,7 @@ export class Panel {
 				this.element.style[cssProp] = reverseStartSize !== null ? `${reverseStartSize}px` : '0px';
 				this.element.classList.add('is-opening');
 				if (body) lockBody(body);
-				// Force a flush so Firefox commits the locked state before the rAF.
+				// Settle here, so Firefox has the pinned size committed before the rAF.
 				void getComputedStyle(this.element)[cssProp];
 
 				requestAnimationFrame(() => {
@@ -624,9 +679,7 @@ export class Panel {
 
 
 	/**
-	 * Register a handler for async content loading before the panel opens.
-	 * The handler receives the panel element and an AbortSignal.
-	 * If it returns a Promise, the panel waits for it before animating open.
+	 * Register a function that fetches the content before the panel opens. It gets the panel element and an AbortSignal. Return a promise and the panel waits for it before opening.
 	 */
 	onBeforeOpen(handler: AsyncOpenHandler, options: { once?: boolean } = {}): void {
 		registerBeforeOpenHandler<BeforeOpenEventDetail>(
@@ -639,6 +692,7 @@ export class Panel {
 	}
 
 	close(event?: Event) {
+		if (this._static) return this._log('close() ignored: panel is static');
 		if (!this.isOpen) return;
 		if (this.config.interruptible === false && this._activating) return;
 
@@ -675,9 +729,7 @@ export class Panel {
 		this.element.style[prop] = `${current}px`;
 		this.element.classList.remove('is-opening', 'is-open');
 		this.element.classList.add('is-closing');
-		// Force a flush so Firefox sees { is-closing, height: Npx } as a committed
-		// state. Without it the lock is overwritten in the rAF and Firefox sees
-		// auto → 0px in one step — non-animatable, so it jumps.
+		// Settle here, so Firefox has { is-closing, height: Npx } committed. Without it the rAF overwrites the pin, Firefox gets auto and 0px in one go, which it cannot animate between, and the panel jumps shut.
 		void getComputedStyle(this.element)[prop];
 		requestAnimationFrame(() => {
 			this.element.style[prop] = '0px';
@@ -689,6 +741,7 @@ export class Panel {
 	}
 
 	toggle(event?: Event) {
+		if (this._static) return this._log('toggle() ignored: panel is static');
 		if (this.element.classList.contains('is-closing')) {
 			this.open(event); // reverse: re-open from mid-close
 		} else if (this.isOpen) {
@@ -704,12 +757,20 @@ export class Panel {
 	}
 
 	/**
-	 * Tear down this instance. Removes listeners, resets element state, and
-	 * clears element.panel so Panel.init() can re-bind it.
+	 * Take this instance apart: listeners off, element back to how it was, and element.panel cleared so Panel.init() can pick it up again.
 	 */
 	destroy() {
 		this._anim.start(); // pending .then() callbacks check signal.aborted
 		this._listenerController.abort();
+
+		if (this._mql && this._onMqlChange) {
+			this._mql.removeEventListener('change', this._onMqlChange);
+			this._mql = null;
+			this._onMqlChange = null;
+		}
+		this._static = false;
+		this.element.removeAttribute('data-ps-static');
+		this._triggers().forEach(t => t.removeAttribute('data-ps-static'));
 
 		this.element.classList.remove('is-opening', 'is-closing', 'is-loading', 'is-open');
 		this.element.style[this._cssProp()] = '';

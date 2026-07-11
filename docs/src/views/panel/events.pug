@@ -67,6 +67,13 @@ block content
 					dt.code trigger: HTMLElement | null
 					dd The element that last opened the panel, or #[code null] if closed programmatically.
 
+			+apiEvent("panel:staticchange")
+				p Fires when the panel stops being a collapsible disclosure and becomes plain expanded content, or the other way round. See the #[a(href=url('/panel/configuration.html')) static] option. It does not fire on init: that is the panel's starting state, not a change.
+				h3 Detail:
+				dl.bg-surface-tint-contrast
+					dt.code static: boolean
+					dd #[code true] when the panel just became static, #[code false] when it became collapsible again (which lands it closed).
+
 	+section("Listening to events")
 		+codeblock('JavaScript').
 			document.querySelector('#my-panel').addEventListener('panel:opened', e => {

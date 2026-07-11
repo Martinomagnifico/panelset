@@ -1,21 +1,12 @@
-// Panel and closable PanelSet. Both are closed by default.
+// Panel and closable PanelSet.
 //
-// Both components are CLOSED BY DEFAULT and opt into the open state with the
-// `.is-open` class. Add `.is-open` in markup to start opened. The collapsed
-// resting state lives here (committed, painted) so both the opening and closing
-// transitions animate from a real start value — no JS pinning required.
+// Both are CLOSED BY DEFAULT and opt into the open state with `.is-open`. Add it in your markup to start open. The collapsed resting state lives here, painted and committed, so both transitions animate from a real value and the JS never has to pin one.
 //
-// Plain (non-closable) PanelSets never match this block: it is scoped to
-// [data-closable], so a tabset keeps height:auto and a visible wrapper with no
-// classes at all.
+// A plain (non-closable) PanelSet never matches: it is scoped to [data-closable], so a tabset keeps height:auto and a visible wrapper.
 //
-// Selector group (rather than a mixin) so the shared rules are emitted once.
+// A selector group, not a mixin, so the shared rules are written once.
 //
-// The wrapper rules use the DIRECT-CHILD combinator (> .panel-wrapper). The
-// wrapper is always a direct child of its component, and a descendant combinator
-// would leak into nested collapsibles — e.g. a closable PanelSet inside an open
-// accordion Panel would inherit the parent's `.is-open .panel-wrapper`
-// (opacity:1; transform:none), leaving its own open transition nothing to animate.
+// The wrapper rules use the DIRECT CHILD combinator. A descendant one would leak into nested collapsibles: a closable PanelSet inside an open Panel would pick up the parent's `.is-open .panel-wrapper` and have nothing left to animate.
 
 [data-panel], ps-panel,
 [data-panelset][data-closable], ps-panelset[data-closable] {
@@ -27,9 +18,7 @@
 
     > .panel-wrapper {
         position: relative;
-        // Reveal start-state. Fades (and optionally transforms) in on open,
-        // out on close. --ps-closed-opacity: 1 disables the fade;
-        // --ps-wrapper-transform-from adds a slide/scale/flip.
+        // Where the reveal starts. --ps-closed-opacity: 1 switches the fade off, --ps-wrapper-transform-from adds a slide, scale or flip.
         opacity: var(--ps-closed-opacity, 0);
         transform: var(--ps-wrapper-transform-from, var(--ps-gpu-nudge, none));
         pointer-events: none;
@@ -63,8 +52,7 @@
         transform: none;
         transition: opacity   var(--ps-open-speed) var(--ps-open-timing),
                     transform var(--ps-open-speed) var(--ps-open-timing);
-        // Open delay: --ps-wrapper-open-delay, falling back to the legacy
-        // --ps-wrapper-delay, then 0s.
+        // Open delay: --ps-wrapper-open-delay, then the older --ps-wrapper-delay, then 0s.
         transition-delay: var(--ps-wrapper-open-delay, var(--ps-wrapper-delay, 0s));
     }
 

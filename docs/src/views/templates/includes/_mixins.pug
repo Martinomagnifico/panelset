@@ -294,6 +294,15 @@ mixin chevron(size, dir)
 	svg.chevron(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width=size height=size fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true")
 		polyline(points=points)
 
+//- Three lines that fold into a cross. The open state is read from the button's
+//- own aria-expanded (see _nav.scss), so the icon carries no state of its own.
+mixin burger(size)
+	- size = size || 24
+	svg.burger(xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width=size height=size fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true")
+		line.burger-top(x1="4" y1="6"  x2="20" y2="6")
+		line.burger-mid(x1="4" y1="12" x2="20" y2="12")
+		line.burger-bot(x1="4" y1="18" x2="20" y2="18")
+
 
 mixin arrow
 	hr.sr-only

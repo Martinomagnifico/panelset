@@ -1,0 +1,231 @@
+// Docs shell: aside.docs-sidebar > header + #main-nav[data-panel].
+// Desktop: sticky full-height column, nav not collapsible (see _scripts.pug).
+// Mobile: sticky top bar + a drawer that slides in over the content.
+
+:root {
+	// Constant at every width, unlike --standard-padding, so the logo does not move as the browser is resized.
+	--nav-padding: var(--padding-small);
+	--nav-border: 1px;
+
+	// Height of the header row: the tallest thing in it, which is the menu button (the logo is 32px). The header's height is DERIVED from this, and the drawer's top hangs off the header's height, so the three cannot drift apart. Hard-coding the header height instead tucks the top of the drawer under the bar.
+	--nav-item-h: 2.5rem;
+	--nav-header-h: calc(var(--nav-item-h) + 2 * var(--nav-padding) + var(--nav-border));
+
+	// The drawer is a big slab of chrome, so it moves faster than the library default. One variable for the three things that make up the open gesture (drawer, burger, scrim), because the burger and the scrim sit OUTSIDE #main-nav and so cannot inherit a speed set on it.
+	--nav-speed: 0.2s;
+
+	// The library's own speed, captured here while it still holds the default. --ps-open-speed inherits, so the drawer's faster speed would otherwise cascade into the nav sections nested inside it. This hands those children the default back without repeating the number.
+	--nav-child-speed: var(--ps-open-speed);
+}
+
+.docs-layout {
+	display: grid;
+	grid-template-columns: var(--doc-sidebar-width) minmax(0, 1fr);
+	min-height: 100dvh;
+}
+
+.docs-sidebar {
+	display: flex;
+	flex-direction: column;
+	background: var(--bg-sidebar);
+
+	// Height is set, not implied: that is what guarantees it equals --nav-header-h, which the drawer is positioned from. Only the horizontal padding is left here, the vertical space comes from the height plus centring.
+	> header {
+		box-sizing: border-box;
+		height: var(--nav-header-h);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0 var(--nav-padding);
+		background: var(--bg-sidebar);
+		flex-shrink: 0;
+	}
+}
+
+// Background belongs here, not on .panel-wrapper: the library fades the wrapper, so a surface painted there would fade in with the content.
+#main-nav {
+	background: var(--bg-sidebar);
+}
+
+// A nav section's content lifts into place as it opens. This used to sit on .docs-sidebar, which no longer works: the drawer is itself a panel inside that element, so it would inherit the nudge and drift vertically while it slides in sideways. Worse, --ps-wrapper-transform-from displaces --ps-gpu-nudge, which is what keeps the drawer's own transition smooth on iOS Safari. So it goes on the sections, at every width.
+#main-nav [data-panel] {
+	--ps-wrapper-transform-from: translateY(-0.25rem);
+}
+
+// The wrapper is the scroll container, so .sidebar-about-wrap (margin-top: auto) rests at the bottom but still scrolls into view once the nav outgrows it.
+#main-nav > .panel-wrapper {
+	box-sizing: border-box;
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	padding: var(--nav-padding);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+#main-nav .sidebar-about-wrap {
+	flex-shrink: 0;
+}
+
+// The menu button hides itself above 768px with no breakpoint repeated on this side: the library adds [data-ps-static] to the panel and its triggers whenever the panel is not collapsible (here: see data-panel-static), and hides static triggers by default.
+
+.nav-toggle {
+	justify-content: center;
+	width: var(--nav-item-h);
+	height: var(--nav-item-h);
+	flex-shrink: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--sidebar-item-text);
+	cursor: pointer;
+	transition: background var(--nav-speed) var(--ps-open-timing),
+	            color      var(--nav-speed) var(--ps-open-timing);
+
+	&:hover {
+		background: var(--sidebar-item-hover-bg);
+		color: var(--sidebar-item-hover-text);
+	}
+}
+
+// Burger to cross. The lines slide to the middle and rotate, so the state comes straight from the Panel's own aria-expanded: the icon needs no class. view-box puts the origin at the centre of the 24x24 grid, and the order matters: the rightmost transform runs first, so each line is translated to the centre and only then rotated about it.
+.burger line {
+	transform-box: view-box;
+	transform-origin: center;
+	transition: transform var(--nav-speed) var(--ps-open-timing),
+	            opacity   var(--nav-speed) var(--ps-open-timing);
+}
+
+[aria-expanded="true"] .burger {
+	.burger-top { transform: rotate(45deg) translateY(6px); }
+	.burger-mid { opacity: 0; }
+	.burger-bot { transform: rotate(-45deg) translateY(-6px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.nav-toggle,
+	.burger line { transition: none; }
+}
+
+
+//  desktop
+@media (min-width: 769px) {
+	// Pre-JS paint. A Panel is collapsed BY DEFAULT in CSS (see _collapsible.scss: height 0, and width 0 on the horizontal axis, with the wrapper at opacity 0), and only [data-ps-static] expands it. That attribute is added by JS, so between first paint and Panel init (and forever, with JS off) the desktop sidebar would not be merely collapsed, it would be absent. A missing accordion is survivable; missing navigation is not.
+	// This paints the static state ahead of the JS. Once init adds [data-ps-static] the :not() stops matching and the library's own rule takes over with the same values, so there is no second flash. It costs a repeat of the breakpoint, which this file already has anyway.
+	#main-nav:not([data-ps-static]) {
+		width: auto;
+		height: auto;
+		overflow: visible;
+
+		> .panel-wrapper {
+			opacity: 1;
+			transform: none;
+			pointer-events: auto;
+		}
+	}
+
+	.docs-sidebar {
+		position: sticky;
+		top: 0;
+		height: 100dvh;
+	}
+
+	// Fill the column
+	#main-nav {
+		flex: 1;
+		overflow: hidden;
+
+		> .panel-wrapper {
+			width: 100%;
+			min-width: 0;
+		}
+	}
+}
+
+
+//  mobile
+@media (max-width: 768px) {
+	.docs-layout {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.docs-sidebar {
+		position: sticky;
+		top: 0;
+		z-index: 20;
+
+		> header {
+			position: relative;
+			z-index: 2;
+			border-bottom: var(--nav-border) solid var(--border-default);
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			z-index: 0;
+			pointer-events: none;
+			box-shadow: 0 0 16px var(--special-shadow-dark);
+		}
+	}
+
+	#main-nav {
+		--ps-panel-width: min(320px, 84vw);
+
+		// Only the drawer slides fast. Set on the mobile drawer alone, since above 769px the panel is static and never animates.
+		--ps-open-speed: var(--nav-speed);
+		--ps-close-speed: var(--nav-speed);
+
+		// The nav sections inside the drawer are panels too, and they inherited the speed above. Give them the library default back so they keep their own, slower accordion feel.
+		[data-panel] {
+			--ps-open-speed: var(--nav-child-speed);
+			--ps-close-speed: var(--nav-child-speed);
+		}
+
+		position: fixed;
+		top: var(--nav-header-h);
+		bottom: 0;
+		left: 0;
+		z-index: 1;
+
+		// A viewport unit, not 100%: the panel's width is what is being animated.
+		@media (max-width: 420px) {
+			--ps-panel-width: 100vw;
+		}
+
+		// Only while it is out, so a 0-width panel leaves no smudge at the edge.
+		&.is-opening,
+		&.is-open,
+		&.is-closing {
+			box-shadow: 0 0 12px rgb(0 0 0 / 0.2);
+		}
+	}
+
+	// Keyed on the trigger, not a state class, so it flips exactly when the Panel starts opening and closing.
+	body:has(.nav-toggle[aria-expanded="true"]) {
+		overflow: hidden;
+	}
+
+	body::before {
+		content: "";
+		position: fixed;
+		inset: 0;
+		background: #000;
+		opacity: 0;
+		z-index: 10;
+		pointer-events: none;
+		transition: opacity var(--nav-speed) var(--ps-open-timing);
+	}
+
+	// pointer-events while open, so a click beside the drawer is swallowed instead of landing on a link behind it. The click-outside handler keys on that.
+	body:has(.nav-toggle[aria-expanded="true"])::before {
+		opacity: 0.25;
+		pointer-events: auto;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		body::before { transition: none; }
+	}
+}

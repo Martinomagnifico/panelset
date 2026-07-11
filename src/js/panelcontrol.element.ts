@@ -14,7 +14,7 @@ export class PanelControlElement extends HTMLElement {
 
 /**
  * Register the <ps-panelcontrol> custom element.
- * @param prefix - Element name prefix. Defaults to 'ps' → <ps-panelcontrol>.
+ * @param prefix - the name to put in front. Defaults to 'ps', giving <ps-panelcontrol>.
  */
 export function registerPanelControl(prefix = 'ps'): void {
 	const name = `${prefix}-panelcontrol`;

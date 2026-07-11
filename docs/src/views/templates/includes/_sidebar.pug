@@ -1,49 +1,56 @@
 aside.docs-sidebar
-	a.logo(href=url('/'))
-		+logoicon
-		| PanelSet
+	header
+		a.logo(href=url('/'))
+			+logoicon
+			| PanelSet
 
-	nav(data-panel-group data-panel-close-siblings)
-		each link, i in sidebar.mainLinks
-			- let active = (link.text === pagetitle);
-			a(class=[(active ? "active" : ""), (i > 0 ? "main-link-sep" : "")].filter(Boolean).join(" ") href=url(link.href)) #{link.text}
+		button.nav-toggle(aria-controls="main-nav")
+			span.sr-only Toggle navigation
+			+burger(24)
+
+	#main-nav(data-panel data-panel-axis="horizontal" data-panel-align="end" data-panel-static="(min-width: 769px)" data-panel-return-focus="true")
+		.panel-wrapper
+			nav(data-panel-group data-panel-close-siblings)
+				each link, i in sidebar.mainLinks
+					- let active = (link.text === pagetitle);
+					a(class=[(active ? "active" : ""), (i > 0 ? "main-link-sep" : "")].filter(Boolean).join(" ") href=url(link.href)) #{link.text}
 
 
-		each section in sidebar.sections
-			- const sectionId = 'nav-' + section.title.toLowerCase().replace(/\s+/g, '-')
-			- const allLinks = [...(section.links || []), ...(section.examples || []), ...(section.integrations || [])]
-			- const isActive = allLinks.some(link => link.text === pagetitle)
-			
-			
-			.nav-section
-				button.nav-section-toggle(class=isActive ? 'active' : '', aria-controls=sectionId, aria-expanded=String(isActive) )
-					span= section.title
-					+chevron(18, 'down')
-				div(id=sectionId, data-panel, class=isActive ? 'is-open' : '')
-					.panel-wrapper
-						.section-links
-							ul
-								each link in section.links
-									- let active = (link.text === pagetitle);
-									li
-										a(class=(active ? "active" : "") href=url(link.href) tabindex=(active ? "-1" : false)) #{link.label || link.text}
-							
-							if section.examples
-								p.nav-examples-label Examples
-								ul.nav-examples
-									each link in section.examples
-										- let active = (link.text === pagetitle);
-										li
-											a(class=(active ? "active" : "") href=url(link.href) tabindex=(active ? "-1" : false)) #{link.label || link.text}
+				each section in sidebar.sections
+					- const sectionId = 'nav-' + section.title.toLowerCase().replace(/\s+/g, '-')
+					- const allLinks = [...(section.links || []), ...(section.examples || []), ...(section.integrations || [])]
+					- const isActive = allLinks.some(link => link.text === pagetitle)
+					
+					
+					.nav-section
+						button.nav-section-toggle(class=isActive ? 'active' : '', aria-controls=sectionId, aria-expanded=String(isActive) )
+							span= section.title
+							+chevron(18, 'down')
+						div(id=sectionId, data-panel, class=isActive ? 'is-open' : '')
+							.panel-wrapper
+								.section-links
+									ul
+										each link in section.links
+											- let active = (link.text === pagetitle);
+											li
+												a(class=(active ? "active" : "") href=url(link.href) tabindex=(active ? "-1" : false)) #{link.label || link.text}
+									
+									if section.examples
+										p.nav-examples-label Examples
+										ul.nav-examples
+											each link in section.examples
+												- let active = (link.text === pagetitle);
+												li
+													a(class=(active ? "active" : "") href=url(link.href) tabindex=(active ? "-1" : false)) #{link.label || link.text}
 
-							if section.integrations
-								p.nav-examples-label Integrations
-								ul.nav-examples
-									each link in section.integrations
-										- let active = (link.text === pagetitle);
-										li
-											a(class=(active ? "active" : "") href=url(link.href) tabindex=(active ? "-1" : false)) #{link.label || link.text}
+									if section.integrations
+										p.nav-examples-label Integrations
+										ul.nav-examples
+											each link in section.integrations
+												- let active = (link.text === pagetitle);
+												li
+													a(class=(active ? "active" : "") href=url(link.href) tabindex=(active ? "-1" : false)) #{link.label || link.text}
 
-	.sidebar-about-wrap
-		a.sidebar-about(href=url('/about.html') class=(pagetitle === "About / Buy me a coffee" ? "active" : "")) 
-			| About / #[+coffee()] Buy me a coffee
+			.sidebar-about-wrap
+				a.sidebar-about(href=url('/about.html') class=(pagetitle === "About / Buy me a coffee" ? "active" : "")) 
+					| About / #[+coffee()] Buy me a coffee

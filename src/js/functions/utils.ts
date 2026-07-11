@@ -8,10 +8,8 @@ export function log(prefix: string, element: HTMLElement, debug: boolean, messag
 
 
 /**
- * Add or remove id token(s) on an element's aria-describedby, leaving any other
- * tokens (author-set descriptions) intact. `ids` may be a single id or a
- * space-separated list. Used to attach a "why is this disabled" hint only while
- * a control is disabled, so it is not announced when the control is enabled.
+ * Add or remove ids on an element's aria-describedby, leaving your own descriptions alone. `ids` can be one id or a space-separated list.
+ * It attaches a "why is this disabled" hint only while the control is disabled, so nobody hears it once the control works again.
  */
 export function setDescribedBy(el: HTMLElement, ids: string, present: boolean): void {
 	const want = ids.split(/\s+/).filter(Boolean);
@@ -32,8 +30,7 @@ export function setDescribedBy(el: HTMLElement, ids: string, present: boolean): 
 let _interpolateSizeLogged = false;
 
 /**
- * Logs browser interpolate-size support once across all Panel and PanelSet instances.
- * No-ops if debug is false or the message has already been logged.
+ * Says once, across every Panel and PanelSet, that the browser has interpolate-size. Quiet if debug is off, or if it has said so already.
  */
 export function logInterpolateSizeOnce(debug: boolean): void {
 	if (!debug || _interpolateSizeLogged) return;
@@ -42,18 +39,16 @@ export function logInterpolateSizeOnce(debug: boolean): void {
 }
 
 
-/** A before-open event detail that carries an awaitable promise for async content. */
+/** A before-open event detail carrying a promise the open can wait for, so content can arrive late. */
 export interface Awaitable {
-	/** Underlying mechanism the open awaits; prefer waitUntil(). */
+	/** What the open actually waits on. Use waitUntil() instead. */
 	promise: Promise<unknown> | null;
-	/** Delay the open until p resolves. Safe to call more than once (the open awaits
-	 *  all of them), and safe to destructure (it closes over the detail, not `this`). */
+	/** Hold the open until p resolves. Call it as often as you like: the open waits for all of them. Safe to pull out of the detail on its own, since it closes over the detail, not `this`. */
 	waitUntil(p: Promise<unknown>): void;
 }
 
 /**
- * Wire detail.waitUntil() so it sets detail.promise, combining via Promise.all when
- * called more than once. Direct `detail.promise = …` keeps working alongside it.
+ * Gives the detail its waitUntil(), which sets detail.promise and folds several calls together with Promise.all. Setting detail.promise yourself still works.
  */
 export function attachWaitUntil(detail: Awaitable): void {
 	detail.waitUntil = (p) => {
@@ -62,12 +57,9 @@ export function attachWaitUntil(detail: Awaitable): void {
 }
 
 /**
- * Register an async content handler on a CustomEvent.
- * The handler receives the target element and an AbortSignal.
- * If it returns a Promise, it is handed to event.detail.waitUntil() so the
- * consuming code awaits it (combining with any other waitUntil calls).
- * Pass once:true to skip the handler after the first successful load
- * (tracked via target.dataset.loaded).
+ * Register an async content handler on a CustomEvent. It gets the target element and an AbortSignal.
+ * Return a promise and it goes to event.detail.waitUntil(), so the open waits for it, along with any other waitUntil calls.
+ * With once:true the handler is skipped after the first load that works, remembered on target.dataset.loaded.
  */
 export function registerBeforeOpenHandler<D extends Awaitable & { signal: AbortSignal }>(
 	element: HTMLElement,

@@ -111,6 +111,7 @@ Panel manages the aria-expanded attributes. You do not need to do that.
 | `loadingHeight` | `number` | `150` | px reserved while async content loads |
 | `persist` | `boolean` | `false` | Save open/closed state to `localStorage` |
 | `returnFocus` | `boolean` | `true` | Return focus to the trigger on close |
+| `static` | `boolean \| media query` | `false` | Make the panel plain content. Pass a media query to do it only while that query matches, e.g. `"(min-width: 769px)"` for a nav that is a drawer on mobile and an ordinary sidebar on desktop. Just like the docs. |
 | `transitions` | `boolean` | `true` | Enable/disable CSS transitions |
 
 ### Async content
