@@ -53,6 +53,13 @@
 	--ps-wrapper-transform-from: translateY(-0.25rem);
 }
 
+// The drawer's faster speed is set on #main-nav and INHERITS, so everything inside it would move at 0.2s: the nav sections, and the chevrons, which read --ps-open-speed for their own rotation. Only the drawer itself should be that quick.
+// The reset goes on the wrapper's children, not on [data-panel]: a chevron sits in a section's trigger BUTTON, which is not a panel, so a rule aimed at panels never reaches it. The wrapper is left out on purpose, since the library fades it as part of the drawer's own slide and it has to keep the drawer's timing.
+#main-nav > .panel-wrapper > * {
+	--ps-open-speed: var(--nav-child-speed);
+	--ps-close-speed: var(--nav-child-speed);
+}
+
 // The wrapper is the scroll container, so .sidebar-about-wrap (margin-top: auto) rests at the bottom but still scrolls into view once the nav outgrows it.
 #main-nav > .panel-wrapper {
 	box-sizing: border-box;
@@ -178,16 +185,11 @@
 		--ps-open-speed: var(--nav-speed);
 		--ps-close-speed: var(--nav-speed);
 
-		// The nav sections inside the drawer are panels too, and they inherited the speed above. Give them the library default back so they keep their own, slower accordion feel.
-		[data-panel] {
-			--ps-open-speed: var(--nav-child-speed);
-			--ps-close-speed: var(--nav-child-speed);
-		}
-
+		// Anchored RIGHT, under the menu button, so the drawer opens on the side the thumb is already on. Only here: above 768px the panel is static and sits in the grid as an ordinary column, on the left.
 		position: fixed;
 		top: var(--nav-header-h);
 		bottom: 0;
-		left: 0;
+		right: 0;
 		z-index: 1;
 
 		// A viewport unit, not 100%: the panel's width is what is being animated.

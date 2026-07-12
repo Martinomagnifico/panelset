@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.2.5] - 2026-07-12
+
+### Changed
+- The `data-ps-for="<panel-id>"` attributes now swaps with the aria-controls.
+- Changed static example so that it works on smaller devices.
 
 ## [1.2.4] - 2026-07-12
 

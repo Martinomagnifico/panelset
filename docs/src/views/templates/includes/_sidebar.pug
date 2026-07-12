@@ -8,7 +8,8 @@ aside.docs-sidebar
 			span.sr-only Toggle navigation
 			+burger(24)
 
-	#main-nav(data-panel data-panel-axis="horizontal" data-panel-align="end" data-panel-static="(min-width: 769px)" data-panel-return-focus="true")
+	//- No data-panel-align: the drawer is anchored right and grows LEFTWARDS, so the growing edge is the left one, and that is align "start", the default. Pin the wrapper to the wrong edge and the content is wiped open instead of sliding in.
+	#main-nav(data-panel data-panel-axis="horizontal" data-panel-static="(min-width: 769px)" data-panel-return-focus="true")
 		.panel-wrapper
 			nav(data-panel-group data-panel-close-siblings)
 				each link, i in sidebar.mainLinks

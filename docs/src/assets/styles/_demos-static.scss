@@ -1,10 +1,99 @@
-.static-box {
-	// resize needs an overflow other than visible, or the browser draws no handle.
-	resize: horizontal;
-	overflow: hidden;
-	width: 320px;
-	min-width: 260px;
+// The demo runs on --special-hue (blue). The site's --btn-primary-* strokes are built on
+// --main-hue (green) in light mode, so they cannot be used here: they would drop a green
+// button into a blue box. These are the same idea, in the demo's own hue.
+.static-demo {
+	--demo-stroke: var(--color-special-tint-600);
+	--demo-stroke-hover: var(--color-special-tint-700);
+
+	@media (prefers-color-scheme: dark) {
+		--demo-stroke: var(--color-special-tint-400);
+		--demo-stroke-hover: var(--color-special-tint-300);
+	}
+}
+
+// The handle is ours, not CSS `resize`, which iOS Safari draws no grabber for at all.
+// It hangs OUTSIDE the box, straddling its right border, so it cannot live inside .static-box:
+// that clips with overflow: hidden. Hence the wrapper, which is only as wide as the box.
+.static-resizer {
+	position: relative;
+	width: fit-content;
 	max-width: 100%;
+}
+
+// The ELEMENT is a full-height column, because that is the drag target and a thumb needs
+// somewhere to land. What you SEE is a 32x32 grip, centred on the border.
+.static-handle {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	// Half its width would centre the grip on the box's OUTER edge. The border is 3px and sits
+	// inside that edge, so another 1.5px to the left puts the grip over the middle of the line.
+	right: -14.5px;
+	width: 32px;
+	background: none;
+	border: 0;
+	cursor: col-resize;
+	// The pointer must not scroll the page while it is dragging the handle.
+	touch-action: none;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	// The grip.
+	&::before {
+		content: "";
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		width: 32px;
+		height: 32px;
+		box-sizing: border-box;
+		border-radius: 6px;
+		background: var(--demo-surface);
+		border: 2px solid var(--demo-stroke);
+		transition: border-color var(--ps-open-speed) var(--ps-open-timing);
+	}
+
+	// The two grab lines, on top of the grip.
+	&::after {
+		content: "";
+		position: relative;
+		width: 2px;
+		height: 13px;
+		border-left: 2px solid var(--demo-stroke);
+		border-right: 2px solid var(--demo-stroke);
+		transition: border-color var(--ps-open-speed) var(--ps-open-timing);
+	}
+
+	&:hover::before,
+	&[data-dragging]::before,
+	&:hover::after,
+	&[data-dragging]::after {
+		border-color: var(--demo-stroke-hover);
+	}
+
+	&:focus-visible {
+		outline: none;
+
+		&::before {
+			outline: 2px solid var(--color-special-tint-500);
+			outline-offset: 2px;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		&::before, &::after { transition: none; }
+	}
+}
+
+.static-box {
+	overflow: hidden;
+	// 220px of demo plus the box's own borders (6). The handle hangs outside and costs nothing.
+	// The script works the same width out from START, but painting it here first means the box does not jump on load.
+	width: 226px;
+	min-width: 226px; // 220px of demo plus the borders. The script clamps to the same value.
+	flex: 0 1 auto;
 	box-sizing: border-box;
 	display: flex;
 	border: 3px solid var(--special-demoblock);
@@ -17,9 +106,9 @@
 		padding: 1rem;
 	}
 
-	// The sidebar.
+	// The sidebar. Narrow, so that at 200px there is still a demo left to look at.
 	#static-panel {
-		--ps-panel-width: 160px;
+		--ps-panel-width: 110px;
 		flex-shrink: 0;
 		background: var(--demo-surface);
 
@@ -51,16 +140,15 @@
 		font-weight: 500;
 		color: inherit;
 		background: var(--demo-surface);
-		border: 1px solid var(--border-default);
+		border: 2px solid var(--demo-stroke);
 		border-radius: 6px;
 		cursor: pointer;
 		transition: background var(--ps-open-speed) var(--ps-open-timing),
 		            border-color var(--ps-open-speed) var(--ps-open-timing);
 
-		// The demo runs on --special-hue (blue), not --main-hue (the site's green), so the hover comes from the special tints. A --bg-* variable here would drop a green button into a blue box.
 		&:hover {
 			background: var(--color-special-tint-050);
-			border-color: var(--color-special-tint-300);
+			border-color: var(--demo-stroke-hover);
 		}
 
 		&:focus-visible {
@@ -72,7 +160,6 @@
 	@media (prefers-color-scheme: dark) {
 		button:hover {
 			background: var(--color-special-tint-800);
-			border-color: var(--color-special-tint-600);
 		}
 	}
 

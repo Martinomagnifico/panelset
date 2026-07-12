@@ -13,19 +13,22 @@ block content
 
 	+section("Live demo")
 
-		p Drag the handle at the bottom right of the box. Above #[code 480px] the panel is #[strong static]: it is simply open, and the button is gone. Below that it is a disclosure again, and the button comes back.
+		p Drag the handle on the right, or give it focus and use the arrow keys. Above #[code 260px] the panel is #[strong static]: it is simply open, and the button is gone. Below that it is a disclosure again, and the button comes back.
 
 		p The markup underneath is live. Watch #[code aria-expanded] and #[code inert] disappear as #[code data-ps-static] arrives, because that is what this option really is. It is not a layout trick, it is a change of what the thing #[em is].
 
 		.card
 			.static-demo
-				#static-box.static-box
-					#static-panel(data-panel data-panel-axis="horizontal" data-panel-align="start")
-						.panel-wrapper(role="navigation" aria-label="Demo")
-							p Sidebar
-					.demo-body
-						button(aria-controls="static-panel" aria-expanded="false") Menu
-						p Content
+				.static-resizer
+					#static-box.static-box
+						#static-panel(data-panel data-panel-axis="horizontal" data-panel-align="start")
+							.panel-wrapper(role="navigation" aria-label="Demo")
+								p Sidebar
+						.demo-body
+							button(aria-controls="static-panel" aria-expanded="false") Menu
+							p Content
+
+					#static-handle.static-handle(role="separator" aria-orientation="vertical" aria-label="Resize the demo" tabindex="0")
 
 				p.static-readout#static-readout Measuring…
 
@@ -48,9 +51,15 @@ block content
 
 		p Which leaves the panel needing another way to recognise its own button, since #[code aria-controls] is exactly how it used to find one. So on its way into static it stamps a hook first: #[code data-ps-for="panel-id"]. That, and not the ARIA, is how a static panel finds its triggers, which is how it can give #[code aria-controls] back when it becomes a disclosure again.
 
-		p You never write #[code data-ps-for] yourself, and an ordinary panel never gets one. It appears only where #[code static] is in play. But if you go looking for the trigger of a static panel in your own code, that is what to look for, because #[code aria-controls] will not be there.
+		p You never write #[code data-ps-for] yourself, and it lives exactly as long as #[code aria-controls] is away: it arrives as the panel goes static and leaves as soon as #[code aria-controls] comes back. An ordinary panel never carries one. But if you go looking for the trigger of a static panel in your own code, that is what to look for, because #[code aria-controls] will not be there.
 
 		p #[code setStatic()] does all of the above when the breakpoint is not a viewport media query.
+
+		h3 Do not name the panel after its button
+
+		p If a panel can go static, do not label it with #[code aria-labelledby] pointing at its own trigger, which is the usual accordion pattern. The name survives (a name read through #[code aria-labelledby] still comes off an element that CSS has hidden, the one place hidden text counts), so nothing breaks. But the panel ends up named after a button that is no longer on the page.
+
+		p Give it a name of its own instead, with #[code aria-label], or point #[code aria-labelledby] at a heading #[em inside] the panel, which is content that stays. Panel never touches the label itself: stripping it would leave the panel with no name at all, which is worse than a stale one. With #[code debug] on, it says so in the console.
 
 
 	+section("How it is driven")
@@ -75,7 +84,7 @@ block content
 			const panel = document.getElementById('static-panel').panel;
 
 			new ResizeObserver(([entry]) => {
-				panel.setStatic(entry.contentRect.width >= 480);
+				panel.setStatic(entry.contentRect.width >= 260);
 			}).observe(box);
 
 		p Crossing the threshold never animates, so dragging the handle does not look like the panel opening and closing over and over. And #[code setStatic()] with the state it is already in does nothing, so calling it on every resize frame is fine.

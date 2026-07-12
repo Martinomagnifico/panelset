@@ -182,7 +182,7 @@ export class Panel {
 
 	// How the panel finds its triggers. A trigger is normally found by its aria-controls, which is all a panel has ever needed.
 	// A STATIC panel is the exception: it takes aria-controls off the trigger (a button that controls nothing must not say it does), and then the query would lose sight of the very button it has to hand the attribute back to. So a static panel stamps its own hook first, data-ps-for="<panel id>", and is found by that. The hook lives in the DOM, so unlike a JS reference it survives a re-render, and the query stays live, so a trigger added later is still found.
-	// It is stamped only where static is in play (see _stampTriggers), so an ordinary panel leaves nothing extra behind.
+	// It lives exactly as long as aria-controls is missing: written on the way into static, taken off again on the way out. An ordinary panel never carries one.
 	private _triggers(): HTMLElement[] {
 		const id = this.element.id;
 		if (!id) return [];
@@ -196,6 +196,20 @@ export class Panel {
 		const id = this.element.id;
 		if (!id) return;
 		triggers.forEach(t => { if (t.dataset.psFor !== id) t.dataset.psFor = id; });
+	}
+
+	// A panel labelled by its own trigger (the usual accordion pattern) keeps that name when it turns static, because a name taken through aria-labelledby is still read from an element that CSS has hidden. That is the one place hidden text still counts.
+	// So nothing breaks, and the panel is NOT stripped of its label: an unnamed region would be worse than a stale name. But the panel is now named after a button that is no longer on the page, so say so while debugging.
+	private _warnLabelledByTrigger(triggers: HTMLElement[]): void {
+		if (!this.config.debug) return;
+		const labelledBy = this.element.getAttribute('aria-labelledby');
+		if (!labelledBy || this.element.hasAttribute('aria-label')) return;
+
+		const ids = labelledBy.split(/\s+/).filter(Boolean);
+		const triggerIds = new Set(triggers.map(t => t.id).filter(Boolean));
+		if (!ids.length || !ids.every(id => triggerIds.has(id))) return;
+
+		this._log(`Static, but aria-labelledby points only at this panel's trigger, which is now hidden. The name still resolves, but it names a button nobody can see. Give the panel its own aria-label, or point aria-labelledby at a heading inside it.`);
 	}
 
 	// Switch between "collapsible disclosure" and "plain expanded content". Never animates: a resize across the breakpoint should not look like an open.
@@ -221,6 +235,7 @@ export class Panel {
 				t.removeAttribute('aria-expanded');
 				t.removeAttribute('aria-controls');
 			});
+			this._warnLabelledByTrigger(triggers);
 		} else {
 			// Collapsible again, and it lands CLOSED: a drawer that reappears already open over the content is never what you want.
 			this.element.classList.remove('is-open');
@@ -230,6 +245,7 @@ export class Panel {
 			this._triggers().forEach(t => {
 				t.removeAttribute('data-ps-static');
 				if (id) t.setAttribute('aria-controls', id);
+				t.removeAttribute('data-ps-for'); // aria-controls is back, so the hook has nothing left to do
 				t.setAttribute('aria-expanded', 'false');
 			});
 		}
