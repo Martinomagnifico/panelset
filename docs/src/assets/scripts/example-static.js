@@ -9,6 +9,10 @@ const panelEl = document.getElementById('static-panel');
 const out = document.getElementById('static-markup');
 const readout = document.getElementById('static-readout');
 
+// Held, not looked up each time. A static panel takes aria-controls off its trigger, so
+// [aria-controls] would find nothing exactly when the demo has the most to show.
+const trigger = box.querySelector('button');
+
 const esc = (s) => s.replace(/[&<>]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' }[c]));
 
 // name="value", or a bare name for the boolean ones (data-panel, inert). Empty
@@ -40,15 +44,19 @@ const openTag = (el, before) => {
 const key = (el) => el.id || el.tagName;
 
 function render() {
-	const trigger = document.querySelector('[aria-controls="static-panel"]');
 	const wrapper = panelEl.querySelector(':scope > .panel-wrapper');
 	const para = wrapper.querySelector('p');
-	if (!trigger) return;
 
 	const now = new Map([[key(trigger), attrsOf(trigger)], [key(panelEl), attrsOf(panelEl)]]);
 
+	// The button is still in the DOM while static, just hidden by the stylesheet. Fade the
+	// line the way a browser's inspector fades a node it is not painting, or the markup
+	// looks like it contradicts the demo, where the button has gone.
+	const hidden = trigger.hasAttribute('data-ps-static');
+	const buttonLine = openTag(trigger, previous) + esc(trigger.textContent.trim()) + '&lt;/button&gt;';
+
 	const lines = [
-		openTag(trigger, previous) + esc(trigger.textContent.trim()) + '&lt;/button&gt;',
+		hidden ? `<span class="not-rendered">${buttonLine}</span>` : buttonLine,
 		'',
 		openTag(panelEl, previous),
 		'\t&lt;div class="panel-wrapper"&gt;',
@@ -92,10 +100,20 @@ function start() {
 	// synchronously, so the listener above has already drawn the marks by the time
 	// this returns. Rendering again here would compare the new state against itself,
 	// find nothing changed, and wipe those marks in the same tick.
+	//
+	// And it does its work in the NEXT frame, not during delivery. setStatic() changes
+	// the DOM, and changing layout inside a ResizeObserver callback makes the browser
+	// queue another round it cannot deliver, which is the "ResizeObserver loop completed
+	// with undelivered notifications" warning. Handing it to rAF keeps the callback itself
+	// free of layout writes.
+	let frame = 0;
 	new ResizeObserver(([entry]) => {
 		const width = entry.contentRect.width;
-		panel.setStatic(width >= THRESHOLD); // ignored when it is already in that state
-		label(width, panel.isStatic);
+		cancelAnimationFrame(frame);
+		frame = requestAnimationFrame(() => {
+			panel.setStatic(width >= THRESHOLD); // ignored when it is already in that state
+			label(width, panel.isStatic);
+		});
 	}).observe(box);
 }
 

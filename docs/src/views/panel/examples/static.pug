@@ -44,6 +44,12 @@ block content
 
 		p Those are two separate layers, on purpose. Hiding the button is #[strong CSS], and you can take it back with #[code display: revert] to keep the button and give it another job. Removing #[code aria-expanded] is #[strong JavaScript], and it is not optional: a button you chose to keep must not go on claiming it expands a panel that cannot collapse, and your stylesheet may not load ours at all.
 
+		p #[code aria-controls] goes as well, for the same reason. A button you keep and repurpose must not still say it controls this panel. So a static panel's trigger claims nothing about it at all: it is hidden, and if you unhide it, it is simply a button.
+
+		p Which leaves the panel needing another way to recognise its own button, since #[code aria-controls] is exactly how it used to find one. So on its way into static it stamps a hook first: #[code data-ps-for="panel-id"]. That, and not the ARIA, is how a static panel finds its triggers, which is how it can give #[code aria-controls] back when it becomes a disclosure again.
+
+		p You never write #[code data-ps-for] yourself, and an ordinary panel never gets one. It appears only where #[code static] is in play. But if you go looking for the trigger of a static panel in your own code, that is what to look for, because #[code aria-controls] will not be there.
+
 		p #[code setStatic()] does all of the above when the breakpoint is not a viewport media query.
 
 

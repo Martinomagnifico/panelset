@@ -48,7 +48,7 @@ ps-panel { display: block; }
 	}
 }
 
-// A trigger for a static panel can do nothing: open(), close() and toggle() all return early. Left standing it would sit in the tab order and take a click, with no aria-expanded to explain itself. So it hides itself.
+// A trigger for a static panel can do nothing: open(), close() and toggle() all return early. Left standing it would sit in the tab order and take a click, saying nothing (the JS has already taken its aria-expanded and aria-controls away). So it hides itself.
 // The attribute is REPEATED to lift the specificity to (0,2,1). Plain `button[data-ps-static]` is (0,1,1), which an everyday rule of yours (`.sidebar button { display: flex }`) ties and then wins on load order, and the dead button walks back in. Not !important, or the escape hatch below would be impossible.
 // To keep the button and give it another job:
 //   button[data-ps-static][data-ps-static] { display: revert; }

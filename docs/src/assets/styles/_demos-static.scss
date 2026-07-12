@@ -105,6 +105,12 @@
 		padding: 0 0.15em;
 	}
 
+	// A node that is in the DOM but not painted. Faded, the way a browser's inspector fades
+	// one, so the markup does not look like it disagrees with the demo above it.
+	.not-rendered {
+		opacity: 0.4;
+	}
+
 	code[data-removed]:not([data-removed=""])::after {
 		content: attr(data-removed);
 		display: block;

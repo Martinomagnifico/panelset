@@ -180,10 +180,22 @@ export class Panel {
 		return v;
 	}
 
+	// How the panel finds its triggers. A trigger is normally found by its aria-controls, which is all a panel has ever needed.
+	// A STATIC panel is the exception: it takes aria-controls off the trigger (a button that controls nothing must not say it does), and then the query would lose sight of the very button it has to hand the attribute back to. So a static panel stamps its own hook first, data-ps-for="<panel id>", and is found by that. The hook lives in the DOM, so unlike a JS reference it survives a re-render, and the query stays live, so a trigger added later is still found.
+	// It is stamped only where static is in play (see _stampTriggers), so an ordinary panel leaves nothing extra behind.
 	private _triggers(): HTMLElement[] {
 		const id = this.element.id;
 		if (!id) return [];
-		return Array.from(document.querySelectorAll<HTMLElement>(`[aria-controls="${id}"]`));
+		return Array.from(
+			document.querySelectorAll<HTMLElement>(`[data-ps-for="${id}"], [aria-controls="${id}"]`)
+		);
+	}
+
+	// Write the hook, just before aria-controls is taken away.
+	private _stampTriggers(triggers: HTMLElement[]): void {
+		const id = this.element.id;
+		if (!id) return;
+		triggers.forEach(t => { if (t.dataset.psFor !== id) t.dataset.psFor = id; });
 	}
 
 	// Switch between "collapsible disclosure" and "plain expanded content". Never animates: a resize across the breakpoint should not look like an open.
@@ -198,21 +210,26 @@ export class Panel {
 		if (body) unlockBody(body);
 
 		if (next) {
-			// Not a disclosure: expanded, reachable, and the trigger stops claiming to expand anything (it is hidden by [data-ps-static] in author CSS).
+			// Not a disclosure: open, reachable, and the trigger stops claiming ANYTHING about the panel. aria-expanded goes, because there is no expanding left to describe, and aria-controls goes with it, because the button no longer controls this panel. The stylesheet hides that button, but hiding is CSS and you can take it back to reuse the button, so the semantics can never lean on it.
 			this.element.classList.add('is-open');
 			this.element.removeAttribute('inert');
 			this.element.setAttribute('data-ps-static', '');
-			this._triggers().forEach(t => {
+			const triggers = this._triggers();
+			this._stampTriggers(triggers); // the hook goes on BEFORE aria-controls comes off, or they cannot be found again
+			triggers.forEach(t => {
 				t.setAttribute('data-ps-static', '');
 				t.removeAttribute('aria-expanded');
+				t.removeAttribute('aria-controls');
 			});
 		} else {
 			// Collapsible again, and it lands CLOSED: a drawer that reappears already open over the content is never what you want.
 			this.element.classList.remove('is-open');
 			this.element.setAttribute('inert', '');
 			this.element.removeAttribute('data-ps-static');
+			const id = this.element.id;
 			this._triggers().forEach(t => {
 				t.removeAttribute('data-ps-static');
+				if (id) t.setAttribute('aria-controls', id);
 				t.setAttribute('aria-expanded', 'false');
 			});
 		}
@@ -341,7 +358,8 @@ export class Panel {
 		if (!id) return;
 		const { signal } = this._listenerController;
 
-		document.querySelectorAll<HTMLElement>(`[aria-controls="${id}"]`).forEach(trigger => {
+		// _triggers() rather than a raw [aria-controls] query, so a trigger the panel already stamped (it was static, and lost its aria-controls) is bound too.
+		this._triggers().forEach(trigger => {
 			trigger.addEventListener('click', e => {
 				this._returnFocusTarget = trigger;
 				this.toggle(e);
@@ -365,11 +383,8 @@ export class Panel {
 	}
 
 	private _setTriggerState(open: boolean) {
-		const id = this.element.id;
-		if (!id) return;
-		document.querySelectorAll(`[aria-controls="${id}"]`).forEach(t =>
-			t.setAttribute('aria-expanded', String(open))
-		);
+		if (this._static) return; // a static panel's trigger says nothing about it
+		this._triggers().forEach(t => t.setAttribute('aria-expanded', String(open)));
 	}
 
 	private _cleanupTempClose() {
@@ -768,9 +783,15 @@ export class Panel {
 			this._mql = null;
 			this._onMqlChange = null;
 		}
+		// Hand the triggers back as they were found: aria-controls returned (a panel destroyed while static would otherwise leave its button hidden and pointing at nothing), and the library's own hook taken off again.
+		const id = this.element.id;
+		this._triggers().forEach(t => {
+			t.removeAttribute('data-ps-static');
+			if (id && !t.hasAttribute('aria-controls')) t.setAttribute('aria-controls', id);
+			t.removeAttribute('data-ps-for');
+		});
 		this._static = false;
 		this.element.removeAttribute('data-ps-static');
-		this._triggers().forEach(t => t.removeAttribute('data-ps-static'));
 
 		this.element.classList.remove('is-opening', 'is-closing', 'is-loading', 'is-open');
 		this.element.style[this._cssProp()] = '';

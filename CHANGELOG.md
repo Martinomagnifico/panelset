@@ -1,6 +1,13 @@
 # Changelog
 
 
+## [Unreleased]
+
+### Changed
+- A static Panel now takes **`aria-controls`** off its trigger as well as `aria-expanded`. A button that controls nothing should not say that it does, and hiding it is only a CSS default you are free to override to reuse the button.
+- To find that trigger again, a static Panel stamps **`data-ps-for="<panel-id>"`** on it first, and is found by that instead. `aria-controls` is restored when the panel becomes a disclosure again. Nothing changes for a panel that never goes static: no new attribute, and triggers are still found by `aria-controls`. You never author `data-ps-for`, but it is what to look for if your own code needs the trigger of a static panel.
+
+
 ## [1.2.3] - 2026-07-11
 
 ### Added
