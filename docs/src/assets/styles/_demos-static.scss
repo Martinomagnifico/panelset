@@ -1,0 +1,121 @@
+.static-box {
+	// resize needs an overflow other than visible, or the browser draws no handle.
+	resize: horizontal;
+	overflow: hidden;
+	width: 320px;
+	min-width: 260px;
+	max-width: 100%;
+	box-sizing: border-box;
+	display: flex;
+	border: 3px solid var(--special-demoblock);
+	border-radius: 8px;
+	background: var(--demo-surface-tint);
+
+	.demo-body {
+		flex: 1;
+		min-width: 0;
+		padding: 1rem;
+	}
+
+	// The sidebar.
+	#static-panel {
+		--ps-panel-width: 160px;
+		flex-shrink: 0;
+		background: var(--demo-surface);
+
+		.panel-wrapper {
+			padding: 1rem;
+		}
+
+		// While it is open
+		&.is-open,
+		&.is-opening,
+		&.is-closing,
+		&[data-ps-static] {
+			border-right: 1px solid var(--border-default);
+		}
+	}
+
+	p {
+		margin: 0;
+	}
+
+	// The Menu button
+	button {
+		margin-bottom: 0.75rem;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		padding: 0.4em 0.9em;
+		font-size: 0.875rem;
+		font-weight: 500;
+		color: inherit;
+		background: var(--demo-surface);
+		border: 1px solid var(--border-default);
+		border-radius: 6px;
+		cursor: pointer;
+		transition: background var(--ps-open-speed) var(--ps-open-timing),
+		            border-color var(--ps-open-speed) var(--ps-open-timing);
+
+		// The demo runs on --special-hue (blue), not --main-hue (the site's green), so the hover comes from the special tints. A --bg-* variable here would drop a green button into a blue box.
+		&:hover {
+			background: var(--color-special-tint-050);
+			border-color: var(--color-special-tint-300);
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-special-tint-500);
+			outline-offset: 2px;
+		}
+	}
+
+	@media (prefers-color-scheme: dark) {
+		button:hover {
+			background: var(--color-special-tint-800);
+			border-color: var(--color-special-tint-600);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		button { transition: none; }
+	}
+}
+
+.static-readout {
+	margin-top: 0.75rem;
+	font-size: 0.9rem;
+	opacity: 0.75;
+	font-variant-numeric: tabular-nums;
+}
+
+// The live markup block. It is written by JS, so it carries no copy button: what
+// you would copy is a snapshot of a moving thing.
+.static-markup {
+	code {
+		display: block;
+		white-space: pre-wrap;
+	}
+
+	// A changed attribute is marked, and the ones that vanished are named underneath,
+	// since there is nothing left in the markup to point at.
+	mark {
+		background: rgb(255 214 0 / 0.35);
+		color: inherit;
+		border-radius: 2px;
+		padding: 0 0.15em;
+	}
+
+	code[data-removed]:not([data-removed=""])::after {
+		content: attr(data-removed);
+		display: block;
+		margin-top: 0.75rem;
+		font-size: 0.85em;
+		opacity: 0.7;
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.static-markup mark {
+		background: rgb(255 214 0 / 0.22);
+	}
+}

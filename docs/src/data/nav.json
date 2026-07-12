@@ -1,77 +1,229 @@
 {
-  "mainLinks": [
-    { "text": "Intro", "href": "/intro.html" },
-    { "text": "How it works", "href": "/how-it-works.html" }
-  ],
-  "sections": [
-    {
-      "title": "Panel",
-      "links": [
-        { "text": "Panel | Getting started", "label": "Getting started", "href": "/panel/index.html" },
-        { "text": "Panel | Configuration", "label": "Configuration", "href": "/panel/configuration.html" },
-        { "text": "Panel | Events", "label": "Events", "href": "/panel/events.html" },
-        { "text": "Panel | Transitions", "label": "Transitions", "href": "/panel/transitions.html" },
-        { "text": "Panel | Alignment", "label": "Alignment", "href": "/panel/alignment.html" },
-        { "text": "Panel | API", "label": "API", "href": "/panel/api.html" },
-        { "text": "Panel | Accessibility", "label": "Accessibility", "href": "/panel/accessibility.html" }
-      ],
-      "examples": [
-        { "text": "Panel | Examples | Show more", "label": "Show more", "href": "/panel/examples/show-more.html" },
-        { "text": "Panel | Examples | Accordion", "label": "Accordion", "href": "/panel/examples/accordion.html" },
-        
-        { "text": "Panel | Examples | Async panel", "label": "Async panel", "href": "/panel/examples/async.html" },
-        { "text": "Panel | Examples | Absolute positioning", "label": "Absolute positioning", "href": "/panel/examples/absolute.html" }
-      ],
-      "integrations": [
-        { "text": "Panel | Integrations | Web Component", "label": "Web Component", "href": "/panel/integrations/webcomponent.html" }
-      ]
-    },
-    {
-      "title": "PanelSet",
-      "links": [
-        { "text": "PanelSet | Getting started", "label": "Getting started", "href": "/panelset/index.html" },
-        { "text": "PanelSet | Configuration", "label": "Configuration", "href": "/panelset/configuration.html" },
-        { "text": "PanelSet | Events", "label": "Events", "href": "/panelset/events.html" },
-        { "text": "PanelSet | Transitions", "label": "Transitions", "href": "/panelset/transitions.html" },
-        { "text": "PanelSet | Closable & alignment", "label": "Closable & alignment", "href": "/panelset/closable-alignment.html" },
-        { "text": "PanelSet | API", "label": "API", "href": "/panelset/api.html" },
-        { "text": "PanelSet | Accessibility", "label": "Accessibility", "href": "/panelset/accessibility.html" }
-      ],
-      "examples": [
-        { "text": "PanelSet | Examples | Basic tabs", "label": "Basic tabs", "href": "/panelset/examples/basictabs.html" },
-        { "text": "PanelSet | Examples | Async panels", "label": "Async panels", "href": "/panelset/examples/async.html" },
-        { "text": "PanelSet | Examples | Wizard", "label": "Wizard", "href": "/panelset/examples/wizard.html" },
-        { "text": "PanelSet | Examples | Height tracking", "label": "Height tracking", "href": "/panelset/examples/height-tracking.html" },
-        { "text": "PanelSet | Examples | Absolute positioning", "label": "Absolute positioning", "href": "/panelset/examples/absolute.html" }
-      ],
-      "integrations": [
-        { "text": "PanelSet | Integrations | Web Component", "label": "Web Component", "href": "/panelset/integrations/webcomponent.html" }
-      ]
-    },
-    {
-      "title": "PanelControl",
-      "links": [
-        { "text": "PanelControl | Getting started", "label": "Getting started", "href": "/panelcontrol/index.html" },
-        { "text": "PanelControl | Configuration", "label": "Configuration", "href": "/panelcontrol/configuration.html" },
-        { "text": "PanelControl | API", "label": "API", "href": "/panelcontrol/api.html" },
-        { "text": "PanelControl | Activation", "label": "Activation", "href": "/panelcontrol/activation.html" },
-        { "text": "PanelControl | Accessibility", "label": "Accessibility", "href": "/panelcontrol/accessibility.html" }
-      ],
-      "examples": [
-        { "text": "PanelControl | Examples | Wizard", "label": "Wizard", "href": "/panelcontrol/examples/wizard.html" },
-        { "text": "PanelControl | Examples | Closable", "label": "Closable", "href": "/panelcontrol/examples/closable.html" },
-        { "text": "PanelControl | Examples | Vertical display", "label": "Vertical display", "href": "/panelcontrol/examples/vertical.html" }
-      ],
-      "integrations": [
-        { "text": "PanelControl | Integrations | Web Component", "label": "Web Component", "href": "/panelcontrol/integrations/webcomponent.html" }
-      ]
-    },
-    {
-      "title": "Shared concepts",
-      "links": [
-        { "text": "Deep linking", "href": "/sharedconcepts/deep-linking.html" },
-        { "text": "Persisting state", "href": "/sharedconcepts/persisting.html" }
-      ]
-    }
-  ]
+    "mainLinks": [
+        {
+            "text": "Intro",
+            "href": "/intro.html"
+        },
+        {
+            "text": "How it works",
+            "href": "/how-it-works.html"
+        }
+    ],
+    "sections": [
+        {
+            "title": "Panel",
+            "links": [
+                {
+                    "text": "Panel | Getting started",
+                    "label": "Getting started",
+                    "href": "/panel/index.html"
+                },
+                {
+                    "text": "Panel | Configuration",
+                    "label": "Configuration",
+                    "href": "/panel/configuration.html"
+                },
+                {
+                    "text": "Panel | Events",
+                    "label": "Events",
+                    "href": "/panel/events.html"
+                },
+                {
+                    "text": "Panel | Transitions",
+                    "label": "Transitions",
+                    "href": "/panel/transitions.html"
+                },
+                {
+                    "text": "Panel | Alignment",
+                    "label": "Alignment",
+                    "href": "/panel/alignment.html"
+                },
+                {
+                    "text": "Panel | API",
+                    "label": "API",
+                    "href": "/panel/api.html"
+                },
+                {
+                    "text": "Panel | Accessibility",
+                    "label": "Accessibility",
+                    "href": "/panel/accessibility.html"
+                }
+            ],
+            "examples": [
+                {
+                    "text": "Panel | Examples | Show more",
+                    "label": "Show more",
+                    "href": "/panel/examples/show-more.html"
+                },
+                {
+                    "text": "Panel | Examples | Static",
+                    "label": "Static",
+                    "href": "/panel/examples/static.html"
+                },
+                {
+                    "text": "Panel | Examples | Accordion",
+                    "label": "Accordion",
+                    "href": "/panel/examples/accordion.html"
+                },
+                {
+                    "text": "Panel | Examples | Async panel",
+                    "label": "Async panel",
+                    "href": "/panel/examples/async.html"
+                },
+                {
+                    "text": "Panel | Examples | Absolute positioning",
+                    "label": "Absolute positioning",
+                    "href": "/panel/examples/absolute.html"
+                }
+            ],
+            "integrations": [
+                {
+                    "text": "Panel | Integrations | Web Component",
+                    "label": "Web Component",
+                    "href": "/panel/integrations/webcomponent.html"
+                }
+            ]
+        },
+        {
+            "title": "PanelSet",
+            "links": [
+                {
+                    "text": "PanelSet | Getting started",
+                    "label": "Getting started",
+                    "href": "/panelset/index.html"
+                },
+                {
+                    "text": "PanelSet | Configuration",
+                    "label": "Configuration",
+                    "href": "/panelset/configuration.html"
+                },
+                {
+                    "text": "PanelSet | Events",
+                    "label": "Events",
+                    "href": "/panelset/events.html"
+                },
+                {
+                    "text": "PanelSet | Transitions",
+                    "label": "Transitions",
+                    "href": "/panelset/transitions.html"
+                },
+                {
+                    "text": "PanelSet | Closable & alignment",
+                    "label": "Closable & alignment",
+                    "href": "/panelset/closable-alignment.html"
+                },
+                {
+                    "text": "PanelSet | API",
+                    "label": "API",
+                    "href": "/panelset/api.html"
+                },
+                {
+                    "text": "PanelSet | Accessibility",
+                    "label": "Accessibility",
+                    "href": "/panelset/accessibility.html"
+                }
+            ],
+            "examples": [
+                {
+                    "text": "PanelSet | Examples | Basic tabs",
+                    "label": "Basic tabs",
+                    "href": "/panelset/examples/basictabs.html"
+                },
+                {
+                    "text": "PanelSet | Examples | Async panels",
+                    "label": "Async panels",
+                    "href": "/panelset/examples/async.html"
+                },
+                {
+                    "text": "PanelSet | Examples | Wizard",
+                    "label": "Wizard",
+                    "href": "/panelset/examples/wizard.html"
+                },
+                {
+                    "text": "PanelSet | Examples | Height tracking",
+                    "label": "Height tracking",
+                    "href": "/panelset/examples/height-tracking.html"
+                },
+                {
+                    "text": "PanelSet | Examples | Absolute positioning",
+                    "label": "Absolute positioning",
+                    "href": "/panelset/examples/absolute.html"
+                }
+            ],
+            "integrations": [
+                {
+                    "text": "PanelSet | Integrations | Web Component",
+                    "label": "Web Component",
+                    "href": "/panelset/integrations/webcomponent.html"
+                }
+            ]
+        },
+        {
+            "title": "PanelControl",
+            "links": [
+                {
+                    "text": "PanelControl | Getting started",
+                    "label": "Getting started",
+                    "href": "/panelcontrol/index.html"
+                },
+                {
+                    "text": "PanelControl | Configuration",
+                    "label": "Configuration",
+                    "href": "/panelcontrol/configuration.html"
+                },
+                {
+                    "text": "PanelControl | API",
+                    "label": "API",
+                    "href": "/panelcontrol/api.html"
+                },
+                {
+                    "text": "PanelControl | Activation",
+                    "label": "Activation",
+                    "href": "/panelcontrol/activation.html"
+                },
+                {
+                    "text": "PanelControl | Accessibility",
+                    "label": "Accessibility",
+                    "href": "/panelcontrol/accessibility.html"
+                }
+            ],
+            "examples": [
+                {
+                    "text": "PanelControl | Examples | Wizard",
+                    "label": "Wizard",
+                    "href": "/panelcontrol/examples/wizard.html"
+                },
+                {
+                    "text": "PanelControl | Examples | Closable",
+                    "label": "Closable",
+                    "href": "/panelcontrol/examples/closable.html"
+                },
+                {
+                    "text": "PanelControl | Examples | Vertical display",
+                    "label": "Vertical display",
+                    "href": "/panelcontrol/examples/vertical.html"
+                }
+            ],
+            "integrations": [
+                {
+                    "text": "PanelControl | Integrations | Web Component",
+                    "label": "Web Component",
+                    "href": "/panelcontrol/integrations/webcomponent.html"
+                }
+            ]
+        },
+        {
+            "title": "Shared concepts",
+            "links": [
+                {
+                    "text": "Deep linking",
+                    "href": "/sharedconcepts/deep-linking.html"
+                },
+                {
+                    "text": "Persisting state",
+                    "href": "/sharedconcepts/persisting.html"
+                }
+            ]
+        }
+    ]
 }

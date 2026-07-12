@@ -51,7 +51,7 @@ block scripts
 		});
 
 	script.
-		// Highlight. Exclude install wizard
-		hljs.configure({ cssSelector: 'pre code:not(.iw-code)' });
+		// Highlight. Exclude the install wizard, and any block JS writes itself (.live-code): hljs rebuilds a block from its text, which would throw away the <mark> elements the static demo puts there.
+		hljs.configure({ cssSelector: 'pre code:not(.iw-code):not(.live-code)' });
 		hljs.highlightAll();
 		hljs.initLineNumbersOnLoad();

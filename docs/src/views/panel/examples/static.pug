@@ -1,0 +1,104 @@
+extends /views/templates/layouts/_base
+
+append variables
+	- pagetitle = "Panel | Examples | Static"
+
+block content
+	.lane
+		.container
+			.page-header
+				h1 Static
+				p.lead A panel that stops being a disclosure when there is room for it.
+
+
+	+section("Live demo")
+
+		p Drag the handle at the bottom right of the box. Above #[code 480px] the panel is #[strong static]: it is simply open, and the button is gone. Below that it is a disclosure again, and the button comes back.
+
+		p The markup underneath is live. Watch #[code aria-expanded] and #[code inert] disappear as #[code data-ps-static] arrives, because that is what this option really is. It is not a layout trick, it is a change of what the thing #[em is].
+
+		.card
+			.static-demo
+				#static-box.static-box
+					#static-panel(data-panel data-panel-axis="horizontal" data-panel-align="start")
+						.panel-wrapper(role="navigation" aria-label="Demo")
+							p Sidebar
+					.demo-body
+						button(aria-controls="static-panel" aria-expanded="false") Menu
+						p Content
+
+				p.static-readout#static-readout Measuring…
+
+			.code-block.static-markup
+				.code-header
+					| Live HTML
+				pre
+					code.live-code#static-markup
+
+
+	+section("What a screen reader is told")
+
+		p If a developer tries to force a drawer to look permanent with CSS alone, that will not work. The library still thinks it is a closed disclosure, so the markup keeps saying so: #[code inert] hides the sidebar everyone can see, and #[code aria-expanded="false"] claims a button can expand something that is already expanded. The page looks right and reads wrong.
+
+		p Static is not "open the panel", it is "stop being a disclosure". The JavaScript takes #[code inert] off the panel and #[strong removes] #[code aria-expanded] from the trigger. Not set to #[code true]: gone, because there is nothing left to expand. The stylesheet then hides that trigger, since a button that can do nothing should not hold a tab stop. Go back the other way and the panel lands closed with both attributes restored.
+
+		p Those are two separate layers, on purpose. Hiding the button is #[strong CSS], and you can take it back with #[code display: revert] to keep the button and give it another job. Removing #[code aria-expanded] is #[strong JavaScript], and it is not optional: a button you chose to keep must not go on claiming it expands a panel that cannot collapse, and your stylesheet may not load ours at all.
+
+		p #[code setStatic()] does all of the above when the breakpoint is not a viewport media query.
+
+
+	+section("How it is driven")
+
+		h3 With a breakpoint
+
+		p This is what you want almost every time. Put the media query in the markup and the library watches it for you, with no JavaScript of your own at all:
+
+		+codeblock('HTML').
+			<div data-panel data-panel-static="(min-width: 769px)">
+
+		p The breakpoint then lives in exactly one place. Your CSS does not repeat it, because the library marks the panel and its trigger with #[code data-ps-static] while the query matches, and you can style off that.
+
+		h3 With setStatic()
+
+		p The demo above cannot use a breakpoint. #[code static] takes a media query, and a media query only ever sees the #[strong viewport], not a box on the page. A container query cannot help either: CSS never hands those to JavaScript, and there is no #[code matchContainer()].
+
+		p So you watch whatever you like and tell the panel what it is:
+
+		+codeblock('JavaScript').
+			const box = document.getElementById('static-box');
+			const panel = document.getElementById('static-panel').panel;
+
+			new ResizeObserver(([entry]) => {
+				panel.setStatic(entry.contentRect.width >= 480);
+			}).observe(box);
+
+		p Crossing the threshold never animates, so dragging the handle does not look like the panel opening and closing over and over. And #[code setStatic()] with the state it is already in does nothing, so calling it on every resize frame is fine.
+
+		p Reach for it only when the thing you are reacting to is something the library cannot see for itself: a container query, your own breakpoint system, a feature flag.
+
+
+	+section("Reading the state")
+
+		p #[code panel.isStatic] tells you where it stands, and #[code panel:staticchange] fires on every switch, with #[code detail.static]. That event is what the markup above listens to.
+
+		+codeblock('JavaScript').
+			panel.element.addEventListener('panel:staticchange', (e) => {
+				console.log(e.detail.static ? 'plain content now' : 'a disclosure again');
+			});
+
+		.callout
+			+warning()
+			p A static panel is #[strong not] an open panel. It has no open or closed state at all, so #[code open()], #[code close()] and #[code toggle()] do nothing, and #[code persist] and #[code deepLink] write nothing. When it becomes a disclosure again it starts as being #[strong closed], because a panel that reappears already open over your content is never what you want.
+
+
+append scripts
+	if isProd
+		script(src=`${basePath}lib/panelset.js` vite-ignore)
+		script.
+			Panel.init('.docs-content [data-panel]');
+		script(src=`${basePath}assets/scripts/example-static.js` vite-ignore)
+	else
+		script(type="module").
+			import { Panel } from 'panelset';
+			Panel.init('.docs-content [data-panel]');
+		script(type="module" src="/src/assets/scripts/example-static.js")

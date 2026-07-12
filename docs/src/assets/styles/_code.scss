@@ -95,6 +95,13 @@ dl.horizontal {
 	}
 }
 
+// A block that JS writes itself is kept away from hljs (see _scripts.pug), so it never gets the .hljs class, and without that class the inline-code background above shows through. Clear it here. It needs `pre code.live-code` to out-rank `.card code`.
+pre code.live-code {
+	background: none;
+	padding: 0;
+	tab-size: 2;
+}
+
 .hljs {
 	tab-size: 2;
 
