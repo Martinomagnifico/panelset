@@ -3,9 +3,35 @@ head
 		meta(charset="utf-8")
 		meta(name="viewport" content="width=device-width, initial-scale=1.0")
 		meta(http-equiv="X-UA-Compatible" content="IE=edge,chrome=1")
-		meta(name="description" content="Flexible panel management with smooth transitions")
+
+
+		//-   - pagedescription = "…"   the card's text, and the meta description
+		//-   - pageimage       = "og-static.png"   a card of its own, from docs/public
+		//-   - socialtitle     = "…"   a card title different from the <title>
+
+		- var pagedesc   = typeof pagedescription !== 'undefined' ? pagedescription : "Flexible panel management with smooth transitions. Accessible panels, tabs, accordions and drawers, in vanilla JS."
+		- var pageimg    = typeof pageimage !== 'undefined' ? siteUrl + String(pageimage).replace(/^\//, '') : siteUrl + "og.png"
+		- var cardtitle  = typeof socialtitle !== 'undefined' ? socialtitle : pagetitle
+
+		meta(name="description" content=pagedesc)
 		link(rel="icon", href="data:,")
 		title= pagetitle
+
+		block og
+			meta(property="og:type" content="website")
+			meta(property="og:site_name" content="Panelset")
+			meta(property="og:title" content=cardtitle)
+			meta(property="og:description" content=pagedesc)
+			meta(property="og:image" content=pageimg)
+			meta(property="og:image:width" content="1200")
+			meta(property="og:image:height" content="630")
+			meta(property="og:image:alt" content="Panelset: accessible panels, tabs and drawers in vanilla JS")
+
+			meta(name="twitter:card" content="summary_large_image")
+			meta(name="twitter:title" content=cardtitle)
+			meta(name="twitter:description" content=pagedesc)
+			meta(name="twitter:image" content=pageimg)
+
 		block styles
 			link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github.min.css" media="(prefers-color-scheme: light)")
 			link(rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-dark.min.css" media="(prefers-color-scheme: dark)")
