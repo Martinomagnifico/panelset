@@ -25,8 +25,8 @@
 			download: {
 				esm: {
 					lang: 'js',
-					api: "// Keep panelset-core.js next to panelset.esm.js\nimport { " + imports + " } from './panelset.esm.js';\nimport './panelset.css';",
-					wc:  "// Keep panelset-core.js next to panelset.esm.js\nimport { " + imports + ", register } from './panelset.esm.js';\nimport './panelset.css';\n\nregister();"
+					api: "// Copy the whole esm/ folder\nimport { " + imports + " } from './esm/index.js';\nimport './panelset.css';",
+					wc:  "// Copy the whole esm/ folder\nimport { " + imports + ", register } from './esm/index.js';\nimport './panelset.css';\n\nregister();"
 				},
 				iife: {
 					lang: 'html',

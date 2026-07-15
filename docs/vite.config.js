@@ -123,7 +123,7 @@ export default defineConfig(({ mode }) => {
 			alias: {
 				'panelset': isDev
 					? resolve(__dirname, '../src/js/index.ts')
-					: resolve(__dirname, '../dist/panelset.esm.js')
+					: resolve(__dirname, '../dist/esm/index.js')
 			}
 		}
 	};

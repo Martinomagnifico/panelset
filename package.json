@@ -7,18 +7,18 @@
     "**/*.css",
     "**/*.scss"
   ],
-  "main": "./dist/panelset.esm.js",
+  "main": "./dist/esm/index.js",
   "types": "./dist/types/index.d.ts",
   "unpkg": "./dist/panelset.js",
   "jsdelivr": "./dist/panelset.js",
   "exports": {
     ".": {
       "types": "./dist/types/index.d.ts",
-      "import": "./dist/panelset.esm.js"
+      "import": "./dist/esm/index.js"
     },
     "./register": {
       "types": "./dist/types/register.d.ts",
-      "import": "./dist/register.js"
+      "import": "./dist/esm/register.js"
     },
     "./style.css": "./dist/panelset.css"
   },
