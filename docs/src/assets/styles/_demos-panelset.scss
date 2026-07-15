@@ -7,7 +7,7 @@
 	svg {
 		flex-shrink: 0;
 		will-change: transform;
-		transform: rotate(-180deg);
+		transform: rotate(0deg);
 		transition: transform var(--ps-close-speed, 0.25s) var(--ps-close-timing, ease-in-out);
 
 		@media (prefers-reduced-motion: reduce) {
@@ -17,7 +17,7 @@
 
 	&[aria-selected="true"] svg,
 	&[aria-current="true"] svg {
-		transform: rotate(0deg);
+		transform: rotate(-180deg);
 	}
 }
 
@@ -25,7 +25,7 @@
 .demo:has([data-panelset][data-closable]:not(.is-open):not(.is-opening)) .tabs[data-closeable] button[aria-controls] svg,
 .demo:has([data-panelset].is-closing) .demo-controls button[aria-controls] svg,
 .demo:has([data-panelset].is-closing) .tabs[data-closeable] button[aria-controls] svg {
-	transform: rotate(-180deg);
+	transform: rotate(0deg);
 }
 
 .demo {

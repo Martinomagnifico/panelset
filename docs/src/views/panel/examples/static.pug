@@ -41,19 +41,24 @@ block content
 
 	+section("What a screen reader is told")
 
-		p If a developer tries to force a drawer to look permanent with CSS alone, that will not work. The library still thinks it is a closed disclosure, so the markup keeps saying so: #[code inert] hides the sidebar everyone can see, and #[code aria-expanded="false"] claims a button can expand something that is already expanded. The page looks right and reads wrong.
+		p If you force a drawer to look permanent with CSS alone, the library still thinks it is a closed disclosure, so the markup keeps saying so: #[code inert] hides the sidebar everyone can see, and #[code aria-expanded="false"] claims a button can expand what is already expanded. The page looks right and reads wrong.
 
-		p Static is not "open the panel", it is "stop being a disclosure". The JavaScript takes #[code inert] off the panel and #[strong removes] #[code aria-expanded] from the trigger. Not set to #[code true]: gone, because there is nothing left to expand. The stylesheet then hides that trigger, since a button that can do nothing should not hold a tab stop. Go back the other way and the panel lands closed with both attributes restored.
+		p Static is not "open the panel", it is "stop being a disclosure". Going static, the panel:
 
-		p Those are two separate layers, on purpose. Hiding the button is #[strong CSS], and you can take it back with #[code display: revert] to keep the button and give it another job. Removing #[code aria-expanded] is #[strong JavaScript], and it is not optional: a button you chose to keep must not go on claiming it expands a panel that cannot collapse, and your stylesheet may not load ours at all.
+		ul
+			li drops #[code inert], so its content is really in the accessibility tree
+			li #[strong removes] #[code aria-expanded] and #[code aria-controls] from the trigger (removes, does not set to #[code false]), since the button no longer expands or controls anything
+			li hides that trigger through the stylesheet, so it holds no tab stop
 
-		p #[code aria-controls] goes as well, for the same reason. A button you keep and repurpose must not still say it controls this panel. So a static panel's trigger claims nothing about it at all: it is hidden, and if you unhide it, it is simply a button.
+		p Going back the other way restores all three. And the panel returns #[strong closed], never open over your content.
 
-		p Which leaves the panel needing another way to recognise its own button, since #[code aria-controls] is exactly how it used to find one. So on its way into static it stamps a hook first: #[code data-ps-for="panel-id"]. That, and not the ARIA, is how a static panel finds its triggers, which is how it can give #[code aria-controls] back when it becomes a disclosure again.
+		.callout
+			+warning()
+			p #[strong Two things happen, in two places.] The button is hidden by #[strong CSS], so you can bring it back with #[code display: revert] and reuse it for something else. The ARIA is removed by #[strong JavaScript], and that part you cannot turn off. There are two reasons it has to work this way. If you do bring the button back, a visible button must not still say it controls a panel that no longer opens or closes. And you might not use our stylesheet at all. So whether the markup is honest can never depend on the CSS.
 
-		p You never write #[code data-ps-for] yourself, and it lives exactly as long as #[code aria-controls] is away: it arrives as the panel goes static and leaves as soon as #[code aria-controls] comes back. An ordinary panel never carries one. But if you go looking for the trigger of a static panel in your own code, that is what to look for, because #[code aria-controls] will not be there.
+		p One consequence: #[code aria-controls] was how the panel found its own trigger, so on the way into static it stamps #[code data-ps-for="panel-id"] and finds it by that instead. The hook lives only while #[code aria-controls] is away, and an ordinary panel never carries one. If your own code looks a static panel's trigger up, look for #[code data-ps-for].
 
-		p #[code setStatic()] does all of the above when the breakpoint is not a viewport media query.
+		p #[code setStatic()] does all of this when the breakpoint is not a viewport media query.
 
 		h3 Do not name the panel after its button
 
@@ -77,17 +82,21 @@ block content
 
 		p The demo above cannot use a breakpoint. #[code static] takes a media query, and a media query only ever sees the #[strong viewport], not a box on the page. A container query cannot help either: CSS never hands those to JavaScript, and there is no #[code matchContainer()].
 
-		p So you watch whatever you like and tell the panel what it is:
+		p So you watch whatever you like and tell the panel what it is. The #[code setStatic()] call is wrapped in #[code requestAnimationFrame], because #[code setStatic()] changes the DOM, and changing layout inside a #[code ResizeObserver] callback makes the browser warn about a resize loop. Doing it in the next frame keeps the callback clean:
 
 		+codeblock('JavaScript').
 			const box = document.getElementById('static-box');
 			const panel = document.getElementById('static-panel').panel;
 
+			let frame;
 			new ResizeObserver(([entry]) => {
-				panel.setStatic(entry.contentRect.width >= 260);
+				cancelAnimationFrame(frame);
+				frame = requestAnimationFrame(() => {
+					panel.setStatic(entry.contentRect.width >= 260);
+				});
 			}).observe(box);
 
-		p Crossing the threshold never animates, so dragging the handle does not look like the panel opening and closing over and over. And #[code setStatic()] with the state it is already in does nothing, so calling it on every resize frame is fine.
+		p Crossing the threshold never animates, so dragging the handle does not look like the panel opening and closing over and over. And #[code setStatic()] with the state it is already in does nothing, so calling it on every frame is fine.
 
 		p Reach for it only when the thing you are reacting to is something the library cannot see for itself: a container query, your own breakpoint system, a feature flag.
 

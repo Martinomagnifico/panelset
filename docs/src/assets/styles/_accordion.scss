@@ -43,11 +43,11 @@ ul[data-panel-group] {
 
 
 
-        transform: rotate(-90deg);
+        transform: rotate(90deg);
       }
 
       &[aria-expanded="true"] .chevron {
-        transform: rotate(90deg);
+        transform: rotate(-90deg);
       }
     }
     .panel-wrapper {

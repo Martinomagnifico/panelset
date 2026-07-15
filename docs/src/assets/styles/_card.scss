@@ -196,7 +196,7 @@ dl.bg-surface-tint-contrast {
 		transition: transform var(--ps-open-speed) var(--ps-open-timing);
 		flex-shrink: 0;
 		color: var(--text-muted);
-		transform: rotate(-90deg);
+		transform: rotate(90deg);
 
 		@media (prefers-reduced-motion: reduce) {
           transition: none !important;
@@ -205,7 +205,7 @@ dl.bg-surface-tint-contrast {
 
 	&[aria-expanded="true"] {
 		.chevron {
-			transform: rotate(90deg);
+			transform: rotate(-90deg);
 		}
 		&:before {
 			border-radius: 0.5rem 0.5rem 0 0;

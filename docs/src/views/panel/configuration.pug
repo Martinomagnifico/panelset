@@ -321,7 +321,7 @@ block content
 					#main-nav(data-panel data-panel-static="(min-width: 769px)")
 						.panel-wrapper ...
 
-				p While static the panel is expanded and reachable: no #[code inert], no open or close, and its trigger stops claiming to expand anything (#[code aria-expanded] is removed). #[code open()], #[code close()] and #[code toggle()] do nothing, #[code persist] and #[code deepLink] do not write, and #[code closeSiblings] cannot close it. Crossing the breakpoint never animates. Becoming collapsible again lands the panel #[strong closed], because a drawer that reappears already open over your content is never what you want.
+				p While static the panel is expanded and reachable: no #[code inert], no open or close, and its trigger stops claiming to expand anything (#[code aria-expanded] is removed). #[code open()], #[code close()] and #[code toggle()] do nothing, #[code persist] and #[code deepLink] do not write, and #[code closeSiblings] cannot close it. Crossing the breakpoint never animates. Becoming collapsible again leaves the panel #[strong closed], because a drawer that reappears already open over your content is never what you want.
 
 				p The library adds #[code data-ps-static] to the panel #[strong and to its triggers] while static. A trigger for a static panel cannot do anything, so the stylesheet hides it for you: no menu button on desktop, and no breakpoint repeated in your CSS. To keep the button visible and repurpose it, repeat the attribute (the rule that hides it does the same, so that a plain #[code .sidebar button] rule in your own CSS cannot out-rank it by accident):
 
