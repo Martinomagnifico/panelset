@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.2.6] - 2026-07-17
+
+### Added
+- Trigger-level loading state. While a panel loads async content, the trigger that opened it (a button or tab) now also gets `aria-busy="true"` and an `.is-trigger-loading` class, so you can show a spinner in the control, not only in the panel.
+
+### Changed
+- Build now ships one ES module per source file (under `dist/esm/`) instead of a single flattened bundle, so `import { Panel }` tree-shakes away PanelSet and PanelControl. The IIFE (`dist/panelset.js`), the stylesheet, and the `panelset` / `panelset/register` import paths are unchanged; only the internal ESM layout moved.
+
 ## [1.2.5] - 2026-07-12
 
 ### Changed

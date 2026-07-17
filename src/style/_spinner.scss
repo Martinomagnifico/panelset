@@ -1,12 +1,25 @@
+// The keyframe carries --ps-spinner-transform through, rather than hardcoding the centring
+// translate. Hardcoding it meant that overriding the var (to corner-place the spinner, say)
+// left the animation still ending at translate(-50%, -50%), so the spinner drifted across the
+// panel as it turned. Both stops name the var, so it rotates in place wherever you put it.
+// The var must be a transform function, not `none`: use translate(0, 0) to sit at the edges.
 @keyframes ps-spin {
-	to { transform: translate(-50%, -50%) rotate(360deg); }
+	from { transform: var(--ps-spinner-transform, translate(-50%, -50%)) rotate(0deg); }
+	to   { transform: var(--ps-spinner-transform, translate(-50%, -50%)) rotate(360deg); }
 }
 
 [data-panel], ps-panel,
 [data-panelset], ps-panelset {
+	// Stays whatever happens: it is the containing block the indicator is placed against, and other things lean on it too.
 	position: relative;
 
-	&::after {
+	// The indicator is the one piece of design the library ships, and it claims the ::after of every
+	// panel. `customIndicator: true` stamps [data-ps-custom-indicator], and this :not() is why that
+	// actually returns the pseudo-element: the rule stops MATCHING. Hiding it (display: none, or a
+	// var) would leave all eighteen declarations below sitting on an ::after the author may want for
+	// something else, and they would have to unpick each one. The state hooks (.is-loading,
+	// aria-busy, .is-trigger-loading) are untouched either way, so your own indicator still works.
+	&:not([data-ps-custom-indicator])::after {
 		content: '';
 		position: absolute;
 		top: var(--ps-spinner-top, 50%);
@@ -27,10 +40,12 @@
 	}
 }
 
+// Same exclusion as above, and it matters more here: these are !important, so if they landed on an
+// ::after the author had taken back, there would be no way to override them.
 @media (prefers-reduced-motion: reduce) {
 	[data-panel], ps-panel,
 	[data-panelset], ps-panelset {
-		&::after {
+		&:not([data-ps-custom-indicator])::after {
 			transition: none !important;
 			animation-play-state: paused !important;
 		}

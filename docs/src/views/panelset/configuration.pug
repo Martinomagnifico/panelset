@@ -278,6 +278,30 @@ block content
 						ul
 							li #[code loading-height="200"]
 
+		+apiOption("customIndicator: boolean")
+
+			p If you set it, the library does not show its spinner. That spinner is the one piece of design the library ships, so it is the one thing you can take out.
+
+			p The loading #[strong state] stays either way (#[code .is-loading] on the set, #[code aria-busy] on the tab), which is what you use. Pair it with #[code loadingHeight: 0] if the content area no longer needs to hold room for one. See #[a(href=url('/sharedconcepts/loading-indicators.html')) Loading indicators].
+
+			p The attribute is #[code data-panel-*] here, not #[code data-*], because it is the same one a Panel takes: the indicator is a shared concept, like #[code persist] and #[code deepLink].
+
+			h4 Default: #[code false]
+
+			.card-row
+				.card
+					h4 JavaScript
+					ul
+						li #[code { customIndicator: true }]
+				.card
+					h4 Data attribute
+					ul
+						li #[code data-panel-custom-indicator]
+				.card
+					h4 Web Component attribute
+					ul
+						li #[code panel-custom-indicator]
+
 			+apiOption("loop: boolean")
 				p Let #[code next()] / #[code prev()] wrap instead of stopping at the ends: past the last panel you’re back at the first, and the other way round. With loop on there’s nowhere unreachable, so PanelSet never disables its #[code data-ps-next] / #[code data-ps-prev] buttons. Carousel territory (see the #[a(href=url('/panelset/examples/wizard.html')) Wizard] page).
 

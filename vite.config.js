@@ -30,12 +30,7 @@ const iifeBuild = () => ({
   }
 });
 
-// Move the .d.ts files into dist/types, keeping their folder structure.
-// With preserveModules the JS build now mirrors src/js into dist too, so dist holds
-// BOTH .js and .d.ts side by side (including in subfolders like functions/). This walks
-// the tree and relocates only the type files, leaving the JS mirror in place. A relative
-// import inside a .d.ts (`from './panel.js'`) still resolves, because every .d.ts moves
-// together and TypeScript maps the .js specifier to the sibling .d.ts.
+
 const groupTypes = () => ({
   name: 'group-types',
   closeBundle: async () => {
@@ -80,16 +75,8 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        // Ship one file per source module (mirroring src/js/) instead of a single
-        // flattened bundle. A downstream bundler can then prune whole modules at real
-        // file boundaries, so `import { Panel }` drops PanelSet and PanelControl. A
-        // forced shared chunk hid the implementation behind a re-export the bundler
-        // could not shake through.
         preserveModules: true,
         preserveModulesRoot: 'src/js',
-        // The ESM mirror lives under dist/esm so src/js/panelset.ts (-> panelset.js)
-        // does not collide with the public IIFE artifact dist/panelset.js. The CSS asset
-        // stays at the dist root, where package.json's ./style.css export points.
         entryFileNames: 'esm/[name].js',
         chunkFileNames: 'esm/[name].js',
         assetFileNames: '[name][extname]',

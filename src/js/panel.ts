@@ -66,6 +66,7 @@ export class Panel {
 		closeSiblings: false,
 		loadingDelay: 320,
 		loadingHeight: 150,
+		customIndicator: false,
 		interruptible: true,
 		persist: false,
 		deepLink: false,
@@ -83,6 +84,7 @@ export class Panel {
 		closeSiblings: ['panelCloseSiblings', 'boolean'],
 		loadingDelay:  ['panelLoadingDelay',  'number'],
 		loadingHeight:  ['panelLoadingHeight',  'number'],
+		customIndicator: ['panelCustomIndicator', 'boolean'],
 		interruptible:  ['panelInterruptible',  'boolean'],
 		persist:        ['panelPersist',        'boolean'],
 		deepLink:       ['panelDeeplink',       'boolean'],
@@ -138,6 +140,9 @@ export class Panel {
 
 		if (this.config.axis === 'horizontal') element.dataset.panelAxis = 'horizontal';
 		if (this.config.align !== 'start') element.dataset.panelAlign = this.config.align;
+
+		// This is what stops the library showing its own spinner. It reflects the RESOLVED config, so the CSS cannot read the authored attribute directly (data-panel-custom-indicator="false" is present but means false). The rule then stops MATCHING rather than merely hiding: a hidden ::after still carries all its declarations, so the author could not reuse the pseudo-element without unpicking every one.
+		if (this.config.customIndicator) element.setAttribute('data-ps-custom-indicator', '');
 
 		this._wireImplicitTriggers();
 		this._bindTriggers();
@@ -403,6 +408,16 @@ export class Panel {
 		this._triggers().forEach(t => t.setAttribute('aria-expanded', String(open)));
 	}
 
+	// Reflect the async loading state onto the trigger as well.
+
+	private _setTriggersLoading(loading: boolean) {
+		this._triggers().forEach(t => {
+			t.classList.toggle('is-trigger-loading', loading);
+			if (loading) t.setAttribute('aria-busy', 'true');
+			else t.removeAttribute('aria-busy');
+		});
+	}
+
 	private _cleanupTempClose() {
 		if (!this._tempCloseGroup) return;
 		this._tempCloseGroup.style.removeProperty('--ps-tempclose-speed');
@@ -528,9 +543,11 @@ export class Panel {
 
 		// The slow way: loadingDelay ran out and the content is not here.
 		// is-loading goes on BEFORE anything forces the styles to settle. If the wrapper already sits at opacity 1 (the panel was open before) when is-opening arrives, that gives it a 1-to-0 opacity transition and the old content stays in view all through phase 1. is-loading first pins the wrapper at opacity 0, and nothing transitions.
+		
 		this.element.classList.remove('is-closing');
 		this.element.removeAttribute('inert');
 		this.element.classList.add('is-loading');
+		this._setTriggersLoading(true);
 
 		// Throw the old content out, or it walks back in the moment is-loading comes off.
 		this.element.querySelector(':scope > .panel-wrapper')?.replaceChildren();
@@ -567,6 +584,7 @@ export class Panel {
 			// An abort, or the content failed. Either way, fall through to the signal check below.
 		} finally {
 			this.element.classList.remove('is-loading');
+			this._setTriggersLoading(false);
 			this.element.style.removeProperty('--ps-loading-delay');
 		}
 

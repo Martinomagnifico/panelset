@@ -6,9 +6,6 @@ import pug from '@vituum/vite-plugin-pug';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 const navData = JSON.parse(readFileSync(new URL('./src/data/nav.json', import.meta.url), 'utf-8'));
-
-// Where the docs actually live. Open Graph needs ABSOLUTE urls: a relative og:image is
-// simply ignored, and that is why a pasted link showed no card.
 const SITE_URL = 'https://martinomagnifico.github.io/panelset/';
 
 export default defineConfig(({ mode }) => {
@@ -47,14 +44,8 @@ export default defineConfig(({ mode }) => {
 	    },
 		plugins: [
 			{
-				// og:url and the canonical link have to be absolute AND different on every page, which
-				// is the one thing a Pug template cannot work out for itself. Vite knows the output
-				// path of each page, so they are written here instead of being hand-typed per page,
-				// where they would rot the first time a file moved.
 				name: 'og-url',
 				transformIndexHtml(html, ctx) {
-					// ctx.path is the SOURCE path (src/views/panel/api.pug.html), not the page's
-					// final url, so strip Vituum's plumbing back off it.
 					const path = (ctx.path || '/')
 						.replace(/^\//, '')
 						.replace(/^src\/views\//, '')

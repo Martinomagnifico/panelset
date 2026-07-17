@@ -27,6 +27,7 @@ export class PanelSet {
 		disabledMode: 'aria',
 		loadingHeight: 150,
 		loadingDelay: 320,
+		customIndicator: false,
 		returnFocus: false,
 		autoFocus: false,
 		persist: false,
@@ -72,6 +73,8 @@ export class PanelSet {
 		closeOnTab:    ['closeOnTab',    'boolean'],
 		disabledMode:  ['psDisabledMode', 'string'],
 		loadingHeight: ['loadingHeight', 'number'],
+		// data-panel-* rather than data-*, so it is the SAME attribute a Panel takes. The indicator is a shared concept, and the library's rule for those is one name on both: persist and deepLink already read data-panel-persist and data-panel-deeplink here too.
+		customIndicator: ['panelCustomIndicator', 'boolean'],
 		loadingDelay:  ['loadingDelay',  'number'],
 		autoFocus:      ['autoFocus',      'string'],
 		returnFocus:    ['returnFocus',    'boolean'],
@@ -162,6 +165,9 @@ export class PanelSet {
 
 		const dataConfig = parseDataAttrs<PanelSetConfig>(element.dataset, PanelSet.attrs);
 		this.config = { ...PanelSet.defaults, ...options, ...dataConfig } as Required<Omit<PanelSetConfig, 'selector'>>;
+
+		// This is what stops the library showing its own spinner. It reflects the RESOLVED config, so the CSS cannot read the authored attribute directly (data-panel-custom-indicator="false" is present but means false). The rule then stops MATCHING rather than merely hiding: a hidden ::after still carries all its declarations, so the author could not reuse the pseudo-element without unpicking every one.
+		if (this.config.customIndicator) element.setAttribute('data-ps-custom-indicator', '');
 
 		// This set's own panels and nobody else's, or an outer set walks off with a nested set's panels. See _collectPanels.
 		this.panels = this._collectPanels();
@@ -438,6 +444,17 @@ export class PanelSet {
 			document.querySelectorAll<HTMLElement>(`[aria-controls="${panel.id}"]`).forEach(trigger => {
 				trigger.classList.toggle('is-activating', active);
 			});
+		});
+	}
+
+	// Reflect a panel's async loading onto every trigger pointing at it.
+	
+	private _setTriggersLoading(panelId: string, loading: boolean): void {
+		if (!this.config.manageTriggers || !panelId) return;
+		document.querySelectorAll<HTMLElement>(`[aria-controls="${panelId}"]`).forEach(trigger => {
+			trigger.classList.toggle('is-trigger-loading', loading);
+			if (loading) trigger.setAttribute('aria-busy', 'true');
+			else trigger.removeAttribute('aria-busy');
 		});
 	}
 
@@ -1040,6 +1057,8 @@ export class PanelSet {
 		const signal = this._animShow.start();
 
 		if (!prevSignalAborted && wasLoadingAsync && prevPanelId && prevPanelId !== panelId) {
+			// A new switch interrupts a load still running on another panel. Stop that panel's trigger spinning now, rather than wait for the old activation to unwind.
+			this._setTriggersLoading(prevPanelId, false);
 			this._dispatch<ActivationAbortedEventDetail>('ps:activationaborted', {
 				panelId: prevPanelId,
 				trigger: resolvedTrigger
@@ -1078,6 +1097,7 @@ export class PanelSet {
 			// The spinner is held back by a CSS transition-delay (--ps-loading-delay), which keeps it off quick loads with no timer in the JS.
 			this.element.style.setProperty('--ps-loading-delay', `${this.config.loadingDelay}ms`);
 			this.element.classList.add('is-loading');
+			this._setTriggersLoading(panelId, true);
 
 			let openTransition: Promise<void> | null = null;
 
@@ -1115,6 +1135,7 @@ export class PanelSet {
 				if (signal.aborted) {
 					this._log(`Aborted during load: ${panelId}`);
 					this.element.classList.remove('is-loading');
+					this._setTriggersLoading(panelId, false);
 					this.element.style.removeProperty('--ps-loading-delay');
 					return;
 				}
@@ -1129,6 +1150,7 @@ export class PanelSet {
 				const err = error as Error;
 				this._log(`Load failed: ${err.message}`);
 				this.element.classList.remove('is-loading');
+				this._setTriggersLoading(panelId, false);
 				this.element.style.removeProperty('--ps-loading-delay');
 
 				if (err.name !== 'AbortError') {
@@ -1141,6 +1163,7 @@ export class PanelSet {
 			}
 
 			this.element.classList.remove('is-loading');
+			this._setTriggersLoading(panelId, false);
 			this.element.style.removeProperty('--ps-loading-delay');
 			this.element.classList.remove('is-opening');
 		}

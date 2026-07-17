@@ -64,3 +64,91 @@ img.testimage {
     width: 100%;
   }
 }
+
+// Trigger-level loading (1.2.6).
+// This is a USER style, not a lib style. Feel free to copy it.
+
+.uses-trigger-spinner {
+
+	> button[aria-controls] {
+		position: relative;
+
+		transition:
+			color 0.125s,
+			background-color 0.125s,
+			box-shadow 0.125s,
+			border-color 0.125s,
+			padding-right 0.28s ease;
+
+		&::after {
+			content: "";
+			position: absolute;
+			right: 9px;
+			top: 50%;
+			margin-top: -7px;
+			width: 14px;
+			height: 14px;
+			box-sizing: border-box;
+			border: 2px solid var(--color-special-tint-300);
+			border-top-color: var(--color-special-tint-600);
+			border-radius: 50%;
+			transform-origin: 50% 50%;
+
+			opacity: 0;
+			transition: opacity 0.2s ease;
+		}
+
+		&[aria-busy="true"] {
+			padding-right: 31px;
+
+			&::after {
+				opacity: 1;
+				will-change: transform;
+				backface-visibility: hidden;
+				animation: demo-trigger-spin 0.6s linear infinite;
+			}
+		}
+	}
+
+	.tabs button[aria-controls]::after {
+		content: "";
+		display: inline-block;
+		vertical-align: middle;
+		box-sizing: border-box;
+		width: 0;
+		height: 0;
+		margin-left: 0;
+		opacity: 0;
+
+		border: 2px solid var(--color-special-tint-300);
+		border-top-color: var(--color-special-tint-600);
+		border-radius: 50%;
+		transform-origin: 50% 50%;
+		transition:
+			width 0.28s ease,
+			height 0.28s ease,
+			margin-left 0.28s ease,
+			opacity 0.2s ease;
+	}
+
+	.tabs button[aria-controls][aria-busy="true"]::after {
+		width: 14px;
+		height: 14px;
+		margin-left: 0.5em;
+		opacity: 1;
+
+		will-change: transform;
+		backface-visibility: hidden;
+		animation: demo-trigger-spin 0.6s linear 0.28s infinite;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		button[aria-controls][aria-busy="true"]::after {
+			animation: none;
+		}
+	}
+}
+
+@keyframes demo-trigger-spin {
+	to { transform: rotate(360deg); }
+}

@@ -7,16 +7,14 @@ export interface PanelSetConfig {
 		panels?: boolean;
 		height?: boolean;
 	};
-	/** Slide in the direction you are travelling. The DOM order sets the levels (a later panel is higher), and .levelup or .leveldown goes on the panels so CSS can reverse the transform on the way back. False by default. */
 	levels?: boolean;
-	/** Let next() and prev() come round at the ends, last to first and back again. False by default, so they stop. */
 	loop?: boolean;
 	closable?: boolean;
 	closeOnTab?: boolean;
-	/** How PanelSet turns its own buttons (data-ps-next, -prev, -close) off at the ends. 'aria' (the default) toggles aria-disabled and leaves the real disabled attribute to you. 'native' toggles the real disabled attribute (PanelSet owns it) and leaves aria-disabled to you. Locking a tab strip is PanelControl's business, and always aria. */
 	disabledMode?: 'aria' | 'native';
 	loadingHeight?: number;
 	loadingDelay?: number;
+	customIndicator?: boolean;
 	returnFocus?: boolean;
 	autoFocus?: AutoFocusMode;
 	persist?: boolean;
@@ -81,7 +79,6 @@ export interface ShowOptions {
 	event?: Event;
 	transition?: boolean;
 	autoFocus?: AutoFocusMode;
-	/** Pick which way the levels slide, whatever the DOM order says. next() and prev() set it, so coming round the end still slides the way you were going ('forward' looks like Next, even landing on an earlier panel). Only matters for sets with levels. */
 	direction?: 'forward' | 'backward';
 }
 

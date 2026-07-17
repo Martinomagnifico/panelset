@@ -222,6 +222,10 @@
                 {
                     "text": "Persisting state",
                     "href": "/sharedconcepts/persisting.html"
+                },
+                {
+                    "text": "Loading indicators",
+                    "href": "/sharedconcepts/loading-indicators.html"
                 }
             ]
         }

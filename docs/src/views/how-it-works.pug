@@ -157,6 +157,8 @@ block content
 					li Works with Tailwind, CSS Modules, CSS-in-JS, anything
 					li Your design system, not the library’s
 
+		p #[strong One exception:] the loading indicator. A panel fetching content with no feedback looks broken, so there is a default spinner, and it does have an opinion (a size, a speed, some colors). It is only a default: every part of it is a CSS variable, #[code customIndicator] takes it out (and hands you back the #[code ::after] it was using), and the loading state is exposed so you can show your own. See #[a(href=url('/sharedconcepts/loading-indicators.html')) Loading indicators].
+
 	+section("FAQ (or: &nbsp;<em>Some remarks that people might have</em>)", "FAQ")
 		.column.gap-1(data-panel-group data-panel-close-siblings)
 			+faq("But you should use <code>interpolate-size: allow-keywords</code>")
@@ -201,6 +203,9 @@ block content
 								button(aria-controls="raw-ps-panel-2") Second
 								button(aria-controls="raw-ps-panel-3") Third
 							+examplepanelset('raw-ps', false, 4)
+
+				p If you meant the 'spinner', that is already mentioned above. It is the only exception to the no-styles principle. See #[a(href=url('/sharedconcepts/loading-indicators.html')) loading spinner]. It is a default you can re-style or remove, not something you have to fight. Everything else is bare.
+
 
 	hr
 	section.no-hr

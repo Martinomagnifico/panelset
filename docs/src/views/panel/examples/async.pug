@@ -166,8 +166,8 @@ block content
 
 	+section("Loading states")
 		.title-text
-			h3 Loading spinner
-			p During async operations, Panel shows a spinner. It only appears if loading takes longer than #[code loadingDelay] ms. Fast loads open directly without a spinner:
+			h3 Loading indicator in the panel area
+			p During async operations, Panel shows a spinner in the panel. It only appears if loading takes longer than #[code loadingDelay] ms. Fast loads open directly without a spinner. Its size, colour, speed and position are all CSS variables, and it can be switched off: see #[a(href=url('/sharedconcepts/loading-indicators.html')) Loading indicators].
 
 		+codeblock('JS').
 			const panel = new Panel('#my-panel', {
@@ -179,6 +179,10 @@ block content
 
 		+codeblock('HTML')
 			div(data-panel data-panel-loading-delay="320") ...
+
+		.title-text
+			h3 Other ways to show it
+			p The spinner is the default, not the only option. While content loads, the panel gets #[code .is-loading] and the button that opened it gets #[code aria-busy="true"], so the wait can be shown anywhere: a spinner in the button, a progress bar, skeleton content, a changed label. The spinner's own size, colour, speed and position are CSS variables, and it can be switched off. It is all on #[a(href=url('/sharedconcepts/loading-indicators.html')) Loading indicators], with live examples.
 
 		.title-text
 			h3 Loading height

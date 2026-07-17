@@ -22,15 +22,13 @@ block content
 				#async-demo(data-panelset data-empty-panel-height="320" data-loading-delay="200")
 					.panel-wrapper
 						#async-panel-1(role="tabpanel" class="active" data-loaded="true")
-							h3 Static Content
-							p This panel has pre-loaded content.
+							+example-1(3)
 
 						#async-panel-2(role="tabpanel" hidden)
 							// Empty - will load async
 
 						#async-panel-3(role="tabpanel" hidden)
-							h3 Another Static Panel
-							p More pre-loaded content.
+							+example-3(3)
 
 			+codeblock('JS').
 				asyncPanelSet.onBeforeOpen((targetPanel, signal) => {
@@ -139,8 +137,8 @@ block content
 
 	+section("Loading states")
 		.title-text
-			h3 Loading spinner
-			p During async operations, PanelSet shows a loading spinner. Configure the delay to prevent flashing on fast connections:
+			h3 Loading indicator in the panel area
+			p During async operations, PanelSet shows a loading spinner. Configure the delay to prevent flashing on fast connections. Its size, colour, speed and position are all CSS variables, and it can be switched off: see #[a(href=url('/sharedconcepts/loading-indicators.html')) Loading indicators].
 
 		+codeblock('JS').
 			const panelSet = new PanelSet('#my-panelset', {
@@ -152,6 +150,10 @@ block content
 
 		+codeblock('HTML')
 			div(data-panelset data-loading-delay="320") ...
+
+		.title-text
+			h3 Other ways to show it
+			p The spinner is the default, not the only option. While content loads, the set gets #[code .is-loading] and the tab that opened the panel gets #[code aria-busy="true"], so the wait can be shown anywhere: a spinner in the tab, a progress bar, skeleton content, a changed label. The spinner's own size, colour, speed and position are CSS variables, and it can be switched off. It is all on #[a(href=url('/sharedconcepts/loading-indicators.html')) Loading indicators], with live examples.
 
 		.title-text
 			h3 Empty panel height
