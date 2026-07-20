@@ -32,6 +32,13 @@ let _interpolateSizeLogged = false;
 /**
  * Says once, across every Panel and PanelSet, that the browser has interpolate-size. Quiet if debug is off, or if it has said so already.
  */
+// The busy state on one trigger: aria-busy for assistive tech, and a class to style off. Shared by both components, so the attribute and the class name cannot drift apart.
+export function setTriggerLoading(trigger: HTMLElement, loading: boolean): void {
+	trigger.classList.toggle('is-trigger-loading', loading);
+	if (loading) trigger.setAttribute('aria-busy', 'true');
+	else trigger.removeAttribute('aria-busy');
+}
+
 export function logInterpolateSizeOnce(debug: boolean): void {
 	if (!debug || _interpolateSizeLogged) return;
 	_interpolateSizeLogged = true;

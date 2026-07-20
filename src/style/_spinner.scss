@@ -1,8 +1,4 @@
-// The keyframe carries --ps-spinner-transform through, rather than hardcoding the centring
-// translate. Hardcoding it meant that overriding the var (to corner-place the spinner, say)
-// left the animation still ending at translate(-50%, -50%), so the spinner drifted across the
-// panel as it turned. Both stops name the var, so it rotates in place wherever you put it.
-// The var must be a transform function, not `none`: use translate(0, 0) to sit at the edges.
+// Both stops name --ps-spinner-transform, so a repositioned spinner still turns in place.
 @keyframes ps-spin {
 	from { transform: var(--ps-spinner-transform, translate(-50%, -50%)) rotate(0deg); }
 	to   { transform: var(--ps-spinner-transform, translate(-50%, -50%)) rotate(360deg); }
@@ -10,15 +6,10 @@
 
 [data-panel], ps-panel,
 [data-panelset], ps-panelset {
-	// Stays whatever happens: it is the containing block the indicator is placed against, and other things lean on it too.
+	// The containing block the indicator is placed against.
 	position: relative;
 
-	// The indicator is the one piece of design the library ships, and it claims the ::after of every
-	// panel. `customIndicator: true` stamps [data-ps-custom-indicator], and this :not() is why that
-	// actually returns the pseudo-element: the rule stops MATCHING. Hiding it (display: none, or a
-	// var) would leave all eighteen declarations below sitting on an ::after the author may want for
-	// something else, and they would have to unpick each one. The state hooks (.is-loading,
-	// aria-busy, .is-trigger-loading) are untouched either way, so your own indicator still works.
+	// customIndicator sets [data-ps-custom-indicator], and the :not() hands the ::after back clean.
 	&:not([data-ps-custom-indicator])::after {
 		content: '';
 		position: absolute;
@@ -34,14 +25,14 @@
 		border-radius: 50%;
 		opacity: 0;
 		pointer-events: none;
-		transition: opacity var(--ps-loading-dim-duration) var(--ps-transition-timing);
+		// Resting state, so this is the fade out. The fade in is on the .is-loading rules.
+		transition: opacity var(--ps-spinner-fade-out-speed, 0.2s) var(--ps-transition-timing);
 		animation: ps-spin var(--ps-spinner-speed, 0.8s) linear infinite;
 		z-index: 11;
 	}
 }
 
-// Same exclusion as above, and it matters more here: these are !important, so if they landed on an
-// ::after the author had taken back, there would be no way to override them.
+// Same exclusion, and it matters more here: these are !important.
 @media (prefers-reduced-motion: reduce) {
 	[data-panel], ps-panel,
 	[data-panelset], ps-panelset {

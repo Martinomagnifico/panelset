@@ -4,6 +4,34 @@ append variables
 	- pagetitle = "Loading indicators"
 
 block content
+
+	//- One demo pair (Panel + PanelSet) per section, so the three ways can be compared like for
+	//- like. Everything that differs between them is passed in: a class carrying CSS variables,
+	//- or the attributes that take the library's own indicator out.
+	mixin loadingDemo(n, opts)
+		- opts = opts || {}
+		.grid-2.gap-v-1
+			div
+				h3 Panel
+				.demo(class=opts.demoClass)
+					button(aria-controls=`li${n}-panel` aria-expanded="false") Load pricing
+					div(id=`li${n}-panel` data-panel data-panel-custom-indicator=opts.custom data-panel-loading-height=opts.height)
+						.panel-wrapper
+							//- filled in by example-loading.js
+
+			div
+				h3 PanelSet
+				.demo(class=opts.demoClass)
+					.tabs(role="tablist" aria-label=`Loading indicators demo ${n}`)
+						button(role="tab" aria-controls=`li${n}-tab-1` aria-selected="true") Features
+						button(role="tab" aria-controls=`li${n}-tab-2` aria-selected="false") Pricing
+					div(id=`li${n}-tabs` class="tab-content" data-panelset data-panel-custom-indicator=opts.custom data-loading-height=opts.height)
+						.panel-wrapper
+							div(id=`li${n}-tab-1` role="tabpanel" class="active" data-loaded="true")
+								+example-1(4)
+							div(id=`li${n}-tab-2` role="tabpanel" hidden)
+								//- filled in by example-loading.js
+
 	.lane
 		.container
 			.page-header
@@ -17,23 +45,51 @@ block content
 
 		p The spinner is there because the library needs it. Panel and PanelSet need to show #[em at least something] to indicate to the user that there is some waiting to be expected. That "at least something" is the spinner. You do not have to use it, but you do have to show something. NOT showing anything if there is async/remote/slow content loading in the background is worse.
 
-		p You will probably want one of three things: 
-		ul
-			li The default spinner, in the panel area. You get it out of the box.
-			li Your own spinner, with your own size, thickness, speed and colors. You can do that with CSS variables.
-			li A spinner in the trigger, or a progress bar, or skeleton content, or a label change. You can do that with the state the library exposes.
+		p You will probably want one of three things, and they are the three sections below:
 
+		ol
+			li #[strong The default spinner], in the panel area. You get it out of the box.
+			li #[strong Your own spinner], with your own size, thickness, speed and colors. You can do that with CSS variables.
+			li #[strong Your own indicator]: a spinner in the trigger, a progress bar, skeleton content, a label change. You can do that with the state the library exposes.
 
 		.callout
 			+warning()
 			p The library supplies the #[strong state], not the look. #[code .is-loading] on the panel, #[code aria-busy] and #[code .is-trigger-loading] on the trigger. The spinner is only the default way of showing that state. Replace it and nothing else changes.
 
 
-	+section("Customizing: CSS variables")
+	+section("1. The default spinner")
 
-		p Set them anywhere they inherit from: on #[code :root] for all of them, or on one panel to change just that one.
+		p Nothing to set up. Load content asynchronously and the spinner appears in the panel area, in both components:
 
-		h3 Appearance
+		+loadingDemo(1)
+
+		p It only appears if the load takes longer than #[code loadingDelay] (320ms by default), so a fast load opens straight to its content without a flash of spinner. While it shows, the panel holds #[code loadingHeight] (150px by default) so there is somewhere for it to live, and the old content dims behind it.
+
+		+codeblock('JavaScript').
+			new Panel('#my-panel', {
+				loadingDelay: 320,   // wait this long before showing anything
+				loadingHeight: 150   // the room it holds while it waits
+			});
+
+
+	+section("2. Your own spinner")
+
+		p Same spinner, your values. Every part of it is a CSS variable, so nothing needs to be rebuilt. The pair below is the demo above with five variables changed:
+
+		+loadingDemo(2, { demoClass: 'li-tuned', height: 100 })
+
+		+codeblock('CSS').
+			.my-panel {
+				--ps-spinner-size: 24px;
+				--ps-spinner-thickness: 8px;
+				--ps-spinner-track-color: pink;
+				--ps-spinner-color: limegreen;
+				--ps-spinner-speed: 1.4s;
+			}
+
+		p Set them wherever they inherit from: on #[code :root] for every panel on the page, or on one element to change just that one.
+
+		h3 CSS variables
 
 		.card.api
 			dl
@@ -52,21 +108,13 @@ block content
 				dt.code --ps-spinner-speed
 				dd One full turn. Default #[code 0.8s].
 
-		+codeblock('CSS').
-			:root {
-				--ps-spinner-size: 24px;
-				--ps-spinner-thickness: 2px;
-				--ps-spinner-track-color: rgb(0 0 0 / 0.08);
-				--ps-spinner-color: rebeccapurple;
-				--ps-spinner-speed: 0.6s;
-			}
+				dt.code --ps-spinner-fade-in-speed
+				dd How long it takes to fade up once it appears, so it does not arrive as a flash. it is unset by default, which means it follows whatever the spinner appears alongside: the content dimming in a PanelSet (#[code --ps-loading-dim-duration]), or the panel opening in a Panel (#[code --ps-open-speed]). Give it a value to pick one number for both.
 
-		h3 Position
+				dt.code --ps-spinner-fade-out-speed
+				dd How long it takes to fade away once the content is there. Default #[code 0.2s]. Separate from the one above, so the spinner can come up gently and leave quickly.
 
-		p By default the spinner sits dead centre of the panel. These four place it, and #[code --ps-spinner-transform] is what centres it on that point.
 
-		.card.api
-			dl
 				dt.code --ps-spinner-top / --ps-spinner-bottom
 				dd Defaults: #[code 50%] and #[code auto].
 
@@ -76,48 +124,41 @@ block content
 				dt.code --ps-spinner-transform
 				dd Default #[code translate(-50%, -50%)], which pulls the circle back by half its own size so that #[code 50%/50%] is its middle rather than its top-left corner. To place it against an edge instead, set this to #[code translate(0, 0)]. It has to stay a transform function: #[code none] is not valid here, because the spin is composed on top of it.
 
-		p Putting it in the top right corner, out of the way of the content:
-
-		+codeblock('CSS').
-			#my-panel {
-				--ps-spinner-top: 12px;
-				--ps-spinner-right: 12px;
-				--ps-spinner-left: auto;
-				--ps-spinner-transform: translate(0, 0);
-			}
-
-		h3 Dimming
-
-		.card.api
-			dl
 				dt.code --ps-loading-panel-opacity
 				dd How far the old content fades back while the new content loads. Default #[code 0.1]. Set it to #[code 1] to leave the content alone.
 
-				dt.code --ps-loading-dim-duration / --ps-loading-fadeout-duration
-				dd Worked out from the panel speed and the opacity above. Override them directly if you change those.
+				dt.code --ps-loading-dim-duration
+				dd How long that fade back takes (PanelSet). Follows #[code --ps-panel-out-speed] unless you set it, and the spinner fades in over the same time, so the two read as one cross-fade.
 
 
-	+section("Using a custom indicator")
+	+section("3. Your own indicator")
 
-		p Set #[code customIndicator] if you want to inform the user of the loading state yourself. If you set it, the library does not show its spinner. It is the same option and the same attribute on both:
+		p If a spinner in the panel area is not what you want at all, take it out and show the wait yourself. In the pair below the spinner sits in the trigger instead, the button of the Panel and the tab of the PanelSet, and the content area holds no room for one:
+
+		+loadingDemo(3, { demoClass: 'uses-trigger-spinner', custom: true, height: '0' })
+
+		p Two things make that work:
+		ul
+			li #[code customIndicator] tells the library you are showing the state yourself, so it does not show its spinner.
+			li #[code loadingHeight: 0] is the other half: with the indicator on the trigger, the content area does not need to hold space for one, so it stays collapsed until the real content arrives. That is why the demos above open straight to their content. 
 
 		+codeblock('JavaScript').
-			new Panel('#my-panel', { customIndicator: true });
-			new PanelSet('#my-set', { customIndicator: true });
+			new Panel('#my-panel', {
+				customIndicator: true,
+				loadingHeight: 0
+			});
+			new PanelSet('#my-panelset', {
+				customIndicator: true,
+				loadingHeight: 0
+			});
+
+		p Or use it as one-offs, as data-attributes:
 
 		+codeblock('HTML').
-			<div data-panel data-panel-custom-indicator> … </div>
-			<div data-panelset data-panel-custom-indicator> … </div>
+			<div data-panel data-panel-custom-indicator data-panel-loading-height="0"> … </div>
+			<div data-panelset data-panel-custom-indicator data-loading-height="0"> … </div>
 
-
-		.callout
-			+warning()
-			p Taking the spinner out does not touch the #[strong state]. #[code .is-loading] and #[code aria-busy] are set either way, so show something with them, or the wait says nothing. That is what the hooks below are for.
-
-
-	+section("Your own indicator")
-
-		p Both components mark the state while content loads, and clear it the moment the load settles, whether it finishes, is cancelled, or fails. Style whatever you like off these:
+		p After that, you can use the following states and classes for styling:
 
 		.card.api
 			dl
@@ -130,42 +171,7 @@ block content
 				dt.code .is-trigger-loading
 				dd On those same triggers, for when you want a class instead.
 
-		p The default spinner and whatever you add are independent, so it is worth deciding which one you want. Two indicators for one wait is noise, so if you put something in the trigger, hide the panel one.
 
-		p A spinner in the trigger rather than the panel is an alternative that can easily be constructed. It works the same for both: the button of a Panel, the tab of a PanelSet. Try them:
-
-		.grid-2.gap-v-1
-			div
-				h3 Panel
-				.demo.uses-trigger-spinner
-					button(aria-controls="li-panel" aria-expanded="false") Load 'pricing'
-					#li-panel(data-panel data-panel-custom-indicator data-panel-loading-height="0")
-						.panel-wrapper
-							// content cloned in by JS, from the template below
-
-			div
-				h3 PanelSet
-				.demo.uses-trigger-spinner
-					.tabs(role="tablist" aria-label="Loading indicator tabs")
-						button(role="tab" aria-controls="li-tab-1" aria-selected="true") Features
-						button(role="tab" aria-controls="li-tab-2" aria-selected="false") Load 'pricing'
-					#li-tabs.tab-content(data-panelset data-panel-custom-indicator data-loading-height="0" data-loading-delay="150")
-						.panel-wrapper
-							#li-tab-1(role="tabpanel" class="active" data-loaded="true")
-								+example-1(4)
-							#li-tab-2(role="tabpanel" hidden)
-								// content cloned in by JS, from the template below
-
-		//- What the two demos load.
-		template#li-panel-content
-			+example-2(4)
-		template#li-tab-content
-			+example-2(4)
-
-		p Both of those work the same way: say that you are showing it yourself, then show it on the trigger.
-
-		+codeblock('HTML').
-			<div data-panel data-panel-custom-indicator data-panel-loading-height="0"> … </div>
 
 		+codeblock('CSS').
 			/* show it on the trigger: a button, or a tab */
@@ -185,9 +191,13 @@ block content
 				to { rotate: 360deg; }
 			}
 
-		p #[code loadingHeight: 0] is the other half of it: with the indicator on the trigger, the content area does not need to hold space for one, so it stays collapsed until the real content arrives. That is why the demos above open straight to their content.
+		p Both components mark that state while content loads, and clear it the moment the load settles, whether it finishes, is cancelled, or fails.
 
-		p The state is just a state: fade the trigger, put a progress bar above the panel, show skeleton content, swap the label. The library does not care what you show.
+		p It does not have to be a spinner. The state is just a state: fade the trigger, put a progress bar above the panel, show skeleton content, swap the label. The library does not care what you show.
+
+	//- What every demo on this page loads.
+	template#li-content
+		+example-2(4)
 
 
 append scripts

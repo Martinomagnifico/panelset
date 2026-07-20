@@ -16,7 +16,7 @@ ps-panelset { display: block; }
         margin: 0;
     }
 
-    // Closed by default, the wrapper reveal and the height transition are shared with Panel, scoped to [data-closable]. See _collapsible.scss.
+    // Closed by default. Reveal and height transition shared with Panel. See _collapsible.scss.
 
     [role="tabpanel"] {
         opacity: 0;
@@ -28,7 +28,7 @@ ps-panelset { display: block; }
         margin: 0;
         display: flow-root;
 
-        // The JS puts .fade on every panel while a switch runs. It carries the opacity and transform transition, and the offsets live under it, so with transitions off the panels swap cleanly and no offset flashes past.
+        // .fade goes on every panel while a switch runs, and carries the opacity and transform transition.
         &.fade {
             pointer-events: none;
             transition: opacity   var(--ps-panel-out-speed) var(--ps-panel-out-timing),
@@ -40,7 +40,7 @@ ps-panelset { display: block; }
                 transition-delay: var(--ps-panel-in-delay);
             }
 
-            // Where the motion starts and ends. :not(.active) lets the settled .active state win, even against the heavier .leveldown selectors below.
+            // Where the motion starts and ends. :not(.active) lets the settled state win.
             &.incoming:not(.active) { 
                 transform: var(--ps-panel-in-transform-from, var(--ps-gpu-nudge, none));
             }
@@ -48,7 +48,7 @@ ps-panelset { display: block; }
                 transform: var(--ps-panel-out-transform-to, var(--ps-gpu-nudge, none));
             }
 
-            // Levels: going back reverses the motion by swapping the two transforms. Works for any transform, with no signs to flip.
+            // Levels: going back swaps the two transforms, so any transform reverses with no signs to flip.
             &.leveldown.incoming:not(.active) { 
                 transform: var(--ps-panel-out-transform-to, var(--ps-gpu-nudge, none));
             }
@@ -81,15 +81,15 @@ ps-panelset { display: block; }
         will-change: height;
     }
 
-    // A switch has no wrapper reveal transition (that only runs on open and close), so on iOS the wrapper is not on the GPU and a busy main thread can make the cross-fade stutter. This borrows --ps-gpu-nudge to hold a layer for the length of the switch, as a keyframe because a transition cannot run in this state.
-    // It uses --ps-gpu-nudge, not --ps-wrapper-transform-from, so your open/close reveal never tags along on a switch. Set --ps-gpu-nudge to none and the keyframe animates none to none, which WebKit never promotes, so it switches itself off.
+    // Borrows --ps-gpu-nudge to hold a compositor layer through a switch, so iOS does not stutter.
+    // Not --ps-wrapper-transform-from, so your reveal never tags along. Set it to none to opt out.
     &.is-transitioning > .panel-wrapper {
         animation: ps-wrapper-switch
             calc((var(--ps-panel-in-speed) + var(--ps-panel-in-delay)) * var(--ps-height-duration-ratio))
             var(--ps-transition-timing);
     }
 
-    // Alignment. Where .panel-wrapper sits during an open or close, so it applies while transitioning and while closed.
+    // Where .panel-wrapper sits during an open or close.
     &.is-opening, &.is-closing,
     &[data-closable]:not(.is-open) {
         &[data-panelset-align="center"] {
@@ -107,17 +107,17 @@ ps-panelset { display: block; }
 }
 
 
-// The keyframe for that switch nudge. It runs the wrapper from the invisible nudge to none, only to hold a compositor layer while the switch lasts.
+// Runs the wrapper from the nudge to none, only to hold a compositor layer.
 @keyframes ps-wrapper-switch {
     from { transform: var(--ps-gpu-nudge, none); }
     to   { transform: none; }
 }
 
 
-// Native interpolate-size, where the browser has it. CSS animates a closable PanelSet's height between 0 and auto by itself, so the JS measures nothing. The JS still owns the state classes, the ARIA and the focus. Everywhere else, _animateOpenClose does the same job in pixels.
+// Native interpolate-size where available: CSS animates height 0 to auto, so the JS measures nothing.
 
 @supports (interpolate-size: allow-keywords) {
-    // Limited to is-opening and is-closing, so interpolate-size is NOT live during an ordinary panel switch. If it were, clearing the inline height in _cleanupPanels() would set off an auto-size animation nobody asked for.
+    // Opening and closing only, or clearing the inline height in _cleanupPanels() would animate.
     [data-panelset][data-closable], ps-panelset[data-closable] {
         &.is-opening {
             interpolate-size: allow-keywords;
@@ -138,7 +138,8 @@ ps-panelset { display: block; }
         --ps-panel-in-speed: 0s !important;
         --ps-panel-in-delay: 0s !important;
         --ps-loading-dim-duration: 0s !important;
-        --ps-loading-fadeout-duration: 0s !important;
+        --ps-spinner-fade-in-speed: 0s !important;
+        --ps-spinner-fade-out-speed: 0s !important;
         --ps-close-speed: 0s !important;
         --ps-open-speed: 0s !important;
 

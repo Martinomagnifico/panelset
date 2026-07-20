@@ -1,11 +1,12 @@
-// is-loading beats the opacity: 1 that is-opening sets, so the wrapper stays hidden while the content loads. Take it away and is-opening picks up again, and the wrapper fades in.
+// is-loading beats the opacity: 1 from is-opening, so the wrapper stays hidden while content loads.
 
 [data-panel].is-loading, ps-panel.is-loading {
 	cursor: wait;
 
 	&::after {
 		opacity: 1;
-		transition: opacity var(--ps-loading-dim-duration) var(--ps-transition-timing) var(--ps-loading-delay, 0s);
+		// Fades in over the opening it appears during, unless you set a speed of your own.
+		transition: opacity var(--ps-spinner-fade-in-speed, var(--ps-open-speed)) var(--ps-transition-timing) var(--ps-loading-delay, 0s);
 		
 		@media (prefers-reduced-motion: reduce) {
 		  transition: none !important;

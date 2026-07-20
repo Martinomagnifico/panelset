@@ -1,12 +1,12 @@
 import '../style/panelset.scss';
 import { Core } from './functions/core.js';
 import { autoFocus } from './functions/focus.js';
-import { readPanelParam, writePanelParam, readStored, writeStored } from './functions/persist.js';
+import { readPanelParam, setPanelParam, readStored, writeStored } from './functions/persist.js';
 import { findBody, lockBody, unlockBody } from './functions/pinning.js';
 
 import type { PanelConfig, BeforeOpenEventDetail, PanelEventDetail, PanelStaticEventDetail, AsyncOpenHandler } from './panel.types.js';
 import { parseDataAttrs, type AttrMap } from './functions/config.js';
-import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil } from './functions/utils.js';
+import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil, setTriggerLoading } from './functions/utils.js';
 
 declare global {
 	interface HTMLElement {
@@ -276,11 +276,7 @@ export class Panel {
 	private _updatePanelParam = (open: boolean): void => {
 		const { id } = this.element;
 		if (!id) return;
-		const current = readPanelParam();
-		const next = open
-			? [...new Set([...current, id])]
-			: current.filter(i => i !== id);
-		writePanelParam(next);
+		setPanelParam([id], open ? [id] : []);
 	};
 
 	// Work out persist and deepLink, closest thing wins: the element's own attribute, then the group's, then the init option or default. So data-panel-persist="false" on the element keeps it out, even inside a [data-panel-group] that persists. An attribute counts as set by being there, and anything but "false" means true.
@@ -411,11 +407,7 @@ export class Panel {
 	// Reflect the async loading state onto the trigger as well.
 
 	private _setTriggersLoading(loading: boolean) {
-		this._triggers().forEach(t => {
-			t.classList.toggle('is-trigger-loading', loading);
-			if (loading) t.setAttribute('aria-busy', 'true');
-			else t.removeAttribute('aria-busy');
-		});
+		this._triggers().forEach(t => setTriggerLoading(t, loading));
 	}
 
 	private _cleanupTempClose() {
@@ -525,13 +517,7 @@ export class Panel {
 		event?:         Event
 	) {
 		// Race the content against loadingDelay. If the content wins, phase 1 is skipped: no spinner, no loadingHeight.
-		const contentFirst = await Promise.race([
-			contentPromise.then(() => true as const),
-			new Promise<false>(res => {
-				const t = setTimeout(() => res(false), this.config.loadingDelay);
-				signal.addEventListener('abort', () => clearTimeout(t));
-			}),
-		]).catch(() => false as const);
+		const contentFirst = await Core.raceContent(contentPromise, this.config.loadingDelay, signal);
 
 		if (signal.aborted) return;
 
@@ -554,6 +540,13 @@ export class Panel {
 
 		// The JS already sat through loadingDelay, so the spinner shows at once.
 		this.element.style.setProperty('--ps-loading-delay', '0ms');
+
+		// Phase 1 grows from nothing, and the spinner is placed against the panel's CURRENT size, so at 50% it slides down as the panel opens while being clipped by it. Pinning it to where the centre will end up holds it still and lets the panel uncover it instead. Along the axis being animated, since a horizontal panel is clipped sideways.
+		// Only when the placement is still the default: an empty computed value means nothing set the var and the 50% fallback is in play, so a spinner you have positioned yourself is left where you put it.
+		const placementProp = cssProp === 'height' ? '--ps-spinner-top' : '--ps-spinner-left';
+		if (this.config.loadingHeight > 0 && !getComputedStyle(this.element).getPropertyValue(placementProp).trim()) {
+			this.element.style.setProperty(placementProp, `${this.config.loadingHeight / 2}px`);
+		}
 
 		this._setTriggerState(true);
 		this._persistState(true);
@@ -586,6 +579,8 @@ export class Panel {
 			this.element.classList.remove('is-loading');
 			this._setTriggersLoading(false);
 			this.element.style.removeProperty('--ps-loading-delay');
+			this.element.style.removeProperty('--ps-spinner-top');
+			this.element.style.removeProperty('--ps-spinner-left');
 		}
 
 		if (signal.aborted) return;

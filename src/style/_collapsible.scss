@@ -1,12 +1,12 @@
 // Panel and closable PanelSet.
 //
-// Both are CLOSED BY DEFAULT and opt into the open state with `.is-open`. Add it in your markup to start open. The collapsed resting state lives here, painted and committed, so both transitions animate from a real value and the JS never has to pin one.
+// Closed by default, opting in with .is-open. The resting state lives here, so transitions have a real start value.
 //
-// A plain (non-closable) PanelSet never matches: it is scoped to [data-closable], so a tabset keeps height:auto and a visible wrapper.
+// A plain PanelSet never matches: scoped to [data-closable], so a tabset keeps height:auto.
 //
 // A selector group, not a mixin, so the shared rules are written once.
 //
-// The wrapper rules use the DIRECT CHILD combinator. A descendant one would leak into nested collapsibles: a closable PanelSet inside an open Panel would pick up the parent's `.is-open .panel-wrapper` and have nothing left to animate.
+// Direct child combinator: a descendant one would leak into nested collapsibles.
 
 [data-panel], ps-panel,
 [data-panelset][data-closable], ps-panelset[data-closable] {
@@ -18,7 +18,7 @@
 
     > .panel-wrapper {
         position: relative;
-        // Where the reveal starts. --ps-closed-opacity: 1 switches the fade off, --ps-wrapper-transform-from adds a slide, scale or flip.
+        // Where the reveal starts. --ps-closed-opacity: 1 switches the fade off.
         opacity: var(--ps-closed-opacity, 0);
         transform: var(--ps-wrapper-transform-from, var(--ps-gpu-nudge, none));
         pointer-events: none;

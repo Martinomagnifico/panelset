@@ -1,12 +1,27 @@
 # Changelog
 
+## [1.2.7] - 2026-07-20
+
+### Fixed
+- PanelSet now correctly uses loadingDelay, matching Panel.
+- Spinner fade no longer derived from --ps-loading-panel-opacity, which could zero it.
+- Removed --ps-loading-fadeout-duration, which never did anything.
+- Spinner no longer slides while a Panel opens.
+
+### Added
+- --ps-spinner-fade-in-speed, --ps-spinner-fade-out-speed.
+
+
+
 ## [1.2.6] - 2026-07-17
 
 ### Added
-- Trigger-level loading state. While a panel loads async content, the trigger that opened it (a button or tab) now also gets `aria-busy="true"` and an `.is-trigger-loading` class, so you can show a spinner in the control, not only in the panel.
+- Custom loading indicators. While a panel loads async content, the trigger that opened it (a button or tab) now also gets `aria-busy="true"` and an `.is-trigger-loading` class, so you can show a spinner in the control, not only in the panel.
 
 ### Changed
 - Build now ships one ES module per source file (under `dist/esm/`) instead of a single flattened bundle, so `import { Panel }` tree-shakes away PanelSet and PanelControl. The IIFE (`dist/panelset.js`), the stylesheet, and the `panelset` / `panelset/register` import paths are unchanged; only the internal ESM layout moved.
+
+
 
 ## [1.2.5] - 2026-07-12
 
@@ -14,10 +29,13 @@
 - The `data-ps-for="<panel-id>"` attributes now swaps with the aria-controls.
 - Changed static example so that it works on smaller devices.
 
+
+
 ## [1.2.4] - 2026-07-12
 
 ### Changed
 A static Panel now takes **`aria-controls`** off its trigger as well as `aria-expanded`. Panel then uses a **`data-ps-for="<panel-id>"`** so that the trigger can be found again.
+
 
 
 ## [1.2.3] - 2026-07-11
@@ -35,10 +53,14 @@ A static Panel now takes **`aria-controls`** off its trigger as well as `aria-ex
 ### Added
 - `--ps-gpu-nudge` CSS variable that keeps Panel and PanelSet transitions smooth on iOS Safari, where an animating SVG icon (like a rotating chevron) can otherwise make a transition stutter. It applies an invisible GPU-compositing nudge only while animating.
 
+
+
 ## [1.2.1] - 2026-06-26
 
 ### Fixed
 - Accessibility: use `aria-current` instead of `aria-selected` on non-tab triggers.
+
+
 
 ## [1.2.0] - 2026-06-22
 
@@ -51,6 +73,7 @@ A static Panel now takes **`aria-controls`** off its trigger as well as `aria-ex
 - Verb buttons wired by delegation: `data-ps-next`, `data-ps-prev`, `data-ps-close`.
 - Lifecycle events
 - Async content loading
+
 
 
 ## [1.0.9] - 2026-04-10
@@ -76,6 +99,7 @@ A static Panel now takes **`aria-controls`** off its trigger as well as `aria-ex
 - Removed aria-selected.
 
 
+
 ## [1.0.7] - 2026-02-18
 
 ### Changed
@@ -89,10 +113,12 @@ A static Panel now takes **`aria-controls`** off its trigger as well as `aria-ex
 - Added short delay in autoFocus
 
 
+
 ## [1.0.5] - 2026-02-18
 
 ### Added
 - Added 'input' case in autoFocus with keyboard detection bypass
+
 
 
 ## [1.0.4] - 2026-02-18
@@ -105,16 +131,19 @@ A static Panel now takes **`aria-controls`** off its trigger as well as `aria-ex
   - No configuration needed - activates automatically when `role="tab"` is detected
 
 
+
 ## [1.0.3] - 2026-02-16
 
 ### Changed
 - Changed API to make it more flexible.
 
 
+
 ## [1.0.1] - 2026-02-16
 
 ### Changed
 - Changed API to include event.
+
 
 
 ## [1.0.0] - 2026-02-13
@@ -132,10 +161,12 @@ A static Panel now takes **`aria-controls`** off its trigger as well as `aria-ex
 - Added warning if no panels found
 
 
+
 ## [0.5.3] - 2026-02-08
 
 ### Added
 - Added height tracking
+
 
 
 ## [0.5.2] - 2026-01-06
@@ -144,6 +175,7 @@ A static Panel now takes **`aria-controls`** off its trigger as well as `aria-ex
 - Added default export
 - Added warning if selector does not have the data-tabs attribute
 - Wrote more docs (will follow)
+
 
 
 ## [0.5.0] - 2026-01-04

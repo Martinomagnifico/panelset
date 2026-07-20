@@ -3,7 +3,7 @@ ps-panel { display: block; }
 
 [data-panel], ps-panel {
 	display: flow-root;
-	// Closed by default, the wrapper reveal and the height transition are shared with closable PanelSet. See _collapsible.scss.
+	// Closed by default. Reveal and height transition shared with closable PanelSet. See _collapsible.scss.
 
 	// Direct child only, so this one does not style a nested Panel's wrapper.
 	> .panel-wrapper {
@@ -34,7 +34,7 @@ ps-panel { display: block; }
 	}
 }
 
-// Static (static: true, or its media query matches). Not a disclosure any more, just plain open content. The JS puts [data-ps-static] on the panel AND its triggers.
+// Static panels are plain open content. [data-ps-static] goes on the panel AND its triggers.
 // Nothing animates: open() and close() do nothing while static, so is-opening and is-closing never turn up.
 [data-panel][data-ps-static], ps-panel[data-ps-static] {
 	height: auto;
@@ -48,16 +48,15 @@ ps-panel { display: block; }
 	}
 }
 
-// A trigger for a static panel can do nothing: open(), close() and toggle() all return early. Left standing it would sit in the tab order and take a click, saying nothing (the JS has already taken its aria-expanded and aria-controls away). So it hides itself.
-// The attribute is REPEATED to lift the specificity to (0,2,1). Plain `button[data-ps-static]` is (0,1,1), which an everyday rule of yours (`.sidebar button { display: flex }`) ties and then wins on load order, and the dead button walks back in. Not !important, or the escape hatch below would be impossible.
-// To keep the button and give it another job:
-//   button[data-ps-static][data-ps-static] { display: revert; }
+// A static panel's trigger does nothing, so it hides itself rather than sit in the tab order.
+// Attribute repeated to lift specificity to (0,2,1). Not !important, or the escape hatch below breaks.
+// To keep the button and give it another job: button[data-ps-static][data-ps-static] { display: revert; }
 button[data-ps-static][data-ps-static],
 [role="button"][data-ps-static][data-ps-static] {
 	display: none;
 }
 
-// Alignment. Where .panel-wrapper sits inside the clipped container while it animates. align: start needs no CSS, it is ordinary block flow.
+// Where .panel-wrapper sits inside the clipped container while it animates.
 
 // Vertical (default)
 [data-panel], ps-panel {
@@ -97,7 +96,7 @@ button[data-ps-static][data-ps-static],
 }
 
 // Native interpolate-size, where the browser has it.
-// Only while opening or closing, never while is-loading is on as well: during an async load the wrapper is still empty, so height:auto resolves to about 0, the transition has nothing to cover and transitionend fires at once. Phase 1 stays pixel to pixel, phase 2 gets the native animation to auto.
+// Never while is-loading: the wrapper is empty, so height:auto is about 0 and transitionend fires at once.
 @supports (interpolate-size: allow-keywords) {
 	[data-panel]:not(.is-loading), ps-panel:not(.is-loading) {
 		&.is-opening {
@@ -132,7 +131,8 @@ button[data-ps-static][data-ps-static],
 		--ps-panel-in-speed: 0s !important;
 		--ps-panel-in-delay: 0s !important;
 		--ps-loading-dim-duration: 0s !important;
-		--ps-loading-fadeout-duration: 0s !important;
+		--ps-spinner-fade-in-speed: 0s !important;
+		--ps-spinner-fade-out-speed: 0s !important;
 		--ps-close-speed: 0s !important;
 		--ps-open-speed: 0s !important;
 

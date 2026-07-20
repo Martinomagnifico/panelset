@@ -1,5 +1,5 @@
 [data-panelset] {
-    // The wrapper's resting transition. transform is named next to opacity so the transitioned properties match the is-opening and is-closing rules: when those come in with faster timing, transform is already being watched and animates, instead of being added mid-frame, which browsers skip and which leaves it to jump at the end.
+    // transform is named next to opacity so it is already watched when the faster is-opening timing arrives.
     // Direct child only, so this does not style a nested PanelSet's wrapper.
     > .panel-wrapper {
         transition: opacity   var(--ps-panel-out-speed) var(--ps-transition-timing) var(--ps-panel-in-speed),
@@ -17,7 +17,8 @@
 
     &::after {
         opacity: 1;
-        transition: opacity var(--ps-loading-dim-duration) var(--ps-transition-timing) var(--ps-loading-delay, 0s);
+        // Fades in over the dim it cross-fades with, unless you set a speed of your own.
+        transition: opacity var(--ps-spinner-fade-in-speed, var(--ps-loading-dim-duration)) var(--ps-transition-timing) var(--ps-loading-delay, 0s);
 
         @media (prefers-reduced-motion: reduce) {
           transition: none !important;
@@ -26,8 +27,8 @@
 
     // Direct child only: an outer loading set must not dim a nested set's content.
     > .panel-wrapper {
-        transition: opacity   var(--ps-panel-out-speed) var(--ps-transition-timing),
-                    transform var(--ps-panel-out-speed) var(--ps-transition-timing);
+        transition: opacity   var(--ps-loading-dim-duration) var(--ps-transition-timing),
+                    transform var(--ps-loading-dim-duration) var(--ps-transition-timing);
         opacity: var(--ps-loading-panel-opacity);
     }
 }

@@ -152,3 +152,12 @@ img.testimage {
 @keyframes demo-trigger-spin {
 	to { transform: rotate(360deg); }
 }
+
+// Section 2 of the Loading indicators page
+.demo.li-tuned {
+	--ps-spinner-size: 24px;
+	--ps-spinner-thickness: 8px;
+	--ps-spinner-track-color: pink;
+	--ps-spinner-color: limegreen;
+	--ps-spinner-speed: 1.4s;
+}

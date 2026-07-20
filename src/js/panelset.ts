@@ -2,12 +2,12 @@ import '../style/panelset.scss';
 import { Core } from './functions/core.js';
 import { autoFocus } from './functions/focus.js';
 import type { AutoFocusMode } from './functions/focus.js';
-import { readPanelParam, writePanelParam, readStored, writeStored } from './functions/persist.js';
+import { readPanelParam, setPanelParam, readStored, writeStored } from './functions/persist.js';
 
 
 import type { PanelSetConfig, ReadyEventDetail, BeforeActivateEventDetail, BeforeOpenEventDetail, ActivationEventDetail, ActivationAbortedEventDetail, HandlerOptions, ShowOptions, AsyncContentHandler } from './panelset.types.js';
 import { parseDataAttrs, type AttrMap } from './functions/config.js';
-import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil, setDescribedBy } from './functions/utils.js';
+import { log, logInterpolateSizeOnce, registerBeforeOpenHandler, attachWaitUntil, setDescribedBy, setTriggerLoading } from './functions/utils.js';
 
 declare global {
 	interface HTMLElement {
@@ -258,21 +258,15 @@ export class PanelSet {
 
 	private _persistState = (panelId: string): void => {
 		if (this.config.persist && this.element.id) writeStored(`ps:${this.element.id}`, panelId);
-		if (this.config.deepLink) {
-			this._updatePanelParam(panelId);
-		} else {
-			// No deepLink, so clear out any old ?panel= ids an opening left behind.
-			const myIds = new Set(this.panels.map(p => p.id).filter(Boolean));
-			const current = readPanelParam();
-			if (current.some(id => myIds.has(id))) writePanelParam(current.filter(id => !myIds.has(id)));
-		}
+		// Without deepLink the active panel is named by nothing, which also clears any old ?panel= id an earlier opening left behind.
+		this._updatePanelParam(this.config.deepLink ? panelId : null);
 	};
 
-	private _updatePanelParam = (panelId: string): void => {
-		const myIds = new Set(this.panels.map(p => p.id).filter(Boolean));
-		const next = [...readPanelParam().filter(id => !myIds.has(id)), panelId].filter(Boolean);
-		writePanelParam(next);
+	private _updatePanelParam = (panelId: string | null): void => {
+		setPanelParam(this._panelIds(), panelId ? [panelId] : []);
 	};
+
+	private _panelIds = (): string[] => this.panels.map(p => p.id).filter(Boolean);
 
 	private _resolveInitialPanel = (): string | null => {
 		// The URL always counts: a ?panel=id link is explicit and belongs to this page, so a shareable link works with no config.
@@ -451,11 +445,51 @@ export class PanelSet {
 	
 	private _setTriggersLoading(panelId: string, loading: boolean): void {
 		if (!this.config.manageTriggers || !panelId) return;
-		document.querySelectorAll<HTMLElement>(`[aria-controls="${panelId}"]`).forEach(trigger => {
-			trigger.classList.toggle('is-trigger-loading', loading);
-			if (loading) trigger.setAttribute('aria-busy', 'true');
-			else trigger.removeAttribute('aria-busy');
+		document.querySelectorAll<HTMLElement>(`[aria-controls="${panelId}"]`).forEach(t => setTriggerLoading(t, loading));
+	}
+
+	// Which parts of a switch animate. Read from the per-call argument and the config, where transitions can also be an object naming the two separately.
+	private _transitionFlags(transition?: boolean): { panels: boolean; height: boolean } {
+		const on = transition !== false && this.config.transitions !== false;
+		if (typeof this.config.transitions === 'object') {
+			return {
+				panels: on && this.config.transitions.panels !== false,
+				height: on && this.config.transitions.height !== false
+			};
+		}
+		return { panels: on, height: on };
+	}
+
+	// Everything the loading state put on, taken back off. Called from one finally, so an abort, a failure and a success all leave the same state behind.
+	private _clearLoading(panelId: string): void {
+		this.element.classList.remove('is-loading');
+		this._setTriggersLoading(panelId, false);
+		this.element.style.removeProperty('--ps-loading-delay');
+	}
+
+	// Opens the set to loadingHeight so the spinner has somewhere to live. Returns the transition to wait on, or null when nothing moves.
+	private _openToLoadingHeight(isClosed: boolean, transition?: boolean): Promise<void> | null {
+		if (!this._transitionFlags(transition).height) return null;
+
+		if (isClosed) {
+			this.element.classList.add('is-open', 'is-opening');
+			this.element.style.height = '0px';
+			requestAnimationFrame(() => {
+				this.element.style.height = `${this.config.loadingHeight}px`;
+			});
+			return Core.waitForTransition(this.element, 'height');
+		}
+
+		// loadingHeight is a floor, not a size: grow to it only if the set is already shorter.
+		const currentHeight = this.element.offsetHeight;
+		const targetHeight = Math.max(currentHeight, this.config.loadingHeight);
+		if (targetHeight <= currentHeight) return null;
+
+		this.element.style.height = `${currentHeight}px`;
+		requestAnimationFrame(() => {
+			this.element.style.height = `${targetHeight}px`;
 		});
+		return Core.waitForTransition(this.element, 'height');
 	}
 
 	private _cleanupPanels(newPanel: HTMLElement): void {
@@ -1093,50 +1127,46 @@ export class PanelSet {
 			this._isLoadingAsync = true;
 			this._log('Waiting for content...');
 
-			// is-loading goes on at once, so the wrapper dims and nothing flashes.
-			// The spinner is held back by a CSS transition-delay (--ps-loading-delay), which keeps it off quick loads with no timer in the JS.
-			this.element.style.setProperty('--ps-loading-delay', `${this.config.loadingDelay}ms`);
-			this.element.classList.add('is-loading');
-			this._setTriggersLoading(panelId, true);
+			// loadingDelay is a grace period, not a spinner-fade delay. If the content wins the race, the switch runs like any other one and the user never learns there was a load. Only when the delay runs out does the set commit to a loading state. Panel races the same way, through the same helper, so the option means one thing in both.
+			const contentFirst = await Core.raceContent(userPromise, this.config.loadingDelay, signal);
 
-			let openTransition: Promise<void> | null = null;
-
-			const shouldTransition = transition !== false && this.config.transitions !== false;
-			let heightTransition = shouldTransition;
-			if (typeof this.config.transitions === 'object') {
-				heightTransition = shouldTransition && this.config.transitions.height !== false;
+			if (signal.aborted) {
+				this._log(`Aborted during load: ${panelId}`);
+				return;
 			}
 
-			if (heightTransition) {
-				if (isClosed) {
-					this.element.classList.add('is-open', 'is-opening');
-					this.element.style.height = '0px';
-					requestAnimationFrame(() => {
-						this.element.style.height = `${this.config.loadingHeight}px`;
-					});
-					openTransition = Core.waitForTransition(this.element, 'height');
-				} else {
-					// loadingHeight is a floor, not a size: grow to it only if the set is already shorter.
-					const currentHeight = this.element.offsetHeight;
-					const targetHeight = Math.max(currentHeight, this.config.loadingHeight);
-					if (targetHeight > currentHeight) {
-						this.element.style.height = `${currentHeight}px`;
-						requestAnimationFrame(() => {
-							this.element.style.height = `${targetHeight}px`;
-						});
-						openTransition = Core.waitForTransition(this.element, 'height');
-					}
+			if (contentFirst) {
+				this._log('Content loaded');
+				if (newPanel.dataset.loaded === 'true') {
+					this._updateHighestPanel();
 				}
-			}
+			} else {
+				// The delay ran out and the content is not here, so the set commits to a loading state: the wrapper dims, the height opens to loadingHeight, and the triggers report busy.
+				// The JS already sat through loadingDelay, so the spinner shows at once.
+				this.element.style.setProperty('--ps-loading-delay', '0ms');
+				this.element.classList.add('is-loading');
+				this._setTriggersLoading(panelId, true);
 
-			try {
-				await Promise.all([userPromise, openTransition].filter(Boolean) as Promise<void>[]);
+				const openTransition = this._openToLoadingHeight(isClosed, transition);
+
+				try {
+					await Promise.all([userPromise, openTransition].filter(Boolean) as Promise<void>[]);
+				} catch (error) {
+					const err = error as Error;
+					this._log(`Load failed: ${err.message}`);
+					if (err.name !== 'AbortError') {
+						console.error('Panel load error:', error);
+					}
+
+					this._activating = false;
+					if (this.config.manageTriggers && this.config.interruptible === false) this._setTriggersActivating(false);
+					return;
+				} finally {
+					this._clearLoading(panelId);
+				}
 
 				if (signal.aborted) {
 					this._log(`Aborted during load: ${panelId}`);
-					this.element.classList.remove('is-loading');
-					this._setTriggersLoading(panelId, false);
-					this.element.style.removeProperty('--ps-loading-delay');
 					return;
 				}
 
@@ -1146,26 +1176,8 @@ export class PanelSet {
 					this._updateHighestPanel();
 				}
 
-			} catch (error) {
-				const err = error as Error;
-				this._log(`Load failed: ${err.message}`);
-				this.element.classList.remove('is-loading');
-				this._setTriggersLoading(panelId, false);
-				this.element.style.removeProperty('--ps-loading-delay');
-
-				if (err.name !== 'AbortError') {
-					console.error('Panel load error:', error);
-				}
-
-				this._activating = false;
-				if (this.config.manageTriggers && this.config.interruptible === false) this._setTriggersActivating(false);
-				return;
+				this.element.classList.remove('is-opening');
 			}
-
-			this.element.classList.remove('is-loading');
-			this._setTriggersLoading(panelId, false);
-			this.element.style.removeProperty('--ps-loading-delay');
-			this.element.classList.remove('is-opening');
 		}
 
 		if (signal.aborted) {
@@ -1182,15 +1194,7 @@ export class PanelSet {
 			...this._edgeInfo(newPanel)
 		});
 
-		const shouldTransition = transition !== false && this.config.transitions !== false;
-
-		let panelTransition = shouldTransition;
-		let heightTransition = shouldTransition;
-
-		if (typeof this.config.transitions === 'object') {
-			panelTransition = shouldTransition && this.config.transitions.panels !== false;
-			heightTransition = shouldTransition && this.config.transitions.height !== false;
-		}
+		const { panels: panelTransition, height: heightTransition } = this._transitionFlags(transition);
 
 		this.panels.forEach(panel => panel.classList.toggle('fade', panelTransition));
 
