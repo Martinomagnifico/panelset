@@ -111,18 +111,11 @@
 	font-variant-numeric: tabular-nums;
 	color: var(--text-default);
 
-	// Severity colors for the dropped-frame percentage.
-	--techout-warn: oklch(0.53 0.15 62); // dark orange (10-15%)
-	--techout-bad:  oklch(0.52 0.20 27); // dark red (> 15%)
+	// Severity colors for the dropped-frame percentage. The dark-mode values are
+	// brighter, to keep 4.5:1 against the dark page background.
+	--techout-warn: light-dark(oklch(0.53 0.15 62), oklch(0.80 0.15 75)); // orange (10-15%)
+	--techout-bad:  light-dark(oklch(0.52 0.20 27), oklch(0.72 0.18 25)); // red (> 15%)
 
 	&.is-warn { color: var(--techout-warn); }
 	&.is-bad  { color: var(--techout-bad); }
-}
-
-@media (prefers-color-scheme: dark) {
-	.techout {
-		// Brighter, to keep 4.5:1 against the dark page background.
-		--techout-warn: oklch(0.80 0.15 75);
-		--techout-bad:  oklch(0.72 0.18 25);
-	}
 }

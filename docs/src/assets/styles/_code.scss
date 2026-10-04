@@ -135,13 +135,8 @@ pre code.live-code {
 }
 
 .hljs-code, .hljs-comment, .hljs-formula {
-	color: var(--text-muted);
+	color: light-dark(var(--text-muted), white);
 	opacity: 0.8;
-
-	@media (prefers-color-scheme: dark) {
-		color: white;
-	}
-
 }
 
 
@@ -150,19 +145,20 @@ pre code.live-code {
 
 
 button.copy {
-	background: var(--btn-primary-bg);
+	background: none;
 	border: none;
 	border-radius: 3px;
 	padding: 0.2rem 0.5rem;
 	font-size: 1rem;
 	font-weight: 400;
-	color: var(--btn-primary-text);
+	color: var(--btn-plain-text);
 	cursor: pointer;
 	transition: background 0.125s, color 0.125s;
 	outline-width: 2px;
 	outline-offset: 2px;
 
 	&:hover {
-		background: var(--btn-primary-hover);
+		background: var(--btn-plain-hover-bg);
+		color: var(--btn-plain-text-hover);
 	}
 }

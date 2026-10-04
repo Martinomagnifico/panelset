@@ -1,12 +1,7 @@
 
 .static-demo {
-	--demo-stroke: var(--color-special-tint-600);
-	--demo-stroke-hover: var(--color-special-tint-700);
-
-	@media (prefers-color-scheme: dark) {
-		--demo-stroke: var(--color-special-tint-400);
-		--demo-stroke-hover: var(--color-special-tint-300);
-	}
+	--demo-stroke: light-dark(var(--color-special-tint-600), var(--color-special-tint-400));
+	--demo-stroke-hover: light-dark(var(--color-special-tint-700), var(--color-special-tint-300));
 }
 
 .static-resizer {
@@ -133,19 +128,13 @@
 		            border-color var(--ps-open-speed) var(--ps-open-timing);
 
 		&:hover {
-			background: var(--color-special-tint-050);
+			background: light-dark(var(--color-special-tint-50), var(--color-special-tint-800));
 			border-color: var(--demo-stroke-hover);
 		}
 
 		&:focus-visible {
 			outline: 2px solid var(--color-special-tint-500);
 			outline-offset: 2px;
-		}
-	}
-
-	@media (prefers-color-scheme: dark) {
-		button:hover {
-			background: var(--color-special-tint-800);
 		}
 	}
 
@@ -168,7 +157,7 @@
 	}
 
 	mark {
-		background: rgb(255 214 0 / 0.35);
+		background: light-dark(rgb(255 214 0 / 0.35), rgb(255 214 0 / 0.22));
 		color: inherit;
 		border-radius: 2px;
 		padding: 0 0.15em;
@@ -184,11 +173,5 @@
 		margin-top: 0.75rem;
 		font-size: 0.85em;
 		opacity: 0.7;
-	}
-}
-
-@media (prefers-color-scheme: dark) {
-	.static-markup mark {
-		background: rgb(255 214 0 / 0.22);
 	}
 }

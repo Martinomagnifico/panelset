@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.2.9] - 2026-10-04
+
+### Changed
+- The ES modules are now one file per entry: `dist/panelset.mjs` and `dist/register.mjs`, instead of a file for every source file in `dist/esm/`. The package has no source maps any more. The import paths stay the same.
+
+
+## [1.2.8] - 2026-10-04
+
+### Changed
+- The types are now one file per entry: `dist/types/index.d.ts` and `dist/types/register.d.ts`. Internal types are no longer in the package. The import paths stay the same.
+
+
+
 ## [1.2.7] - 2026-07-20
 
 ### Fixed

@@ -2,7 +2,6 @@
 import { defineConfig, build } from 'vite';
 import { resolve } from 'path';
 import dts from 'vite-plugin-dts';
-import { rename, mkdir, readdir, rmdir } from 'fs/promises';
 
 const iifeBuild = () => ({
   name: 'iife-build',
@@ -31,41 +30,26 @@ const iifeBuild = () => ({
 });
 
 
-const groupTypes = () => ({
-  name: 'group-types',
-  closeBundle: async () => {
-    const dist = resolve(__dirname, 'dist');
-    const typesDir = resolve(dist, 'types');
-
-    const moveTypes = async (relDir) => {
-      const absDir = resolve(dist, relDir);
-      for (const e of await readdir(absDir, { withFileTypes: true })) {
-        const rel = relDir ? `${relDir}/${e.name}` : e.name;
-        if (rel === 'types') continue;
-        if (e.isDirectory()) {
-          await moveTypes(rel);
-          // Drop the source folder if moving its .d.ts left it empty.
-          await rmdir(resolve(dist, rel)).catch(() => {});
-        } else if (e.name.endsWith('.d.ts') || e.name.endsWith('.d.ts.map')) {
-          const dest = resolve(typesDir, rel);
-          await mkdir(resolve(dest, '..'), { recursive: true });
-          await rename(resolve(dist, rel), dest);
-        }
-      }
-    };
-
-    await mkdir(typesDir, { recursive: true });
-    await moveTypes('');
-  }
-});
 
 export default defineConfig({
   plugins: [
-    dts({ insertTypesEntry: true, outDir: 'dist', include: ['src/js/**/*'] }),
-    iifeBuild(),
-    groupTypes()
+    // The types in one file per entry: dist/types/index.d.ts and register.d.ts.
+    dts({
+      bundleTypes: true,
+      outDirs: 'dist/types',
+      entryRoot: 'src/js',
+      entries: { index: 'src/js/index.ts', register: 'src/js/register.ts' },
+      include: ['src/js/**/*'],
+      exclude: ['src/js/index.iife.ts'],
+      // register only runs register(), and exports nothing.
+      beforeWriteFile: (filePath, content) =>
+        filePath.endsWith('register.d.ts') ? { filePath, content: 'export {};\n' } : { filePath, content }
+    }),
+    iifeBuild()
   ],
   build: {
+    // One ES module per entry: dist/panelset.mjs and dist/register.mjs, which
+    // imports panelset.mjs. No source maps in the package.
     lib: {
       entry: {
         'index': resolve(__dirname, 'src/js/index.ts'),
@@ -74,15 +58,15 @@ export default defineConfig({
       formats: ['es'],
     },
     rollupOptions: {
+      // The code both entries use stays in panelset.mjs, not in a third file.
+      preserveEntrySignatures: 'allow-extension',
       output: {
-        preserveModules: true,
-        preserveModulesRoot: 'src/js',
-        entryFileNames: 'esm/[name].js',
-        chunkFileNames: 'esm/[name].js',
+        entryFileNames: (chunk) => (chunk.name === 'index' ? 'panelset.mjs' : '[name].mjs'),
+        chunkFileNames: '[name].mjs',
         assetFileNames: '[name][extname]',
       }
     },
-    sourcemap: true,
+    sourcemap: false,
     minify: 'oxc',
     target: 'es2020'
   },

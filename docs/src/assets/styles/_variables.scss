@@ -1,4 +1,6 @@
 :root {
+	color-scheme: light dark;
+
 	--main-hue: 120.0;
 	--special-hue: calc(var(--main-hue) + 135);
 	--special-hue: mod(calc(var(--main-hue) + 135), 360);
@@ -40,37 +42,40 @@
 	--color-special-tint-900: oklch(0.20 0.068 var(--special-hue));
 	--color-special-tint-950: oklch(0.10 0.038 var(--special-hue));
 
-	--color-special-helptext: oklch(0.25 0.009 var(--special-hue));
-	--color-error: oklch(0.60 0.25 30);
+	--color-special-helptext: light-dark(oklch(0.25 0.009 var(--special-hue)), oklch(0.90 0.009 var(--special-hue)));
+	--color-error: light-dark(oklch(0.60 0.25 30), oklch(60% 0.18 25));
 	
 }
 
+// Each colour is light-dark(light, dark). It follows color-scheme, set on :root at the top.
 :root {
-	--text-heading-1: var(--color-tint-900);
-	--text-heading-2: var(--color-tint-700);
-	--text-heading-3: var(--color-tint-600);
+	--text-heading-1: light-dark(var(--color-tint-900), var(--color-tint-100));
+	--text-heading-2: light-dark(var(--color-tint-700), var(--color-tint-200));
+	--text-heading-3: light-dark(var(--color-tint-600), var(--color-tint-300));
 
-	--bg-surface: var(--color-tint-25);
-	--bg-surface-off: var(--color-tint-25);
+	--bg-surface: light-dark(var(--color-tint-25), var(--color-tint-925));
+	--bg-surface-off: light-dark(var(--color-tint-25), var(--color-tint-900));
 
-	--bg-surface-tint: var(--color-tint-50);
-	--bg-surface-tint-contrast: var(--color-tint-100);
-	--bg-sidebar: var(--color-tint-100);
+	--bg-surface-tint: light-dark(var(--color-tint-50), var(--color-tint-850));
+	--bg-surface-tint-contrast: light-dark(var(--color-tint-100), var(--color-tint-750));
+	--bg-sidebar: light-dark(var(--color-tint-100), var(--color-tint-800));
 
-	--demo-surface: var(--color-special-tint-0);
-	--demo-surface-tint: var(--color-special-tint-50);
+	--demo-surface: light-dark(var(--color-special-tint-0), var(--color-special-tint-950));
+	--demo-surface-tint: light-dark(var(--color-special-tint-50), var(--color-special-tint-900));
 
-	--text-default: var(--color-tint-950);
-	--text-muted: var(--color-tint-700);
-	--text-tinted: var(--color-tint-400);
+	--text-default: light-dark(var(--color-tint-950), var(--color-tint-50));
+	--text-muted: light-dark(var(--color-tint-700), var(--color-tint-300));
+	--text-tinted: light-dark(var(--color-tint-400), var(--color-tint-300));
 
-	--link-focus: var(--color-tint-600);
+	--link-focus: light-dark(var(--color-tint-600), var(--color-tint-200));
 	
-	--border-default: var(--color-tint-200);
+	--border-default: light-dark(var(--color-tint-200), var(--color-tint-700));
 
-	--btn-plain-text: var(--color-tint-600);
-	--btn-plain-text-hover: var(--color-tint-700);
-	--btn-plain-hover-bg: oklch(from var(--color-tint-500) l c h / 0.1);
+	--btn-plain-text: light-dark(var(--color-tint-600), var(--color-tint-200));
+	--btn-plain-text-hover: light-dark(var(--color-tint-700), var(--color-tint-200));
+	--btn-plain-hover-bg: light-dark(oklch(from var(--color-tint-500) l c h / 0.1), oklch(from var(--color-tint-400) l c h / 0.15));
+
+	--btn-primary-hover: light-dark(var(--color-tint-700), var(--color-tint-600));
 
 
 
@@ -89,177 +94,71 @@
 
 
 	//-----// 
-	--doc-code-transparent: oklch(from var(--color-tint-700) l c h / 0.08);
+	--doc-code-transparent: light-dark(oklch(from var(--color-tint-700) l c h / 0.08), oklch(from var(--color-tint-100) l c h / 0.1));
 
 	--special-demoblock: var(--color-special-tint-300);
-	--special-normal: var(--color-special-tint-600);
-	--special-hover: var(--color-special-tint-700);
+	--special-normal: light-dark(var(--color-special-tint-600), var(--color-special-tint-300));
+	--special-hover: light-dark(var(--color-special-tint-700), var(--color-special-tint-25));
 	--special-active: var(--color-special-tint-700);
-	--special-shadow: oklch(from var(--special-normal) l c h / 0.33);
+	--special-shadow: light-dark(oklch(from var(--special-normal) l c h / 0.33), oklch(from var(--special-normal) l c h / 0.25));
 	--special-shadow-dark: oklch(from var(--special-normal) calc(l * 0.1) calc(c * 2) h / 0.2);
 
-	--tab-text-normal: var(--color-tint-600);
-	--tab-text-hover: var(--color-tint-700);
-	--tab-text-active: var(--color-tint-600);
+	--tab-text-normal: light-dark(var(--color-tint-600), var(--color-tint-300));
+	--tab-text-hover: light-dark(var(--color-tint-700), var(--color-tint-200));
+	--tab-text-active: light-dark(var(--color-tint-600), var(--color-tint-50));
 
 	--tab-underline-hover: var(--color-tint-300);
-	--tab-underline-active: var(--color-tint-600);
+	--tab-underline-active: light-dark(var(--color-tint-600), var(--color-tint-50));
 
 
 
 	.demo {
-		--border-default: var(--color-special-tint-400);
-		--text-tinted: var(--color-special-tint-400);
-		--link-focus: var(--color-special-tint-400);
+		--border-default: light-dark(var(--color-special-tint-400), var(--color-special-tint-700));
+		--text-tinted: light-dark(var(--color-special-tint-400), var(--color-special-tint-200));
+		--link-focus: light-dark(var(--color-special-tint-400), var(--color-special-tint-200));
 
-		--btn-plain-text: var(--color-special-tint-600);
-		--btn-plain-text-hover: var(--color-special-tint-700);
-		--btn-plain-hover-bg: oklch(from var(--color-special-tint-500) l c h / 0.1);
+		--btn-plain-text: light-dark(var(--color-special-tint-600), var(--color-special-tint-300));
+		--btn-plain-text-hover: light-dark(var(--color-special-tint-700), var(--color-special-tint-100));
+		--btn-plain-hover-bg: light-dark(oklch(from var(--color-special-tint-500) l c h / 0.1), oklch(from var(--color-special-tint-400) l c h / 0.15));
 
-		--text-heading-1: var(--color-special-tint-900);
-		--text-heading-2: var(--color-special-tint-700);
-		--text-heading-3: var(--color-special-tint-600);
+		--text-heading-1: light-dark(var(--color-special-tint-900), var(--color-special-tint-100));
+		--text-heading-2: light-dark(var(--color-special-tint-700), var(--color-special-tint-200));
+		--text-heading-3: light-dark(var(--color-special-tint-600), var(--color-special-tint-300));
 
-		--text-muted: var(--color-special-tint-800);
+		--text-muted: light-dark(var(--color-special-tint-800), var(--color-special-tint-300));
 
-		--ps-spinner-color: var(--color-special-tint-600);
+		--ps-spinner-track-color: light-dark(#0000001a, rgba(256, 256, 256, 0.1));
+		--ps-spinner-color: light-dark(var(--color-special-tint-600), var(--color-special-tint-300));
 
-		--tab-text-normal: var(--color-special-tint-550);
-		--tab-text-hover: var(--color-special-tint-600);
-		--tab-text-active: var(--color-special-tint-700);
+		--tab-text-normal: light-dark(var(--color-special-tint-550), var(--color-special-tint-300));
+		--tab-text-hover: light-dark(var(--color-special-tint-600), var(--color-special-tint-200));
+		--tab-text-active: light-dark(var(--color-special-tint-700), var(--color-special-tint-100));
 
-		--tab-underline-hover: var(--color-special-tint-300);
-		--tab-underline-active: var(--color-special-tint-600);
+		--tab-underline-hover: light-dark(var(--color-special-tint-300), var(--color-special-tint-400));
+		--tab-underline-active: light-dark(var(--color-special-tint-600), var(--color-special-tint-100));
 		
-		--btn-primary-bg-normal: var(--color-special-tint-25);
-		--btn-primary-text-normal: var(--color-special-tint-600);
-		--btn-primary-stroke-normal: var(--color-special-tint-600);
+		--btn-primary-bg-normal: light-dark(var(--color-special-tint-25), var(--color-special-tint-800));
+		--btn-primary-text-normal: light-dark(var(--color-special-tint-600), var(--color-special-tint-100));
+		--btn-primary-stroke-normal: light-dark(var(--color-special-tint-600), var(--color-special-tint-200));
 
-		--btn-primary-bg-current: var(--color-special-tint-0);
-		--btn-primary-text-current: var(--color-special-tint-700);
-		--btn-primary-stroke-current: var(--color-special-tint-700);
+		--btn-primary-bg-current: light-dark(var(--color-special-tint-0), var(--color-special-tint-700));
+		--btn-primary-text-current: light-dark(var(--color-special-tint-700), var(--color-special-tint-25));
+		--btn-primary-stroke-current: light-dark(var(--color-special-tint-700), var(--color-special-tint-100));
 
-		--btn-primary-bg-hover: var(--color-special-tint-0);
-		--btn-primary-text-hover: var(--color-special-tint-700);
-		--btn-primary-stroke-hover: var(--color-special-tint-700);
-
-	}
-
-	--sidebar-item-text: var(--color-tint-700);
-	--sidebar-item-hover-bg: var(--color-tint-25);
-	--sidebar-item-hover-text: var(--color-tint-950);
-	--sidebar-item-active-text: var(--color-tint-800);
-	--sidebar-item-active-text: var(--color-tint-600);
-
-	--sidebar-item-active-bg: oklch(from var(--color-tint-500) l c h / 0.12);
-	--sidebar-item-active-bg: var(--color-tint-150);
-
-	--demo-btn-bg: white;
-	--demo-btn-bg-off: var(--color-special-tint-25);
-}
-
-@media (prefers-color-scheme: dark) {
-
-	:root {
-
-		--color-special-helptext: oklch(0.90 0.009 var(--special-hue));
-		--color-error: oklch(60% 0.18 25);
-
-		--text-heading-1: var(--color-tint-100);
-		--text-heading-2: var(--color-tint-200);
-		--text-heading-3: var(--color-tint-300);
-
-		--bg-surface: var(--color-tint-925);
-		--bg-surface-off: var(--color-tint-900);
-		--bg-surface-tint: var(--color-tint-850);
-		--bg-surface-tint-contrast: var(--color-tint-750);
-		--bg-sidebar: var(--color-tint-800);
-
-		--demo-surface: var(--color-special-tint-950);
-		--demo-surface-tint: var(--color-special-tint-900);
-
-		--text-default: var(--color-tint-50);
-		--text-muted: var(--color-tint-300);
-
-		--link-focus: var(--color-tint-200);
-		--border-default: var(--color-tint-700);
-
-		--btn-plain-text: var(--color-tint-200);
-		--btn-plain-text-hover: var(--color-tint-200);
-		--btn-plain-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
-
-		--btn-primary-text: var(--color-tint-50);
-		--btn-primary-hover: var(--color-tint-600);
-
-		--text-tinted: var(--color-tint-300);
-		--doc-code-transparent: oklch(from var(--color-tint-100) l c h / 0.1);
-
-		--sidebar-item-text: var(--color-tint-200);
-		--sidebar-item-hover-bg: oklch(from var(--color-tint-400) l c h / 0.15);
-		--sidebar-item-hover-text: var(--color-tint-25);
-		--sidebar-item-active-text: var(--color-tint-50);
-		--sidebar-item-active-bg: var(--color-tint-700);
-
-
-
-
-		--demo-btn-bg: var(--color-special-tint-900);
-		--demo-btn-bg-off: var(--color-special-tint-800);
-
-		--special-normal: var(--color-special-tint-300);
-		--special-hover: var(--color-special-tint-25);
-
-		--special-shadow: oklch(from var(--special-normal) l c h / 0.25);
-
-		--tab-text-normal: var(--color-tint-300);
-		--tab-text-hover: var(--color-tint-200);
-		--tab-text-active: var(--color-tint-50);
-		--tab-underline-hover: var(--color-tint-300);
-		--tab-underline-active: var(--color-tint-50);
-
-
-		.demo {
-			--border-default: var(--color-special-tint-700);
-
-			--text-tinted: var(--color-special-tint-200);
-			--link-focus: var(--color-special-tint-200);
-
-			--btn-plain-text: var(--color-special-tint-300);
-			--btn-plain-text-hover: var(--color-special-tint-100);
-			--btn-plain-hover-bg: oklch(from var(--color-special-tint-400) l c h / 0.15);
-
-			--text-heading-1: var(--color-special-tint-100);
-			--text-heading-2: var(--color-special-tint-200);
-			--text-heading-3: var(--color-special-tint-300);
-
-			--text-muted: var(--color-special-tint-300);
-
-			--ps-spinner-track-color: rgba(256, 256, 256, 0.1);
-			--ps-spinner-color: var(--color-special-tint-300);
-
-			--tab-text-normal: var(--color-special-tint-300);
-			--tab-text-hover: var(--color-special-tint-200);
-			--tab-text-active: var(--color-special-tint-100);
-			--tab-underline-hover: var(--color-special-tint-400);
-			--tab-underline-active: var(--color-special-tint-100);
-
-			// BUTTONS DM
-
-			--btn-primary-bg-normal: var(--color-special-tint-800);
-			--btn-primary-text-normal: var(--color-special-tint-100);
-			--btn-primary-stroke-normal: var(--color-special-tint-200);
-
-			--btn-primary-bg-current: var(--color-special-tint-700);
-			--btn-primary-text-current: var(--color-special-tint-25);
-			--btn-primary-stroke-current: var(--color-special-tint-100);
-
-			--btn-primary-bg-hover: var(--color-special-tint-700);
-			--btn-primary-text-hover: var(--color-special-tint-25);
-			--btn-primary-stroke-hover: var(--color-special-tint-100);
-
-		}
+		--btn-primary-bg-hover: light-dark(var(--color-special-tint-0), var(--color-special-tint-700));
+		--btn-primary-text-hover: light-dark(var(--color-special-tint-700), var(--color-special-tint-25));
+		--btn-primary-stroke-hover: light-dark(var(--color-special-tint-700), var(--color-special-tint-100));
 
 	}
+
+	--sidebar-item-text: light-dark(var(--color-tint-700), var(--color-tint-200));
+	--sidebar-item-hover-bg: light-dark(var(--color-tint-25), oklch(from var(--color-tint-400) l c h / 0.15));
+	--sidebar-item-hover-text: light-dark(var(--color-tint-950), var(--color-tint-25));
+	--sidebar-item-active-text: light-dark(var(--color-tint-600), var(--color-tint-50));
+	--sidebar-item-active-bg: light-dark(var(--color-tint-150), var(--color-tint-700));
+
+	--demo-btn-bg: light-dark(white, var(--color-special-tint-900));
+	--demo-btn-bg-off: light-dark(var(--color-special-tint-25), var(--color-special-tint-800));
 }
 
 :root {

@@ -10,7 +10,7 @@
 ----
 ## What is it?
 It is a transition helper for panels that you want to show or hide.
-The package exports *three* classes. *Two* main classes: Panel and PanelSet and *one* additional class PanelControl. Both main classes animate a size between values using an [LMAU](#the-lock-measure-animate-unlock-lmau-cycle)* cycle:
+The package has *three* classes: *two* main classes, Panel and PanelSet, and *one* additional class, PanelControl. Each class can also be used as a custom element, such as `<ps-panel>`. Both main classes animate a size between values using an [LMAU](#the-lock-measure-animate-unlock-lmau-cycle)* cycle:
 
 * **Panel** animates height or width
 * **PanelSet** animates height of a whole set of panels, showing one at a time

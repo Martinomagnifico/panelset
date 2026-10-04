@@ -254,10 +254,6 @@ dl.bg-surface-tint-contrast {
 
 	.card {
 		background: var(--bg-surface-tint-contrast);
-
-		@media (prefers-color-scheme: dark) {
-			background: var(--bg-surface-tint-contrast);
-		}
 	}
 
 	.card-content {

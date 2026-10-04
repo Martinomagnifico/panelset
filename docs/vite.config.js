@@ -17,6 +17,8 @@ export default defineConfig(({ mode }) => {
 		build: {
 	        outDir: "dist",
 	        emptyOutDir: false,
+			// Browsers that support light-dark(), so the build does not rewrite it.
+			cssTarget: ['chrome123', 'edge123', 'firefox120', 'safari17.5'],
 	        rollupOptions: {
 	            input: [
 					resolve(__dirname, "src/views/**/[!_]*.pug"),
@@ -114,7 +116,7 @@ export default defineConfig(({ mode }) => {
 			alias: {
 				'panelset': isDev
 					? resolve(__dirname, '../src/js/index.ts')
-					: resolve(__dirname, '../dist/esm/index.js')
+					: resolve(__dirname, '../dist/panelset.mjs')
 			}
 		}
 	};
