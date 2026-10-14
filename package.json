@@ -1,6 +1,6 @@
 {
   "name": "panelset",
-  "version": "1.2.9",
+  "version": "1.2.10",
   "description": "Flexible panel management with smooth transitions",
   "type": "module",
   "sideEffects": [
@@ -8,16 +8,16 @@
     "**/*.scss"
   ],
   "main": "./dist/panelset.mjs",
-  "types": "./dist/types/index.d.ts",
+  "types": "./dist/panelset.d.mts",
   "unpkg": "./dist/panelset.js",
   "jsdelivr": "./dist/panelset.js",
   "exports": {
     ".": {
-      "types": "./dist/types/index.d.ts",
+      "types": "./dist/panelset.d.mts",
       "import": "./dist/panelset.mjs"
     },
     "./register": {
-      "types": "./dist/types/register.d.ts",
+      "types": "./dist/register.d.mts",
       "import": "./dist/register.mjs"
     },
     "./style.css": "./dist/panelset.css"
@@ -51,13 +51,16 @@
   "author": "Martijn De Jongh",
   "license": "MIT",
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.59.3",
     "@vituum/vite-plugin-pug": "^2.0.1",
+    "rolldown-plugin-dts": "^0.28.8",
     "sass": "^1.97.3",
     "terser": "^5.46.0",
     "typescript": "^5.9.3",
-    "vite": "^8.0.0",
-    "vite-plugin-dts": "5.0.0-beta.6",
+    "vite": "^8.3.4",
     "vituum": "^2.0.1"
+  },
+  "allowScripts": {
+    "@parcel/watcher": false,
+    "fsevents": false
   }
 }

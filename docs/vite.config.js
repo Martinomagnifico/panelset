@@ -7,6 +7,8 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 
 const navData = JSON.parse(readFileSync(new URL('./src/data/nav.json', import.meta.url), 'utf-8'));
 const SITE_URL = 'https://martinomagnifico.github.io/panelset/';
+// The version of the library, for the docs as `version`.
+const { version } = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf8'));
 
 export default defineConfig(({ mode }) => {
 	const isDev = mode === 'development';
@@ -63,9 +65,11 @@ export default defineConfig(({ mode }) => {
 				name: 'pug-full-reload',
 				configureServer(server) {
 					server.watcher.add(resolve(__dirname, 'src/**/*.pug'));
+					server.watcher.add(resolve(__dirname, 'src/data/*.json'));
 				},
 				handleHotUpdate({ file, server, modules }) {
-					if (file.endsWith('.pug')) {
+					// The pug plugin reads src/data/*.json again on each render, so the docs follow size.json.
+					if (file.endsWith('.pug') || /src\/data\/[^/]+\.json$/.test(file)) {
 						modules.forEach(mod => server.moduleGraph.invalidateModule(mod));
 						server.moduleGraph.invalidateAll();
 						const hot = server.hot ?? server.ws;
@@ -93,6 +97,7 @@ export default defineConfig(({ mode }) => {
 					siteUrl: SITE_URL, // absolute, for Open Graph: a relative og:image is ignored
 					url: (h) => (isProd ? '/panelset/' : '/') + String(h).replace(/^\//, ''),
 					sidebar: navData,
+					version,
 				},
 	            options: {
 	                pretty: true,

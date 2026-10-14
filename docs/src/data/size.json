@@ -1,0 +1,15 @@
+{
+	"size": {
+		"js": 11.19,
+		"css": 1.99,
+		"total": 13.18,
+		"entries": {
+			"Panel": 5.3,
+			"PanelSet": 6.91,
+			"PanelControl": 2.06,
+			"Panel + PanelSet": 9.99,
+			"All three": 11.19,
+			"Stylesheet (CSS)": 1.99
+		}
+	}
+}

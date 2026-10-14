@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.10] - 2026-10-14
+
+### Changed
+- The types are now `dist/panelset.d.mts` and `dist/register.d.mts`, next to the ES modules, instead of `dist/types/`. They are made with rolldown-plugin-dts instead of API Extractor. The import paths stay the same.
+
+
 ## [1.2.9] - 2026-10-04
 
 ### Changed
