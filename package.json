@@ -27,6 +27,9 @@
     "README.md",
     "CHANGELOG.md"
   ],
+  "workspaces": [
+    "docs"
+  ],
   "scripts": {
     "start": "cd docs && npm start",
     "dev": "vite",
@@ -38,8 +41,7 @@
     "build:lib": "vite build",
     "size": "node scripts/size.mjs",
     "prepack": "npm run build",
-    "clean": "rm -rf dist",
-    "setup": "cd docs && npm install"
+    "clean": "rm -rf dist"
   },
   "keywords": [
     "panels",
@@ -62,5 +64,10 @@
   "allowScripts": {
     "@parcel/watcher": false,
     "fsevents": false
+  },
+  "overrides": {
+    "vite-plugin-static-copy": {
+      "chokidar": "^4.0.3"
+    }
   }
 }

@@ -10,7 +10,7 @@ const iifeBuild = () => ({
       configFile: false,
       build: {
         lib: {
-          entry: resolve(__dirname, 'src/js/index.iife.ts'),
+          entry: resolve(import.meta.dirname, 'src/js/index.iife.ts'),
           name: 'PanelSet',
           formats: ['iife'],
           fileName: () => 'panelset.js'
@@ -45,8 +45,8 @@ export default defineConfig({
     // imports panelset.mjs. No source maps in the package.
     lib: {
       entry: {
-        'index': resolve(__dirname, 'src/js/index.ts'),
-        'register': resolve(__dirname, 'src/js/register.ts'),
+        'index': resolve(import.meta.dirname, 'src/js/index.ts'),
+        'register': resolve(import.meta.dirname, 'src/js/register.ts'),
       },
       formats: ['es'],
     },

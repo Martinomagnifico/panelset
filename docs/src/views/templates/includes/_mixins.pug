@@ -191,19 +191,6 @@ mixin examplepilltabs(id)
 		button(role="tab" aria-controls=`${id}-panel-3`) Support
 
 
-mixin revealsrc(kind, thesource)
-	- let isProd = process.env.NODE_ENV === 'production';
-	if isProd
-		if kind === 'script'
-			script(src=`${thesource}`)
-		else
-			link(rel="stylesheet", href=`${thesource}`)
-	else
-		if kind === 'script'
-			script(src=`/node_modules/reveal.js/${thesource}`)
-		else
-			link(rel="stylesheet", href=`/node_modules/reveal.js/${thesource}`)
-
 -
 	const reindentCode = (code) => {
 		const lines = code.split('\n');

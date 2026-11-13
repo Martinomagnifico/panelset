@@ -8,7 +8,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 const navData = JSON.parse(readFileSync(new URL('./src/data/nav.json', import.meta.url), 'utf-8'));
 const SITE_URL = 'https://martinomagnifico.github.io/panelset/';
 // The version of the library, for the docs as `version`.
-const { version } = JSON.parse(readFileSync(resolve(__dirname, '../package.json'), 'utf8'));
+const { version } = JSON.parse(readFileSync(resolve(import.meta.dirname, '../package.json'), 'utf8'));
 
 export default defineConfig(({ mode }) => {
 	const isDev = mode === 'development';
@@ -20,12 +20,12 @@ export default defineConfig(({ mode }) => {
 	        outDir: "dist",
 	        emptyOutDir: false,
 			// Browsers that support light-dark(), so the build does not rewrite it.
-			cssTarget: ['chrome123', 'edge123', 'firefox120', 'safari17.5'],
+			cssTarget: ['chrome123', 'edge123', 'firefox120', 'safari17.5', 'ios17.5'],
 	        rollupOptions: {
 	            input: [
-					resolve(__dirname, "src/views/**/[!_]*.pug"),
-	                resolve(__dirname, "src/assets/styles/[!_]*.scss"),
-	                resolve(__dirname, "src/assets/scripts/[!_]*.js")
+					resolve(import.meta.dirname, "src/views/**/[!_]*.pug"),
+	                resolve(import.meta.dirname, "src/assets/styles/[!_]*.scss"),
+	                resolve(import.meta.dirname, "src/assets/scripts/[!_]*.js")
 	            ],
 	            output: {
 	                entryFileNames: (chunkInfo) => {
@@ -64,8 +64,8 @@ export default defineConfig(({ mode }) => {
 			{
 				name: 'pug-full-reload',
 				configureServer(server) {
-					server.watcher.add(resolve(__dirname, 'src/**/*.pug'));
-					server.watcher.add(resolve(__dirname, 'src/data/*.json'));
+					server.watcher.add(resolve(import.meta.dirname, 'src/**/*.pug'));
+					server.watcher.add(resolve(import.meta.dirname, 'src/data/*.json'));
 				},
 				handleHotUpdate({ file, server, modules }) {
 					// The pug plugin reads src/data/*.json again on each render, so the docs follow size.json.
@@ -120,8 +120,8 @@ export default defineConfig(({ mode }) => {
 		resolve: {
 			alias: {
 				'panelset': isDev
-					? resolve(__dirname, '../src/js/index.ts')
-					: resolve(__dirname, '../dist/panelset.mjs')
+					? resolve(import.meta.dirname, '../src/js/index.ts')
+					: resolve(import.meta.dirname, '../dist/panelset.mjs')
 			}
 		}
 	};
