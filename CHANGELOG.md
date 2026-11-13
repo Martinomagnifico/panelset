@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.11] - 2026-11-13
+
+### Changed
+- Updated Vite and dependencies.
+
+
 ## [1.2.10] - 2026-10-14
 
 ### Changed
