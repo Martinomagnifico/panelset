@@ -79,7 +79,7 @@
 		}
 		&::picker(select) {
 			appearance: base-select;
-			background: white;
+			background: light-dark(white, var(--color-tint-850));
 			border: 1px solid var(--border-default);
 			border-radius: 0.25rem;
 			padding: 0.5rem;
