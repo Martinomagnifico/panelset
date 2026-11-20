@@ -205,9 +205,20 @@
 		}
 	}
 
-	// Keyed on the trigger, not a state class, so it flips exactly when the Panel starts opening and closing.
-	body:has(.nav-toggle[aria-expanded="true"]) {
-		overflow: hidden;
+	// Set by main.js while the drawer is open. The body is fixed at its scroll position, so the page does not scroll and the scrollbar stays.
+	html[data-scroll-lock] {
+		// No bounce and no pull-to-reload on iOS.
+		overscroll-behavior: none;
+
+		&[data-scroll-lock="scrollbar"] {
+			overflow-y: scroll;
+		}
+
+		body {
+			position: fixed;
+			inset-inline: 0;
+			top: var(--locked-at);
+		}
 	}
 
 	body::before {

@@ -6,6 +6,7 @@ block scripts
 		script(src=`${basePath}assets/scripts/copybutton.js` vite-ignore)
 		script(src=`${basePath}assets/scripts/anchorlink.js` vite-ignore)
 		script(src=`${basePath}assets/scripts/install-wizard.js` vite-ignore)
+		script(src=`${basePath}assets/scripts/main.js` vite-ignore defer)
 		script(src=`${basePath}lib/panelset.js` vite-ignore)
 		script.
 			Panel.init('.docs-sidebar [data-panel]', { returnFocus: false });
@@ -14,44 +15,7 @@ block scripts
 		script(type="module" src="/src/assets/scripts/copybutton.js")
 		script(type="module" src="/src/assets/scripts/anchorlink.js")
 		script(type="module" src="/src/assets/scripts/install-wizard.js")
+		script(type="module" src="/src/assets/scripts/main.js")
 		script(type="module").
 			import { Panel } from 'panelset';
 			Panel.init('.docs-sidebar [data-panel]', { returnFocus: false });
-
-
-	//- Dismiss the drawer, and hold focus inside it while it is open. On desktop the nav is static (data-panel-static)
-	script.
-		document.addEventListener('DOMContentLoaded', function () {
-			var nav = document.getElementById('main-nav');
-			if (!nav) return;
-			var content = document.querySelector('.docs-content');
-
-			// Click beside the drawer. The toggle is skipped: it already toggles itself.
-			document.addEventListener('click', function (e) {
-				if (nav.contains(e.target) || e.target.closest('.nav-toggle')) return;
-				nav.panel?.close(e);
-			});
-
-			document.addEventListener('keydown', function (e) {
-				if (e.key === 'Escape') nav.panel?.close(e);
-			});
-
-			// The drawer looks modal, so it behaves modal: nothing behind it is tabbable. The check matters, because the nav sections are panels whose events bubble.
-			nav.addEventListener('panel:opening', function (e) {
-				if (e.target === nav) content?.setAttribute('inert', '');
-			});
-			nav.addEventListener('panel:closed', function (e) {
-				if (e.target === nav) content?.removeAttribute('inert');
-			});
-
-			// Resizing to desktop makes it static, which is not a close, so release here.
-			nav.addEventListener('panel:staticchange', function () {
-				content?.removeAttribute('inert');
-			});
-		});
-
-	script.
-		// Highlight. Exclude the install wizard, and any block JS writes itself (.live-code): hljs rebuilds a block from its text, which would throw away the <mark> elements the static demo puts there.
-		hljs.configure({ cssSelector: 'pre code:not(.iw-code):not(.live-code)' });
-		hljs.highlightAll();
-		hljs.initLineNumbersOnLoad();
